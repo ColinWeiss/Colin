@@ -51,10 +51,10 @@ namespace Colin
         public Vector2 Center
         { get { return Position + Size / 2; } }
 
-        public int Width
+        public float Width
         { get { return (int)Size.X; } set { Size.X = value; } }
 
-        public int Height
+        public float Height
         { get { return (int)Size.Y; } set { Size.Y = value; } }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Colin
         /// 获取元素的基础矩形
         /// </summary>
         public Rectangle Rectangle
-        { get { return new Rectangle( (int)PositionX, (int)PositionY, Width, Height ); } }
+        { get { return new Rectangle( (int)PositionX, (int)PositionY, (int)Width, (int)Height ); } }
 
         public bool Empty { get; set; } = true;
 

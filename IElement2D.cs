@@ -34,11 +34,11 @@ namespace Colin
         /// <summary>
         /// 元素的宽度.
         /// </summary>
-        public int Width { get; set; }
+        public float Width { get; set; }
 
         /// <summary>
         /// 元素的高度.
         /// </summary>
-        public int Height { get; set; }
+        public float Height { get; set; }
     }
 }

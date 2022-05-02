@@ -122,9 +122,9 @@ namespace Colin.Core
         {
             for ( int count = 0; count < Components.Count; count++ )
             {
+                Components[ count ].Index = count;
                 if ( Components[ count ].Enable )
                 {
-                    Components[ count ].Index = count;
                     Components[ count ].Update( );
                 }
             }
