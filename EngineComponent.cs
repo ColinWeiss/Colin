@@ -74,7 +74,7 @@ namespace Colin
         }
 
         bool _drawStarted;
-         public override sealed void Draw( GameTime gameTime )
+        public override sealed void Draw( GameTime gameTime )
         {
             base.Draw( gameTime );
             if ( !_drawStarted )
@@ -89,7 +89,7 @@ namespace Colin
             if ( this != null )
                 PostDraw( HardwareInfo.SpriteBatch );
         }
-         protected virtual void DrawStart( SpriteBatch spriteBatch )
+        protected virtual void DrawStart( SpriteBatch spriteBatch )
         {
 
         }

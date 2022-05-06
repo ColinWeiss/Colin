@@ -40,5 +40,11 @@ namespace Colin
         /// 元素的高度.
         /// </summary>
         public float Height { get; set; }
+
+        /// <summary>
+        /// 元素的缩放.
+        /// </summary>
+        public float Scale { get; set; }
+
     }
 }

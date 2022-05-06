@@ -12,7 +12,7 @@ namespace Colin
     /// <summary>
     /// 提供游戏窗口中可进行逻辑刷新、纹理绘制的元素.
     /// </summary>
-    public abstract class EngineElement : IElement2D , ILocalizable, IPoolObject, IEmptyState
+    public class EngineElement : IElement2D , ILocalizable, IPoolObject, IEmptyState
     {
         /// <summary>
         /// 指示该元素是否进行逻辑刷新.
@@ -179,14 +179,26 @@ namespace Colin
 
         public virtual string GetInformation => "A engine element.";
         
-
+        public void StartActive()
+        {
+            Enable = true;
+            Visable = true;
+            OnActive( );
+        }
         public virtual void OnActive( )
         {
         }
 
+        public void Dormancy( )
+        {
+            Enable = false;
+            Visable = false;
+            OnDormancy( );
+        }
         public virtual void OnDormancy( )
         {
 
         }
+
     }
 }

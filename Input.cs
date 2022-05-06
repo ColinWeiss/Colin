@@ -29,7 +29,7 @@ namespace Colin
         };
 
         /// <summary>
-        /// 指示鼠标目前是否正在与 <seealso cref="BasicControl"/> 进行交互的值.
+        /// 指示鼠标目前是否正在与 <seealso cref="Control"/> 进行交互的值.
         /// </summary>
         public static bool MouseContorl { get; set; } = false;
 
@@ -130,7 +130,7 @@ namespace Colin
         /// </summary>
         public static KeyboardState KeyboardStateLast = new KeyboardState( );
 
-        internal static void GetInformationFromDevice( GameTime gameTime )
+        internal static void GetInformationFromDevice( )
         {
             MouseStateLast = MouseState;
             MouseState = Mouse.GetState( );
@@ -151,6 +151,15 @@ namespace Colin
         }
 
         /// <summary>
+        /// 将上一帧与这一帧的鼠标状态相统一.
+        /// </summary>
+        public static void ResetMouseState( )
+        {
+            MouseStateLast = Mouse.GetState( );
+            MouseState = Mouse.GetState( );
+        }
+
+        /// <summary>
         /// 重置设备信息.
         /// </summary>
         internal static void ResetInfomation( )
@@ -158,12 +167,17 @@ namespace Colin
             MouseContorl = false;
         }
 
+        public static bool KeyClick( Keys keys )
+        {
+            return KeyboardState.IsKeyDown( keys ) && KeyboardStateLast.IsKeyUp( keys );
+        }
+
         /// <summary>
         /// 判断键盘上的某个键位是否被按下后松开.
         /// </summary>
         /// <param name="keys">键.</param>
         /// <returns>如若是, 返回 <seealso href="true"/>, 否则返回 <seealso href="false"/>.</returns>
-        public static bool IsKeyClickUp( Keys keys )
+        public static bool KeyUp( Keys keys )
         {
             return KeyboardState.IsKeyUp( keys ) && KeyboardStateLast.IsKeyDown( keys );
         }

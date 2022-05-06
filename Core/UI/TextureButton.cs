@@ -11,7 +11,7 @@ namespace Colin.Core.UI
     /// <summary>
     /// 表示一个可以显示纹理的按钮.
     /// </summary>
-    public abstract class TextureButton : BasicControl, IAnimation
+    public abstract class TextureButton : Control, IAnimation
     {
         public abstract int CurrentFrameX { get; }
 

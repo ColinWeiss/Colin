@@ -8,7 +8,7 @@ namespace Colin.Core.UI
     /// <summary>
     /// 定义带有可视化表示形式的控件的基类.
     /// </summary>
-    public abstract class BasicControl : EngineElement
+    public abstract class Control : EngineElement
     {
         /// <summary>
         /// 指示该元素是否允许拖动.
@@ -19,6 +19,11 @@ namespace Colin.Core.UI
         /// 指示是否被父元素锁定坐标.
         /// </summary>
         public bool LockOnParent = true;
+
+        /// <summary>
+        /// 允许该控件被执行器的指针寻找到.
+        /// </summary>
+        public bool CanGetForPointer = true;
 
         /// <summary>
         /// 指示控件是否可进行交互的值.
@@ -41,9 +46,7 @@ namespace Colin.Core.UI
         /// </summary>
         protected virtual bool CalculationInteractive( )
         {
-            bool result = false;
-            if ( !Enable )
-                result = false;
+            bool result;
             if ( Enable && Rectangle.IntersectMouse( ) )
             {
                 result = true;
@@ -57,27 +60,23 @@ namespace Colin.Core.UI
         /// <summary>
         /// 启用该控件.
         /// </summary>
-        public virtual void StartUsing( )
+        public override void OnActive( )
         {
             Enable = true;
             Visable = true;
-            foreach ( BasicControl item in SubControls )
+            foreach ( Control item in SubControls )
             {
-                item.StartUsing( );
+                item.StartActive( );
             }
         }
 
         /// <summary>
         /// 令该控件休眠.
         /// </summary>
-        public virtual void Dormancy( )
+        public override void OnDormancy( )
         {
-            Enable = false;
-            Visable = false;
-            foreach ( BasicControl item in SubControls )
-            {
+            foreach ( Control item in SubControls )
                 item.Dormancy( );
-            }
         }
 
         /// <summary>
@@ -98,7 +97,7 @@ namespace Colin.Core.UI
         /// <summary>
         /// 控件相对于父控件的纵位置坐标
         /// </summary>
-        public float SubPosititonY
+        public float SubPositionY
         {
             get
             {
@@ -118,26 +117,59 @@ namespace Colin.Core.UI
         /// <summary>
         /// 控件的上级控件, 控件只可以拥有一个上级控件
         /// </summary>
-        public BasicControl? Parent { get; private set; }
+        public Control? Parent { get; private set; }
 
         /// <summary>
         /// 控件的子控件.控件可以拥有多个子控件
         /// </summary>
-        public List<BasicControl> SubControls { get; private set; } = new List<BasicControl>( );
+        public List<Control> SubControls { get; private set; } = new List<Control>( );
+
+        /// <summary>
+        /// 获取该控件包括自己所在内、所包含的所有控件及其子控件.
+        /// </summary>
+        /// <returns></returns>
+        public List<Control> GetControls()
+        {
+            List<Control> result = new List<Control>
+            {
+                this
+            };
+            for ( int sub = 0 ; sub < SubControls.Count ; sub++ )
+                for ( int count = 0; count < SubControls[ sub ].GetControls( ).Count; count++ )
+                    result.Add( SubControls[ sub ].GetControls( )[ count ] );
+            return result;
+        }
+
+        /// <summary>
+        /// 获取该控件包括自己所在内、所包含的已启用的所有控件及其子控件.
+        /// </summary>
+        /// <returns></returns>
+        public List<Control> GetEnableControls( )
+        {
+            List<Control> result = new List<Control>( );
+            if ( Enable )
+                result.Add( this );
+            for ( int sub = 0; sub < SubControls.Count; sub++ )
+                if ( SubControls[ sub ].Enable )
+                    for ( int count = 0; count < SubControls[ sub ].GetControls( ).Count; count++ )
+                        if ( SubControls[ sub ].GetControls( )[ count ].Enable )
+                            result.Add( SubControls[ sub ].GetControls( )[ count ] );
+            return result;
+        }
 
         /// <summary>
         /// 表示控件所属的执行器.
         /// </summary>
-        public ControlOperator? Manager { get; set; }
+        public ControlOperator? Operator { get; set; }
 
         /// <summary>
         /// 将一个具有指定引用的控件注册进该控件
         /// <para>被注册的控件将会成为该控件的子控件</para>
         /// </summary>
         /// <param name="control"></param>
-        public virtual void Register( BasicControl control )
+        public virtual void Register( Control control )
         {
-            control.Manager = Manager;
+            control.Operator = Operator;
             control.Parent = this;
             SubControls.Add( control );
         }
@@ -146,7 +178,7 @@ namespace Colin.Core.UI
         /// 将具有指定引用的控件从该控件的子控件列表内删除
         /// </summary>
         /// <param name="element"></param>
-        public void Remove( BasicControl element )
+        public void Remove( Control element )
         {
             SubControls.Remove( element );
         }
@@ -220,7 +252,7 @@ namespace Colin.Core.UI
             OnMouseInto += MouseInto;
             OnMouseLeave += MouseLeave;
             InitializeControl( );
-            foreach ( BasicControl element in SubControls )
+            foreach ( Control element in SubControls )
                 element.Initialization( );
         }
 
@@ -240,7 +272,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseLeftClickEvent( ) => OnMouseLeftClick?.Invoke( );
+        public void MouseLeftClickEvent( ) => OnMouseLeftClick?.Invoke( );
 
          protected int positionCacheX = 0;
          protected int positionCacheY = 0;
@@ -255,7 +287,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseLeftPressedEvent( )
+        public void MouseLeftPressedEvent( )
         {
             if ( !Rectangle.IntersectMouseLast( ) && Input.MouseStateLast.LeftButton == ButtonState.Pressed )
                 cantDrop = true;
@@ -278,7 +310,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseLeftReleasedEvent( ) => OnMouseLeftReleased?.Invoke( );
+        public void MouseLeftReleasedEvent( ) => OnMouseLeftReleased?.Invoke( );
 
         /// <summary>
         /// 在鼠标左键释放的最后一帧执行.
@@ -287,7 +319,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseLeftUpEvent( )
+        public void MouseLeftUpEvent( )
         {
             if ( DropPermit )
             {
@@ -307,7 +339,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseRightClickEvent( ) => OnMouseRightClick?.Invoke( );
+        public void MouseRightClickEvent( ) => OnMouseRightClick?.Invoke( );
 
 
         /// <summary>
@@ -317,7 +349,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseRightPressedEvent( ) => OnMouseRightPressed?.Invoke( );
+        public void MouseRightPressedEvent( ) => OnMouseRightPressed?.Invoke( );
 
 
         /// <summary>
@@ -327,7 +359,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseRightReleasedEvent( ) => OnMouseRightReleased?.Invoke( );
+        public void MouseRightReleasedEvent( ) => OnMouseRightReleased?.Invoke( );
 
 
         /// <summary>
@@ -337,7 +369,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseRightUpEvent( ) => OnMouseRightUp?.Invoke( );
+        public void MouseRightUpEvent( ) => OnMouseRightUp?.Invoke( );
 
 
         /// <summary>
@@ -347,7 +379,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseHoverEvent( ) => OnMouseHover?.Invoke( );
+        public void MouseHoverEvent( ) => OnMouseHover?.Invoke( );
 
         /// <summary>
         /// 在鼠标进入可交互状态时执行.
@@ -356,7 +388,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseIntoEvent( ) => OnMouseInto?.Invoke( );
+        public void MouseIntoEvent( ) => OnMouseInto?.Invoke( );
 
         /// <summary>
         /// 在鼠标结束可交互状态时执行.
@@ -365,7 +397,7 @@ namespace Colin.Core.UI
         {
 
         }
-        internal void MouseLeaveEvent( ) => OnMouseLeave?.Invoke( );
+        public void MouseLeaveEvent( ) => OnMouseLeave?.Invoke( );
 
         protected override void PreUpdate( )
         {
@@ -378,7 +410,7 @@ namespace Colin.Core.UI
         /// </summary>
         protected virtual void UpdateSubControls( )
         {
-            foreach ( BasicControl sub in SubControls )
+            foreach ( Control sub in SubControls )
             {
                 sub.CalculationInteractive( );
                 if ( sub.LockOnParent )
@@ -407,7 +439,7 @@ namespace Colin.Core.UI
         /// </summary>
         protected virtual void DrawSubControls( )
         {
-            foreach ( BasicControl sub in SubControls )
+            foreach ( Control sub in SubControls )
                 sub.Draw( HardwareInfo.GameTimeCache );
         }
 
@@ -424,9 +456,9 @@ namespace Colin.Core.UI
         /// 返回该控件目前可最先交互的控件.
         /// </summary>
         /// <returns>如果寻找到非该控件之外的控件, 则返回寻找到的控件; 否则返回自己.</returns>
-        public virtual BasicControl SeekAt( )
+        public virtual Control SeekAt( )
         {
-            BasicControl? target = null;
+            Control? target = null;
             for ( int sub = SubControls.Count - 1; sub >= 0; sub-- )
             {
                 if ( SubControls[ sub ].SeekAt( ) == null )

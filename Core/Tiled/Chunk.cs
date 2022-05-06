@@ -41,8 +41,10 @@ namespace Colin.Core.Tiled
             {
                 for ( int y = 0; y < Height; y++ )
                 {
-                    Tiles[ x, y ] = new Tile( );
-                    Tiles[ x, y ].Chunk = this;
+                    Tiles[ x, y ] = new Tile
+                    {
+                        Chunk = this
+                    };
                 }
             }
         }

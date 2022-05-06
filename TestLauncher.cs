@@ -10,10 +10,8 @@ namespace Colin
     {
         public static void Main()
         {
-            using ( Engine game = new Engine() )
-            {
-                game.Run( );
-            }
+            using Engine game = new Engine( );
+            game.Run( );
         }
     }
 }

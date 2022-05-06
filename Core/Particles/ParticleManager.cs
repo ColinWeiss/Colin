@@ -27,12 +27,14 @@ namespace Colin.Core.Particles
             {
                 if( Objects[count].Empty )
                 {
-                    Objects[ count ] = new Particle( );
-                    Objects[ count ].Position = pos;
-                    Objects[ count ].Velocity = vel;
-                    Objects[ count ].ActiveTime = activeTime;
-                    Objects[ count ].Scale = scale;
-                    Objects[ count ].ElementColor = color;
+                    Objects[ count ] = new Particle
+                    {
+                        Position = pos,
+                        Velocity = vel,
+                        ActiveTime = activeTime,
+                        Scale = scale,
+                        ElementColor = color
+                    };
                     Objects[ count ].OnActive( );
                     ActiveObject( count );
                     break;
@@ -54,12 +56,14 @@ namespace Colin.Core.Particles
             {
                 if ( Objects[ count ].Empty )
                 {
-                    Objects[ count ] = new Particle( );
-                    Objects[ count ].Position = pos;
-                    Objects[ count ].Velocity = vel;
-                    Objects[ count ].ActiveTime = activeTime;
-                    Objects[ count ].Scale = scale;
-                    Objects[ count ].ElementColor = Color.White;
+                    Objects[ count ] = new Particle
+                    {
+                        Position = pos,
+                        Velocity = vel,
+                        ActiveTime = activeTime,
+                        Scale = scale,
+                        ElementColor = Color.White
+                    };
                     Objects[ count ].OnActive( );
                     ActiveObject( count );
                     break;
@@ -80,12 +84,14 @@ namespace Colin.Core.Particles
             {
                 if ( Objects[ count ].Empty )
                 {
-                    Objects[ count ] = new Particle( );
-                    Objects[ count ].Position = pos;
-                    Objects[ count ].Velocity = vel;
-                    Objects[ count ].ActiveTime = activeTime;
-                    Objects[ count ].Scale = 1f;
-                    Objects[ count ].ElementColor = Color.White;
+                    Objects[ count ] = new Particle
+                    {
+                        Position = pos,
+                        Velocity = vel,
+                        ActiveTime = activeTime,
+                        Scale = 1f,
+                        ElementColor = Color.White
+                    };
                     Objects[ count ].OnActive( );
                     ActiveObject( count );
                     break;
@@ -105,12 +111,14 @@ namespace Colin.Core.Particles
             {
                 if ( Objects[ count ].Empty )
                 {
-                    Objects[ count ] = new Particle( );
-                    Objects[ count ].Position = pos;
-                    Objects[ count ].Velocity = vel;
-                    Objects[ count ].ActiveTime =Engine.Instance.TargetFrame;
-                    Objects[ count ].Scale = 1f;
-                    Objects[ count ].ElementColor = Color.White;
+                    Objects[ count ] = new Particle
+                    {
+                        Position = pos,
+                        Velocity = vel,
+                        ActiveTime = Engine.Instance.TargetFrame,
+                        Scale = 1f,
+                        ElementColor = Color.White
+                    };
                     Objects[ count ].OnActive( );
                     ActiveObject( count );
                     break;
@@ -129,12 +137,14 @@ namespace Colin.Core.Particles
             {
                 if ( Objects[ count ].Empty )
                 {
-                    Objects[ count ] = new Particle( );
-                    Objects[ count ].Position = pos;
-                    Objects[ count ].Velocity = Vector2.Zero;
-                    Objects[ count ].ActiveTime =Engine.Instance.TargetFrame;
-                    Objects[ count ].Scale = 1f;
-                    Objects[ count ].ElementColor = Color.White;
+                    Objects[ count ] = new Particle
+                    {
+                        Position = pos,
+                        Velocity = Vector2.Zero,
+                        ActiveTime = Engine.Instance.TargetFrame,
+                        Scale = 1f,
+                        ElementColor = Color.White
+                    };
                     Objects[ count ].OnActive( );
                     ActiveObject( count );
                     break;

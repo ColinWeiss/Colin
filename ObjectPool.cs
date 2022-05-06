@@ -24,11 +24,13 @@ namespace Colin
             ActiveList = new List<T>( );
             Objects = new T[ poolSize ];
             Span<T> ts = Objects;
-            T t = new T( );
-            t.Empty = true;
-            t.ActiveIndex = -1;
-            t.PoolIndex = -1;
-            ts.Fill( new T( ) );
+            T t = new T
+            {
+                Empty = true,
+                ActiveIndex = -1,
+                PoolIndex = -1
+            };
+            ts.Fill( t );
         }
 
         public virtual void Initialize( )

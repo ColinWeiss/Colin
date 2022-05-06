@@ -41,10 +41,12 @@ namespace Colin
         {
             Instance = this;
             IsFixedTimeStep = true;
-            HardwareInfo.Graphics = new GraphicsDeviceManager( this );
-            HardwareInfo.Graphics.PreferHalfPixelOffset = true;
-            HardwareInfo.Graphics.HardwareModeSwitch = false;
-            HardwareInfo.Graphics.PreferMultiSampling = false;
+            HardwareInfo.Graphics = new GraphicsDeviceManager( this )
+            {
+                PreferHalfPixelOffset = true,
+                HardwareModeSwitch = false,
+                PreferMultiSampling = false
+            };
             Window.AllowUserResizing = true;
             IsFixedTimeStep = true;
             HardwareInfo.Graphics.SynchronizeWithVerticalRetrace = false;
@@ -109,23 +111,21 @@ namespace Colin
         protected override sealed void Update( GameTime gameTime )
         {
             HardwareInfo.GetInformationFromDevice( gameTime );
-            Input.GetInformationFromDevice( gameTime );
+            Input.GetInformationFromDevice( );
             base.Update( gameTime );
             Input.ResetInfomation( );
         }
 
         protected override sealed void EndRun( ) => base.EndRun( );
 
+
+
         protected override sealed void Draw( GameTime gameTime )
         {
             GraphicsDevice.Clear( Color.Black );
             GraphicsDevice.SetRenderTarget( EngineRenderTarget );
             base.Draw( gameTime );
-            ScreenRender.RenderFrame( gameTime );
-            GraphicsDevice.SetRenderTarget( null );
-            HardwareInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null );
-            HardwareInfo.SpriteBatch.Draw( EngineRenderTarget, Vector2.Zero, Color.White );
-            HardwareInfo.SpriteBatch.End( );
+            ScreenRender.RenderFrame( );
             Input.ResetInfomation( );
         }
 

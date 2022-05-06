@@ -130,6 +130,7 @@ namespace Colin.Core
             }
             base.PreUpdate( );
         }
+
         protected override void PreDraw( SpriteBatch spriteBatch )
         {
             for ( int count = 0; count < Components.Count; count++ )
