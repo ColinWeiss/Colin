@@ -72,8 +72,8 @@ namespace Colin.Graphics
         public int DefaultBufferSize { get; private set; }
 
         /// <summary>
-        /// 调用 <seealso cref="AddVertex"/> 进行顶点块的填充.
-        /// <para>Flush将使用此数组, 并将确定要从中绘制的顶点.</para>
+        /// 调用 <seealso cref="AddVertex(Vector2,Color)"/> 及其重载函数进行顶点块的填充.
+        /// <para>[!] Flush将使用此数组, 并将确定要从中绘制的顶点.</para>
         /// </summary>
         public VertexPositionColorTexture[ ] Vertices { get; private set; }
 
