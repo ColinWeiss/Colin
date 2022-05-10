@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Particles
 {
@@ -21,11 +16,11 @@ namespace Colin.Core.Particles
         /// <param name="activeTime">设置粒子的活跃时间.</param>
         /// <param name="scale">粒子的初始大小.</param>
         /// <param name="color">粒子的颜色.</param>
-        public void CreateParticle<T>( Vector2 pos , Vector2 vel , float activeTime , float scale , Color color ) where T : Particle , new( )
+        public void CreateParticle<T>( Vector2 pos, Vector2 vel, float activeTime, float scale, Color color ) where T : Particle, new()
         {
-            for ( int count = 0; count < Objects.Length ; count++ )
+            for ( int count = 0; count < Objects.Length; count++ )
             {
-                if( Objects[count].Empty )
+                if ( Objects[ count ].Empty )
                 {
                     Objects[ count ] = new Particle
                     {

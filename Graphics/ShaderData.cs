@@ -26,14 +26,14 @@ namespace Colin.Graphics
 
         }
 
-         public virtual void UpdateShader( GameTime gameTime )
+        public virtual void UpdateShader( GameTime gameTime )
         {
 
         }
 
-         public void ApplyPass( string passName ) => Effect.CurrentTechnique.Passes[ passName ].Apply( );
+        public void ApplyPass( string passName ) => Effect.CurrentTechnique.Passes[ passName ].Apply( );
 
-         public ShaderData( Effect effect )
+        public ShaderData( Effect effect )
         {
             Effect = effect;
             ForInternalOptimizationBoolen = false;

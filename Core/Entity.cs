@@ -1,10 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Colin.Core
 {
@@ -73,7 +67,7 @@ namespace Colin.Core
                 component.Entity = this;
                 Components.Add( component );
             }
-            else if( HasComponent( component ) )
+            else if ( HasComponent( component ) )
                 throw new Exception( "名为: " + component.Name + " 的组件已经被添加过, 请检查某组件是否被重复地添加至不同的实体." );
         }
 
@@ -93,13 +87,13 @@ namespace Colin.Core
                 return false;
         }
 
-        public bool RemoveComponent<T>() where T : EntityComponent
+        public bool RemoveComponent<T>( ) where T : EntityComponent
         {
             for ( int count = 0; count < Components.Count; count++ )
             {
                 if ( Components[ count ].GetType( ) == typeof( T ) )
                 {
-                    if( !Components.Remove( Components[ count ] ) )
+                    if ( !Components.Remove( Components[ count ] ) )
                     {
                         return false;
                     }

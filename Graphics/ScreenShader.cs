@@ -17,7 +17,7 @@ namespace Colin.Graphics
         /// </summary>
         public string ScreenShaderName;
 
-         public ScreenShader( Effect effect, string screenShaderName ) : base( effect )
+        public ScreenShader( Effect effect, string screenShaderName ) : base( effect )
         {
             ScreenShaderName = screenShaderName;
         }

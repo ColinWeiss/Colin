@@ -13,12 +13,12 @@ namespace Colin
         /// </summary>
         public RenderTarget2D? RenderTarget;
 
-         protected virtual void Initialization( )
+        protected virtual void Initialization( )
         {
 
         }
 
-         public override sealed void Initialize( )
+        public override sealed void Initialize( )
         {
             base.Initialize( );
             _updateStarted = false;
@@ -27,7 +27,7 @@ namespace Colin
                 HardwareInfo.Graphics.GraphicsDevice,
                 HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
                 HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
-           Engine.Instance.Window.ClientSizeChanged += Window_ClientSizeChanged;
+            Engine.Instance.Window.ClientSizeChanged += Window_ClientSizeChanged;
             void Window_ClientSizeChanged( object? sender, EventArgs e )
             {
                 RenderTarget = new RenderTarget2D(
@@ -38,13 +38,13 @@ namespace Colin
             Initialization( );
         }
 
-         protected override sealed void LoadContent( )
+        protected override sealed void LoadContent( )
         {
             base.LoadContent( );
         }
 
         bool _updateStarted;
-         public override sealed void Update( GameTime gameTime )
+        public override sealed void Update( GameTime gameTime )
         {
             base.Update( gameTime );
             if ( !_updateStarted )
@@ -59,17 +59,17 @@ namespace Colin
             if ( this != null )
                 PostUpdate( );
         }
-         protected virtual void UpdateStart( )
+        protected virtual void UpdateStart( )
         {
 
         }
-         protected virtual void PreUpdate( )
+        protected virtual void PreUpdate( )
         {
         }
-         protected virtual void Update( )
+        protected virtual void Update( )
         {
         }
-         protected virtual void PostUpdate( )
+        protected virtual void PostUpdate( )
         {
         }
 
@@ -93,16 +93,16 @@ namespace Colin
         {
 
         }
-         protected virtual void PreDraw( SpriteBatch spriteBatch )
+        protected virtual void PreDraw( SpriteBatch spriteBatch )
         {
         }
-         protected virtual void Draw( SpriteBatch spriteBatch )
+        protected virtual void Draw( SpriteBatch spriteBatch )
         {
         }
-         protected virtual void PostDraw( SpriteBatch spriteBatch )
+        protected virtual void PostDraw( SpriteBatch spriteBatch )
         {
         }
 
-         public EngineComponent( ) : base(Engine.Instance ) { }
+        public EngineComponent( ) : base( Engine.Instance ) { }
     }
 }

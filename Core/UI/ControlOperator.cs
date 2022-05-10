@@ -87,7 +87,7 @@ namespace Colin.Core.UI
                     _seekControl.MouseIntoEvent( );
             }
             if ( _seekControl != OldAtControl && OldAtControl != null && !OldAtControl.Interactive )
-                 OldAtControl.MouseLeaveEvent( );
+                OldAtControl.MouseLeaveEvent( );
         }
         protected override void Draw( SpriteBatch spriteBatch )
         {
@@ -104,7 +104,7 @@ namespace Colin.Core.UI
             List<Control> result = new List<Control>( );
             for ( int count = 0; count < Controls.Count; count++ )
             {
-                for ( int sub = 0; sub < Controls[count].GetControls( ).Count ; sub++ )
+                for ( int sub = 0; sub < Controls[ count ].GetControls( ).Count; sub++ )
                 {
                     result.Add( Controls[ count ].GetControls( )[ sub ] );
                 }
@@ -121,11 +121,11 @@ namespace Colin.Core.UI
             List<Control> result = new List<Control>( );
             for ( int count = 0; count < Controls.Count; count++ )
             {
-                if ( Controls[ count ].Enable && Controls[count].Rectangle.Intersects( HardwareInfo.GameViewSize ) )
+                if ( Controls[ count ].Enable && Controls[ count ].Rectangle.Intersects( HardwareInfo.GameViewSize ) )
                 {
                     for ( int sub = 0; sub < Controls[ count ].GetControls( ).Count; sub++ )
                     {
-                        if( Controls[ count ].GetControls( )[ sub ].Enable )
+                        if ( Controls[ count ].GetControls( )[ sub ].Enable )
                             result.Add( Controls[ count ].GetControls( )[ sub ] );
                     }
                 }

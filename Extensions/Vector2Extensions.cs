@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Extensions
 {
@@ -86,6 +81,11 @@ namespace Colin.Extensions
         public static Vector2 GetFloor( this Vector2 vec )
         {
             return new Vector2( (int)vec.X, (int)vec.Y );
+        }
+
+        public static Vector2 GetAngle( this float value )
+        {
+            return new Vector2( (float)Math.Cos( value ), (float)Math.Sin( value ) );
         }
 
         /// <summary>

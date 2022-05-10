@@ -1,15 +1,21 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Colin.Extensions;
+using Microsoft.Xna.Framework;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Colin
 {
     /// <summary>
-    /// 三角形.
-    /// <para>[!] 该结构作者 <see href="幽银"/>; 感谢 <see href=" lntrue"/> 提供的几何帮助得以完成此结构代码.</para>
+    /// 表示一个三角形.
     /// </summary>
     public struct Triangle
     {
         /// <summary>
-        /// 顶点A.
+        /// 顶点A
         /// </summary>
         public Vector2 VertexA;
 
@@ -24,43 +30,30 @@ namespace Colin
         public Vector2 VertexC;
 
         /// <summary>
-        /// 三个顶点; 顺序为A/B/C.
+        /// 顶点们
         /// </summary>
         public List<Vector2> Vertices
         {
             get { return new List<Vector2>( ) { VertexA, VertexB, VertexC }; }
         }
 
-        /// <summary>
-        /// 定义一个三角形.
-        /// </summary>
-        /// <param name="a">顶点A.</param>
-        /// <param name="b">顶点B.</param>
-        /// <param name="c">顶点C.</param>
-        /// <exception cref="Exception"></exception>
         public Triangle( Vector2 a, Vector2 b, Vector2 c )
         {
-            if ( a == b || b == c || a == c ||
-                 ( a - b ).Length( ) + ( b - c ).Length( ) <= ( a - c ).Length( ) ||
-                 ( a - c ).Length( ) + ( b - c ).Length( ) <= ( a - b ).Length( ) ||
-                 ( a - b ).Length( ) + ( a - c ).Length( ) <= ( b - c ).Length( ) )
-                throw new Exception( "请输入一个正确的三角形" );
             VertexA = a;
             VertexB = b;
             VertexC = c;
         }
 
         /// <summary>
-        /// 判断两个三角形是否发生重叠.
+        /// 俩三角形是否发生碰撞
         /// </summary>
-        /// <param name="triangle">指定三角形.</param>
-        /// <returns>若发生重叠, 则返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
-        public bool Intersect( Triangle triangle )
+        /// <param name="triangle"></param>
+        /// <returns></returns>
+        public bool Collision( Triangle triangle )
         {
+            //基于SAT理论实现的三角形碰撞
             Vector2 point, point1, n, myInterval, hisInterval;
-#pragma warning disable CS0168 // 声明了变量“j”，但从未使用过
             int i, j;
-#pragma warning restore CS0168 // 声明了变量“j”，但从未使用过
             for ( i = 0; i < 6; i++ )
             {
                 if ( i < 3 )
@@ -97,11 +90,11 @@ namespace Colin
         }
 
         /// <summary>
-        /// 三角形是否包含指定位置的点.
+        /// 三角形是否包含点
         /// </summary>
-        /// <param name="point">指定的点.</param>
-        /// <returns>若包含, 则返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
-        public bool ContainPoint( Vector2 point )
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public bool Contain( Vector2 point )
         {
             //当P=Ax+By+Cz(x+y+z=1)求得x、y、z全部大于0时点被三角形包含。此处使用行列式求解
             float d = 1 * VertexB.X * VertexC.Y + 1 * VertexC.X * VertexA.Y + 1 * VertexA.X * VertexB.Y - 1 * VertexB.X * VertexA.Y - 1 * VertexA.X * VertexC.Y - 1 * VertexC.X * VertexB.Y,
@@ -111,6 +104,39 @@ namespace Colin
             if ( d == 0 )
                 return false;
             return d1 / d > 0 && d2 / d > 0 && d3 / d > 0;
+        }
+
+        /// <summary>
+        /// 在现基础上以某点为中心旋转三角形
+        /// </summary>
+        /// <param name="rotation"></param>
+        /// <param name="center"></param>
+        public void Rotated( float rotation, Vector2 center = default( Vector2 ) )
+        {
+            VertexA = VertexA.GetRotateTo( rotation, center );
+            VertexB = VertexB.GetRotateTo( rotation, center );
+            VertexC = VertexC.GetRotateTo( rotation, center );
+        }
+
+        /// <summary>
+        /// 获取三角形质心
+        /// </summary>
+        /// <returns>质心坐标</returns>
+        public Vector2 GetCentroid( ) => ( VertexA + VertexB + VertexC ) / 3f;
+
+        /// <summary>
+        /// 以质心为基点更改三角形大小
+        /// </summary>
+        /// <param name="scale"></param>
+        public void ChangeScale( float scale )
+        {
+            Vector2 centroid = GetCentroid( ),
+            aDirection = VertexA - centroid,
+            bDirection = VertexB - centroid,
+            cDirection = VertexC - centroid;
+            VertexA = Vector2.Normalize( aDirection ) * aDirection.Length( ) * scale + centroid;
+            VertexB = Vector2.Normalize( bDirection ) * bDirection.Length( ) * scale + centroid;
+            VertexC = Vector2.Normalize( cDirection ) * cDirection.Length( ) * scale + centroid;
         }
     }
 }

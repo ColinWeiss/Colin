@@ -1,14 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin
 {
-     public class HardwareInfo
+    public class HardwareInfo
     {
         /// <summary>
         ///用于初始化和控制图形设备的显示.

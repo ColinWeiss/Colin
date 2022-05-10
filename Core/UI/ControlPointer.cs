@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.UI
+﻿namespace Colin.Core.UI
 {
     /// <summary>
     /// 指示当前操作指向的控件.
@@ -29,7 +23,7 @@ namespace Colin.Core.UI
         /// <summary>
         /// 将指针移向上一个控件.
         /// </summary>
-        public void LastControl()
+        public void LastControl( )
         {
             Count--;
             if ( Count < 0 )

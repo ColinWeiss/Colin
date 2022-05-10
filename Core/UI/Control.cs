@@ -128,13 +128,13 @@ namespace Colin.Core.UI
         /// 获取该控件包括自己所在内、所包含的所有控件及其子控件.
         /// </summary>
         /// <returns></returns>
-        public List<Control> GetControls()
+        public List<Control> GetControls( )
         {
             List<Control> result = new List<Control>
             {
                 this
             };
-            for ( int sub = 0 ; sub < SubControls.Count ; sub++ )
+            for ( int sub = 0; sub < SubControls.Count; sub++ )
                 for ( int count = 0; count < SubControls[ sub ].GetControls( ).Count; count++ )
                     result.Add( SubControls[ sub ].GetControls( )[ count ] );
             return result;
@@ -238,7 +238,7 @@ namespace Colin.Core.UI
         /// </summary>
         public event Action? OnMouseLeave;
 
-         protected override sealed void Initialization( )
+        protected override sealed void Initialization( )
         {
             OnMouseLeftClick += MouseLeftClick;
             OnMouseLeftPressed += MouseLeftPressed;
@@ -274,11 +274,11 @@ namespace Colin.Core.UI
         }
         public void MouseLeftClickEvent( ) => OnMouseLeftClick?.Invoke( );
 
-         protected int positionCacheX = 0;
-         protected int positionCacheY = 0;
-         protected bool isClicked = true;
-         protected bool inDrop = false;
-         protected bool cantDrop = false;
+        protected int positionCacheX = 0;
+        protected int positionCacheY = 0;
+        protected bool isClicked = true;
+        protected bool inDrop = false;
+        protected bool cantDrop = false;
 
         /// <summary>
         /// 在鼠标左键长按时执行.
@@ -419,7 +419,7 @@ namespace Colin.Core.UI
             }
         }
 
-         protected override void Update( )
+        protected override void Update( )
         {
             if ( inDrop )
                 Position = Input.MousePosition - new Vector2( positionCacheX, positionCacheY );

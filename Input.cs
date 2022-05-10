@@ -1,8 +1,7 @@
-﻿using Keys = Microsoft.Xna.Framework.Input.Keys;
+﻿using Colin.Core.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Colin.Core.UI;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace Colin
 {

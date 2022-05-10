@@ -1,11 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core
+﻿namespace Colin.Core
 {
     /// <summary>
     /// 实体组件; 提供一组基础的数据以供该组件所绑定的实体使用.

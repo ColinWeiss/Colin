@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin
+﻿namespace Colin
 {
     /// <summary>
     /// 表示一个可以使用非空状态进行判断的对象.

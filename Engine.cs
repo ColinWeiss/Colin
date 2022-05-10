@@ -2,11 +2,6 @@
 using Colin.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin
 {
@@ -84,8 +79,7 @@ namespace Colin
                     HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
             }
             Initialization( );
-            Components.Add( InitializeScene( ) );
-            for ( int count = Components.Count - 1; count > 0 ; count-- )
+            for ( int count = Components.Count - 1; count > 0; count-- )
                 ( Components[ count ] as GameComponent ).UpdateOrder = count;
             base.Initialize( );
         }
@@ -93,15 +87,6 @@ namespace Colin
         protected virtual void Initialization( )
         {
 
-        }
-
-        /// <summary>
-        /// 重写该函数以于初始化场景时执行自定义操作.
-        /// </summary>
-        /// <returns>开始场景.</returns>
-        protected virtual Scene InitializeScene( )
-        {
-            return new Scene( );
         }
 
         protected override sealed void LoadContent( ) => base.LoadContent( );

@@ -1,10 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Tiled
 {
@@ -21,7 +15,7 @@ namespace Colin.Core.Tiled
 
         public int Height { get; private set; } = -1;
 
-        public Tile[,]? Tiles { get; private set; }
+        public Tile[ , ]? Tiles { get; private set; }
 
         /// <summary>
         /// 初始化一个区块.
@@ -37,14 +31,31 @@ namespace Colin.Core.Tiled
             Width = width;
             Height = height;
             Tiles = new Tile[ Width, Height ];
-            for ( int x = 0; x < Width ; x++ )
+            if ( width > height )
             {
                 for ( int y = 0; y < Height; y++ )
                 {
-                    Tiles[ x, y ] = new Tile
+                    for ( int x = 0; x < Width; x++ )
                     {
-                        Chunk = this
-                    };
+                        Tiles[ x, y ] = new Tile
+                        {
+                            Chunk = this
+                        };
+                    }
+                }
+            }
+            else if ( width <= height )
+            {
+                for ( int x = 0; x < Width; x++ )
+                {
+                    for ( int y = 0; y < Height; y++ )
+                    {
+
+                        Tiles[ x, y ] = new Tile
+                        {
+                            Chunk = this
+                        };
+                    }
                 }
             }
         }

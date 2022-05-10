@@ -1,17 +1,12 @@
 ﻿using Colin.Localizations;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Tiled
 {
     /// <summary>
     /// 一块单独的瓦片.
     /// </summary>
-    public class Tile : ILocalizable , IEmptyState , IAnimation
+    public class Tile : ILocalizable, IEmptyState, IAnimation
     {
         public bool Empty { get; set; } = true;
 
@@ -44,7 +39,7 @@ namespace Colin.Core.Tiled
         /// <summary>
         /// 在该物块所绑定的区块中的指定坐标放置该物块.
         /// </summary>
-        public void Place( int coordinateX , int coordinateY )
+        public void Place( int coordinateX, int coordinateY )
         {
             Empty = false;
             CoordinateX = coordinateX;

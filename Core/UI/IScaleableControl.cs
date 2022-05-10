@@ -1,11 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.UI
+﻿namespace Colin.Core.UI
 {
     /// <summary>
     /// 表示一个可以以 <seealso cref="ScaleTarget"/> 为目标值进行缩放的控件.

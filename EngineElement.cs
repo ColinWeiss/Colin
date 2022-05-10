@@ -1,18 +1,13 @@
 ﻿using Colin.Localizations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin
 {
     /// <summary>
     /// 提供游戏窗口中可进行逻辑刷新、纹理绘制的元素.
     /// </summary>
-    public class EngineElement : IElement2D , ILocalizable, IPoolObject, IEmptyState
+    public class EngineElement : IElement2D, ILocalizable, IPoolObject, IEmptyState
     {
         /// <summary>
         /// 指示该元素是否进行逻辑刷新.
@@ -178,8 +173,8 @@ namespace Colin
 
 
         public virtual string GetInformation => "A engine element.";
-        
-        public void StartActive()
+
+        public void StartActive( )
         {
             Enable = true;
             Visable = true;

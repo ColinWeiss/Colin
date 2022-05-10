@@ -88,7 +88,7 @@ namespace Colin.Graphics
             }
         }
 
-         public override void Update( GameTime gameTime )
+        public override void Update( GameTime gameTime )
         {
             foreach ( ScreenShader item in ScreenShaders )
             {
@@ -106,7 +106,7 @@ namespace Colin.Graphics
             Engine.Instance.GraphicsDevice.SetRenderTarget( Engine.Instance.EngineRenderTargetSwap );
             for ( int screenShaderCount = 0; screenShaderCount < Instance.ScreenShaders.Count; screenShaderCount++ )
             {
-                HardwareInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                HardwareInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.NonPremultiplied );
                 if ( Engine._engineRenderTargetSwitch )
                 {
                     Instance.ScreenShaders[ screenShaderCount ].ApplyPass( "ScreenPass" );
@@ -124,7 +124,7 @@ namespace Colin.Graphics
                 HardwareInfo.SpriteBatch.End( );
             }
             Engine.Instance.GraphicsDevice.SetRenderTarget( null );
-            if( Engine._engineRenderTargetSwitch )
+            if ( Engine._engineRenderTargetSwitch )
             {
                 HardwareInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend );
                 HardwareInfo.SpriteBatch.Draw( Engine.Instance.EngineRenderTarget, Vector2.Zero, Color.White );
@@ -138,7 +138,7 @@ namespace Colin.Graphics
             }
         }
 
-        public ScreenRender( ) : base(Engine.Instance )
+        public ScreenRender( ) : base( Engine.Instance )
         {
             Engine._engineRenderTargetSwitch = true;
         }

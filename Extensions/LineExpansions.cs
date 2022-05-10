@@ -13,7 +13,7 @@
         /// <summary>
         /// 跨立实验.
         /// </summary>
-        public static bool Straddle( this Line line, Line targetLine )
+        static bool Straddle( this Line line, Line targetLine )
         {
             float l1x1 = line.Start.X;
             float l1x2 = line.End.X;
