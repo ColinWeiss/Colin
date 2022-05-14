@@ -58,6 +58,7 @@ namespace Colin.Core.UI
             for ( int Count = 0; Count < Controls.Count; Count++ )
                 Controls[ Count ].Initialize( );
         }
+
         private Control? _seekControl;
         protected override void Update( )
         {
@@ -89,6 +90,7 @@ namespace Colin.Core.UI
             if ( _seekControl != OldAtControl && OldAtControl != null && !OldAtControl.Interactive )
                 OldAtControl.MouseLeaveEvent( );
         }
+
         protected override void Draw( SpriteBatch spriteBatch )
         {
             base.Draw( spriteBatch );
