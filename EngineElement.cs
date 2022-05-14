@@ -1,4 +1,6 @@
-﻿using Colin.Localizations;
+﻿using Colin.Core;
+using Colin.Graphics;
+using Colin.Localizations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

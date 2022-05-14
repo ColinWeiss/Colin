@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Colin
+namespace Colin.Core
 {
     /// <summary>
     /// 表示一个针对 <seealso cref="IPoolObject"/> 的对象池.

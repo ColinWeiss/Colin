@@ -7,36 +7,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colin
+namespace Colin.DataStructures
 {
     /// <summary>
-    /// 表示一个三角形.
+    /// 定义具有三个组件的三角形.
     /// </summary>
     public struct Triangle
     {
         /// <summary>
-        /// 顶点A
+        /// 顶点A.
         /// </summary>
         public Vector2 VertexA;
 
         /// <summary>
-        /// 顶点B
+        /// 顶点B.
         /// </summary>
         public Vector2 VertexB;
 
         /// <summary>
-        /// 顶点C
+        /// 顶点C.
         /// </summary>
         public Vector2 VertexC;
 
         /// <summary>
-        /// 顶点们
+        /// 以 A、B、C 作为元素的顶点数组.
         /// </summary>
-        public List<Vector2> Vertices
-        {
-            get { return new List<Vector2>( ) { VertexA, VertexB, VertexC }; }
-        }
+        public List<Vector2> Vertices =>
+            new List<Vector2>( ) { VertexA, VertexB, VertexC };
 
+        /// <summary>
+        /// 定义具有三个组件的三角形.
+        /// </summary>
+        /// <param name="a">顶点A.</param>
+        /// <param name="b">顶点B.</param>
+        /// <param name="c">顶点C.</param>
         public Triangle( Vector2 a, Vector2 b, Vector2 c )
         {
             VertexA = a;
@@ -45,10 +49,10 @@ namespace Colin
         }
 
         /// <summary>
-        /// 俩三角形是否发生碰撞
+        /// 判断两个三角形是否发生重叠.
         /// </summary>
-        /// <param name="triangle"></param>
-        /// <returns></returns>
+        /// <param name="triangle">三角形.</param>
+        /// <returns>若重叠, 则返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
         public bool Collision( Triangle triangle )
         {
             //基于SAT理论实现的三角形碰撞
@@ -90,10 +94,10 @@ namespace Colin
         }
 
         /// <summary>
-        /// 三角形是否包含点
+        /// 判断三角形是否包含指定点.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
+        /// <param name="point">判断点.</param>
+        /// <returns>若包含, 则返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
         public bool Contain( Vector2 point )
         {
             //当P=Ax+By+Cz(x+y+z=1)求得x、y、z全部大于0时点被三角形包含。此处使用行列式求解
@@ -107,11 +111,11 @@ namespace Colin
         }
 
         /// <summary>
-        /// 在现基础上以某点为中心旋转三角形
+        /// 在现基础上将三角形以某点为中心旋转至一定角度.
         /// </summary>
-        /// <param name="rotation"></param>
-        /// <param name="center"></param>
-        public void Rotated( float rotation, Vector2 center = default( Vector2 ) )
+        /// <param name="rotation">旋转角度.</param>
+        /// <param name="center">旋转中心.</param>
+        public void Rotated( float rotation, Vector2 center = default )
         {
             VertexA = VertexA.GetRotateTo( rotation, center );
             VertexB = VertexB.GetRotateTo( rotation, center );
@@ -119,18 +123,18 @@ namespace Colin
         }
 
         /// <summary>
-        /// 获取三角形质心
+        /// 获取三角形质心的坐标值.
         /// </summary>
-        /// <returns>质心坐标</returns>
-        public Vector2 GetCentroid( ) => ( VertexA + VertexB + VertexC ) / 3f;
+        /// <returns>质心坐标.</returns>
+        public Vector2 Centroid => ( VertexA + VertexB + VertexC ) / 3f;
 
         /// <summary>
-        /// 以质心为基点更改三角形大小
+        /// 以质心为基点缩放三角形.
         /// </summary>
-        /// <param name="scale"></param>
+        /// <param name="scale">缩放倍数, 单位为 1.</param>
         public void ChangeScale( float scale )
         {
-            Vector2 centroid = GetCentroid( ),
+            Vector2 centroid = Centroid,
             aDirection = VertexA - centroid,
             bDirection = VertexB - centroid,
             cDirection = VertexC - centroid;
@@ -138,5 +142,6 @@ namespace Colin
             VertexB = Vector2.Normalize( bDirection ) * bDirection.Length( ) * scale + centroid;
             VertexC = Vector2.Normalize( cDirection ) * cDirection.Length( ) * scale + centroid;
         }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Colin
+﻿namespace Colin.Core
 {
     /// <summary>
     /// 表示一个可以使用非空状态进行判断的对象.

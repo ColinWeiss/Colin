@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Colin
+namespace Colin.Graphics
 {
     /// <summary>
     /// 表示一个具有帧动画的对象.

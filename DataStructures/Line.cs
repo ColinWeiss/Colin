@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Colin
+namespace Colin.DataStructures
 {
     /// <summary>
     /// 表示一根线.
@@ -35,6 +35,5 @@ namespace Colin
         {
             return End - Start;
         }
-
     }
 }

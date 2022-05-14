@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
-namespace Colin
+namespace Colin.DataStructures
 {
     /// <summary>
     /// 表示一个圆.

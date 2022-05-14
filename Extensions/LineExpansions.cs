@@ -1,4 +1,6 @@
-﻿namespace Colin.Extensions
+﻿using Colin.DataStructures;
+
+namespace Colin.Extensions
 {
     public static class LineExpansions
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Colin.Graphics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Colin.Core.UI

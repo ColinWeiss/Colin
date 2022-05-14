@@ -85,12 +85,11 @@ namespace Colin.Graphics
         {
             DefaultBufferSize = bufferSize;
             Vertices = new VertexPositionColorTexture[ DefaultBufferSize ];
-            BasicEffect = new BasicEffect( Engine.Instance.GraphicsDevice );
-            BasicEffect.VertexColorEnabled = true;
-            BasicEffect.Projection = Matrix.CreateOrthographicOffCenter
-                ( 0, HardwareInfo.GameViewWidth,
-                 HardwareInfo.GameViewHeight, 0,
-                0, 1 );
+            BasicEffect = new BasicEffect( Engine.Instance.GraphicsDevice )
+            {
+                VertexColorEnabled = true,
+                Projection = Matrix.CreateOrthographicOffCenter( 0, HardwareInfo.GameViewWidth, HardwareInfo.GameViewHeight, 0, 0, 1 )
+            };
         }
 
         /// <summary>
@@ -102,14 +101,13 @@ namespace Colin.Graphics
         {
             DefaultBufferSize = bufferSize;
             Vertices = new VertexPositionColorTexture[ DefaultBufferSize ];
-            BasicEffect = new BasicEffect( Engine.Instance.GraphicsDevice );
-            BasicEffect.VertexColorEnabled = true;
-            BasicEffect.TextureEnabled = true;
-            BasicEffect.Texture = texture;
-            BasicEffect.Projection = Matrix.CreateOrthographicOffCenter
-                ( 0, HardwareInfo.GameViewWidth,
-                 HardwareInfo.GameViewHeight, 0,
-                0, 1 );
+            BasicEffect = new BasicEffect( Engine.Instance.GraphicsDevice )
+            {
+                VertexColorEnabled = true,
+                TextureEnabled = true,
+                Texture = texture,
+                Projection = Matrix.CreateOrthographicOffCenter( 0, HardwareInfo.GameViewWidth, HardwareInfo.GameViewHeight, 0, 0, 1 )
+            };
         }
 
         /// <summary>

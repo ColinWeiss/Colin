@@ -1,4 +1,5 @@
-﻿using Colin.Localizations;
+﻿using Colin.Graphics;
+using Colin.Localizations;
 using Microsoft.Xna.Framework;
 
 namespace Colin.Core.Tiled

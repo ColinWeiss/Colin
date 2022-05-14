@@ -1,4 +1,4 @@
-﻿namespace Colin
+﻿namespace Colin.Graphics
 {
     /// <summary>
     /// 表示一个2D元素.
