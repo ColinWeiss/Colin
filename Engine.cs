@@ -1,5 +1,4 @@
-﻿using Colin.Core.Scenes;
-using Colin.Graphics;
+﻿using Colin.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -36,7 +35,7 @@ namespace Colin
         {
             Instance = this;
             IsFixedTimeStep = true;
-            HardwareInfo.Graphics = new GraphicsDeviceManager( this )
+            EngineInfo.Graphics = new GraphicsDeviceManager( this )
             {
                 PreferHalfPixelOffset = true,
                 HardwareModeSwitch = false,
@@ -44,39 +43,39 @@ namespace Colin
             };
             Window.AllowUserResizing = true;
             IsFixedTimeStep = true;
-            HardwareInfo.Graphics.SynchronizeWithVerticalRetrace = false;
+            EngineInfo.Graphics.SynchronizeWithVerticalRetrace = false;
             TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / TargetFrame ) );
             Content.RootDirectory = "Contents";
         }
 
         protected override sealed void Initialize( )
         {
-            HardwareInfo.SpriteBatch = new SpriteBatch( GraphicsDevice );
-            if ( HardwareInfo.Graphics != null )
+            EngineInfo.SpriteBatch = new SpriteBatch( GraphicsDevice );
+            if ( EngineInfo.Graphics != null )
             {
-                HardwareInfo.Graphics.PreferredBackBufferWidth = 1280;
-                HardwareInfo.Graphics.PreferredBackBufferHeight = 720;
-                HardwareInfo.Graphics.ApplyChanges( );
+                EngineInfo.Graphics.PreferredBackBufferWidth = 1280;
+                EngineInfo.Graphics.PreferredBackBufferHeight = 720;
+                EngineInfo.Graphics.ApplyChanges( );
             }
             EngineRenderTarget = new RenderTarget2D(
-                    HardwareInfo.Graphics.GraphicsDevice,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
             EngineRenderTargetSwap = new RenderTarget2D(
-                    HardwareInfo.Graphics.GraphicsDevice,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
             Window.ClientSizeChanged += Window_ClientSizeChanged;
             void Window_ClientSizeChanged( object? sender, EventArgs e )
             {
                 EngineRenderTarget = new RenderTarget2D(
-                    HardwareInfo.Graphics.GraphicsDevice,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
                 EngineRenderTargetSwap = new RenderTarget2D(
-                    HardwareInfo.Graphics.GraphicsDevice,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
             }
             Initialization( );
             for ( int count = Components.Count - 1; count > 0; count-- )
@@ -95,7 +94,7 @@ namespace Colin
 
         protected override sealed void Update( GameTime gameTime )
         {
-            HardwareInfo.GetInformationFromDevice( gameTime );
+            EngineInfo.GetInformationFromDevice( gameTime );
             Input.GetInformationFromDevice( );
             base.Update( gameTime );
             Input.ResetInfomation( );

@@ -10,6 +10,7 @@
         /// </summary>
         /// <returns>对象名称文本.</returns>
         string? GetName { get; }
+
         /// <summary>
         /// 获取该对象的介绍文本.
         /// </summary>

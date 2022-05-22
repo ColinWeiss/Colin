@@ -1,4 +1,4 @@
-﻿using Colin.Core.UI;
+﻿using Colin.Common.Core.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
@@ -28,7 +28,7 @@ namespace Colin
         };
 
         /// <summary>
-        /// 指示鼠标目前是否正在与 <seealso cref="Control"/> 进行交互的值.
+        /// 指示鼠标目前是否正在与 <seealso cref="Container"/> 进行交互的值.
         /// </summary>
         public static bool MouseContorl { get; set; } = false;
 
@@ -166,6 +166,11 @@ namespace Colin
             MouseContorl = false;
         }
 
+        /// <summary>
+        /// 判断键盘上的某个键位是否被单击.
+        /// </summary>
+        /// <param name="keys">键.</param>
+        /// <returns>如若是, 返回 <seealso href="true"/>, 否则返回 <seealso href="false"/>.</returns>
         public static bool KeyClick( Keys keys )
         {
             return KeyboardState.IsKeyDown( keys ) && KeyboardStateLast.IsKeyUp( keys );
@@ -180,5 +185,6 @@ namespace Colin
         {
             return KeyboardState.IsKeyUp( keys ) && KeyboardStateLast.IsKeyDown( keys );
         }
+
     }
 }

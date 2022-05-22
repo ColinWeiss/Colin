@@ -1,4 +1,4 @@
-﻿using Colin.DataStructures;
+﻿using Colin.Common.DataStructures;
 
 namespace Colin.Extensions
 {

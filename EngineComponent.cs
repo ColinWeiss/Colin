@@ -24,16 +24,16 @@ namespace Colin
             _updateStarted = false;
             _drawStarted = false;
             RenderTarget = new RenderTarget2D(
-                HardwareInfo.Graphics.GraphicsDevice,
-                HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
-                HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
+                EngineInfo.Graphics.GraphicsDevice,
+                EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
+                EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
             Engine.Instance.Window.ClientSizeChanged += Window_ClientSizeChanged;
             void Window_ClientSizeChanged( object? sender, EventArgs e )
             {
                 RenderTarget = new RenderTarget2D(
-                HardwareInfo.Graphics.GraphicsDevice,
-                HardwareInfo.Graphics.GraphicsDevice.Viewport.Width,
-                HardwareInfo.Graphics.GraphicsDevice.Viewport.Height );
+                EngineInfo.Graphics.GraphicsDevice,
+                EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
+                EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
             }
             Initialization( );
         }
@@ -52,21 +52,14 @@ namespace Colin
                 UpdateStart( );
                 _updateStarted = true;
             }
-            if ( this != null )
-                PreUpdate( );
-            if ( this != null )
-                Update( );
-            if ( this != null )
-                PostUpdate( );
+            this?.UpdateSelf( );
+            this?.PostUpdate( );
         }
         protected virtual void UpdateStart( )
         {
 
         }
-        protected virtual void PreUpdate( )
-        {
-        }
-        protected virtual void Update( )
+        protected virtual void UpdateSelf( )
         {
         }
         protected virtual void PostUpdate( )
@@ -79,24 +72,17 @@ namespace Colin
             base.Draw( gameTime );
             if ( !_drawStarted )
             {
-                DrawStart( HardwareInfo.SpriteBatch );
+                DrawStart( EngineInfo.SpriteBatch );
                 _drawStarted = true;
             }
-            if ( this != null )
-                PreDraw( HardwareInfo.SpriteBatch );
-            if ( this != null )
-                Draw( HardwareInfo.SpriteBatch );
-            if ( this != null )
-                PostDraw( HardwareInfo.SpriteBatch );
+            this?.DrawSelf( EngineInfo.SpriteBatch );
+            this?.PostDraw( EngineInfo.SpriteBatch );
         }
         protected virtual void DrawStart( SpriteBatch spriteBatch )
         {
 
         }
-        protected virtual void PreDraw( SpriteBatch spriteBatch )
-        {
-        }
-        protected virtual void Draw( SpriteBatch spriteBatch )
+        protected virtual void DrawSelf( SpriteBatch spriteBatch )
         {
         }
         protected virtual void PostDraw( SpriteBatch spriteBatch )

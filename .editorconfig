@@ -81,7 +81,7 @@ csharp_prefer_static_local_function = true:suggestion
 dotnet_diagnostic.CS1591.severity = none
 
 # IDE0090: 使用 "new(...)"
-dotnet_diagnostic.IDE0090.severity = none
+dotnet_diagnostic.IDE0090.severity = silent
 
 # CA1822: 将成员标记为 static
 dotnet_diagnostic.CA1822.severity = none
@@ -94,6 +94,9 @@ dotnet_diagnostic.CS8618.severity = none
 
 # IDE0055: 修正格式
 dotnet_diagnostic.IDE0055.severity = none
+
+# CS8601: 引用类型赋值可能为 null。
+dotnet_diagnostic.CS8601.severity = none
 
 [*.vb]
 #### 命名样式 ####
@@ -148,7 +151,16 @@ dotnet_style_qualification_for_field = false:silent
 dotnet_style_qualification_for_property = false:silent
 dotnet_style_qualification_for_method = false:silent
 dotnet_style_qualification_for_event = false:silent
-dotnet_style_require_accessibility_modifiers = for_non_interface_members:silent
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:none
 dotnet_code_quality_unused_parameters = all:suggestion
-dotnet_style_readonly_field = true:suggestion
+dotnet_style_readonly_field = true:none
 end_of_line = crlf
+
+# IDE0028: 简化集合初始化
+dotnet_diagnostic.IDE0028.severity = none
+
+# IDE0044: 添加只读修饰符
+dotnet_diagnostic.IDE0044.severity = none
+
+# IDE0040: 添加可访问性修饰符
+dotnet_diagnostic.IDE0040.severity = none
