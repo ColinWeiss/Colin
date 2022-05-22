@@ -103,8 +103,6 @@ namespace Colin
 
         protected override sealed void EndRun( ) => base.EndRun( );
 
-
-
         protected override sealed void Draw( GameTime gameTime )
         {
             GraphicsDevice.Clear( Color.Black );

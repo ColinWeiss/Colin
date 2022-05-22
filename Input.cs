@@ -57,7 +57,7 @@ namespace Colin
         /// <summary>
         /// 获取鼠标是否进行了左键长按操作的值.
         /// </summary>
-        public static bool MouseLeftPressed
+        public static bool MouseLeftDown
         { get { return MouseState.LeftButton == ButtonState.Pressed && MouseStateLast.LeftButton == ButtonState.Pressed; } }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Colin
         /// <summary>
         /// 获取鼠标是否进行了右键长按操作的值.
         /// </summary>
-        public static bool MouseRightPressed
+        public static bool MouseRightDown
         { get { return MouseState.RightButton == ButtonState.Pressed && MouseStateLast.RightButton == ButtonState.Pressed; } }
 
         /// <summary>
