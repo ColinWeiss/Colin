@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Colin.Common.Core
+namespace Colin.Common.Code
 {
     /// <summary>
     /// 表示一个可被对象池加入的对象.

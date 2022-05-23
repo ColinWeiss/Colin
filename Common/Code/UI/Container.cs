@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colin.Common.Core.UI
+namespace Colin.Common.Code.UI
 {
     /// <summary>
     /// 容器类.
@@ -14,6 +14,8 @@ namespace Colin.Common.Core.UI
     /// </summary>
     public class Container : IZero
     {
+        public bool CanSeek = true;
+
         public Container( )
         {
             Events = new ContainerEvents( this );
@@ -119,13 +121,13 @@ namespace Colin.Common.Core.UI
                 {
                     target = null;
                 }
-                else if ( ContainerItems[ sub ].SeekAt( ) != null )
+                else if ( ContainerItems[ sub ].SeekAt( ) != null && ContainerItems[ sub ].CanSeek )
                 {
                     target = ContainerItems[ sub ].SeekAt( );
                     return target;
                 }
             }
-            if ( GetInterviewState( ) )
+            if ( CanSeek && GetInterviewState( ) )
             {
                 return this;
             }
@@ -158,7 +160,7 @@ namespace Colin.Common.Core.UI
         }
 
         /// <summary>
-        /// 执行该容器的子容器的 <see cref="DoIniti"/>, 于该容器本身的初始化执行的末尾执行.
+        /// 执行该容器的子容器的 <see cref="DoInitialize"/>, 于该容器本身的初始化执行的末尾执行.
         /// </summary>
         protected virtual void InitializeContainerItems( )
         {
@@ -187,7 +189,6 @@ namespace Colin.Common.Core.UI
             ContainerElement.UpdateElement( );
             this?.UpdateSelf( );
             this?.UpdateContainerItems( );
-            Events.Update( );
             MoveFunction?.UpdateLocation( ContainerElement );
             if ( MoveFunction != null )
                 ContainerElement.SetLocation( Location.X + MoveFunction.VelocityX, Location.Y + MoveFunction.VelocityY );

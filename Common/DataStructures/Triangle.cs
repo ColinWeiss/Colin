@@ -57,7 +57,7 @@ namespace Colin.Common.DataStructures
         {
             //基于SAT理论实现的三角形碰撞
             Vector2 point, point1, n, myInterval, hisInterval;
-            int i, j;
+            int i;
             for ( i = 0; i < 6; i++ )
             {
                 if ( i < 3 )

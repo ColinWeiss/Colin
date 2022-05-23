@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colin.Common.Core.UI
+namespace Colin.Common.Code.UI
 {
     public class ContainerEvents
     {
@@ -176,29 +176,26 @@ namespace Colin.Common.Core.UI
         {
         }
 
-        public void Update( )
+        public virtual void Update( )
         {
             if ( _droping )
                 Container.ContainerElement.SetLocation( Input.MousePosition - _selectPoint );
             if ( Input.MouseLeftUp && Drop && _droping )
                 _droping = false;
-            Container seekAt = Container.SeekAt( );
-            if ( seekAt == null )
-                return;
-            if ( seekAt.Events.Interview )
-                seekAt.Events.DoInterviewEvent( );
+            if ( Interview )
+                DoInterviewEvent( );
             if ( Input.MouseLeftClick )
-                seekAt.Events.DoMouseLeftClickEvent( );
+                DoMouseLeftClickEvent( );
             else if ( Input.MouseLeftDown )
-                seekAt.Events.DoMouseLeftDownEvent( );
+                DoMouseLeftDownEvent( );
             else if ( Input.MouseLeftUp )
-                seekAt.Events.DoMouseLeftUpEvent( );
+                DoMouseLeftUpEvent( );
             if ( Input.MouseRightClick )
-                seekAt.Events.DoMouseRightClickEvent( );
+                DoMouseRightClickEvent( );
             if ( Input.MouseRightDown )
-                seekAt.Events.DoMouseRightDownEvent( );
+                DoMouseRightDownEvent( );
             if ( Input.MouseRightUp )
-                seekAt.Events.DoMouseRightUpEvent( );
+                DoMouseRightUpEvent( );
         }
     }
 }

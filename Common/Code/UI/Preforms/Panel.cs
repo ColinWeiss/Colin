@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colin.Common.Core.UI.Preforms
+namespace Colin.Common.Code.UI.Preforms
 {
     /// <summary>
     /// 一块可拖动的底板, 九片式绘制.
@@ -45,6 +45,8 @@ namespace Colin.Common.Core.UI.Preforms
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null );
             if ( ScaleFunction != null )
                 EngineInfo.SpriteBatch.NinePiece( Image, (int)Location.X, (int)Location.Y, (int)( Size.X * ScaleFunction.Scale ), (int)( Size.Y * ScaleFunction.Scale ), _borderSize );
+            else
+                EngineInfo.SpriteBatch.NinePiece( Image, (int)Location.X, (int)Location.Y, (int)Size.X, (int)Size.Y, _borderSize );
             base.DrawSelf( );
             EngineInfo.SpriteBatch.End( );
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap );

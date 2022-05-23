@@ -1,4 +1,4 @@
-﻿using Colin.Common.Core.UI;
+﻿using Colin.Common.Code.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Keys = Microsoft.Xna.Framework.Input.Keys;

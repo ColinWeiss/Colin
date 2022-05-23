@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colin.Common.Core.UI
+namespace Colin.Common.Code.UI
 {
     /// <summary>
     /// 指示当前操作指向的容器.

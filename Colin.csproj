@@ -13,15 +13,22 @@
     <Copyright>中华人民共和国深圳市埃坎达网络有限公司 版权所有</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Version>1.0.2.5</Version>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <PackageIcon>Icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/ColinWeiss/Colin</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Icon.ico" />
+    <None Remove="Icon.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,10 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\Files\Textures\Icon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 

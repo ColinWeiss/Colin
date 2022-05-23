@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Colin.Common.Core
+namespace Colin.Common.Code
 {
     /// <summary>
     /// 表示一个针对 <seealso cref="IPoolObject"/> 的对象池.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ObjectPool<T> where T : IPoolObject , new()
+    public class ObjectPool<T> where T : IPoolObject, new()
     {
         /// <summary>
         /// 对象池缓存池.

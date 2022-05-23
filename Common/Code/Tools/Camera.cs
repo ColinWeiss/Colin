@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Colin.Common.Core.Tools
+namespace Colin.Common.Code.Tools
 {
     /// <summary>
     /// 2D摄像机.

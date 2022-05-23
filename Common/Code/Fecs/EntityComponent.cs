@@ -1,4 +1,4 @@
-﻿namespace Colin.Common.Core.Fecs
+﻿namespace Colin.Common.Code.Fecs
 {
     /// <summary>
     /// 实体组件; 提供一组基础的数据以供该组件所绑定的实体使用.

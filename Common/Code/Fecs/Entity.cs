@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace Colin.Common.Core.Fecs
+namespace Colin.Common.Code.Fecs
 {
     /// <summary>
     /// 实体.

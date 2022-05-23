@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colin.Common.Core.UI
+namespace Colin.Common.Code.UI
 {
     /// <summary>
     /// 存储容器主体属性的结构.
