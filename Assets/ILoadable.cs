@@ -5,6 +5,6 @@
     /// </summary>
     public interface ILoadable
     {
-        void LoadContents( );
+        void Load( );
     }
 }

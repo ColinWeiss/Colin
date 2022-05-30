@@ -22,7 +22,7 @@ namespace Colin.Assets
                 if ( !type.IsAbstract && type.GetInterfaces( ).Contains( typeof( ILoadable ) ) )
                 {
                     var instance = (ILoadable)Activator.CreateInstance( type );
-                    await Task.Run( instance.LoadContents );
+                    await Task.Run( instance.Load );
                 }
             }
             Loaded = true;
