@@ -5,14 +5,21 @@ namespace Colin.Common.Code.Scenes
     /// <summary>
     /// 一个游戏场景.
     /// </summary>
-    public class Scene : EngineComponent
+    public abstract class Scene : EngineComponent
     {
         List<SceneContentLayer>? _contentLayers = new List<SceneContentLayer>( );
 
-        SceneUILayer _uiLayer;
+        SceneUserInterfaceLayer _uiLayer;
+
+        /// <summary>
+        /// 设置场景的用户交互界面内容层.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract SceneUserInterfaceLayer SetUserInterface( );
 
         protected override void Initialization( )
         {
+            _uiLayer = SetUserInterface( );
             for ( int count = 0; count < _contentLayers.Count; count++ )
                 _contentLayers[ count ].DoInitialize( );
             _uiLayer.DoInitialize( );
@@ -43,7 +50,7 @@ namespace Colin.Common.Code.Scenes
             _contentLayers.Add( layer );
         }
 
-        public void Register( SceneUILayer layer )
+        public void Register( SceneUserInterfaceLayer layer )
         {
             _uiLayer = layer;
         }

@@ -164,3 +164,6 @@ dotnet_diagnostic.IDE0044.severity = none
 
 # IDE0040: 添加可访问性修饰符
 dotnet_diagnostic.IDE0040.severity = none
+
+# IDE0017: 简化对象初始化
+dotnet_diagnostic.IDE0017.severity = none

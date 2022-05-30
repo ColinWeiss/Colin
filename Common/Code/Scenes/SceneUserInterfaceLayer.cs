@@ -11,9 +11,9 @@ namespace Colin.Common.Code.Scenes
     /// <summary>
     /// 场景内容层: 场景用户交互界面内容层.
     /// </summary>
-    public class SceneUILayer
+    public class SceneUserInterfaceLayer
     {
-        Container Container;
+        ContainerPage ContainerPage;
 
         /// <summary>
         /// 获取该用户交互界面层所绑定的场景.
@@ -30,30 +30,33 @@ namespace Colin.Common.Code.Scenes
         /// </summary>
         public bool DrawEnable { get; set; } = true;
 
-        public SceneUILayer( Scene scene ) { Scene = scene; }
+        public SceneUserInterfaceLayer( Scene scene ) { Scene = scene; }
 
         public void DoInitialize( )
         {
-            Container = new Container( );
-            Container.CanSeek = false;
-            Container.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
+            ContainerPage = new ContainerPage( );
+            ContainerPage.CanSeek = false;
+            ContainerPage.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
             Engine.Instance.Window.ClientSizeChanged += ( s, e ) =>
-                Container.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
-            Container.DoInitialize( );
+                ContainerPage.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
+            ContainerPage.DoInitialize( );
         }
 
         public void DoUpdate( )
         {
-            Container.SeekAt( )?.Events.Update( );
-            Container.DoUpdate( );
+            ContainerPage.DoReset( );
+            ContainerPage.SeekAt( )?.Events.Update( );
+            ContainerPage.CanSeek = false;
+            ContainerPage.DoUpdate( );
+
         }
 
         public void DoDraw( )
         {
-            Container.DoDraw( );
+            ContainerPage.DoDraw( );
         }
 
-        public void Register( Container container ) => Container.Register( container );
+        public void Register( Container container ) => ContainerPage.Register( container );
 
     }
 }

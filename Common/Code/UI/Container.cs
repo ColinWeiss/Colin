@@ -12,8 +12,12 @@ namespace Colin.Common.Code.UI
     /// 容器类.
     /// <para>提供一组数据并令该容器可根据设备数据作出交互, 用于表示该对象在用户交互界面中的具象.</para>
     /// </summary>
-    public class Container : IZero
+    public class Container
     {
+
+        /// <summary>
+        /// 指示该容器是否可被 <seealso cref="SeekAt"/> 检索到.
+        /// </summary>
         public bool CanSeek = true;
 
         public Container( )
@@ -115,19 +119,19 @@ namespace Colin.Common.Code.UI
         public virtual Container SeekAt( )
         {
             Container target = null;
-            for ( int sub = ContainerItems.Count - 1; sub > 0; sub-- )
+            for ( int sub = 0; sub < ContainerItems.Count; sub++ )
             {
                 if ( ContainerItems[ sub ].SeekAt( ) == null )
                 {
                     target = null;
                 }
-                else if ( ContainerItems[ sub ].SeekAt( ) != null && ContainerItems[ sub ].CanSeek )
+                else if ( ContainerItems[ sub ].SeekAt( ) != null )
                 {
                     target = ContainerItems[ sub ].SeekAt( );
                     return target;
                 }
             }
-            if ( CanSeek && GetInterviewState( ) )
+            if ( GetInterviewState( ) )
             {
                 return this;
             }
@@ -140,8 +144,10 @@ namespace Colin.Common.Code.UI
         /// <returns>若是, 返回 <seealso href="true"/> , 否则返回 <seealso href="false"/>.</returns>
         public virtual bool GetInterviewState( )
         {
-            if ( BaseRectangle.Contains( Input.MousePosition ) )
+            if ( BaseRectangle.Contains( new Point( Mouse.GetState( ).X, Mouse.GetState( ).Y ) ) )
+            {
                 return true;
+            }
             return false;
         }
 
@@ -175,6 +181,29 @@ namespace Colin.Common.Code.UI
         /// <para>[!] 于上级容器判断.</para>
         /// </summary>
         protected virtual bool UpdateEnable { get; } = true;
+
+        /// <summary>
+        /// 对每帧需要重置的数据进行重置.
+        /// <para>[!] 该方法的执行同样受 <see cref="UpdateEnable"/> 控制.</para>
+        /// </summary>
+        public void DoReset( )
+        {
+            ResetUpdate( );
+            for ( int count = 0; count < ContainerItems.Count; count++ )
+                if ( ContainerItems[ count ].UpdateEnable )
+                    ContainerItems[ count ].DoReset( );
+        }
+
+        /// <summary>
+        /// 重写该方法以自定义对每帧需要重置的数据进行重置的操作.
+        /// <para>[!] 它将先于 <see cref="DoUpdate"/> 执行.</para>
+        /// <para>[!] 该方法的执行同样受 <see cref="UpdateEnable"/> 控制.</para>
+        /// </summary>
+        protected virtual void ResetUpdate( )
+        {
+
+        }
+
         /// <summary>
         /// 执行该容器的逻辑刷新.
         /// </summary>
@@ -192,6 +221,8 @@ namespace Colin.Common.Code.UI
             MoveFunction?.UpdateLocation( ContainerElement );
             if ( MoveFunction != null )
                 ContainerElement.SetLocation( Location.X + MoveFunction.VelocityX, Location.Y + MoveFunction.VelocityY );
+            if ( Events.Droping )
+                ContainerElement.SetLocation( new Vector2( Mouse.GetState( ).X, Mouse.GetState( ).Y ) - Events.SelectPoint );
             ScaleFunction?.UpdateScale( ContainerElement );
             this?.PostUpdate( );
         }
