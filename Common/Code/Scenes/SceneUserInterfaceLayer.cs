@@ -13,7 +13,7 @@ namespace Colin.Common.Code.Scenes
     /// </summary>
     public class SceneUserInterfaceLayer
     {
-        ContainerPage ContainerPage;
+        internal ContainerPage ContainerPage { get; private set; }
 
         /// <summary>
         /// 获取该用户交互界面层所绑定的场景.
@@ -30,6 +30,16 @@ namespace Colin.Common.Code.Scenes
         /// </summary>
         public bool DrawEnable { get; set; } = true;
 
+        /// <summary>
+        /// 获取最后一次响应左键单击的容器实例.
+        /// </summary>
+        public Container LeftClickContainer { get; private set; }
+
+        /// <summary>
+        /// 获取最后一次响应右键单击的容器实例.
+        /// </summary>
+        public Container RightClickContainer { get; private set; }
+
         public SceneUserInterfaceLayer( Scene scene ) { Scene = scene; }
 
         public void DoInitialize( )
@@ -45,10 +55,13 @@ namespace Colin.Common.Code.Scenes
         public void DoUpdate( )
         {
             ContainerPage.DoReset( );
+            if ( Input.MouseLeftClick && ContainerPage.SeekAt( ) != null )
+                LeftClickContainer = ContainerPage.SeekAt( );
+            if ( Input.MouseRightClick && ContainerPage.SeekAt( ) != null )
+                RightClickContainer = ContainerPage.SeekAt( );
             ContainerPage.SeekAt( )?.Events.Update( );
             ContainerPage.CanSeek = false;
             ContainerPage.DoUpdate( );
-
         }
 
         public void DoDraw( )
@@ -56,7 +69,11 @@ namespace Colin.Common.Code.Scenes
             ContainerPage.DoDraw( );
         }
 
-        public void Register( Container container ) => ContainerPage.Register( container );
+        public void Register( Container container )
+        {
+            container._scuiLayer = this;
+            ContainerPage.Register( container );
+        }
 
     }
 }

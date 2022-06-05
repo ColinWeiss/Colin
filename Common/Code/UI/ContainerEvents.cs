@@ -24,19 +24,9 @@ namespace Colin.Common.Code.UI
         public bool Droping = false;
 
         /// <summary>
-        /// 若启用拖动功能, 在第一帧按下时记录鼠标在容器内的位置.
+        /// 若启用拖动功能, 在第一帧按下时记录光标在容器内的位置.
         /// </summary>
         public Vector2 SelectPoint;
-
-        /// <summary>
-        /// 用于计算输入动作: 确定开始交互与结束交互的容器是否为同一个.
-        /// </summary>
-        private bool _clickRecordSeek = false;
-
-        /// <summary>
-        /// 用于计算输入动作: 确定开始交互与结束交互的容器是否为同一个.
-        /// </summary>
-        private bool _pressedRecordSeek = false;
 
         /// <summary>
         /// 指示该容器是否会被父容器的指针寻找到.
@@ -79,11 +69,11 @@ namespace Colin.Common.Code.UI
         }
 
         /// <summary>
-        /// 发生在容器于可交互状态下, 鼠标左键单击时.
+        /// 发生在容器于可交互状态下, 光标左键单击时.
         /// </summary>
         public event Action OnMouseLeftClick;
         /// <summary>
-        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 鼠标左键单击时.
+        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 光标左键单击时.
         /// </summary>
         public void DoMouseLeftClickEvent( )
         {
@@ -96,18 +86,18 @@ namespace Colin.Common.Code.UI
             OnMouseLeftClick.Invoke( );
         }
         /// <summary>
-        /// 在容器于可交互状态下, 鼠标左键单击时执行.
+        /// 在容器于可交互状态下, 光标左键单击时执行.
         /// </summary>
         protected virtual void MouseLeftClickEvent( )
         {
         }
 
         /// <summary>
-        /// 发生在容器于可交互状态下, 鼠标左键长按时.
+        /// 发生在容器于可交互状态下, 光标左键长按时.
         /// </summary>
         public event Action OnMouseLeftDown;
         /// <summary>
-        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 鼠标左键长按时.
+        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 光标左键长按时.
         /// </summary>
         public void DoMouseLeftDownEvent( )
         {
@@ -115,18 +105,18 @@ namespace Colin.Common.Code.UI
             OnMouseLeftDown.Invoke( );
         }
         /// <summary>
-        /// 在容器于可交互状态下, 鼠标左键长按时执行.
+        /// 在容器于可交互状态下, 光标左键长按时执行.
         /// </summary>
         protected virtual void MouseLeftDownEvent( )
         {
         }
 
         /// <summary>
-        /// 发生在容器于可交互状态下, 鼠标左键抬起时.
+        /// 发生在容器于可交互状态下, 光标左键抬起时.
         /// </summary>
         public event Action OnMouseLeftUp;
         /// <summary>
-        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 鼠标左键抬起时.
+        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 光标左键抬起时.
         /// </summary>
         public void DoMouseLeftUpEvent( )
         {
@@ -135,7 +125,7 @@ namespace Colin.Common.Code.UI
             OnMouseLeftUp.Invoke( );
         }
         /// <summary>
-        /// 在容器于可交互状态下, 鼠标左键抬起时执行.
+        /// 在容器于可交互状态下, 光标左键抬起时执行.
         /// </summary>
         protected virtual void MouseLeftUpEvent( )
         {
@@ -157,11 +147,11 @@ namespace Colin.Common.Code.UI
         }
 
         /// <summary>
-        /// 发生在容器于可交互状态下, 鼠标右键单击时.
+        /// 发生在容器于可交互状态下, 光标右键单击时.
         /// </summary>
         public event Action OnMouseRightClick;
         /// <summary>
-        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 鼠标右键单击时.
+        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 光标右键单击时.
         /// </summary>
         public void DoMouseRightClickEvent( )
         {
@@ -169,18 +159,18 @@ namespace Colin.Common.Code.UI
             OnMouseRightClick.Invoke( );
         }
         /// <summary>
-        /// 在容器于可交互状态下, 鼠标右键单击时执行.
+        /// 在容器于可交互状态下, 光标右键单击时执行.
         /// </summary>
         protected virtual void MouseRightClickEvent( )
         {
         }
 
         /// <summary>
-        /// 发生在容器于可交互状态下, 鼠标右键长按时.
+        /// 发生在容器于可交互状态下, 光标右键长按时.
         /// </summary>
         public event Action OnMouseRightDown;
         /// <summary>
-        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 鼠标右键长按时.
+        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 光标右键长按时.
         /// </summary>
         public void DoMouseRightDownEvent( )
         {
@@ -188,18 +178,18 @@ namespace Colin.Common.Code.UI
             OnMouseRightDown.Invoke( );
         }
         /// <summary>
-        /// 在容器于可交互状态下, 鼠标右键长按时执行.
+        /// 在容器于可交互状态下, 光标右键长按时执行.
         /// </summary>
         protected virtual void MouseRightDownEvent( )
         {
         }
 
         /// <summary>
-        /// 发生在容器于可交互状态下, 鼠标右键抬起时.
+        /// 发生在容器于可交互状态下, 光标右键抬起时.
         /// </summary>
         public event Action OnMouseRightUp;
         /// <summary>
-        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 鼠标右键抬起时.
+        /// 由执行器调用: 执行自定义的操作于当前容器处于可交互状态下时, 光标右键抬起时.
         /// </summary>
         public void DoMouseRightUpEvent( )
         {
@@ -208,7 +198,7 @@ namespace Colin.Common.Code.UI
             OnMouseRightUp.Invoke( );
         }
         /// <summary>
-        /// 在容器于可交互状态下, 鼠标右键抬起时执行.
+        /// 在容器于可交互状态下, 光标右键抬起时执行.
         /// </summary>
         protected virtual void MouseRightUpEvent( )
         {

@@ -5,7 +5,7 @@ namespace Colin.Common.Code.Fecs
     /// <summary>
     /// 实体.
     /// </summary>
-    public abstract class Entity : IZero
+    public abstract class Entity : IEngineElement
     {
         #region ECS 组件系统部分
 

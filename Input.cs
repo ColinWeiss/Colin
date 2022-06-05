@@ -28,12 +28,12 @@ namespace Colin
         };
 
         /// <summary>
-        /// 指示鼠标目前是否正在与 <seealso cref="Container"/> 进行交互的值.
+        /// 指示光标目前是否正在与 <seealso cref="Container"/> 进行交互的值.
         /// </summary>
         public static bool MouseContorl { get; set; } = false;
 
         /// <summary>
-        /// 由 <seealso cref="Mouse.GetState( )"/> 获取本帧的鼠标状态.
+        /// 由 <seealso cref="Mouse.GetState( )"/> 获取本帧的光标状态.
         /// </summary>
         public static MouseState MouseState { get; private set; }
 
@@ -43,49 +43,49 @@ namespace Colin
         public static MouseState MouseStateLast { get; private set; } = new MouseState( );
 
         /// <summary>
-        /// 获取鼠标在屏幕上的位置.
+        /// 获取光标在屏幕上的位置.
         /// </summary>
         public static Vector2 MousePosition
         { get { return Mouse.GetState( ).Position.ToVector2( ); } }
 
         /// <summary>
-        /// 获取鼠标是否进行了左键单击操作的值.
+        /// 获取光标是否进行了左键单击操作的值.
         /// </summary>
         public static bool MouseLeftClick
         { get { return MouseState.LeftButton == ButtonState.Pressed && MouseStateLast.LeftButton == ButtonState.Released; } }
 
         /// <summary>
-        /// 获取鼠标是否进行了左键长按操作的值.
+        /// 获取光标是否进行了左键长按操作的值.
         /// </summary>
         public static bool MouseLeftDown
         { get { return MouseState.LeftButton == ButtonState.Pressed && MouseStateLast.LeftButton == ButtonState.Pressed; } }
 
         /// <summary>
-        /// 获取鼠标是否进行了释放左键操作的值.
+        /// 获取光标是否进行了释放左键操作的值.
         /// </summary>
         public static bool MouseLeftUp
         { get { return MouseState.LeftButton == ButtonState.Released && MouseStateLast.LeftButton == ButtonState.Pressed; } }
 
         /// <summary>
-        /// 表示鼠标是否进行了右键单击操作的值.
+        /// 表示光标是否进行了右键单击操作的值.
         /// </summary>
         public static bool MouseRightClick
         { get { return MouseState.RightButton == ButtonState.Pressed && MouseStateLast.RightButton == ButtonState.Released; } }
 
         /// <summary>
-        /// 获取鼠标是否进行了右键长按操作的值.
+        /// 获取光标是否进行了右键长按操作的值.
         /// </summary>
         public static bool MouseRightDown
         { get { return MouseState.RightButton == ButtonState.Pressed && MouseStateLast.RightButton == ButtonState.Pressed; } }
 
         /// <summary>
-        /// 表示鼠标是否进行了释放右键操作的值.
+        /// 表示光标是否进行了释放右键操作的值.
         /// </summary>
         public static bool MouseRightUp
         { get { return MouseState.RightButton == ButtonState.Released && MouseStateLast.RightButton == ButtonState.Pressed; } }
 
         /// <summary>
-        /// 表示鼠标是否进行了双键释放操作的值.
+        /// 表示光标是否进行了双键释放操作的值.
         /// </summary>
         public static bool MouseReleased
         {
@@ -100,19 +100,19 @@ namespace Colin
         }
 
         /// <summary>
-        /// 表示鼠标滑轮进行了向下滑操作的值.
+        /// 表示光标滑轮进行了向下滑操作的值.
         /// </summary>
         public static bool SlideDown
         { get { return MouseState.ScrollWheelValue < MouseStateLast.ScrollWheelValue; } }
 
         /// <summary>
-        /// 表示鼠标滑轮进行了上滑操作的值.
+        /// 表示光标滑轮进行了上滑操作的值.
         /// </summary>
         public static bool SlideUp
         { get { return MouseState.ScrollWheelValue > MouseStateLast.ScrollWheelValue; } }
 
         /// <summary>
-        /// 表示鼠标进行了左键双击操作的值.
+        /// 表示光标进行了左键双击操作的值.
         /// </summary>
         public static bool MouseDoubleLeftClick { get; set; } = false;
 
@@ -150,7 +150,7 @@ namespace Colin
         }
 
         /// <summary>
-        /// 将上一帧与这一帧的鼠标状态相统一.
+        /// 将上一帧与这一帧的光标状态相统一.
         /// </summary>
         public static void ResetMouseState( )
         {

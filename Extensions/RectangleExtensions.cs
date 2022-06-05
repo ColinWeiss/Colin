@@ -13,7 +13,7 @@ namespace Colin.Extensions
         }
 
         /// <summary>
-        /// 判断鼠标是否与指定的 <seealso cref="Rectangle"/> 重合.
+        /// 判断光标是否与指定的 <seealso cref="Rectangle"/> 重合.
         /// </summary>
         /// <param name="rectangle">指定的 <seealso cref="Rectangle"/>.</param>
         /// <returns>如若是, 返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
@@ -23,7 +23,7 @@ namespace Colin.Extensions
         }
 
         /// <summary>
-        /// 判断上一帧鼠标是否与指定的 <seealso cref="Rectangle"/> 重合.
+        /// 判断上一帧光标是否与指定的 <seealso cref="Rectangle"/> 重合.
         /// </summary>
         /// <param name="rectangle">指定的 <seealso cref="Rectangle"/>.</param>
         /// <returns>如若是, 返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>

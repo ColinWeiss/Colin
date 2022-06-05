@@ -9,7 +9,7 @@ namespace Colin
     /// <summary>
     /// 表示一个引擎中可执行初始化、逻辑刷新、绘制相关操作的对象.
     /// </summary>
-    public interface IZero
+    public interface IEngineElement
     {
         /// <summary>
         /// 执行对象初始化相关操作.
