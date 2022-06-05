@@ -1,5 +1,6 @@
 ﻿using Colin.Common.Code.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,12 @@ namespace Colin.Common.Code.Scenes
             ContainerPage.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
             Engine.Instance.Window.ClientSizeChanged += ( s, e ) =>
                 ContainerPage.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
+            InitializeUserInterface( );
             ContainerPage.DoInitialize( );
+        }
+        protected virtual void InitializeUserInterface( )
+        {
+
         }
 
         public void DoUpdate( )

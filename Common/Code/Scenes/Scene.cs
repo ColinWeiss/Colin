@@ -37,7 +37,6 @@ namespace Colin.Common.Code.Scenes
 
         protected override void DrawSelf( SpriteBatch spriteBatch )
         {
-
             for ( int count = _contentLayers.Count - 1; count >= 0; count-- )
                 if ( _contentLayers[ count ].DrawEnable )
                     _contentLayers[ count ].DoDraw( );

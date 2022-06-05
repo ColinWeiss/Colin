@@ -77,7 +77,6 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseLeftClickEvent( )
         {
-            _clickRecordSeek = true;
             if ( Drop )
             {
                 Droping = true;
@@ -101,7 +100,6 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseLeftDownEvent( )
         {
-            _pressedRecordSeek = true;
             OnMouseLeftDown.Invoke( );
         }
         /// <summary>
@@ -120,8 +118,6 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseLeftUpEvent( )
         {
-            _clickRecordSeek = false;
-            _pressedRecordSeek = false;
             OnMouseLeftUp.Invoke( );
         }
         /// <summary>
@@ -155,7 +151,6 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseRightClickEvent( )
         {
-            _clickRecordSeek = true;
             OnMouseRightClick.Invoke( );
         }
         /// <summary>
@@ -174,7 +169,6 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseRightDownEvent( )
         {
-            _pressedRecordSeek = true;
             OnMouseRightDown.Invoke( );
         }
         /// <summary>
@@ -193,8 +187,6 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseRightUpEvent( )
         {
-            _clickRecordSeek = false;
-            _pressedRecordSeek = false;
             OnMouseRightUp.Invoke( );
         }
         /// <summary>
@@ -213,15 +205,15 @@ namespace Colin.Common.Code.UI
                 DoInterviewEvent( );
             if ( Input.MouseLeftClick )
                 DoMouseLeftClickEvent( );
-            else if ( Input.MouseLeftDown && _clickRecordSeek )
+            else if ( Input.MouseLeftDown && Container._scuiLayer.LeftClickContainer.Equals( Container ) )
                 DoMouseLeftDownEvent( );
-            else if ( Input.MouseLeftUp && _pressedRecordSeek )
+            else if ( Input.MouseLeftUp && Container._scuiLayer.LeftClickContainer.Equals( Container ) )
                 DoMouseLeftUpEvent( );
             if ( Input.MouseRightClick )
                 DoMouseRightClickEvent( );
-            else if ( Input.MouseRightDown && _clickRecordSeek )
+            else if ( Input.MouseRightDown && Container._scuiLayer.RightClickContainer.Equals( Container ) )
                 DoMouseRightDownEvent( );
-            else if ( Input.MouseRightUp && _pressedRecordSeek )
+            else if ( Input.MouseRightUp && Container._scuiLayer.RightClickContainer.Equals( Container ) )
                 DoMouseRightUpEvent( );
 
         }
