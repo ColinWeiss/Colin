@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Common.Code.Tools
 {
     /// <summary>
-    /// 2D摄像机.
+    /// 摄像机.
     /// </summary>
     public class Camera
     {
@@ -27,13 +28,12 @@ namespace Colin.Common.Code.Tools
 
         public Matrix GetTransformation( )
         {
-            return Matrix.CreateTranslation( new Vector3( -Position.X, -Position.Y, 0f ) ) *
+            return Matrix.CreateTranslation( new Vector3( -(int)Position.X, -(int)Position.Y, 0f ) ) *
                         Matrix.CreateRotationZ( Rotation ) *
                         Matrix.CreateScale( new Vector3( Zoom, Zoom, 1f ) ) *
                         Matrix.CreateTranslation( new Vector3(
                             EngineInfo.Graphics.GraphicsDevice.Viewport.Width * 0.5f,
                             EngineInfo.Graphics.GraphicsDevice.Viewport.Height * 0.5f, 0f ) );
         }
-
     }
 }

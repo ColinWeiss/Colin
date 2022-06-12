@@ -112,9 +112,8 @@ namespace Colin.Common.Code.Fecs
 
         #endregion
 
-        public void DoInitialize( )
+        public virtual void DoInitialize( )
         {
-
         }
 
         public void DoUpdate( )
