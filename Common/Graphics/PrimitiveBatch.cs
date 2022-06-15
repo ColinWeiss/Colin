@@ -160,7 +160,7 @@ namespace Colin.Common.Graphics
         /// <param name="position">位置.</param>
         /// <param name="size">大小.</param>
         /// <param name="color">矩形颜色.</param>
-        public void DrawRectangle( Vector2 position, Vector2 size, Color color )
+        public void RenderRectangle( Vector2 position, Vector2 size, Color color )
         {
             if ( !_hasBegun )
                 Begin( PrimitiveType );
@@ -195,7 +195,7 @@ namespace Colin.Common.Graphics
             if ( _positionInBuffer == 0 )
                 return;
             int primitiveCount = _positionInBuffer / NumVertsPerPrimitive;
-            Engine.Instance.GraphicsDevice.DrawUserPrimitives( PrimitiveType, Vertices, 0, primitiveCount );
+            Engine.Instance.GraphicsDevice.RenderUserPrimitives( PrimitiveType, Vertices, 0, primitiveCount );
             _positionInBuffer = 0;
         }
 

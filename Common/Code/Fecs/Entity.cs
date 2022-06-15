@@ -5,7 +5,7 @@ namespace Colin.Common.Code.Fecs
     /// <summary>
     /// 实体.
     /// </summary>
-    public abstract class Entity : IEngineElement
+    public class Entity : IPoolObject , IEngineElement
     {
         #region ECS 组件系统部分
 
@@ -112,12 +112,19 @@ namespace Colin.Common.Code.Fecs
 
         #endregion
 
+        public bool Active { get; set; } = false;
+
+        public int ActiveIndex { get; set; } = -1;
+
+        public int PoolIndex { get; set; } = -1;
+
         public virtual void DoInitialize( )
         {
         }
 
         public void DoUpdate( )
         {
+            UpdateSelf( );
             for ( int count = 0; count < Components.Count; count++ )
             {
                 Components[ count ].Index = count;
@@ -127,15 +134,30 @@ namespace Colin.Common.Code.Fecs
                 }
             }
         }
+        /// <summary>
+        /// 执行逻辑刷新相关操作.
+        /// </summary>
+        public virtual void UpdateSelf( ) { }
 
-        public void DoDraw( )
+        public void DoRender( )
         {
             for ( int count = 0; count < Components.Count; count++ )
             {
                 if ( Components[ count ].Visable )
-                    Components[ count ].Draw( );
+                    Components[ count ].Render( );
             }
         }
+        /// <summary>
+        /// 执行渲染相关操作.
+        /// </summary>
+        public virtual void RenderSelf( ) { }
 
+        public virtual void OnActive( )
+        {
+        }
+
+        public virtual void OnDormancy( )
+        {
+        }
     }
 }

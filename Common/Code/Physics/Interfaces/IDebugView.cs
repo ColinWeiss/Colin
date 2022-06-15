@@ -7,7 +7,7 @@ namespace Colin.Common.Code.Physics.Interfaces
 {
     public interface IDebugView
     {
-        void DrawJoint( Joint joint );
-        void DrawShape( Shape shape, ref Transform transform, Color color );
+        void RenderJoint( Joint joint );
+        void RenderShape( Shape shape, ref Transform transform, Color color );
     }
 }

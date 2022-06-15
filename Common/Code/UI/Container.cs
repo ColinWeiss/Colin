@@ -285,7 +285,7 @@ namespace Colin.Common.Code.UI
         }
 
         /// <summary>
-        /// 性能优化可选项: 若设为 <seealso href="true"/>, 该容器将执行 <seealso cref="DoDraw"/>.
+        /// 性能优化可选项: 若设为 <seealso href="true"/>, 该容器将执行 <seealso cref="DoRender"/>.
         /// <para>[!] 默认为 <seealso href="true"/> .</para>
         /// <para>[!] 于上级容器判断.</para>
         /// </summary>
@@ -293,7 +293,7 @@ namespace Colin.Common.Code.UI
         /// <summary>
         /// 执行该容器的纹理绘制.
         /// </summary>
-        public void DoDraw( )
+        public void DoRender( )
         {
             if ( EnableScissor )
             {
@@ -310,9 +310,9 @@ namespace Colin.Common.Code.UI
                 else
                     EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null );
             }
-            this?.DrawSelf( );
-            this?.DrawContainerItems( );
-            this?.PostDraw( );
+            this?.RenderSelf( );
+            this?.RenderContainerItems( );
+            this?.PostRender( );
             if ( EnableScissor )
             {
                 EngineInfo.SpriteBatch.End( );
@@ -323,23 +323,23 @@ namespace Colin.Common.Code.UI
         /// 绘制于该容器的子容器绘制前.
         /// <para>于该容器调用.</para>
         /// </summary>
-        protected virtual void DrawSelf( )
+        protected virtual void RenderSelf( )
         {
 
         }
         /// <summary>
-        /// 执行该容器的容器项目的  <seealso cref="DoDraw"/>, 于 <seealso cref="DrawSelf"/> 后调用.
+        /// 执行该容器的容器项目的  <seealso cref="DoRender"/>, 于 <seealso cref="RenderSelf"/> 后调用.
         /// </summary>
-        protected virtual void DrawContainerItems( )
+        protected virtual void RenderContainerItems( )
         {
             for ( int count = ContainerItems.Count - 1; count >= 0; count-- )
                 if ( ContainerItems[ count ].Visable )
-                    ContainerItems[ count ].DoDraw( );
+                    ContainerItems[ count ].DoRender( );
         }
         /// <summary>
         /// 绘制于该容器进行自身及其子容器的绘制后.
         /// </summary>
-        protected virtual void PostDraw( )
+        protected virtual void PostRender( )
         {
 
         }

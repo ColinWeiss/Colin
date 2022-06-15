@@ -17,7 +17,7 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Wind
         }
 
         /// <summary>
-        /// Forcetypes are used in the decay math to properly get the distance. They are also used to draw a
+        /// Forcetypes are used in the decay math to properly get the distance. They are also used to Render a
         /// representation in DebugView
         /// </summary>
         public enum ForceTypes

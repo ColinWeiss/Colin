@@ -59,12 +59,12 @@ namespace Colin.Common.Code
             }
         }
 
-        public virtual void DoDraw( )
+        public virtual void DoRender( )
         {
             if ( Enable )
                 return;
             for ( int count = 0; count < ActiveList.Count; count++ )
-                ActiveList[ count ].DoDraw( );
+                ActiveList[ count ].DoRender( );
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace Colin
             {
                 PreferHalfPixelOffset = true,
                 HardwareModeSwitch = false,
-                PreferMultiSampling = false
+                PreferMultiSampling = true
             };
             Window.AllowUserResizing = true;
             IsFixedTimeStep = true;
@@ -102,18 +102,18 @@ namespace Colin
 
         protected override sealed void EndRun( ) => base.EndRun( );
 
-        protected override sealed void Draw( GameTime gameTime )
+        protected override sealed void Render( GameTime gameTime )
         {
             GraphicsDevice.Clear( Color.Black );
             GraphicsDevice.SetRenderTarget( EngineRenderTarget );
-            base.Draw( gameTime );
+            base.Render( gameTime );
             ScreenRender.RenderFrame( );
             Input.ResetInfomation( );
         }
 
-        protected override sealed bool BeginDraw( ) => true;
+        protected override sealed bool BeginRender( ) => true;
 
-        protected override sealed void EndDraw( ) => base.EndDraw( );
+        protected override sealed void EndRender( ) => base.EndRender( );
 
         protected override void UnloadContent( ) => base.UnloadContent( );
     }

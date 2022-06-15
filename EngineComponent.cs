@@ -6,7 +6,7 @@ namespace Colin
     /// <summary>
     /// 表示一个引擎插件.
     /// </summary>
-    public class EngineComponent : DrawableGameComponent
+    public class EngineComponent : RenderableGameComponent
     {
         /// <summary>
         /// 表示该引擎插件所包含的可用作渲染目标的2D纹理.
@@ -22,7 +22,7 @@ namespace Colin
         {
             base.Initialize( );
             _updateStarted = false;
-            _drawStarted = false;
+            _RenderStarted = false;
             RenderTarget = new RenderTarget2D(
                 EngineInfo.Graphics.GraphicsDevice,
                 EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
@@ -66,26 +66,26 @@ namespace Colin
         {
         }
 
-        bool _drawStarted;
-        public override sealed void Draw( GameTime gameTime )
+        bool _RenderStarted;
+        public override sealed void Render( GameTime gameTime )
         {
-            base.Draw( gameTime );
-            if ( !_drawStarted )
+            base.Render( gameTime );
+            if ( !_RenderStarted )
             {
-                DrawStart( EngineInfo.SpriteBatch );
-                _drawStarted = true;
+                RenderStart( EngineInfo.SpriteBatch );
+                _RenderStarted = true;
             }
-            this?.DrawSelf( EngineInfo.SpriteBatch );
-            this?.PostDraw( EngineInfo.SpriteBatch );
+            this?.RenderSelf( EngineInfo.SpriteBatch );
+            this?.PostRender( EngineInfo.SpriteBatch );
         }
-        protected virtual void DrawStart( SpriteBatch spriteBatch )
+        protected virtual void RenderStart( SpriteBatch spriteBatch )
         {
 
         }
-        protected virtual void DrawSelf( SpriteBatch spriteBatch )
+        protected virtual void RenderSelf( SpriteBatch spriteBatch )
         {
         }
-        protected virtual void PostDraw( SpriteBatch spriteBatch )
+        protected virtual void PostRender( SpriteBatch spriteBatch )
         {
         }
 

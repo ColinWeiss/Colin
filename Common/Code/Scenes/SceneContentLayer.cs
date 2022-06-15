@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Colin.Common.Code.Fecs;
+using Microsoft.Xna.Framework;
 
 namespace Colin.Common.Code.Scenes
 {
@@ -12,6 +13,10 @@ namespace Colin.Common.Code.Scenes
         /// </summary>
         public Scene? Scene { get; internal set; }
 
+        /// <summary>
+        /// 初始化一个场景内容层.
+        /// </summary>
+        /// <param name="scene">该内容层所属的场景.</param>
         public SceneContentLayer( Scene scene ) { Scene = scene; }
 
         /// <summary>
@@ -22,7 +27,12 @@ namespace Colin.Common.Code.Scenes
         /// <summary>
         /// 启用该用户交互界面的绘制相关操作.
         /// </summary>
-        public bool DrawEnable { get; set; } = true;
+        public bool RenderEnable { get; set; } = true;
+
+        /// <summary>
+        /// 该场景所有实体.
+        /// </summary>
+        public ObjectPool<Entity> Entities { get; protected set; } = new ObjectPool<Entity>( 1024 );
 
         public virtual void DoInitialize( )
         {
@@ -34,7 +44,7 @@ namespace Colin.Common.Code.Scenes
 
         }
 
-        public virtual void DoDraw(  )
+        public virtual void DoRender(  )
         {
 
         }

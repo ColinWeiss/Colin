@@ -52,7 +52,7 @@
         /// <summary>
         /// 组件的绘制方法; 重载该函数编写自定义操作, 并将 <seealso cref="Visable"/> 的值设为 <see href="true"/> 即可启用组件的逻辑计算.
         /// </summary>
-        public virtual void Draw( )
+        public virtual void Render( )
         {
 
         }

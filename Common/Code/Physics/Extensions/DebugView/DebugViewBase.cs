@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace Colin.Common.Code.Physics.Extensions.DebugView
 {
-    /// <summary>Implement and register this class with a World to provide debug drawing of physics entities in your game.</summary>
+    /// <summary>Implement and register this class with a World to provide debug Rendering of physics entities in your game.</summary>
     public abstract class DebugViewBase
     {
         protected DebugViewBase( World world )
@@ -37,23 +37,23 @@ namespace Colin.Common.Code.Physics.Extensions.DebugView
             Flags &= ~flags;
         }
 
-        /// <summary>Draw a closed polygon provided in CCW order.</summary>
-        public abstract void DrawPolygon( Vector2[ ] vertices, int count, Color color, bool closed = true );
+        /// <summary>Render a closed polygon provided in CCW order.</summary>
+        public abstract void RenderPolygon( Vector2[ ] vertices, int count, Color color, bool closed = true );
 
-        /// <summary>Draw a solid closed polygon provided in CCW order.</summary>
-        public abstract void DrawSolidPolygon( Vector2[ ] vertices, int count, Color color, bool outline = true );
+        /// <summary>Render a solid closed polygon provided in CCW order.</summary>
+        public abstract void RenderSolidPolygon( Vector2[ ] vertices, int count, Color color, bool outline = true );
 
-        /// <summary>Draw a circle.</summary>
-        public abstract void DrawCircle( Vector2 center, float radius, Color color );
+        /// <summary>Render a circle.</summary>
+        public abstract void RenderCircle( Vector2 center, float radius, Color color );
 
-        /// <summary>Draw a solid circle.</summary>
-        public abstract void DrawSolidCircle( Vector2 center, float radius, Vector2 axis, Color color );
+        /// <summary>Render a solid circle.</summary>
+        public abstract void RenderSolidCircle( Vector2 center, float radius, Vector2 axis, Color color );
 
-        /// <summary>Draw a line segment.</summary>
-        public abstract void DrawSegment( Vector2 start, Vector2 end, Color color );
+        /// <summary>Render a line segment.</summary>
+        public abstract void RenderSegment( Vector2 start, Vector2 end, Color color );
 
-        /// <summary>Draw a transform. Choose your own length scale.</summary>
+        /// <summary>Render a transform. Choose your own length scale.</summary>
         /// <param name="transform">The transform.</param>
-        public abstract void DrawTransform( ref Transform transform );
+        public abstract void RenderTransform( ref Transform transform );
     }
 }

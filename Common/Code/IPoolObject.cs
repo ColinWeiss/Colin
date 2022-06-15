@@ -45,6 +45,6 @@ namespace Colin.Common.Code
         /// <summary>
         /// 执行纹理绘制相关操作.
         /// </summary>
-        void DoDraw( );
+        void DoRender( );
     }
 }

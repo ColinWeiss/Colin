@@ -24,6 +24,6 @@ namespace Colin
         /// <summary>
         /// 执行对象绘制相关操作.
         /// </summary>
-        public void DoDraw( );
+        public void DoRender( );
     }
 }

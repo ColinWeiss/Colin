@@ -217,7 +217,7 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.Explosion
                      return fr;
                  }, p1, p2 );
 
-                //draws radius points
+                //Renders radius points
                 if ( hitClosest && fixture.Body.BodyType == BodyType.Dynamic )
                 {
                     if ( _data.Any( ) && _data.Last( ).Body == fixture.Body && !rayMissed )

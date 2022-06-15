@@ -29,7 +29,7 @@ namespace Colin.Common.Code.Scenes
         /// <summary>
         /// 启用该用户交互界面的绘制相关操作.
         /// </summary>
-        public bool DrawEnable { get; set; } = true;
+        public bool RenderEnable { get; set; } = true;
 
         /// <summary>
         /// 获取最后一次响应左键单击的容器实例.
@@ -53,6 +53,7 @@ namespace Colin.Common.Code.Scenes
             InitializeUserInterface( );
             ContainerPage.DoInitialize( );
         }
+
         protected virtual void InitializeUserInterface( )
         {
 
@@ -70,9 +71,9 @@ namespace Colin.Common.Code.Scenes
             ContainerPage.DoUpdate( );
         }
 
-        public void DoDraw( )
+        public void DoRender( )
         {
-            ContainerPage.DoDraw( );
+            ContainerPage.DoRender( );
         }
 
         public void Register( Container container )
