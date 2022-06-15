@@ -1,4 +1,5 @@
-﻿using Colin.Common.Graphics;
+﻿using Colin.Common.Code.Physics.Extensions.DebugView;
+using Colin.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -102,18 +103,18 @@ namespace Colin
 
         protected override sealed void EndRun( ) => base.EndRun( );
 
-        protected override sealed void Render( GameTime gameTime )
+        protected override sealed void Draw( GameTime gameTime )
         {
             GraphicsDevice.Clear( Color.Black );
             GraphicsDevice.SetRenderTarget( EngineRenderTarget );
-            base.Render( gameTime );
+            base.Draw( gameTime );
             ScreenRender.RenderFrame( );
             Input.ResetInfomation( );
         }
 
-        protected override sealed bool BeginRender( ) => true;
+        protected override sealed bool BeginDraw( ) => true;
 
-        protected override sealed void EndRender( ) => base.EndRender( );
+        protected override sealed void EndDraw( ) => base.EndDraw( );
 
         protected override void UnloadContent( ) => base.UnloadContent( );
     }

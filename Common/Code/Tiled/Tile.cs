@@ -17,7 +17,7 @@ namespace Colin.Common.Code.Tiled
     /// <summary>
     /// 瓦片地图中的元素: 瓦片.
     /// </summary>
-    public class Tile : Entity, IEngineElement
+    public class Tile : IEngineElement
     {
         private Vertices vertices;
         public Vertices Shape => vertices;
@@ -28,7 +28,8 @@ namespace Colin.Common.Code.Tiled
         private List<string> userDatas;
         public List<string> UserDatas => userDatas;
 
-        public TileMap TileMap { get; }
+        internal TileMap tileMap;
+        public TileMap TileMap => tileMap;
 
         public TileData TileData { get; }
 
@@ -90,12 +91,23 @@ namespace Colin.Common.Code.Tiled
             }
         }
 
+
+        /// <summary>
+        /// 指示物块非空状态的值, 其中 <seealso href="true"/> 为非空, <seealso href="false"/>为空.
+        /// </summary>
+        public bool Empty = true;
+
         public virtual Texture2D Texture => null;
 
         /// <summary>
-        /// 指示该物块是否进行纹理绘制.
+        /// 指示该物块是否进行纹理绘制的值.
         /// </summary>
         public bool TextureVisible = true;
+
+        /// <summary>
+        /// 指示该物块是否进行纹理绘制的值.
+        /// </summary>
+        public bool BorderVisible = true;
 
         public virtual void CreateVertices( ref Vertices vertices )
         {
@@ -116,19 +128,26 @@ namespace Colin.Common.Code.Tiled
         {
         }
 
-        public override void DoInitialize( )
+        public void DoInitialize( )
         {
+            OnPlaceTile = null;
+            OnPlaceTile += PlaceTileEvent;
             CreateVertices( ref vertices );
             CreateBody( ref body );
             if ( body != null )
             {
-                body.UserData = userDatas;
                 userDatas.Add( "Layer:Tile" );
+                body.UserData = userDatas;
             }
             CreateUserData( ref userDatas );
-
-            base.DoInitialize( );
         }
+
+        public void DoUpdate( )
+        {
+            TileData.UpdateTileData( );
+        }
+
+        public void DoRender( ) { }
 
         /// <summary>
         /// 初始化一个瓦片.
@@ -157,7 +176,6 @@ namespace Colin.Common.Code.Tiled
         {
             if ( !TextureVisible )
                 return;
-
             if ( Texture != null )
             {
                 EngineInfo.SpriteBatch.Draw(
@@ -167,15 +185,30 @@ namespace Colin.Common.Code.Tiled
             }
         }
 
+        /// <summary>
+        /// 物块的边框绘制.
+        /// <para>[!] 该函数仅 <see cref="Tile.BorderVisible"/> 为 <see href="true"/> 时执行.</para>
+        /// </summary>
+        public void RenderBorder( )
+        {
+            if ( !BorderVisible )
+                return;
+            EngineInfo.SpriteBatch.Draw(
+                Texture, ( Coordinate.ToVector2( ) + TileData.BorderRenderOffSet.ToVector2( ) ) * TileMap.GridSize,
+                TileData.BorderFrame.Frame,
+                Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, BorderLayerDepth );
+        }
+
         public event Action OnPlaceTile;
         /// <summary>
         /// 执行在放置物块时发生的事件.
         /// </summary>
         public void DoPlaceTileEvent( )
         {
-
+            TileData.Refresh( );
             OnPlaceTile?.Invoke( );
         }
+
         /// <summary>
         /// 重写该函数以在物块被放置进瓦片地图时执行自定义操作.
         /// </summary>
@@ -183,5 +216,6 @@ namespace Colin.Common.Code.Tiled
         {
 
         }
+
     }
 }

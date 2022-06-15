@@ -195,7 +195,7 @@ namespace Colin.Common.Graphics
             if ( _positionInBuffer == 0 )
                 return;
             int primitiveCount = _positionInBuffer / NumVertsPerPrimitive;
-            Engine.Instance.GraphicsDevice.RenderUserPrimitives( PrimitiveType, Vertices, 0, primitiveCount );
+            Engine.Instance.GraphicsDevice.DrawUserPrimitives( PrimitiveType, Vertices, 0, primitiveCount );
             _positionInBuffer = 0;
         }
 

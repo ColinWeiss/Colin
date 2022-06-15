@@ -6,7 +6,7 @@ namespace Colin
     /// <summary>
     /// 表示一个引擎插件.
     /// </summary>
-    public class EngineComponent : RenderableGameComponent
+    public class EngineComponent : DrawableGameComponent
     {
         /// <summary>
         /// 表示该引擎插件所包含的可用作渲染目标的2D纹理.
@@ -67,9 +67,9 @@ namespace Colin
         }
 
         bool _RenderStarted;
-        public override sealed void Render( GameTime gameTime )
+        public override sealed void Draw( GameTime gameTime )
         {
-            base.Render( gameTime );
+            base.Draw( gameTime );
             if ( !_RenderStarted )
             {
                 RenderStart( EngineInfo.SpriteBatch );

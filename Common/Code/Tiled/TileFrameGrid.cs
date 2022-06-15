@@ -33,20 +33,12 @@ namespace Colin.Common.Code.Tiled
         /// </summary>
         public int FrameHeight;
 
-        private Rectangle frameCache;
-        public Rectangle Frame
-        {
-            get
-            {
-                if ( frameCache == Rectangle.Empty )
-                    frameCache = new Rectangle(
-                        FrameX * Tile.TileMap.GridSize,
-                        FrameY * Tile.TileMap.GridSize,
-                       FrameWidth * Tile.TileMap.GridSize,
-                      FrameHeight * Tile.TileMap.GridSize );
-                return frameCache;
-            }
-        }
+        public Rectangle Frame => new Rectangle(
+            FrameX * Tile.TileMap.GridSize,
+            FrameY * Tile.TileMap.GridSize,
+            FrameWidth * Tile.TileMap.GridSize,
+            FrameHeight * Tile.TileMap.GridSize
+            );
 
         /// <summary>
         /// 设置物块帧格.
