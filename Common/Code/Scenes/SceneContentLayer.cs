@@ -1,5 +1,4 @@
 ﻿using Colin.Common.Code.Fecs;
-using Microsoft.Xna.Framework;
 
 namespace Colin.Common.Code.Scenes
 {
@@ -32,7 +31,7 @@ namespace Colin.Common.Code.Scenes
         /// <summary>
         /// 该场景所有实体.
         /// </summary>
-        public ObjectPool<Entity> Entities { get; protected set; } = new ObjectPool<Entity>( 1024 );
+        public ObjectPool<Entity> Entities { get; protected set; } = new ObjectPool<Entity>(1024);
 
         public virtual void DoInitialize( )
         {
@@ -44,7 +43,7 @@ namespace Colin.Common.Code.Scenes
 
         }
 
-        public virtual void DoRender(  )
+        public virtual void DoRender( )
         {
 
         }

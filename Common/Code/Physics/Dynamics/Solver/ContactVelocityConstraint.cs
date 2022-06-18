@@ -15,16 +15,16 @@ namespace Colin.Common.Code.Physics.Dynamics.Solver
         public Vector2 Normal;
         public Mat22 NormalMass;
         public int PointCount;
-        public VelocityConstraintPoint[ ] Points = new VelocityConstraintPoint[ Settings.MaxManifoldPoints ];
+        public VelocityConstraintPoint[ ] Points = new VelocityConstraintPoint[Settings.MaxManifoldPoints];
         public float Restitution;
         public float Threshold;
         public float TangentSpeed;
 
         public ContactVelocityConstraint( )
         {
-            for ( int i = 0; i < Settings.MaxManifoldPoints; i++ )
+            for( int i = 0; i < Settings.MaxManifoldPoints; i++ )
             {
-                Points[ i ] = new VelocityConstraintPoint( );
+                Points[i] = new VelocityConstraintPoint( );
             }
         }
     }

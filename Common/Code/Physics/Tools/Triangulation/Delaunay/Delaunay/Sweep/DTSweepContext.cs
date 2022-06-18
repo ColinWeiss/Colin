@@ -56,7 +56,7 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         public void RemoveFromList( DelaunayTriangle triangle )
         {
-            Triangles.Remove( triangle );
+            Triangles.Remove(triangle);
 
             // TODO: remove all neighbor pointers to this triangle
             //        for( int i=0; i<3; i++ )
@@ -71,19 +71,19 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         public void MeshClean( DelaunayTriangle triangle )
         {
-            MeshCleanReq( triangle );
+            MeshCleanReq(triangle);
         }
 
         private void MeshCleanReq( DelaunayTriangle triangle )
         {
-            if ( triangle != null && !triangle.IsInterior )
+            if( triangle != null && !triangle.IsInterior )
             {
                 triangle.IsInterior = true;
-                Triangulatable.AddTriangle( triangle );
-                for ( int i = 0; i < 3; i++ )
+                Triangulatable.AddTriangle(triangle);
+                for( int i = 0; i < 3; i++ )
                 {
-                    if ( !triangle.EdgeIsConstrained[ i ] )
-                        MeshCleanReq( triangle.Neighbors[ i ] );
+                    if( !triangle.EdgeIsConstrained[i] )
+                        MeshCleanReq(triangle.Neighbors[i]);
                 }
             }
         }
@@ -98,37 +98,37 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         {
             //        Console.WriteLine( "add:" + node.key + ":" + System.identityHashCode(node.key));
             //        m_nodeTree.put( node.getKey(), node );
-            aFront.AddNode( node );
+            aFront.AddNode(node);
         }
 
         public void RemoveNode( AdvancingFrontNode node )
         {
             //        Console.WriteLine( "remove:" + node.key + ":" + System.identityHashCode(node.key));
             //        m_nodeTree.delete( node.getKey() );
-            aFront.RemoveNode( node );
+            aFront.RemoveNode(node);
         }
 
         public AdvancingFrontNode LocateNode( TriangulationPoint point )
         {
-            return aFront.LocateNode( point );
+            return aFront.LocateNode(point);
         }
 
         public void CreateAdvancingFront( )
         {
             // Initial triangle
-            DelaunayTriangle iTriangle = new DelaunayTriangle( Points[ 0 ], Tail, Head );
-            Triangles.Add( iTriangle );
+            DelaunayTriangle iTriangle = new DelaunayTriangle(Points[0],Tail,Head);
+            Triangles.Add(iTriangle);
 
-            AdvancingFrontNode head = new AdvancingFrontNode( iTriangle.Points[ 1 ] );
+            AdvancingFrontNode head = new AdvancingFrontNode(iTriangle.Points[1]);
             head.Triangle = iTriangle;
 
-            AdvancingFrontNode middle = new AdvancingFrontNode( iTriangle.Points[ 0 ] );
+            AdvancingFrontNode middle = new AdvancingFrontNode(iTriangle.Points[0]);
             middle.Triangle = iTriangle;
 
-            AdvancingFrontNode tail = new AdvancingFrontNode( iTriangle.Points[ 2 ] );
+            AdvancingFrontNode tail = new AdvancingFrontNode(iTriangle.Points[2]);
 
-            aFront = new AdvancingFront( head, tail );
-            aFront.AddNode( middle );
+            aFront = new AdvancingFront(head,tail);
+            aFront.AddNode(middle);
 
             // TODO: I think it would be more intuitive if head is middles next and not previous
             //       so swap head and tail
@@ -142,12 +142,12 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         public void MapTriangleToNodes( DelaunayTriangle t )
         {
             AdvancingFrontNode n;
-            for ( int i = 0; i < 3; i++ )
+            for( int i = 0; i < 3; i++ )
             {
-                if ( t.Neighbors[ i ] == null )
+                if( t.Neighbors[i] == null )
                 {
-                    n = aFront.LocatePoint( t.PointCW( t.Points[ i ] ) );
-                    if ( n != null )
+                    n = aFront.LocatePoint(t.PointCW(t.Points[i]));
+                    if( n != null )
                         n.Triangle = t;
                 }
             }
@@ -155,51 +155,51 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         public override void PrepareTriangulation( ITriangulatable t )
         {
-            base.PrepareTriangulation( t );
+            base.PrepareTriangulation(t);
 
             double xmin;
             double ymin;
 
-            double xmax = xmin = Points[ 0 ].X;
-            double ymax = ymin = Points[ 0 ].Y;
+            double xmax = xmin = Points[0].X;
+            double ymax = ymin = Points[0].Y;
 
             // Calculate bounds. Should be combined with the sorting
-            foreach ( TriangulationPoint p in Points )
+            foreach( TriangulationPoint p in Points )
             {
-                if ( p.X > xmax )
+                if( p.X > xmax )
                     xmax = p.X;
-                if ( p.X < xmin )
+                if( p.X < xmin )
                     xmin = p.X;
-                if ( p.Y > ymax )
+                if( p.Y > ymax )
                     ymax = p.Y;
-                if ( p.Y < ymin )
+                if( p.Y < ymin )
                     ymin = p.Y;
             }
 
-            double deltaX = ALPHA * ( xmax - xmin );
-            double deltaY = ALPHA * ( ymax - ymin );
-            TriangulationPoint p1 = new TriangulationPoint( xmax + deltaX, ymin - deltaY );
-            TriangulationPoint p2 = new TriangulationPoint( xmin - deltaX, ymin - deltaY );
+            double deltaX = ALPHA * (xmax - xmin);
+            double deltaY = ALPHA * (ymax - ymin);
+            TriangulationPoint p1 = new TriangulationPoint(xmax + deltaX,ymin - deltaY);
+            TriangulationPoint p2 = new TriangulationPoint(xmin - deltaX,ymin - deltaY);
 
             Head = p1;
             Tail = p2;
 
             //        long time = System.nanoTime();
             // Sort the points along y-axis
-            Points.Sort( _comparator );
+            Points.Sort(_comparator);
 
             //        logger.info( "Triangulation setup [{}ms]", ( System.nanoTime() - time ) / 1e6 );
         }
 
         public void FinalizeTriangulation( )
         {
-            Triangulatable.AddTriangles( Triangles );
+            Triangulatable.AddTriangles(Triangles);
             Triangles.Clear( );
         }
 
-        public override TriangulationConstraint NewConstraint( TriangulationPoint a, TriangulationPoint b )
+        public override TriangulationConstraint NewConstraint( TriangulationPoint a,TriangulationPoint b )
         {
-            return new DTSweepConstraint( a, b );
+            return new DTSweepConstraint(a,b);
         }
 
         public class DTSweepBasin

@@ -14,8 +14,8 @@ namespace Colin.Common.Code.Physics.Shared
         public Rot( float angle )
         {
             // TODO_ERIN optimize
-            s = (float)Math.Sin( angle );
-            c = (float)Math.Cos( angle );
+            s = (float)Math.Sin(angle);
+            c = (float)Math.Cos(angle);
         }
 
         /// <summary>Set using an angle in radians.</summary>
@@ -23,7 +23,7 @@ namespace Colin.Common.Code.Physics.Shared
         public void Set( float angle )
         {
             //Velcro: Optimization
-            if ( angle == 0 )
+            if( angle == 0 )
             {
                 s = 0;
                 c = 1;
@@ -31,8 +31,8 @@ namespace Colin.Common.Code.Physics.Shared
             else
             {
                 // TODO_ERIN optimize
-                s = (float)Math.Sin( angle );
-                c = (float)Math.Cos( angle );
+                s = (float)Math.Sin(angle);
+                c = (float)Math.Cos(angle);
             }
         }
 
@@ -46,19 +46,19 @@ namespace Colin.Common.Code.Physics.Shared
         /// <summary>Get the angle in radians</summary>
         public float GetAngle( )
         {
-            return (float)Math.Atan2( s, c );
+            return (float)Math.Atan2(s,c);
         }
 
         /// <summary>Get the x-axis</summary>
         public Vector2 GetXAxis( )
         {
-            return new Vector2( c, s );
+            return new Vector2(c,s);
         }
 
         /// <summary>Get the y-axis</summary>
         public Vector2 GetYAxis( )
         {
-            return new Vector2( -s, c );
+            return new Vector2(-s,c);
         }
     }
 }

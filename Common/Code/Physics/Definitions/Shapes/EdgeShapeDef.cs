@@ -7,7 +7,7 @@ namespace Colin.Common.Code.Physics.Definitions.Shapes
     /// information is used to ensure correct contact normals.</summary>
     public sealed class EdgeShapeDef : ShapeDef
     {
-        public EdgeShapeDef( ) : base( ShapeType.Edge )
+        public EdgeShapeDef( ) : base(ShapeType.Edge)
         {
             SetDefaults( );
         }

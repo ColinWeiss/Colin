@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace Colin.Common.Code
+﻿namespace Colin.Common.Code
 {
     /// <summary>
     /// 表示一个针对 <seealso cref="IPoolObject"/> 的对象池.
@@ -30,7 +28,7 @@ namespace Colin.Common.Code
         public ObjectPool( int poolSize )
         {
             ActiveList = new List<T>( );
-            Objects = new T[ poolSize ];
+            Objects = new T[poolSize];
             Span<T> ts = Objects;
             T t = new T
             {
@@ -38,33 +36,33 @@ namespace Colin.Common.Code
                 ActiveIndex = -1,
                 PoolIndex = -1
             };
-            ts.Fill( t );
+            ts.Fill(t);
         }
 
         public virtual void Initialize( )
         {
-            for ( int count = 0; count < Objects.Length; count++ )
-                Objects[ count ].DoInitialize( );
+            for( int count = 0; count < Objects.Length; count++ )
+                Objects[count].DoInitialize( );
         }
 
         public virtual void DoUpdate( )
         {
-            if ( Enable )
+            if( Enable )
                 return;
-            for ( int count = 0; count < ActiveList.Count; count++ )
+            for( int count = 0; count < ActiveList.Count; count++ )
             {
-                ActiveList[ count ].DoUpdate( );
-                if ( !ActiveList[ count ].Active )
-                    DormancyObject( ActiveList[ count ] );
+                ActiveList[count].DoUpdate( );
+                if( !ActiveList[count].Active )
+                    DormancyObject(ActiveList[count]);
             }
         }
 
         public virtual void DoRender( )
         {
-            if ( Enable )
+            if( Enable )
                 return;
-            for ( int count = 0; count < ActiveList.Count; count++ )
-                ActiveList[ count ].DoRender( );
+            for( int count = 0; count < ActiveList.Count; count++ )
+                ActiveList[count].DoRender( );
         }
 
         /// <summary>
@@ -73,9 +71,9 @@ namespace Colin.Common.Code
         /// <param name="index"></param>
         public void ActiveObject( int index )
         {
-            Objects[ index ].Active = true;
-            Objects[ index ].ActiveIndex = ActiveList.Count;
-            ActiveList.Add( Objects[ index ] );
+            Objects[index].Active = true;
+            Objects[index].ActiveIndex = ActiveList.Count;
+            ActiveList.Add(Objects[index]);
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace Colin.Common.Code
         /// <param name="element">指定的 <seealso cref="IPoolObject"/>.</param>
         public void DormancyObject( T element )
         {
-            if ( ActiveList.Remove( element ) )
+            if( ActiveList.Remove(element) )
             {
                 element.ActiveIndex = -1;
                 element.Active = false;
@@ -97,9 +95,9 @@ namespace Colin.Common.Code
         /// <param name="index"></param>
         public void DormancyObject( int index )
         {
-            ActiveList[ index ].ActiveIndex = -1;
-            ActiveList[ index ].Active = false;
-            ActiveList.RemoveAt( index );
+            ActiveList[index].ActiveIndex = -1;
+            ActiveList[index].Active = false;
+            ActiveList.RemoveAt(index);
         }
 
     }

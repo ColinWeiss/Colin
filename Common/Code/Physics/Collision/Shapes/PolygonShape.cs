@@ -39,58 +39,58 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <summary>Initializes a new instance of the <see cref="PolygonShape" /> class.</summary>
         /// <param name="vertices">The vertices.</param>
         /// <param name="density">The density.</param>
-        public PolygonShape( Vertices vertices, float density ) : base( ShapeType.Polygon, Settings.PolygonRadius, density )
+        public PolygonShape( Vertices vertices,float density ) : base(ShapeType.Polygon,Settings.PolygonRadius,density)
         {
-            SetVertices( vertices );
+            SetVertices(vertices);
         }
 
         /// <summary>Initializes a new instance of the <see cref="PolygonShape" /> class.</summary>
         /// <param name="density">The density.</param>
-        public PolygonShape( float density ) : base( ShapeType.Polygon, Settings.PolygonRadius, density )
+        public PolygonShape( float density ) : base(ShapeType.Polygon,Settings.PolygonRadius,density)
         {
         }
 
-        private PolygonShape( ) : base( ShapeType.Polygon, Settings.PolygonRadius ) { }
+        private PolygonShape( ) : base(ShapeType.Polygon,Settings.PolygonRadius) { }
 
         private void SetVertices( Vertices vertices )
         {
-            Debug.Assert( vertices.Count >= 3 && vertices.Count <= Settings.MaxPolygonVertices );
+            Debug.Assert(vertices.Count >= 3 && vertices.Count <= Settings.MaxPolygonVertices);
 
             //Velcro: We throw an exception instead of setting the polygon to a box for safety reasons
-            if ( vertices.Count < 3 )
-                throw new InvalidOperationException( "You can't create a polygon with less than 3 vertices" );
+            if( vertices.Count < 3 )
+                throw new InvalidOperationException("You can't create a polygon with less than 3 vertices");
 
-            int n = MathUtils.Min( vertices.Count, Settings.MaxPolygonVertices );
+            int n = MathUtils.Min(vertices.Count,Settings.MaxPolygonVertices);
 
             // Perform welding and copy vertices into local buffer.
-            Vector2[ ] ps = new Vector2[ n ]; //Velcro: The temp buffer is n long instead of Settings.MaxPolygonVertices
+            Vector2[ ] ps = new Vector2[n]; //Velcro: The temp buffer is n long instead of Settings.MaxPolygonVertices
             int tempCount = 0;
-            for ( int i = 0; i < n; ++i )
+            for( int i = 0; i < n; ++i )
             {
-                Vector2 v = vertices[ i ];
+                Vector2 v = vertices[i];
 
                 bool unique = true;
-                for ( int j = 0; j < tempCount; ++j )
+                for( int j = 0; j < tempCount; ++j )
                 {
-                    Vector2 temp = ps[ j ];
-                    if ( MathUtils.DistanceSquared( ref v, ref temp ) < 0.5f * Settings.LinearSlop * ( 0.5f * Settings.LinearSlop ) )
+                    Vector2 temp = ps[j];
+                    if( MathUtils.DistanceSquared(ref v,ref temp) < 0.5f * Settings.LinearSlop * (0.5f * Settings.LinearSlop) )
                     {
                         unique = false;
                         break;
                     }
                 }
 
-                if ( unique )
+                if( unique )
                 {
-                    ps[ tempCount++ ] = v;
+                    ps[tempCount++] = v;
                 }
             }
 
             n = tempCount;
-            if ( n < 3 )
+            if( n < 3 )
             {
                 // Polygon is degenerate.
-                throw new InvalidOperationException( "Polygon is degenerate" ); //Velcro: We throw exception here because we had invalid input
+                throw new InvalidOperationException("Polygon is degenerate"); //Velcro: We throw exception here because we had invalid input
             }
 
             // Create the convex hull using the Gift wrapping algorithm
@@ -98,45 +98,45 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
 
             // Find the right most point on the hull
             int i0 = 0;
-            float x0 = ps[ 0 ].X;
-            for ( int i = 1; i < n; ++i )
+            float x0 = ps[0].X;
+            for( int i = 1; i < n; ++i )
             {
-                float x = ps[ i ].X;
-                if ( x > x0 || x == x0 && ps[ i ].Y < ps[ i0 ].Y )
+                float x = ps[i].X;
+                if( x > x0 || x == x0 && ps[i].Y < ps[i0].Y )
                 {
                     i0 = i;
                     x0 = x;
                 }
             }
 
-            int[ ] hull = new int[ Settings.MaxPolygonVertices ];
+            int[ ] hull = new int[Settings.MaxPolygonVertices];
             int m = 0;
             int ih = i0;
 
-            for (; ; )
+            for(; ; )
             {
-                Debug.Assert( m < Settings.MaxPolygonVertices );
-                hull[ m ] = ih;
+                Debug.Assert(m < Settings.MaxPolygonVertices);
+                hull[m] = ih;
 
                 int ie = 0;
-                for ( int j = 1; j < n; ++j )
+                for( int j = 1; j < n; ++j )
                 {
-                    if ( ie == ih )
+                    if( ie == ih )
                     {
                         ie = j;
                         continue;
                     }
 
-                    Vector2 r = ps[ ie ] - ps[ hull[ m ] ];
-                    Vector2 v = ps[ j ] - ps[ hull[ m ] ];
-                    float c = MathUtils.Cross( r, v );
-                    if ( c < 0.0f )
+                    Vector2 r = ps[ie] - ps[hull[m]];
+                    Vector2 v = ps[j] - ps[hull[m]];
+                    float c = MathUtils.Cross(r,v);
+                    if( c < 0.0f )
                     {
                         ie = j;
                     }
 
                     // Collinearity check
-                    if ( c == 0.0f && v.LengthSquared( ) > r.LengthSquared( ) )
+                    if( c == 0.0f && v.LengthSquared( ) > r.LengthSquared( ) )
                     {
                         ie = j;
                     }
@@ -145,38 +145,38 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
                 ++m;
                 ih = ie;
 
-                if ( ie == i0 )
+                if( ie == i0 )
                 {
                     break;
                 }
             }
 
-            if ( m < 3 )
+            if( m < 3 )
             {
                 // Polygon is degenerate.
-                throw new InvalidOperationException( "Polygon is degenerate" ); //Velcro: We throw exception here because we had invalid input
+                throw new InvalidOperationException("Polygon is degenerate"); //Velcro: We throw exception here because we had invalid input
             }
 
-            _vertices = new Vertices( m );
+            _vertices = new Vertices(m);
 
             // Copy vertices.
-            for ( int i = 0; i < m; ++i )
+            for( int i = 0; i < m; ++i )
             {
-                _vertices.Add( ps[ hull[ i ] ] );
+                _vertices.Add(ps[hull[i]]);
             }
 
-            _normals = new Vertices( m );
+            _normals = new Vertices(m);
 
             // Compute normals. Ensure the edges have non-zero length.
-            for ( int i = 0; i < m; ++i )
+            for( int i = 0; i < m; ++i )
             {
                 int i1 = i;
                 int i2 = i + 1 < _vertices.Count ? i + 1 : 0;
-                Vector2 edge = _vertices[ i2 ] - _vertices[ i1 ];
-                Debug.Assert( edge.LengthSquared( ) > MathConstants.Epsilon * MathConstants.Epsilon );
-                var temp = MathUtils.Cross( edge, 1.0f );
+                Vector2 edge = _vertices[i2] - _vertices[i1];
+                Debug.Assert(edge.LengthSquared( ) > MathConstants.Epsilon * MathConstants.Epsilon);
+                var temp = MathUtils.Cross(edge,1.0f);
                 temp.Normalize( );
-                _normals.Add( temp );
+                _normals.Add(temp);
             }
 
             //Velcro: We compute all the mass data properties up front
@@ -189,47 +189,47 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         public Vertices Vertices
         {
             get => _vertices;
-            set => SetVertices( value );
+            set => SetVertices(value);
         }
 
         public Vertices Normals => _normals;
 
         public override int ChildCount => 1;
 
-        public void SetAsBox( float hx, float hy )
+        public void SetAsBox( float hx,float hy )
         {
-            _vertices = PolygonUtils.CreateRectangle( hx, hy );
+            _vertices = PolygonUtils.CreateRectangle(hx,hy);
 
-            _normals = new Vertices( 4 );
-            _normals.Add( new Vector2( 0.0f, -1.0f ) );
-            _normals.Add( new Vector2( 1.0f, 0.0f ) );
-            _normals.Add( new Vector2( 0.0f, 1.0f ) );
-            _normals.Add( new Vector2( -1.0f, 0.0f ) );
+            _normals = new Vertices(4);
+            _normals.Add(new Vector2(0.0f,-1.0f));
+            _normals.Add(new Vector2(1.0f,0.0f));
+            _normals.Add(new Vector2(0.0f,1.0f));
+            _normals.Add(new Vector2(-1.0f,0.0f));
 
             ComputeProperties( );
         }
 
-        public void SetAsBox( float hx, float hy, Vector2 center, float angle )
+        public void SetAsBox( float hx,float hy,Vector2 center,float angle )
         {
-            _vertices = PolygonUtils.CreateRectangle( hx, hy );
+            _vertices = PolygonUtils.CreateRectangle(hx,hy);
 
-            _normals = new Vertices( 4 );
-            _normals.Add( new Vector2( 0.0f, -1.0f ) );
-            _normals.Add( new Vector2( 1.0f, 0.0f ) );
-            _normals.Add( new Vector2( 0.0f, 1.0f ) );
-            _normals.Add( new Vector2( -1.0f, 0.0f ) );
+            _normals = new Vertices(4);
+            _normals.Add(new Vector2(0.0f,-1.0f));
+            _normals.Add(new Vector2(1.0f,0.0f));
+            _normals.Add(new Vector2(0.0f,1.0f));
+            _normals.Add(new Vector2(-1.0f,0.0f));
 
             _massData._centroid = center;
 
             Transform xf = new Transform( );
             xf.p = center;
-            xf.q.Set( angle );
+            xf.q.Set(angle);
 
             // Transform vertices and normals.
-            for ( int i = 0; i < 4; ++i )
+            for( int i = 0; i < 4; ++i )
             {
-                _vertices[ i ] = MathUtils.Mul( ref xf, _vertices[ i ] );
-                _normals[ i ] = MathUtils.Mul( ref xf.q, _normals[ i ] );
+                _vertices[i] = MathUtils.Mul(ref xf,_vertices[i]);
+                _normals[i] = MathUtils.Mul(ref xf.q,_normals[i]);
             }
 
             ComputeProperties( );
@@ -261,10 +261,10 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             //
             // The rest of the derivation is handled by computer algebra.
 
-            Debug.Assert( _vertices.Count >= 3 );
+            Debug.Assert(_vertices.Count >= 3);
 
             //Velcro: Early exit as polygons with 0 density does not have any properties.
-            if ( _density <= 0 )
+            if( _density <= 0 )
                 return;
 
             //Velcro: Consolidated the calculate centroid and mass code to a single method.
@@ -274,25 +274,25 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
 
             // Get a reference point for forming triangles.
             // Use the first vertex to reduce round-off errors.
-            Vector2 s = _vertices[ 0 ];
+            Vector2 s = _vertices[0];
 
             const float inv3 = 1.0f / 3.0f;
 
             int count = _vertices.Count;
 
-            for ( int i = 0; i < count; ++i )
+            for( int i = 0; i < count; ++i )
             {
                 // Triangle vertices.
-                Vector2 e1 = _vertices[ i ] - s;
-                Vector2 e2 = i + 1 < count ? _vertices[ i + 1 ] - s : _vertices[ 0 ] - s;
+                Vector2 e1 = _vertices[i] - s;
+                Vector2 e2 = i + 1 < count ? _vertices[i + 1] - s : _vertices[0] - s;
 
-                float D = MathUtils.Cross( e1, e2 );
+                float D = MathUtils.Cross(e1,e2);
 
                 float triangleArea = 0.5f * D;
                 area += triangleArea;
 
                 // Area weighted centroid
-                center += triangleArea * inv3 * ( e1 + e2 );
+                center += triangleArea * inv3 * (e1 + e2);
 
                 float ex1 = e1.X, ey1 = e1.Y;
                 float ex2 = e2.X, ey2 = e2.Y;
@@ -300,11 +300,11 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
                 float intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
                 float inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
 
-                I += 0.25f * inv3 * D * ( intx2 + inty2 );
+                I += 0.25f * inv3 * D * (intx2 + inty2);
             }
 
             //The area is too small for the engine to handle.
-            Debug.Assert( area > MathConstants.Epsilon );
+            Debug.Assert(area > MathConstants.Epsilon);
 
             // We save the area
             _massData._area = area;
@@ -320,26 +320,26 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             _massData._inertia = _density * I;
 
             // Shift to center of mass then to original body origin.
-            _massData._inertia += _massData._mass * ( MathUtils.Dot( _massData._centroid, _massData._centroid ) - MathUtils.Dot( center, center ) );
+            _massData._inertia += _massData._mass * (MathUtils.Dot(_massData._centroid,_massData._centroid) - MathUtils.Dot(center,center));
         }
 
-        public override bool TestPoint( ref Transform transform, ref Vector2 point )
+        public override bool TestPoint( ref Transform transform,ref Vector2 point )
         {
-            return TestPointHelper.TestPointPolygon( _vertices, _normals, ref point, ref transform );
+            return TestPointHelper.TestPointPolygon(_vertices,_normals,ref point,ref transform);
         }
 
-        public override bool RayCast( ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output )
+        public override bool RayCast( ref RayCastInput input,ref Transform transform,int childIndex,out RayCastOutput output )
         {
-            return RayCastHelper.RayCastPolygon( _vertices, _normals, ref input, ref transform, out output );
+            return RayCastHelper.RayCastPolygon(_vertices,_normals,ref input,ref transform,out output);
         }
 
         /// <summary>Given a transform, compute the associated axis aligned bounding box for a child shape.</summary>
         /// <param name="transform">The world transform of the shape.</param>
         /// <param name="childIndex">The child shape index.</param>
         /// <param name="aabb">The AABB results.</param>
-        public override void ComputeAABB( ref Transform transform, int childIndex, out AABB aabb )
+        public override void ComputeAABB( ref Transform transform,int childIndex,out AABB aabb )
         {
-            AABBHelper.ComputePolygonAABB( _vertices, ref transform, out aabb );
+            AABBHelper.ComputePolygonAABB(_vertices,ref transform,out aabb);
         }
 
         public override Shape Clone( )
@@ -348,8 +348,8 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             clone._shapeType = _shapeType;
             clone._radius = _radius;
             clone._density = _density;
-            clone._vertices = new Vertices( _vertices );
-            clone._normals = new Vertices( _normals );
+            clone._vertices = new Vertices(_vertices);
+            clone._normals = new Vertices(_normals);
             clone._massData = _massData;
             return clone;
         }

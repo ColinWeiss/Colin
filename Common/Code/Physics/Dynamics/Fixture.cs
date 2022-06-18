@@ -89,11 +89,11 @@ namespace Colin.Common.Code.Physics.Dynamics
 
             // Reserve proxy space
             int childCount = Shape.ChildCount;
-            _proxies = new FixtureProxy[ childCount ];
-            for ( int i = 0; i < childCount; ++i )
+            _proxies = new FixtureProxy[childCount];
+            for( int i = 0; i < childCount; ++i )
             {
-                _proxies[ i ].Fixture = null;
-                _proxies[ i ].ProxyId = DynamicTreeBroadPhase.NullProxy;
+                _proxies[i].Fixture = null;
+                _proxies[i].ProxyId = DynamicTreeBroadPhase.NullProxy;
             }
             _proxyCount = 0;
 
@@ -126,7 +126,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                if ( _collisionGroup == value )
+                if( _collisionGroup == value )
                     return;
 
                 _collisionGroup = value;
@@ -143,7 +143,7 @@ namespace Colin.Common.Code.Physics.Dynamics
 
             set
             {
-                if ( _collidesWith == value )
+                if( _collidesWith == value )
                     return;
 
                 _collidesWith = value;
@@ -159,7 +159,7 @@ namespace Colin.Common.Code.Physics.Dynamics
 
             set
             {
-                if ( _collisionCategories == value )
+                if( _collisionCategories == value )
                     return;
 
                 _collisionCategories = value;
@@ -179,7 +179,7 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _isSensor;
             set
             {
-                if ( _body != null )
+                if( _body != null )
                     _body.Awake = true;
 
                 _isSensor = value;
@@ -205,7 +205,7 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _friction;
             set
             {
-                Debug.Assert( !float.IsNaN( value ) );
+                Debug.Assert(!float.IsNaN(value));
 
                 _friction = value;
             }
@@ -218,7 +218,7 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _restitution;
             set
             {
-                Debug.Assert( !float.IsNaN( value ) );
+                Debug.Assert(!float.IsNaN(value));
 
                 _restitution = value;
             }
@@ -230,12 +230,12 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             // Flag associated contacts for filtering.
             ContactEdge edge = _body._contactList;
-            while ( edge != null )
+            while( edge != null )
             {
                 Contact contact = edge.Contact;
                 Fixture fixtureA = contact._fixtureA;
                 Fixture fixtureB = contact._fixtureB;
-                if ( fixtureA == this || fixtureB == this )
+                if( fixtureA == this || fixtureB == this )
                     contact._flags |= ContactFlags.FilterFlag;
 
                 edge = edge.Next;
@@ -243,14 +243,14 @@ namespace Colin.Common.Code.Physics.Dynamics
 
             World world = _body._world;
 
-            if ( world == null )
+            if( world == null )
                 return;
 
             // Touch each proxy so that new pairs may be created
             IBroadPhase broadPhase = world._contactManager.BroadPhase;
-            for ( int i = 0; i < _proxyCount; ++i )
+            for( int i = 0; i < _proxyCount; ++i )
             {
-                broadPhase.TouchProxy( _proxies[ i ].ProxyId );
+                broadPhase.TouchProxy(_proxies[i].ProxyId);
             }
         }
 
@@ -258,32 +258,32 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <param name="point">A point in world coordinates.</param>
         public bool TestPoint( ref Vector2 point )
         {
-            return Shape.TestPoint( ref _body._xf, ref point );
+            return Shape.TestPoint(ref _body._xf,ref point);
         }
 
         /// <summary>Cast a ray against this Shape.</summary>
         /// <param name="output">The ray-cast results.</param>
         /// <param name="input">The ray-cast input parameters.</param>
         /// <param name="childIndex">Index of the child.</param>
-        public bool RayCast( out RayCastOutput output, ref RayCastInput input, int childIndex )
+        public bool RayCast( out RayCastOutput output,ref RayCastInput input,int childIndex )
         {
-            return Shape.RayCast( ref input, ref _body._xf, childIndex, out output );
+            return Shape.RayCast(ref input,ref _body._xf,childIndex,out output);
         }
 
         /// <summary>Get the fixture's AABB. This AABB may be enlarge and/or stale. If you need a more accurate AABB, compute it
         /// using the Shape and the body transform.</summary>
         /// <param name="aabb">The AABB.</param>
         /// <param name="childIndex">Index of the child.</param>
-        public void GetAABB( out AABB aabb, int childIndex )
+        public void GetAABB( out AABB aabb,int childIndex )
         {
-            Debug.Assert( 0 <= childIndex && childIndex < _proxyCount );
-            aabb = _proxies[ childIndex ].AABB;
+            Debug.Assert(0 <= childIndex && childIndex < _proxyCount);
+            aabb = _proxies[childIndex].AABB;
         }
 
         internal void Destroy( )
         {
             // The proxies must be destroyed before calling this.
-            Debug.Assert( _proxyCount == 0 );
+            Debug.Assert(_proxyCount == 0);
 
             // Free the proxy array.
             _proxies = null;
@@ -299,58 +299,58 @@ namespace Colin.Common.Code.Physics.Dynamics
         }
 
         // These support body activation/deactivation.
-        internal void CreateProxies( IBroadPhase broadPhase, ref Transform xf )
+        internal void CreateProxies( IBroadPhase broadPhase,ref Transform xf )
         {
-            Debug.Assert( _proxyCount == 0 );
+            Debug.Assert(_proxyCount == 0);
 
             // Create proxies in the broad-phase.
             _proxyCount = _shape.ChildCount;
 
-            for ( int i = 0; i < _proxyCount; ++i )
+            for( int i = 0; i < _proxyCount; ++i )
             {
                 FixtureProxy proxy = new FixtureProxy( );
-                _shape.ComputeAABB( ref xf, i, out proxy.AABB );
+                _shape.ComputeAABB(ref xf,i,out proxy.AABB);
                 proxy.Fixture = this;
                 proxy.ChildIndex = i;
 
                 //Velcro note: This line needs to be after the previous two because FixtureProxy is a struct
-                proxy.ProxyId = broadPhase.AddProxy( ref proxy );
+                proxy.ProxyId = broadPhase.AddProxy(ref proxy);
 
-                _proxies[ i ] = proxy;
+                _proxies[i] = proxy;
             }
         }
 
         internal void DestroyProxies( IBroadPhase broadPhase )
         {
             // Destroy proxies in the broad-phase.
-            for ( int i = 0; i < _proxyCount; ++i )
+            for( int i = 0; i < _proxyCount; ++i )
             {
-                FixtureProxy proxy = _proxies[ i ];
-                broadPhase.RemoveProxy( proxy.ProxyId );
+                FixtureProxy proxy = _proxies[i];
+                broadPhase.RemoveProxy(proxy.ProxyId);
                 proxy.ProxyId = DynamicTreeBroadPhase.NullProxy;
             }
 
             _proxyCount = 0;
         }
 
-        internal void Synchronize( IBroadPhase broadPhase, ref Transform transform1, ref Transform transform2 )
+        internal void Synchronize( IBroadPhase broadPhase,ref Transform transform1,ref Transform transform2 )
         {
-            if ( _proxyCount == 0 )
+            if( _proxyCount == 0 )
                 return;
 
-            for ( int i = 0; i < _proxyCount; ++i )
+            for( int i = 0; i < _proxyCount; ++i )
             {
-                FixtureProxy proxy = _proxies[ i ];
+                FixtureProxy proxy = _proxies[i];
 
                 // Compute an AABB that covers the swept Shape (may miss some rotation effect).
-                Shape.ComputeAABB( ref transform1, proxy.ChildIndex, out AABB aabb1 );
-                Shape.ComputeAABB( ref transform2, proxy.ChildIndex, out AABB aabb2 );
+                Shape.ComputeAABB(ref transform1,proxy.ChildIndex,out AABB aabb1);
+                Shape.ComputeAABB(ref transform2,proxy.ChildIndex,out AABB aabb2);
 
-                proxy.AABB.Combine( ref aabb1, ref aabb2 );
+                proxy.AABB.Combine(ref aabb1,ref aabb2);
 
                 Vector2 displacement = aabb2.Center - aabb1.Center;
 
-                broadPhase.MoveProxy( proxy.ProxyId, ref proxy.AABB, displacement );
+                broadPhase.MoveProxy(proxy.ProxyId,ref proxy.AABB,displacement);
             }
         }
     }

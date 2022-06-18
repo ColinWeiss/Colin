@@ -48,13 +48,13 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         protected AdvancingFrontNode Search;
         public AdvancingFrontNode Tail;
 
-        public AdvancingFront( AdvancingFrontNode head, AdvancingFrontNode tail )
+        public AdvancingFront( AdvancingFrontNode head,AdvancingFrontNode tail )
         {
             Head = head;
             Tail = tail;
             Search = head;
-            AddNode( head );
-            AddNode( tail );
+            AddNode(head);
+            AddNode(tail);
         }
 
         public void AddNode( AdvancingFrontNode node )
@@ -71,12 +71,12 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         {
             StringBuilder sb = new StringBuilder( );
             AdvancingFrontNode node = Head;
-            while ( node != Tail )
+            while( node != Tail )
             {
-                sb.Append( node.Point.X ).Append( "->" );
+                sb.Append(node.Point.X).Append("->");
                 node = node.Next;
             }
-            sb.Append( Tail.Point.X );
+            sb.Append(Tail.Point.X);
             return sb.ToString( );
         }
 
@@ -93,17 +93,17 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         /// <summary>We use a balancing tree to locate a node smaller or equal to given key value</summary>
         public AdvancingFrontNode LocateNode( TriangulationPoint point )
         {
-            return LocateNode( point.X );
+            return LocateNode(point.X);
         }
 
         private AdvancingFrontNode LocateNode( double x )
         {
-            AdvancingFrontNode node = FindSearchNode( x );
-            if ( x < node.Value )
+            AdvancingFrontNode node = FindSearchNode(x);
+            if( x < node.Value )
             {
-                while ( ( node = node.Prev ) != null )
+                while( (node = node.Prev) != null )
                 {
-                    if ( x >= node.Value )
+                    if( x >= node.Value )
                     {
                         Search = node;
                         return node;
@@ -112,9 +112,9 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             }
             else
             {
-                while ( ( node = node.Next ) != null )
+                while( (node = node.Next) != null )
                 {
-                    if ( x < node.Value )
+                    if( x < node.Value )
                     {
                         Search = node.Prev;
                         return node.Prev;
@@ -128,39 +128,39 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         public AdvancingFrontNode LocatePoint( TriangulationPoint point )
         {
             double px = point.X;
-            AdvancingFrontNode node = FindSearchNode( px );
+            AdvancingFrontNode node = FindSearchNode(px);
             double nx = node.Point.X;
 
-            if ( px == nx )
+            if( px == nx )
             {
-                if ( point != node.Point )
+                if( point != node.Point )
                 {
                     // We might have two nodes with same x value for a short time
-                    if ( point == node.Prev.Point )
+                    if( point == node.Prev.Point )
                         node = node.Prev;
-                    else if ( point == node.Next.Point )
+                    else if( point == node.Next.Point )
                         node = node.Next;
                     else
                     {
-                        throw new Exception( "Failed to find Node for given afront point" );
+                        throw new Exception("Failed to find Node for given afront point");
 
                         //node = null;
                     }
                 }
             }
-            else if ( px < nx )
+            else if( px < nx )
             {
-                while ( ( node = node.Prev ) != null )
+                while( (node = node.Prev) != null )
                 {
-                    if ( point == node.Point )
+                    if( point == node.Point )
                         break;
                 }
             }
             else
             {
-                while ( ( node = node.Next ) != null )
+                while( (node = node.Next) != null )
                 {
-                    if ( point == node.Point )
+                    if( point == node.Point )
                         break;
                 }
             }

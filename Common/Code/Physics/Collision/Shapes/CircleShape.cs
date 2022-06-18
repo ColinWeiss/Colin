@@ -38,18 +38,18 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <param name="radius">半径.</param>
         /// <param name="density">密度.</param>
         /// <param name="position">位置.</param>
-        public CircleShape( float radius, float density, Vector2 position = default ) : base( ShapeType.Circle, radius, density )
+        public CircleShape( float radius,float density,Vector2 position = default ) : base(ShapeType.Circle,radius,density)
         {
             _position = position;
             ComputeProperties( );
         }
 
-        public CircleShape( float density ) : base( ShapeType.Circle, 0, density )
+        public CircleShape( float density ) : base(ShapeType.Circle,0,density)
         {
             ComputeProperties( );
         }
 
-        private CircleShape( ) : base( ShapeType.Circle ) { }
+        private CircleShape( ) : base(ShapeType.Circle) { }
 
         public override int ChildCount => 1;
 
@@ -61,7 +61,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             get => _position;
             set
             {
-                if ( _position != value )
+                if( _position != value )
                 {
                     _position = value;
                     ComputeInertia( );
@@ -69,19 +69,19 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             }
         }
 
-        public override bool TestPoint( ref Transform transform, ref Vector2 point )
+        public override bool TestPoint( ref Transform transform,ref Vector2 point )
         {
-            return TestPointHelper.TestPointCircle( ref _position, _radius, ref point, ref transform );
+            return TestPointHelper.TestPointCircle(ref _position,_radius,ref point,ref transform);
         }
 
-        public override bool RayCast( ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output )
+        public override bool RayCast( ref RayCastInput input,ref Transform transform,int childIndex,out RayCastOutput output )
         {
-            return RayCastHelper.RayCastCircle( ref _position, _radius, ref input, ref transform, out output );
+            return RayCastHelper.RayCastCircle(ref _position,_radius,ref input,ref transform,out output);
         }
 
-        public override void ComputeAABB( ref Transform transform, int childIndex, out AABB aabb )
+        public override void ComputeAABB( ref Transform transform,int childIndex,out AABB aabb )
         {
-            AABBHelper.ComputeCircleAABB( ref _position, _radius, ref transform, out aabb );
+            AABBHelper.ComputeCircleAABB(ref _position,_radius,ref transform,out aabb);
         }
 
         protected sealed override void ComputeProperties( )
@@ -103,7 +103,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             _massData._centroid = _position;
 
             // inertia about the local origin
-            _massData._inertia = _massData._mass * ( 0.5f * _radius * _radius + Vector2.Dot( _position, _position ) );
+            _massData._inertia = _massData._mass * (0.5f * _radius * _radius + Vector2.Dot(_position,_position));
         }
 
         public override Shape Clone( )

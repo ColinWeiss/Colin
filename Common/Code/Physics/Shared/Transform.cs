@@ -14,7 +14,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <summary>Initialize using a position vector and a rotation matrix.</summary>
         /// <param name="position">The position.</param>
         /// <param name="rotation">The r.</param>
-        public Transform( ref Vector2 position, ref Rot rotation )
+        public Transform( ref Vector2 position,ref Rot rotation )
         {
             p = position;
             q = rotation;
@@ -30,10 +30,10 @@ namespace Colin.Common.Code.Physics.Shared
         /// <summary>Set this based on the position and angle.</summary>
         /// <param name="position">The position.</param>
         /// <param name="angle">The angle.</param>
-        public void Set( Vector2 position, float angle )
+        public void Set( Vector2 position,float angle )
         {
             p = position;
-            q.Set( angle );
+            q.Set(angle);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
 
         public double X, Y;
 
-        public TriangulationPoint( double x, double y )
+        public TriangulationPoint( double x,double y )
         {
             X = x;
             Y = y;
@@ -68,9 +68,9 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
 
         public void AddEdge( DTSweepConstraint e )
         {
-            if ( Edges == null )
+            if( Edges == null )
                 Edges = new List<DTSweepConstraint>( );
-            Edges.Add( e );
+            Edges.Add(e);
         }
     }
 }

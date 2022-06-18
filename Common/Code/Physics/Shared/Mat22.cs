@@ -10,7 +10,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <summary>Construct this matrix using columns.</summary>
         /// <param name="c1">The c1.</param>
         /// <param name="c2">The c2.</param>
-        public Mat22( Vector2 c1, Vector2 c2 )
+        public Mat22( Vector2 c1,Vector2 c2 )
         {
             ex = c1;
             ey = c2;
@@ -21,10 +21,10 @@ namespace Colin.Common.Code.Physics.Shared
         /// <param name="a12">The a12.</param>
         /// <param name="a21">The a21.</param>
         /// <param name="a22">The a22.</param>
-        public Mat22( float a11, float a12, float a21, float a22 )
+        public Mat22( float a11,float a12,float a21,float a22 )
         {
-            ex = new Vector2( a11, a21 );
-            ey = new Vector2( a12, a22 );
+            ex = new Vector2(a11,a21);
+            ey = new Vector2(a12,a22);
         }
 
         public Mat22 Inverse
@@ -33,7 +33,7 @@ namespace Colin.Common.Code.Physics.Shared
             {
                 float a = ex.X, b = ey.X, c = ex.Y, d = ey.Y;
                 float det = a * d - b * c;
-                if ( det != 0.0f )
+                if( det != 0.0f )
                     det = 1.0f / det;
 
                 Mat22 result = new Mat22( );
@@ -50,7 +50,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <summary>Initialize this matrix using columns.</summary>
         /// <param name="c1">The c1.</param>
         /// <param name="c2">The c2.</param>
-        public void Set( Vector2 c1, Vector2 c2 )
+        public void Set( Vector2 c1,Vector2 c2 )
         {
             ex = c1;
             ey = c2;
@@ -84,13 +84,13 @@ namespace Colin.Common.Code.Physics.Shared
         {
             float a11 = ex.X, a12 = ey.X, a21 = ex.Y, a22 = ey.Y;
             float det = a11 * a22 - a12 * a21;
-            if ( det != 0.0f )
+            if( det != 0.0f )
                 det = 1.0f / det;
 
-            return new Vector2( det * ( a22 * b.X - a12 * b.Y ), det * ( a11 * b.Y - a21 * b.X ) );
+            return new Vector2(det * (a22 * b.X - a12 * b.Y),det * (a11 * b.Y - a21 * b.X));
         }
 
-        public static void Add( ref Mat22 A, ref Mat22 B, out Mat22 R )
+        public static void Add( ref Mat22 A,ref Mat22 B,out Mat22 R )
         {
             R.ex = A.ex + B.ex;
             R.ey = A.ey + B.ey;

@@ -21,20 +21,20 @@ namespace Colin.Common.Code.Physics.Tools.PathGenerator
         /// Creates a rope joint between start and end. This enforces the length of the rope. Said in
         /// another way: it makes the rope less bouncy.
         /// </param>
-        public static Path CreateChain( World world, Vector2 start, Vector2 end, float linkWidth, float linkHeight, int numberOfLinks, float linkDensity, bool attachRopeJoint )
+        public static Path CreateChain( World world,Vector2 start,Vector2 end,float linkWidth,float linkHeight,int numberOfLinks,float linkDensity,bool attachRopeJoint )
         {
-            Debug.Assert( numberOfLinks >= 2 );
+            Debug.Assert(numberOfLinks >= 2);
 
             //Chain start / end
             Path path = new Path( );
-            path.Add( start );
-            path.Add( end );
+            path.Add(start);
+            path.Add(end);
 
             //A single chainlink
-            PolygonShape shape = new PolygonShape( PolygonUtils.CreateRectangle( linkWidth, linkHeight ), linkDensity );
+            PolygonShape shape = new PolygonShape(PolygonUtils.CreateRectangle(linkWidth,linkHeight),linkDensity);
 
             //Use PathManager to create all the chainlinks based on the chainlink created before.
-            List<Body> chainLinks = PathManager.EvenlyDistributeShapesAlongPath( world, path, shape, BodyType.Dynamic, numberOfLinks );
+            List<Body> chainLinks = PathManager.EvenlyDistributeShapesAlongPath(world,path,shape,BodyType.Dynamic,numberOfLinks);
 
             //TODO
             //if (fixStart)
@@ -53,10 +53,10 @@ namespace Colin.Common.Code.Physics.Tools.PathGenerator
             //}
 
             //Attach all the chainlinks together with a revolute joint
-            PathManager.AttachBodiesWithRevoluteJoint( world, chainLinks, new Vector2( 0, -linkHeight ), new Vector2( 0, linkHeight ), false, false );
+            PathManager.AttachBodiesWithRevoluteJoint(world,chainLinks,new Vector2(0,-linkHeight),new Vector2(0,linkHeight),false,false);
 
-            if ( attachRopeJoint )
-                JointFactory.CreateDistanceJoint( world, chainLinks[ 0 ], chainLinks[ chainLinks.Count - 1 ], Vector2.Zero, Vector2.Zero );
+            if( attachRopeJoint )
+                JointFactory.CreateDistanceJoint(world,chainLinks[0],chainLinks[chainLinks.Count - 1],Vector2.Zero,Vector2.Zero);
 
             return path;
         }

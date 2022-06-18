@@ -151,30 +151,30 @@ namespace Colin.Common.Code.Physics
 
         /// <summary>Gets called when there is a collision between 2 fixtures. The first two parameters are the friction values of
         /// either fixture. The return value should be the desired friction value of the collection.</summary>
-        public static Func<float, float, float> MixFriction = DefaultMixFriction;
+        public static Func<float,float,float> MixFriction = DefaultMixFriction;
 
         /// <summary>Gets called when there is a collision between 2 fixtures. The first two parameters are the restitution values
         /// of either fixture. The return value should be the desired restitution value of the collection.</summary>
-        public static Func<float, float, float> MixRestitution = DefaultMixRestitution;
+        public static Func<float,float,float> MixRestitution = DefaultMixRestitution;
 
-        public static Func<float, float, float> MixRestitutionThreshold = DefaultMixRestitutionThreshold;
+        public static Func<float,float,float> MixRestitutionThreshold = DefaultMixRestitutionThreshold;
 
         /// <summary>Friction mixing law. The idea is to allow either fixture to drive the friction to zero. For example, anything
         /// slides on ice.</summary>
-        private static float DefaultMixFriction( float friction1, float friction2 )
+        private static float DefaultMixFriction( float friction1,float friction2 )
         {
-            return (float)Math.Sqrt( friction1 * friction2 );
+            return (float)Math.Sqrt(friction1 * friction2);
         }
 
         /// <summary>Restitution mixing law. The idea is allow for anything to bounce off an inelastic surface. For example, a
         /// superball bounces on anything.</summary>
-        private static float DefaultMixRestitution( float restitution1, float restitution2 )
+        private static float DefaultMixRestitution( float restitution1,float restitution2 )
         {
             return restitution1 > restitution2 ? restitution1 : restitution2;
         }
 
         /// <summary>Restitution mixing law. This picks the lowest value.</summary>
-        private static float DefaultMixRestitutionThreshold( float threshold1, float threshold2 )
+        private static float DefaultMixRestitutionThreshold( float threshold1,float threshold2 )
         {
             return threshold1 < threshold2 ? threshold1 : threshold2;
         }

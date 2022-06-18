@@ -28,14 +28,14 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.FlipCode
         /// <param name="vertices">The list of points describing the polygon</param>
         public static List<Vertices> ConvexPartition( Vertices vertices )
         {
-            Debug.Assert( vertices.Count > 3 );
-            Debug.Assert( vertices.IsCounterClockWise( ) );
+            Debug.Assert(vertices.Count > 3);
+            Debug.Assert(vertices.IsCounterClockWise( ));
 
-            int[ ] polygon = new int[ vertices.Count ];
+            int[ ] polygon = new int[vertices.Count];
 
-            for ( int v = 0; v < vertices.Count; v++ )
+            for( int v = 0; v < vertices.Count; v++ )
             {
-                polygon[ v ] = v;
+                polygon[v] = v;
             }
 
             int nv = vertices.Count;
@@ -45,10 +45,10 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.FlipCode
 
             List<Vertices> result = new List<Vertices>( );
 
-            for ( int v = nv - 1; nv > 2; )
+            for( int v = nv - 1; nv > 2; )
             {
                 // If we loop, it is probably a non-simple polygon 
-                if ( 0 >= count-- )
+                if( 0 >= count-- )
                 {
                     // Triangulate: ERROR - probable bad polygon!
                     return new List<Vertices>( );
@@ -56,34 +56,34 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.FlipCode
 
                 // Three consecutive vertices in current polygon, <u,v,w>
                 int u = v;
-                if ( nv <= u )
+                if( nv <= u )
                     u = 0; // Previous 
                 v = u + 1;
-                if ( nv <= v )
+                if( nv <= v )
                     v = 0; // New v   
                 int w = v + 1;
-                if ( nv <= w )
+                if( nv <= w )
                     w = 0; // Next 
 
-                _tmpA = vertices[ polygon[ u ] ];
-                _tmpB = vertices[ polygon[ v ] ];
-                _tmpC = vertices[ polygon[ w ] ];
+                _tmpA = vertices[polygon[u]];
+                _tmpB = vertices[polygon[v]];
+                _tmpC = vertices[polygon[w]];
 
-                if ( Snip( vertices, u, v, w, nv, polygon ) )
+                if( Snip(vertices,u,v,w,nv,polygon) )
                 {
                     int s, t;
 
                     // Output Triangle
-                    Vertices triangle = new Vertices( 3 );
-                    triangle.Add( _tmpA );
-                    triangle.Add( _tmpB );
-                    triangle.Add( _tmpC );
-                    result.Add( triangle );
+                    Vertices triangle = new Vertices(3);
+                    triangle.Add(_tmpA);
+                    triangle.Add(_tmpB);
+                    triangle.Add(_tmpC);
+                    result.Add(triangle);
 
                     // Remove v from remaining polygon 
-                    for ( s = v, t = v + 1; t < nv; s++, t++ )
+                    for( s = v, t = v + 1; t < nv; s++, t++ )
                     {
-                        polygon[ s ] = polygon[ t ];
+                        polygon[s] = polygon[t];
                     }
                     nv--;
 
@@ -101,16 +101,16 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.FlipCode
         /// <param name="c">The C point.</param>
         /// <param name="p">The point to be tested.</param>
         /// <returns>True if the point is inside the triangle</returns>
-        private static bool InsideTriangle( ref Vector2 a, ref Vector2 b, ref Vector2 c, ref Vector2 p )
+        private static bool InsideTriangle( ref Vector2 a,ref Vector2 b,ref Vector2 c,ref Vector2 p )
         {
             //A cross bp
-            float abp = ( c.X - b.X ) * ( p.Y - b.Y ) - ( c.Y - b.Y ) * ( p.X - b.X );
+            float abp = (c.X - b.X) * (p.Y - b.Y) - (c.Y - b.Y) * (p.X - b.X);
 
             //A cross ap
-            float aap = ( b.X - a.X ) * ( p.Y - a.Y ) - ( b.Y - a.Y ) * ( p.X - a.X );
+            float aap = (b.X - a.X) * (p.Y - a.Y) - (b.Y - a.Y) * (p.X - a.X);
 
             //b cross cp
-            float bcp = ( a.X - c.X ) * ( p.Y - c.Y ) - ( a.Y - c.Y ) * ( p.X - c.X );
+            float bcp = (a.X - c.X) * (p.Y - c.Y) - (a.Y - c.Y) * (p.X - c.X);
 
             return abp >= 0.0f && bcp >= 0.0f && aap >= 0.0f;
         }
@@ -123,19 +123,19 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.FlipCode
         /// <param name="n">The number of elements in the array.</param>
         /// <param name="V">The array to populate with indicies of triangles.</param>
         /// <returns>True if a triangle was found</returns>
-        private static bool Snip( Vertices contour, int u, int v, int w, int n, int[ ] V )
+        private static bool Snip( Vertices contour,int u,int v,int w,int n,int[ ] V )
         {
-            if ( MathConstants.Epsilon > MathUtils.Area( ref _tmpA, ref _tmpB, ref _tmpC ) )
+            if( MathConstants.Epsilon > MathUtils.Area(ref _tmpA,ref _tmpB,ref _tmpC) )
                 return false;
 
-            for ( int p = 0; p < n; p++ )
+            for( int p = 0; p < n; p++ )
             {
-                if ( p == u || p == v || p == w )
+                if( p == u || p == v || p == w )
                     continue;
 
-                Vector2 point = contour[ V[ p ] ];
+                Vector2 point = contour[V[p]];
 
-                if ( InsideTriangle( ref _tmpA, ref _tmpB, ref _tmpC, ref point ) )
+                if( InsideTriangle(ref _tmpA,ref _tmpB,ref _tmpC,ref point) )
                     return false;
             }
 

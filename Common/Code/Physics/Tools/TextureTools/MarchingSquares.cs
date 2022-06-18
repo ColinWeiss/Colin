@@ -45,7 +45,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
         /// <param name="lerpCount"></param>
         /// <param name="combine"></param>
         /// <returns></returns>
-        public static List<Vertices> DetectSquares( AABB domain, float cellWidth, float cellHeight, sbyte[ , ] f, int lerpCount, bool combine )
+        public static List<Vertices> DetectSquares( AABB domain,float cellWidth,float cellHeight,sbyte[ , ] f,int lerpCount,bool combine )
         {
             CxFastList<GeomPoly> ret = new CxFastList<GeomPoly>( );
 
@@ -55,119 +55,119 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             List<GeomPoly> polyList;
             GeomPoly gp;
 
-            int xn = (int)( domain.Extents.X * 2 / cellWidth );
+            int xn = (int)(domain.Extents.X * 2 / cellWidth);
             bool xp = xn == domain.Extents.X * 2 / cellWidth;
-            int yn = (int)( domain.Extents.Y * 2 / cellHeight );
+            int yn = (int)(domain.Extents.Y * 2 / cellHeight);
             bool yp = yn == domain.Extents.Y * 2 / cellHeight;
-            if ( !xp )
+            if( !xp )
                 xn++;
-            if ( !yp )
+            if( !yp )
                 yn++;
 
-            sbyte[ , ] fs = new sbyte[ xn + 1, yn + 1 ];
-            GeomPolyVal[ , ] ps = new GeomPolyVal[ xn + 1, yn + 1 ];
+            sbyte[ , ] fs = new sbyte[xn + 1,yn + 1];
+            GeomPolyVal[ , ] ps = new GeomPolyVal[xn + 1,yn + 1];
 
             //populate shared function lookups.
-            for ( int x = 0; x < xn + 1; x++ )
+            for( int x = 0; x < xn + 1; x++ )
             {
                 int x0;
-                if ( x == xn )
+                if( x == xn )
                     x0 = (int)domain.UpperBound.X;
                 else
-                    x0 = (int)( x * cellWidth + domain.LowerBound.X );
-                for ( int y = 0; y < yn + 1; y++ )
+                    x0 = (int)(x * cellWidth + domain.LowerBound.X);
+                for( int y = 0; y < yn + 1; y++ )
                 {
                     int y0;
-                    if ( y == yn )
+                    if( y == yn )
                         y0 = (int)domain.UpperBound.Y;
                     else
-                        y0 = (int)( y * cellHeight + domain.LowerBound.Y );
-                    fs[ x, y ] = f[ x0, y0 ];
+                        y0 = (int)(y * cellHeight + domain.LowerBound.Y);
+                    fs[x,y] = f[x0,y0];
                 }
             }
 
             //generate sub-polys and combine to scan lines
-            for ( int y = 0; y < yn; y++ )
+            for( int y = 0; y < yn; y++ )
             {
                 float y0 = y * cellHeight + domain.LowerBound.Y;
                 float y1;
-                if ( y == yn - 1 )
+                if( y == yn - 1 )
                     y1 = domain.UpperBound.Y;
                 else
                     y1 = y0 + cellHeight;
                 GeomPoly pre = null;
-                for ( int x = 0; x < xn; x++ )
+                for( int x = 0; x < xn; x++ )
                 {
                     float x0 = x * cellWidth + domain.LowerBound.X;
                     float x1;
-                    if ( x == xn - 1 )
+                    if( x == xn - 1 )
                         x1 = domain.UpperBound.X;
                     else
                         x1 = x0 + cellWidth;
 
                     gp = new GeomPoly( );
 
-                    int key = MarchSquare( f, fs, ref gp, x, y, x0, y0, x1, y1, lerpCount );
-                    if ( gp.Length != 0 )
+                    int key = MarchSquare(f,fs,ref gp,x,y,x0,y0,x1,y1,lerpCount);
+                    if( gp.Length != 0 )
                     {
-                        if ( combine && pre != null && ( key & 9 ) != 0 )
+                        if( combine && pre != null && (key & 9) != 0 )
                         {
-                            CombLeft( ref pre, ref gp );
+                            CombLeft(ref pre,ref gp);
                             gp = pre;
                         }
                         else
-                            ret.Add( gp );
-                        ps[ x, y ] = new GeomPolyVal( gp, key );
+                            ret.Add(gp);
+                        ps[x,y] = new GeomPolyVal(gp,key);
                     }
                     else
                         gp = null;
                     pre = gp;
                 }
             }
-            if ( !combine )
+            if( !combine )
             {
                 polyList = ret.GetListOfElements( );
 
-                foreach ( GeomPoly poly in polyList )
+                foreach( GeomPoly poly in polyList )
                 {
-                    verticesList.Add( new Vertices( poly.Points.GetListOfElements( ) ) );
+                    verticesList.Add(new Vertices(poly.Points.GetListOfElements( )));
                 }
 
                 return verticesList;
             }
 
             //combine scan lines together
-            for ( int y = 1; y < yn; y++ )
+            for( int y = 1; y < yn; y++ )
             {
                 int x = 0;
-                while ( x < xn )
+                while( x < xn )
                 {
-                    GeomPolyVal p = ps[ x, y ];
+                    GeomPolyVal p = ps[x,y];
 
                     //skip along scan line if no polygon exists at this point
-                    if ( p == null )
+                    if( p == null )
                     {
                         x++;
                         continue;
                     }
 
                     //skip along if current polygon cannot be combined above.
-                    if ( ( p.Key & 12 ) == 0 )
+                    if( (p.Key & 12) == 0 )
                     {
                         x++;
                         continue;
                     }
 
                     //skip along if no polygon exists above.
-                    GeomPolyVal u = ps[ x, y - 1 ];
-                    if ( u == null )
+                    GeomPolyVal u = ps[x,y - 1];
+                    if( u == null )
                     {
                         x++;
                         continue;
                     }
 
                     //skip along if polygon above cannot be combined with.
-                    if ( ( u.Key & 3 ) == 0 )
+                    if( (u.Key & 3) == 0 )
                     {
                         x++;
                         continue;
@@ -180,7 +180,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                     CxFastList<Vector2> ap = u.GeomP.Points;
 
                     //skip if it's already been combined with above polygon
-                    if ( u.GeomP == p.GeomP )
+                    if( u.GeomP == p.GeomP )
                     {
                         x++;
                         continue;
@@ -188,7 +188,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
 
                     //combine above (but disallow the hole thingies
                     CxFastListNode<Vector2> bi = bp.Begin( );
-                    while ( Square( bi.Elem( ).Y - ay ) > MathConstants.Epsilon || bi.Elem( ).X < ax )
+                    while( Square(bi.Elem( ).Y - ay) > MathConstants.Epsilon || bi.Elem( ).X < ax )
                     {
                         bi = bi.Next( );
                     }
@@ -196,7 +196,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                     //NOTE: Unused
                     //Vector2 b0 = bi.elem();
                     Vector2 b1 = bi.Next( ).Elem( );
-                    if ( Square( b1.Y - ay ) > MathConstants.Epsilon )
+                    if( Square(b1.Y - ay) > MathConstants.Epsilon )
                     {
                         x++;
                         continue;
@@ -204,29 +204,29 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
 
                     bool brk = true;
                     CxFastListNode<Vector2> ai = ap.Begin( );
-                    while ( ai != ap.End( ) )
+                    while( ai != ap.End( ) )
                     {
-                        if ( VecDsq( ai.Elem( ), b1 ) < MathConstants.Epsilon )
+                        if( VecDsq(ai.Elem( ),b1) < MathConstants.Epsilon )
                         {
                             brk = false;
                             break;
                         }
                         ai = ai.Next( );
                     }
-                    if ( brk )
+                    if( brk )
                     {
                         x++;
                         continue;
                     }
 
                     CxFastListNode<Vector2> bj = bi.Next( ).Next( );
-                    if ( bj == bp.End( ) )
+                    if( bj == bp.End( ) )
                         bj = bp.Begin( );
-                    while ( bj != bi )
+                    while( bj != bi )
                     {
-                        ai = ap.Insert( ai, bj.Elem( ) ); // .clone()
+                        ai = ap.Insert(ai,bj.Elem( )); // .clone()
                         bj = bj.Next( );
-                        if ( bj == bp.End( ) )
+                        if( bj == bp.End( ) )
                             bj = bp.Begin( );
                         u.GeomP.Length++;
                     }
@@ -234,10 +234,10 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                     //u.p.simplify(float.Epsilon,float.Epsilon);
                     //
                     ax = x + 1;
-                    while ( ax < xn )
+                    while( ax < xn )
                     {
-                        GeomPolyVal p2 = ps[ (int)ax, y ];
-                        if ( p2 == null || p2.GeomP != p.GeomP )
+                        GeomPolyVal p2 = ps[(int)ax,y];
+                        if( p2 == null || p2.GeomP != p.GeomP )
                         {
                             ax++;
                             continue;
@@ -246,10 +246,10 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                         ax++;
                     }
                     ax = x - 1;
-                    while ( ax >= 0 )
+                    while( ax >= 0 )
                     {
-                        GeomPolyVal p2 = ps[ (int)ax, y ];
-                        if ( p2 == null || p2.GeomP != p.GeomP )
+                        GeomPolyVal p2 = ps[(int)ax,y];
+                        if( p2 == null || p2.GeomP != p.GeomP )
                         {
                             ax--;
                             continue;
@@ -257,10 +257,10 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                         p2.GeomP = u.GeomP;
                         ax--;
                     }
-                    ret.Remove( p.GeomP );
+                    ret.Remove(p.GeomP);
                     p.GeomP = u.GeomP;
 
-                    x = (int)( ( bi.Next( ).Elem( ).X - domain.LowerBound.X ) / cellWidth ) + 1;
+                    x = (int)((bi.Next( ).Elem( ).X - domain.LowerBound.X) / cellWidth) + 1;
 
                     //x++; this was already commented out!
                 }
@@ -268,9 +268,9 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
 
             polyList = ret.GetListOfElements( );
 
-            foreach ( GeomPoly poly in polyList )
+            foreach( GeomPoly poly in polyList )
             {
-                verticesList.Add( new Vertices( poly.Points.GetListOfElements( ) ) );
+                verticesList.Add(new Vertices(poly.Points.GetListOfElements( )));
             }
 
             return verticesList;
@@ -286,45 +286,45 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             0x6D, 0xB5, 0x55
         };
 
-        private static float Lerp( float x0, float x1, float v0, float v1 )
+        private static float Lerp( float x0,float x1,float v0,float v1 )
         {
             float dv = v0 - v1;
             float t;
-            if ( dv * dv < MathConstants.Epsilon )
+            if( dv * dv < MathConstants.Epsilon )
                 t = 0.5f;
             else
                 t = v0 / dv;
-            return x0 + t * ( x1 - x0 );
+            return x0 + t * (x1 - x0);
         }
 
         /// <summary>Recursive linear interpolation for use in marching squares</summary>
-        private static float Xlerp( float x0, float x1, float y, float v0, float v1, sbyte[ , ] f, int c )
+        private static float Xlerp( float x0,float x1,float y,float v0,float v1,sbyte[ , ] f,int c )
         {
-            float xm = Lerp( x0, x1, v0, v1 );
-            if ( c == 0 )
+            float xm = Lerp(x0,x1,v0,v1);
+            if( c == 0 )
                 return xm;
 
-            sbyte vm = f[ (int)xm, (int)y ];
+            sbyte vm = f[(int)xm,(int)y];
 
-            if ( v0 * vm < 0 )
-                return Xlerp( x0, xm, y, v0, vm, f, c - 1 );
+            if( v0 * vm < 0 )
+                return Xlerp(x0,xm,y,v0,vm,f,c - 1);
 
-            return Xlerp( xm, x1, y, vm, v1, f, c - 1 );
+            return Xlerp(xm,x1,y,vm,v1,f,c - 1);
         }
 
         /// <summary>Recursive linear interpolation for use in marching squares</summary>
-        private static float Ylerp( float y0, float y1, float x, float v0, float v1, sbyte[ , ] f, int c )
+        private static float Ylerp( float y0,float y1,float x,float v0,float v1,sbyte[ , ] f,int c )
         {
-            float ym = Lerp( y0, y1, v0, v1 );
-            if ( c == 0 )
+            float ym = Lerp(y0,y1,v0,v1);
+            if( c == 0 )
                 return ym;
 
-            sbyte vm = f[ (int)x, (int)ym ];
+            sbyte vm = f[(int)x,(int)ym];
 
-            if ( v0 * vm < 0 )
-                return Ylerp( y0, ym, x, v0, vm, f, c - 1 );
+            if( v0 * vm < 0 )
+                return Ylerp(y0,ym,x,v0,vm,f,c - 1);
 
-            return Ylerp( ym, y1, x, vm, v1, f, c - 1 );
+            return Ylerp(ym,y1,x,vm,v1,f,c - 1);
         }
 
         /// <summary>Square value for use in marching squares</summary>
@@ -333,13 +333,13 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             return x * x;
         }
 
-        private static float VecDsq( Vector2 a, Vector2 b )
+        private static float VecDsq( Vector2 a,Vector2 b )
         {
             Vector2 d = a - b;
             return d.X * d.X + d.Y * d.Y;
         }
 
-        private static float VecCross( Vector2 a, Vector2 b )
+        private static float VecCross( Vector2 a,Vector2 b )
         {
             return a.X * b.Y - a.Y * b.X;
         }
@@ -350,56 +350,56 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
         /// for recursive interpolation, given the look-up table 'fs' of the values of 'f' at cell vertices with the result to be
         /// stored in 'poly' given the actual coordinates of 'ax' 'ay' in the marching squares mesh.
         /// </summary>
-        private static int MarchSquare( sbyte[ , ] f, sbyte[ , ] fs, ref GeomPoly poly, int ax, int ay, float x0, float y0, float x1, float y1, int bin )
+        private static int MarchSquare( sbyte[ , ] f,sbyte[ , ] fs,ref GeomPoly poly,int ax,int ay,float x0,float y0,float x1,float y1,int bin )
         {
             //key lookup
             int key = 0;
-            sbyte v0 = fs[ ax, ay ];
-            if ( v0 < 0 )
+            sbyte v0 = fs[ax,ay];
+            if( v0 < 0 )
                 key |= 8;
-            sbyte v1 = fs[ ax + 1, ay ];
-            if ( v1 < 0 )
+            sbyte v1 = fs[ax + 1,ay];
+            if( v1 < 0 )
                 key |= 4;
-            sbyte v2 = fs[ ax + 1, ay + 1 ];
-            if ( v2 < 0 )
+            sbyte v2 = fs[ax + 1,ay + 1];
+            if( v2 < 0 )
                 key |= 2;
-            sbyte v3 = fs[ ax, ay + 1 ];
-            if ( v3 < 0 )
+            sbyte v3 = fs[ax,ay + 1];
+            if( v3 < 0 )
                 key |= 1;
 
-            int val = _lookMarch[ key ];
-            if ( val != 0 )
+            int val = _lookMarch[key];
+            if( val != 0 )
             {
                 CxFastListNode<Vector2> pi = null;
-                for ( int i = 0; i < 8; i++ )
+                for( int i = 0; i < 8; i++ )
                 {
                     Vector2 p;
-                    if ( ( val & 1 << i ) != 0 )
+                    if( (val & 1 << i) != 0 )
                     {
-                        if ( i == 7 && ( val & 1 ) == 0 )
-                            poly.Points.Add( p = new Vector2( x0, Ylerp( y0, y1, x0, v0, v3, f, bin ) ) );
+                        if( i == 7 && (val & 1) == 0 )
+                            poly.Points.Add(p = new Vector2(x0,Ylerp(y0,y1,x0,v0,v3,f,bin)));
                         else
                         {
-                            if ( i == 0 )
-                                p = new Vector2( x0, y0 );
-                            else if ( i == 2 )
-                                p = new Vector2( x1, y0 );
-                            else if ( i == 4 )
-                                p = new Vector2( x1, y1 );
-                            else if ( i == 6 )
-                                p = new Vector2( x0, y1 );
+                            if( i == 0 )
+                                p = new Vector2(x0,y0);
+                            else if( i == 2 )
+                                p = new Vector2(x1,y0);
+                            else if( i == 4 )
+                                p = new Vector2(x1,y1);
+                            else if( i == 6 )
+                                p = new Vector2(x0,y1);
 
-                            else if ( i == 1 )
-                                p = new Vector2( Xlerp( x0, x1, y0, v0, v1, f, bin ), y0 );
-                            else if ( i == 5 )
-                                p = new Vector2( Xlerp( x0, x1, y1, v3, v2, f, bin ), y1 );
+                            else if( i == 1 )
+                                p = new Vector2(Xlerp(x0,x1,y0,v0,v1,f,bin),y0);
+                            else if( i == 5 )
+                                p = new Vector2(Xlerp(x0,x1,y1,v3,v2,f,bin),y1);
 
-                            else if ( i == 3 )
-                                p = new Vector2( x1, Ylerp( y0, y1, x1, v1, v2, f, bin ) );
+                            else if( i == 3 )
+                                p = new Vector2(x1,Ylerp(y0,y1,x1,v1,v2,f,bin));
                             else
-                                p = new Vector2( x0, Ylerp( y0, y1, x0, v0, v3, f, bin ) );
+                                p = new Vector2(x0,Ylerp(y0,y1,x0,v0,v3,f,bin));
 
-                            pi = poly.Points.Insert( pi, p );
+                            pi = poly.Points.Insert(pi,p);
                         }
                         poly.Length++;
                     }
@@ -414,7 +414,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
         /// Used in polygon composition to composit polygons into scan lines Combining polya and polyb into one
         /// super-polygon stored in polya.
         /// </summary>
-        private static void CombLeft( ref GeomPoly polya, ref GeomPoly polyb )
+        private static void CombLeft( ref GeomPoly polya,ref GeomPoly polyb )
         {
             CxFastList<Vector2> ap = polya.Points;
             CxFastList<Vector2> bp = polyb.Points;
@@ -423,13 +423,13 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
 
             Vector2 b = bi.Elem( );
             CxFastListNode<Vector2> prea = null;
-            while ( ai != ap.End( ) )
+            while( ai != ap.End( ) )
             {
                 Vector2 a = ai.Elem( );
-                if ( VecDsq( a, b ) < MathConstants.Epsilon )
+                if( VecDsq(a,b) < MathConstants.Epsilon )
                 {
                     //ignore shared vertex if parallel
-                    if ( prea != null )
+                    if( prea != null )
                     {
                         Vector2 a0 = prea.Elem( );
                         b = bi.Next( ).Elem( );
@@ -440,10 +440,10 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                         Vector2 v = b - a;
 
                         //vec_new(v); vec_sub(b.p.p, a.p.p, v);
-                        float dot = VecCross( u, v );
-                        if ( dot * dot < MathConstants.Epsilon )
+                        float dot = VecCross(u,v);
+                        if( dot * dot < MathConstants.Epsilon )
                         {
-                            ap.Erase( prea, ai );
+                            ap.Erase(prea,ai);
                             polya.Length--;
                             ai = prea;
                         }
@@ -452,13 +452,13 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                     //insert polyb into polya
                     bool fst = true;
                     CxFastListNode<Vector2> preb = null;
-                    while ( !bp.Empty( ) )
+                    while( !bp.Empty( ) )
                     {
                         Vector2 bb = bp.Front( );
                         bp.Pop( );
-                        if ( !fst && !bp.Empty( ) )
+                        if( !fst && !bp.Empty( ) )
                         {
-                            ai = ap.Insert( ai, bb );
+                            ai = ap.Insert(ai,bb);
                             polya.Length++;
                             preb = ai;
                         }
@@ -469,7 +469,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                     ai = ai.Next( );
                     Vector2 a1 = ai.Elem( );
                     ai = ai.Next( );
-                    if ( ai == ap.End( ) )
+                    if( ai == ap.End( ) )
                         ai = ap.Begin( );
                     Vector2 a2 = ai.Elem( );
                     Vector2 a00 = preb.Elem( );
@@ -479,10 +479,10 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                     Vector2 vv = a2 - a1;
 
                     //vec_new(v); vec_sub(a2.p, a1.p, v);
-                    float dot1 = VecCross( uu, vv );
-                    if ( dot1 * dot1 < MathConstants.Epsilon )
+                    float dot1 = VecCross(uu,vv);
+                    if( dot1 * dot1 < MathConstants.Epsilon )
                     {
-                        ap.Erase( preb, preb.Next( ) );
+                        ap.Erase(preb,preb.Next( ));
                         polya.Length--;
                     }
 
@@ -520,8 +520,8 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             /// <summary>add object to list (O(1))</summary>
             public CxFastListNode<T> Add( T value )
             {
-                CxFastListNode<T> newNode = new CxFastListNode<T>( value );
-                if ( _head == null )
+                CxFastListNode<T> newNode = new CxFastListNode<T>(value);
+                if( _head == null )
                 {
                     newNode._next = null;
                     _head = newNode;
@@ -541,18 +541,18 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
 
                 EqualityComparer<T> comparer = EqualityComparer<T>.Default;
 
-                if ( head != null )
+                if( head != null )
                 {
-                    if ( value != null )
+                    if( value != null )
                     {
                         do
                         {
                             // if we are on the value to be removed
-                            if ( comparer.Equals( head._elt, value ) )
+                            if( comparer.Equals(head._elt,value) )
                             {
                                 // then we need to patch the list
                                 // check to see if we are removing the _head
-                                if ( head == _head )
+                                if( head == _head )
                                 {
                                     _head = head._next;
                                     return true;
@@ -566,7 +566,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                             // cache the current as the previous for the next go around
                             prev = head;
                             head = head._next;
-                        } while ( head != null );
+                        } while( head != null );
                     }
                 }
                 return false;
@@ -580,15 +580,15 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             /// </summary>
             public CxFastListNode<T> Pop( )
             {
-                return Erase( null, _head );
+                return Erase(null,_head);
             }
 
             /// <summary>insert object after 'node' returning an iterator to the inserted object.</summary>
-            public CxFastListNode<T> Insert( CxFastListNode<T> node, T value )
+            public CxFastListNode<T> Insert( CxFastListNode<T> node,T value )
             {
-                if ( node == null )
-                    return Add( value );
-                CxFastListNode<T> newNode = new CxFastListNode<T>( value );
+                if( node == null )
+                    return Add(value);
+                CxFastListNode<T> newNode = new CxFastListNode<T>(value);
                 CxFastListNode<T> nextNode = node._next;
                 newNode._next = nextNode;
                 node._next = newNode;
@@ -600,13 +600,13 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             /// removes the element pointed to by 'node' with 'prev' being the previous iterator, returning an iterator to the
             /// element following that of 'node' (O(1))
             /// </summary>
-            public CxFastListNode<T> Erase( CxFastListNode<T> prev, CxFastListNode<T> node )
+            public CxFastListNode<T> Erase( CxFastListNode<T> prev,CxFastListNode<T> node )
             {
                 // cache the node after the node to be removed
                 CxFastListNode<T> nextNode = node._next;
-                if ( prev != null )
+                if( prev != null )
                     prev._next = nextNode;
-                else if ( _head != null )
+                else if( _head != null )
                     _head = _head._next;
                 else
                     return null;
@@ -617,7 +617,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             /// <summary>whether the list is empty (O(1))</summary>
             public bool Empty( )
             {
-                if ( _head == null )
+                if( _head == null )
                     return true;
                 return false;
             }
@@ -631,7 +631,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                 do
                 {
                     count++;
-                } while ( i.Next( ) != null );
+                } while( i.Next( ) != null );
 
                 return count;
             }
@@ -640,7 +640,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             public void Clear( )
             {
                 CxFastListNode<T> head = _head;
-                while ( head != null )
+                while( head != null )
                 {
                     CxFastListNode<T> node2 = head;
                     head = head._next;
@@ -652,7 +652,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             /// <summary>returns true if 'value' is an element of the list (O(n))</summary>
             public bool Has( T value )
             {
-                return Find( value ) != null;
+                return Find(value) != null;
             }
 
             // Non CxFastList Methods 
@@ -661,25 +661,25 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
                 // start at head
                 CxFastListNode<T> head = _head;
                 EqualityComparer<T> comparer = EqualityComparer<T>.Default;
-                if ( head != null )
+                if( head != null )
                 {
-                    if ( value != null )
+                    if( value != null )
                     {
                         do
                         {
-                            if ( comparer.Equals( head._elt, value ) )
+                            if( comparer.Equals(head._elt,value) )
                                 return head;
                             head = head._next;
-                        } while ( head != _head );
+                        } while( head != _head );
                     }
                     else
                     {
                         do
                         {
-                            if ( head._elt == null )
+                            if( head._elt == null )
                                 return head;
                             head = head._next;
-                        } while ( head != _head );
+                        } while( head != _head );
                     }
                 }
                 return null;
@@ -691,13 +691,13 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
 
                 CxFastListNode<T> iter = Begin( );
 
-                if ( iter != null )
+                if( iter != null )
                 {
                     do
                     {
-                        list.Add( iter._elt );
+                        list.Add(iter._elt);
                         iter = iter._next;
-                    } while ( iter != null );
+                    } while( iter != null );
                 }
                 return list;
             }
@@ -744,7 +744,7 @@ namespace Colin.Common.Code.Physics.Tools.TextureTools
             /** Key of original sub-polygon **/
             public int Key;
 
-            public GeomPolyVal( GeomPoly geomP, int K )
+            public GeomPolyVal( GeomPoly geomP,int K )
             {
                 GeomP = geomP;
                 Key = K;

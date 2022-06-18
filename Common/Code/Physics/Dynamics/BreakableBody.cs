@@ -11,37 +11,37 @@ namespace Colin.Common.Code.Physics.Dynamics
     public class BreakableBody
     {
         private readonly World _world;
-        private float[ ] _angularVelocitiesCache = new float[ 8 ];
+        private float[ ] _angularVelocitiesCache = new float[8];
         private bool _break;
-        private Vector2[ ] _velocitiesCache = new Vector2[ 8 ];
+        private Vector2[ ] _velocitiesCache = new Vector2[8];
 
-        public BreakableBody( World world, ICollection<Vertices> parts, float density, Vector2 position = new Vector2( ), float rotation = 0 )
+        public BreakableBody( World world,ICollection<Vertices> parts,float density,Vector2 position = new Vector2( ),float rotation = 0 )
         {
             _world = world;
             _world.ContactManager.PostSolve += PostSolve;
-            Parts = new List<Fixture>( parts.Count );
-            MainBody = BodyFactory.CreateBody( _world, position, rotation, BodyType.Dynamic );
+            Parts = new List<Fixture>(parts.Count);
+            MainBody = BodyFactory.CreateBody(_world,position,rotation,BodyType.Dynamic);
             Strength = 500.0f;
 
-            foreach ( Vertices part in parts )
+            foreach( Vertices part in parts )
             {
-                PolygonShape polygonShape = new PolygonShape( part, density );
-                Fixture fixture = MainBody.AddFixture( polygonShape );
-                Parts.Add( fixture );
+                PolygonShape polygonShape = new PolygonShape(part,density);
+                Fixture fixture = MainBody.AddFixture(polygonShape);
+                Parts.Add(fixture);
             }
         }
 
-        public BreakableBody( World world, IEnumerable<Shape> shapes, Vector2 position = new Vector2( ), float rotation = 0 )
+        public BreakableBody( World world,IEnumerable<Shape> shapes,Vector2 position = new Vector2( ),float rotation = 0 )
         {
             _world = world;
             _world.ContactManager.PostSolve += PostSolve;
-            MainBody = BodyFactory.CreateBody( _world, position, rotation, BodyType.Dynamic );
-            Parts = new List<Fixture>( 8 );
+            MainBody = BodyFactory.CreateBody(_world,position,rotation,BodyType.Dynamic);
+            Parts = new List<Fixture>(8);
 
-            foreach ( Shape part in shapes )
+            foreach( Shape part in shapes )
             {
-                Fixture fixture = MainBody.AddFixture( part );
-                Parts.Add( fixture );
+                Fixture fixture = MainBody.AddFixture(part);
+                Parts.Add(fixture);
             }
         }
 
@@ -52,21 +52,21 @@ namespace Colin.Common.Code.Physics.Dynamics
         public Body MainBody { get; }
         public List<Fixture> Parts { get; }
 
-        private void PostSolve( Contact contact, ContactVelocityConstraint impulse )
+        private void PostSolve( Contact contact,ContactVelocityConstraint impulse )
         {
-            if ( !Broken )
+            if( !Broken )
             {
-                if ( Parts.Contains( contact._fixtureA ) || Parts.Contains( contact._fixtureB ) )
+                if( Parts.Contains(contact._fixtureA) || Parts.Contains(contact._fixtureB) )
                 {
                     float maxImpulse = 0.0f;
                     int count = contact.Manifold.PointCount;
 
-                    for ( int i = 0; i < count; ++i )
+                    for( int i = 0; i < count; ++i )
                     {
-                        maxImpulse = Math.Max( maxImpulse, impulse.Points[ i ].NormalImpulse );
+                        maxImpulse = Math.Max(maxImpulse,impulse.Points[i].NormalImpulse);
                     }
 
-                    if ( maxImpulse > Strength )
+                    if( maxImpulse > Strength )
                     {
                         // Flag the body for breaking.
                         _break = true;
@@ -77,7 +77,7 @@ namespace Colin.Common.Code.Physics.Dynamics
 
         public void Update( )
         {
-            if ( _break )
+            if( _break )
             {
                 Decompose( );
                 Broken = true;
@@ -85,20 +85,20 @@ namespace Colin.Common.Code.Physics.Dynamics
             }
 
             // Cache velocities to improve movement on breakage.
-            if ( !Broken )
+            if( !Broken )
             {
                 //Enlarge the cache if needed
-                if ( Parts.Count > _angularVelocitiesCache.Length )
+                if( Parts.Count > _angularVelocitiesCache.Length )
                 {
-                    _velocitiesCache = new Vector2[ Parts.Count ];
-                    _angularVelocitiesCache = new float[ Parts.Count ];
+                    _velocitiesCache = new Vector2[Parts.Count];
+                    _angularVelocitiesCache = new float[Parts.Count];
                 }
 
                 //Cache the linear and angular velocities.
-                for ( int i = 0; i < Parts.Count; i++ )
+                for( int i = 0; i < Parts.Count; i++ )
                 {
-                    _velocitiesCache[ i ] = Parts[ i ].Body.LinearVelocity;
-                    _angularVelocitiesCache[ i ] = Parts[ i ].Body.AngularVelocity;
+                    _velocitiesCache[i] = Parts[i].Body.LinearVelocity;
+                    _angularVelocitiesCache[i] = Parts[i].Body.AngularVelocity;
                 }
             }
         }
@@ -108,27 +108,27 @@ namespace Colin.Common.Code.Physics.Dynamics
             //Unsubsribe from the PostSolve delegate
             _world.ContactManager.PostSolve -= PostSolve;
 
-            for ( int i = 0; i < Parts.Count; i++ )
+            for( int i = 0; i < Parts.Count; i++ )
             {
-                Fixture oldFixture = Parts[ i ];
+                Fixture oldFixture = Parts[i];
 
                 Shape shape = oldFixture.Shape.Clone( );
                 object userData = oldFixture.UserData;
 
-                MainBody.RemoveFixture( oldFixture );
+                MainBody.RemoveFixture(oldFixture);
 
-                Body body = BodyFactory.CreateBody( _world, MainBody.Position, MainBody.Rotation, BodyType.Dynamic, MainBody.UserData );
+                Body body = BodyFactory.CreateBody(_world,MainBody.Position,MainBody.Rotation,BodyType.Dynamic,MainBody.UserData);
 
-                Fixture newFixture = body.AddFixture( shape );
+                Fixture newFixture = body.AddFixture(shape);
                 newFixture.UserData = userData;
-                Parts[ i ] = newFixture;
+                Parts[i] = newFixture;
 
-                body.AngularVelocity = _angularVelocitiesCache[ i ];
-                body.LinearVelocity = _velocitiesCache[ i ];
+                body.AngularVelocity = _angularVelocitiesCache[i];
+                body.LinearVelocity = _velocitiesCache[i];
             }
 
-            _world.RemoveBody( MainBody );
-            _world.RemoveBreakableBody( this );
+            _world.RemoveBody(MainBody);
+            _world.RemoveBreakableBody(this);
         }
 
         public void Break( )

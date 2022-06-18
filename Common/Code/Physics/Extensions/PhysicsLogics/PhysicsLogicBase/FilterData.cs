@@ -23,28 +23,28 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.PhysicsLogicBase
         /// <returns></returns>
         public virtual bool IsActiveOn( Body body )
         {
-            if ( body == null || !body.Enabled || body.IsStatic )
+            if( body == null || !body.Enabled || body.IsStatic )
                 return false;
 
-            if ( body.FixtureList == null )
+            if( body.FixtureList == null )
                 return false;
 
-            foreach ( Fixture fixture in body.FixtureList )
+            foreach( Fixture fixture in body.FixtureList )
             {
                 //Disable
-                if ( fixture.CollisionGroup == DisabledOnGroup && fixture.CollisionGroup != 0 && DisabledOnGroup != 0 )
+                if( fixture.CollisionGroup == DisabledOnGroup && fixture.CollisionGroup != 0 && DisabledOnGroup != 0 )
                     return false;
 
-                if ( ( fixture.CollisionCategories & DisabledOnCategories ) != Category.None )
+                if( (fixture.CollisionCategories & DisabledOnCategories) != Category.None )
                     return false;
 
-                if ( EnabledOnGroup != 0 || EnabledOnCategories != Category.All )
+                if( EnabledOnGroup != 0 || EnabledOnCategories != Category.All )
                 {
                     //Enable
-                    if ( fixture.CollisionGroup == EnabledOnGroup && fixture.CollisionGroup != 0 && EnabledOnGroup != 0 )
+                    if( fixture.CollisionGroup == EnabledOnGroup && fixture.CollisionGroup != 0 && EnabledOnGroup != 0 )
                         return true;
 
-                    if ( ( fixture.CollisionCategories & EnabledOnCategories ) != Category.None &&
+                    if( (fixture.CollisionCategories & EnabledOnCategories) != Category.None &&
                         EnabledOnCategories != Category.All )
                         return true;
                 }
@@ -74,7 +74,7 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.PhysicsLogicBase
         /// <returns><c>true</c> if the object has the specified category; otherwise, <c>false</c>.</returns>
         public bool IsInDisabledCategory( Category category )
         {
-            return ( DisabledOnCategories & category ) == category;
+            return (DisabledOnCategories & category) == category;
         }
 
         /// <summary>Adds the category.</summary>
@@ -96,7 +96,7 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.PhysicsLogicBase
         /// <returns><c>true</c> if the object has the specified category; otherwise, <c>false</c>.</returns>
         public bool IsInEnabledInCategory( Category category )
         {
-            return ( EnabledOnCategories & category ) == category;
+            return (EnabledOnCategories & category) == category;
         }
     }
 }

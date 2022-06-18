@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Common.Code.Tools
 {
@@ -22,18 +21,18 @@ namespace Colin.Common.Code.Tools
 
         public virtual void Update( GameTime gameTime )
         {
-            Velocity = ( Target - Position ) * MoveFactor;
+            Velocity = (Target - Position) * MoveFactor;
             Position += Velocity;
         }
 
         public Matrix GetTransformation( )
         {
-            return Matrix.CreateTranslation( new Vector3( -(int)Position.X, -(int)Position.Y, 0f ) ) *
-                        Matrix.CreateRotationZ( Rotation ) *
-                        Matrix.CreateScale( new Vector3( Zoom, Zoom, 1f ) ) *
-                        Matrix.CreateTranslation( new Vector3(
+            return Matrix.CreateTranslation(new Vector3(-(int)Position.X,-(int)Position.Y,0f)) *
+                        Matrix.CreateRotationZ(Rotation) *
+                        Matrix.CreateScale(new Vector3(Zoom,Zoom,1f)) *
+                        Matrix.CreateTranslation(new Vector3(
                             EngineInfo.Graphics.GraphicsDevice.Viewport.Width * 0.5f,
-                            EngineInfo.Graphics.GraphicsDevice.Viewport.Height * 0.5f, 0f ) );
+                            EngineInfo.Graphics.GraphicsDevice.Viewport.Height * 0.5f,0f));
         }
     }
 }

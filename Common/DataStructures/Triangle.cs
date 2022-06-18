@@ -1,12 +1,6 @@
 ﻿using Colin.Extensions;
 using Microsoft.Xna.Framework;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Colin.Common.DataStructures
 {
     /// <summary>
@@ -33,7 +27,7 @@ namespace Colin.Common.DataStructures
         /// 以 A、B、C 作为元素的顶点数组.
         /// </summary>
         public List<Vector2> Vertices =>
-            new List<Vector2>( ) { VertexA, VertexB, VertexC };
+            new List<Vector2>( ) { VertexA,VertexB,VertexC };
 
         /// <summary>
         /// 定义具有三个组件的三角形.
@@ -41,7 +35,7 @@ namespace Colin.Common.DataStructures
         /// <param name="a">顶点A.</param>
         /// <param name="b">顶点B.</param>
         /// <param name="c">顶点C.</param>
-        public Triangle( Vector2 a, Vector2 b, Vector2 c )
+        public Triangle( Vector2 a,Vector2 b,Vector2 c )
         {
             VertexA = a;
             VertexB = b;
@@ -58,35 +52,35 @@ namespace Colin.Common.DataStructures
             //基于SAT理论实现的三角形碰撞
             Vector2 point, point1, n, myInterval, hisInterval;
             int i;
-            for ( i = 0; i < 6; i++ )
+            for( i = 0; i < 6; i++ )
             {
-                if ( i < 3 )
+                if( i < 3 )
                 {
-                    point = Vertices[ i ];
-                    point1 = Vertices[ ( i + 1 ) % 3 ];
+                    point = Vertices[i];
+                    point1 = Vertices[(i + 1) % 3];
                 }
                 else
                 {
-                    point = triangle.Vertices[ i % 3 ];
-                    point1 = triangle.Vertices[ ( i + 1 ) % 3 ];
+                    point = triangle.Vertices[i % 3];
+                    point1 = triangle.Vertices[(i + 1) % 3];
                 }
-                n = new Vector2( point.Y - point1.Y, point1.X - point.X );
-                myInterval = new Vector2( Math.Min( Math.Min( VertexA.X * n.X + VertexA.Y * n.Y, VertexB.X * n.X + VertexB.Y * n.Y ),
-                    VertexC.X * n.X + VertexC.Y * n.Y ),
-                    Math.Max( Math.Max( VertexA.X * n.X + VertexA.Y * n.Y, VertexB.X * n.X + VertexB.Y * n.Y ),
-                        VertexC.X * n.X + VertexC.Y * n.Y ) );
-                hisInterval = new Vector2( Math.Min( Math.Min( triangle.VertexA.X * n.X + triangle.VertexA.Y * n.Y, triangle.VertexB.X * n.X + triangle.VertexB.Y * n.Y ),
-                    triangle.VertexC.X * n.X + triangle.VertexC.Y * n.Y ),
-                    Math.Max( Math.Max( triangle.VertexA.X * n.X + triangle.VertexA.Y * n.Y, triangle.VertexB.X * n.X + triangle.VertexB.Y * n.Y ),
-                        triangle.VertexC.X * n.X + triangle.VertexC.Y * n.Y ) );
-                if ( myInterval.X < hisInterval.X )
+                n = new Vector2(point.Y - point1.Y,point1.X - point.X);
+                myInterval = new Vector2(Math.Min(Math.Min(VertexA.X * n.X + VertexA.Y * n.Y,VertexB.X * n.X + VertexB.Y * n.Y),
+                    VertexC.X * n.X + VertexC.Y * n.Y),
+                    Math.Max(Math.Max(VertexA.X * n.X + VertexA.Y * n.Y,VertexB.X * n.X + VertexB.Y * n.Y),
+                        VertexC.X * n.X + VertexC.Y * n.Y));
+                hisInterval = new Vector2(Math.Min(Math.Min(triangle.VertexA.X * n.X + triangle.VertexA.Y * n.Y,triangle.VertexB.X * n.X + triangle.VertexB.Y * n.Y),
+                    triangle.VertexC.X * n.X + triangle.VertexC.Y * n.Y),
+                    Math.Max(Math.Max(triangle.VertexA.X * n.X + triangle.VertexA.Y * n.Y,triangle.VertexB.X * n.X + triangle.VertexB.Y * n.Y),
+                        triangle.VertexC.X * n.X + triangle.VertexC.Y * n.Y));
+                if( myInterval.X < hisInterval.X )
                 {
-                    if ( myInterval.Y < hisInterval.X )
+                    if( myInterval.Y < hisInterval.X )
                         return false;
                 }
                 else
                 {
-                    if ( hisInterval.Y < myInterval.X )
+                    if( hisInterval.Y < myInterval.X )
                         return false;
                 }
             }
@@ -105,7 +99,7 @@ namespace Colin.Common.DataStructures
                 d1 = 1 * VertexB.X * VertexC.Y + 1 * VertexC.X * point.Y + 1 * point.X * VertexB.Y - 1 * VertexB.X * point.Y - 1 * point.X * VertexC.Y - 1 * VertexC.X * VertexB.Y,
                 d2 = 1 * point.X * VertexC.Y + 1 * VertexC.X * VertexA.Y + 1 * VertexA.X * point.Y - 1 * point.X * VertexA.Y - 1 * VertexA.X * VertexC.Y - 1 * VertexC.X * point.Y,
                 d3 = 1 * VertexB.X * point.Y + 1 * point.X * VertexA.Y + 1 * VertexA.X * VertexB.Y - 1 * VertexB.X * VertexA.Y - 1 * VertexA.X * point.Y - 1 * point.X * VertexB.Y;
-            if ( d == 0 )
+            if( d == 0 )
                 return false;
             return d1 / d > 0 && d2 / d > 0 && d3 / d > 0;
         }
@@ -115,18 +109,18 @@ namespace Colin.Common.DataStructures
         /// </summary>
         /// <param name="rotation">旋转角度.</param>
         /// <param name="center">旋转中心.</param>
-        public void Rotated( float rotation, Vector2 center = default )
+        public void Rotated( float rotation,Vector2 center = default )
         {
-            VertexA = VertexA.GetRotateTo( rotation, center );
-            VertexB = VertexB.GetRotateTo( rotation, center );
-            VertexC = VertexC.GetRotateTo( rotation, center );
+            VertexA = VertexA.GetRotateTo(rotation,center);
+            VertexB = VertexB.GetRotateTo(rotation,center);
+            VertexC = VertexC.GetRotateTo(rotation,center);
         }
 
         /// <summary>
         /// 获取三角形质心的坐标值.
         /// </summary>
         /// <returns>质心坐标.</returns>
-        public Vector2 Centroid => ( VertexA + VertexB + VertexC ) / 3f;
+        public Vector2 Centroid => (VertexA + VertexB + VertexC) / 3f;
 
         /// <summary>
         /// 以质心为基点缩放三角形.
@@ -138,9 +132,9 @@ namespace Colin.Common.DataStructures
             aDirection = VertexA - centroid,
             bDirection = VertexB - centroid,
             cDirection = VertexC - centroid;
-            VertexA = Vector2.Normalize( aDirection ) * aDirection.Length( ) * scale + centroid;
-            VertexB = Vector2.Normalize( bDirection ) * bDirection.Length( ) * scale + centroid;
-            VertexC = Vector2.Normalize( cDirection ) * cDirection.Length( ) * scale + centroid;
+            VertexA = Vector2.Normalize(aDirection) * aDirection.Length( ) * scale + centroid;
+            VertexB = Vector2.Normalize(bDirection) * bDirection.Length( ) * scale + centroid;
+            VertexC = Vector2.Normalize(cDirection) * cDirection.Length( ) * scale + centroid;
         }
 
     }

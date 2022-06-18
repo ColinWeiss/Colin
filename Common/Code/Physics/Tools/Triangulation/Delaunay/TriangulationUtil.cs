@@ -62,7 +62,7 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
         /// <param name="pc">triangle point</param>
         /// <param name="pd">point opposite a</param>
         /// <returns>true if d is inside circle, false if on circle edge</returns>
-        public static bool SmartIncircle( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd )
+        public static bool SmartIncircle( TriangulationPoint pa,TriangulationPoint pb,TriangulationPoint pc,TriangulationPoint pd )
         {
             double pdx = pd.X;
             double pdy = pd.Y;
@@ -76,7 +76,7 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
             double oabd = adxbdy - bdxady;
 
             //        oabd = orient2d(pa,pb,pd);
-            if ( oabd <= 0 )
+            if( oabd <= 0 )
                 return false;
 
             double cdx = pc.X - pdx;
@@ -87,7 +87,7 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
             double ocad = cdxady - adxcdy;
 
             //      ocad = orient2d(pc,pa,pd);
-            if ( ocad <= 0 )
+            if( ocad <= 0 )
                 return false;
 
             double bdxcdy = bdx * cdy;
@@ -97,7 +97,7 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
             double blift = bdx * bdx + bdy * bdy;
             double clift = cdx * cdx + cdy * cdy;
 
-            double det = alift * ( bdxcdy - cdxbdy ) + blift * ocad + clift * oabd;
+            double det = alift * (bdxcdy - cdxbdy) + blift * ocad + clift * oabd;
 
             return det > 0;
         }
@@ -136,14 +136,14 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
         }
         */
 
-        public static bool InScanArea( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd )
+        public static bool InScanArea( TriangulationPoint pa,TriangulationPoint pb,TriangulationPoint pc,TriangulationPoint pd )
         {
-            double oadb = ( pa.X - pb.X ) * ( pd.Y - pb.Y ) - ( pd.X - pb.X ) * ( pa.Y - pb.Y );
-            if ( oadb >= -EPSILON )
+            double oadb = (pa.X - pb.X) * (pd.Y - pb.Y) - (pd.X - pb.X) * (pa.Y - pb.Y);
+            if( oadb >= -EPSILON )
                 return false;
 
-            double oadc = ( pa.X - pc.X ) * ( pd.Y - pc.Y ) - ( pd.X - pc.X ) * ( pa.Y - pc.Y );
-            if ( oadc <= EPSILON )
+            double oadc = (pa.X - pc.X) * (pd.Y - pc.Y) - (pd.X - pc.X) * (pa.Y - pc.Y);
+            if( oadc <= EPSILON )
                 return false;
             return true;
         }
@@ -154,14 +154,14 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
         /// 0 if collinear
         /// A[P1,P2,P3]  =  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) + (x3*y1 - y3*x1)
         /// =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
-        public static Orientation Orient2d( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc )
+        public static Orientation Orient2d( TriangulationPoint pa,TriangulationPoint pb,TriangulationPoint pc )
         {
-            double detleft = ( pa.X - pc.X ) * ( pb.Y - pc.Y );
-            double detright = ( pa.Y - pc.Y ) * ( pb.X - pc.X );
+            double detleft = (pa.X - pc.X) * (pb.Y - pc.Y);
+            double detright = (pa.Y - pc.Y) * (pb.X - pc.X);
             double val = detleft - detright;
-            if ( val > -EPSILON && val < EPSILON )
+            if( val > -EPSILON && val < EPSILON )
                 return Orientation.Collinear;
-            if ( val > 0 )
+            if( val > 0 )
                 return Orientation.CCW;
             return Orientation.CW;
         }

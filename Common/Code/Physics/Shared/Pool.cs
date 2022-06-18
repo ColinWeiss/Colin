@@ -8,19 +8,19 @@ namespace Colin.Common.Code.Physics.Shared
         private readonly Action<T> _objectReset;
         private readonly Queue<T> _queue;
 
-        public Pool( Func<T> objectCreator, Action<T> objectReset = null, int capacity = 16, bool preCreateInstances = true )
+        public Pool( Func<T> objectCreator,Action<T> objectReset = null,int capacity = 16,bool preCreateInstances = true )
         {
             _objectCreator = objectCreator;
             _objectReset = objectReset;
-            _queue = new Queue<T>( capacity );
+            _queue = new Queue<T>(capacity);
 
-            if ( !preCreateInstances )
+            if( !preCreateInstances )
                 return;
 
-            for ( int i = 0; i < capacity; i++ )
+            for( int i = 0; i < capacity; i++ )
             {
                 T obj = objectCreator( );
-                _queue.Enqueue( obj );
+                _queue.Enqueue(obj);
             }
         }
 
@@ -28,40 +28,40 @@ namespace Colin.Common.Code.Physics.Shared
 
         public T GetFromPool( bool reset = false )
         {
-            if ( _queue.Count == 0 )
+            if( _queue.Count == 0 )
                 return _objectCreator( );
 
             T obj = _queue.Dequeue( );
 
-            if ( reset )
-                _objectReset?.Invoke( obj );
+            if( reset )
+                _objectReset?.Invoke(obj);
 
             return obj;
         }
 
         public IEnumerable<T> GetManyFromPool( int count )
         {
-            Debug.Assert( count != 0 );
+            Debug.Assert(count != 0);
 
-            for ( int i = 0; i < count; i++ )
+            for( int i = 0; i < count; i++ )
             {
                 yield return GetFromPool( );
             }
         }
 
-        public void ReturnToPool( T obj, bool reset = true )
+        public void ReturnToPool( T obj,bool reset = true )
         {
-            if ( reset )
-                _objectReset?.Invoke( obj );
+            if( reset )
+                _objectReset?.Invoke(obj);
 
-            _queue.Enqueue( obj );
+            _queue.Enqueue(obj);
         }
 
-        public void ReturnToPool( IEnumerable<T> objs, bool reset = true )
+        public void ReturnToPool( IEnumerable<T> objs,bool reset = true )
         {
-            foreach ( T obj in objs )
+            foreach( T obj in objs )
             {
-                ReturnToPool( obj, reset );
+                ReturnToPool(obj,reset);
             }
         }
     }

@@ -22,18 +22,18 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Wind
         /// </summary>
         public bool IgnorePosition { get; set; }
 
-        public override void ApplyForce( float dt, float strength )
+        public override void ApplyForce( float dt,float strength )
         {
-            foreach ( Body body in World.BodyList )
+            foreach( Body body in World.BodyList )
             {
                 //TODO: Consider Force Type
-                float decayMultiplier = GetDecayMultiplier( body );
+                float decayMultiplier = GetDecayMultiplier(body);
 
-                if ( decayMultiplier != 0 )
+                if( decayMultiplier != 0 )
                 {
                     Vector2 forceVector;
 
-                    if ( ForceType == ForceTypes.Point )
+                    if( ForceType == ForceTypes.Point )
                         forceVector = body.Position - Position;
                     else
                     {
@@ -41,24 +41,24 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Wind
 
                         forceVector = Direction;
 
-                        if ( forceVector.Length( ) == 0 )
-                            forceVector = new Vector2( 0, 1 );
+                        if( forceVector.Length( ) == 0 )
+                            forceVector = new Vector2(0,1);
                     }
 
                     //TODO: Consider Divergence:
                     //forceVector = Vector2.Transform(forceVector, Matrix.CreateRotationZ((MathHelper.Pi - MathHelper.Pi/2) * (float)Randomize.NextDouble()));
 
                     // Calculate random Variation
-                    if ( Variation != 0 )
+                    if( Variation != 0 )
                     {
-                        float strengthVariation = (float)Randomize.NextDouble( ) * MathHelper.Clamp( Variation, 0, 1 );
+                        float strengthVariation = (float)Randomize.NextDouble( ) * MathHelper.Clamp(Variation,0,1);
                         forceVector.Normalize( );
-                        body.ApplyForce( forceVector * strength * decayMultiplier * strengthVariation );
+                        body.ApplyForce(forceVector * strength * decayMultiplier * strengthVariation);
                     }
                     else
                     {
                         forceVector.Normalize( );
-                        body.ApplyForce( forceVector * strength * decayMultiplier );
+                        body.ApplyForce(forceVector * strength * decayMultiplier);
                     }
                 }
             }

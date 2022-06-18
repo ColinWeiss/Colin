@@ -43,12 +43,12 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
         /// </summary>
         /// <param name="vertices">The vertices.</param>
         /// <param name="tolerance">The tolerance.</param>
-        public static List<Vertices> ConvexPartition( Vertices vertices, float tolerance = 0.001f )
+        public static List<Vertices> ConvexPartition( Vertices vertices,float tolerance = 0.001f )
         {
-            Debug.Assert( vertices.Count > 3 );
-            Debug.Assert( !vertices.IsCounterClockWise( ) );
+            Debug.Assert(vertices.Count > 3);
+            Debug.Assert(!vertices.IsCounterClockWise( ));
 
-            return TriangulatePolygon( vertices, tolerance );
+            return TriangulatePolygon(vertices,tolerance);
         }
 
         /// <summary>
@@ -60,78 +60,78 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
         /// so for large polygons it should not be part of the simulation loop.
         /// </summary>
         /// <remarks>Only works on simple polygons.</remarks>
-        private static List<Vertices> TriangulatePolygon( Vertices vertices, float tolerance )
+        private static List<Vertices> TriangulatePolygon( Vertices vertices,float tolerance )
         {
             //Velcro note: Check is needed as invalid triangles can be returned in recursive calls.
-            if ( vertices.Count < 3 )
+            if( vertices.Count < 3 )
                 return new List<Vertices>( );
 
             List<Vertices> results = new List<Vertices>( );
 
             //Recurse and split on pinch points
-            Vertices pin = new Vertices( vertices );
-            if ( ResolvePinchPoint( pin, out Vertices pA, out Vertices pB, tolerance ) )
+            Vertices pin = new Vertices(vertices);
+            if( ResolvePinchPoint(pin,out Vertices pA,out Vertices pB,tolerance) )
             {
-                List<Vertices> mergeA = TriangulatePolygon( pA, tolerance );
-                List<Vertices> mergeB = TriangulatePolygon( pB, tolerance );
+                List<Vertices> mergeA = TriangulatePolygon(pA,tolerance);
+                List<Vertices> mergeB = TriangulatePolygon(pB,tolerance);
 
-                if ( mergeA.Count == -1 || mergeB.Count == -1 )
-                    throw new Exception( "Can't triangulate your polygon." );
+                if( mergeA.Count == -1 || mergeB.Count == -1 )
+                    throw new Exception("Can't triangulate your polygon.");
 
-                for ( int i = 0; i < mergeA.Count; ++i )
+                for( int i = 0; i < mergeA.Count; ++i )
                 {
-                    results.Add( new Vertices( mergeA[ i ] ) );
+                    results.Add(new Vertices(mergeA[i]));
                 }
-                for ( int i = 0; i < mergeB.Count; ++i )
+                for( int i = 0; i < mergeB.Count; ++i )
                 {
-                    results.Add( new Vertices( mergeB[ i ] ) );
+                    results.Add(new Vertices(mergeB[i]));
                 }
 
                 return results;
             }
 
-            Vertices[ ] buffer = new Vertices[ vertices.Count - 2 ];
+            Vertices[ ] buffer = new Vertices[vertices.Count - 2];
             int bufferSize = 0;
-            float[ ] xrem = new float[ vertices.Count ];
-            float[ ] yrem = new float[ vertices.Count ];
-            for ( int i = 0; i < vertices.Count; ++i )
+            float[ ] xrem = new float[vertices.Count];
+            float[ ] yrem = new float[vertices.Count];
+            for( int i = 0; i < vertices.Count; ++i )
             {
-                xrem[ i ] = vertices[ i ].X;
-                yrem[ i ] = vertices[ i ].Y;
+                xrem[i] = vertices[i].X;
+                yrem[i] = vertices[i].Y;
             }
 
             int vNum = vertices.Count;
 
-            while ( vNum > 3 )
+            while( vNum > 3 )
             {
                 // Find an ear
                 int earIndex = -1;
                 float earMaxMinCross = -10.0f;
-                for ( int i = 0; i < vNum; ++i )
+                for( int i = 0; i < vNum; ++i )
                 {
-                    if ( IsEar( i, xrem, yrem, vNum ) )
+                    if( IsEar(i,xrem,yrem,vNum) )
                     {
-                        int lower = Remainder( i - 1, vNum );
-                        int upper = Remainder( i + 1, vNum );
-                        Vector2 d1 = new Vector2( xrem[ upper ] - xrem[ i ], yrem[ upper ] - yrem[ i ] );
-                        Vector2 d2 = new Vector2( xrem[ i ] - xrem[ lower ], yrem[ i ] - yrem[ lower ] );
-                        Vector2 d3 = new Vector2( xrem[ lower ] - xrem[ upper ], yrem[ lower ] - yrem[ upper ] );
+                        int lower = Remainder(i - 1,vNum);
+                        int upper = Remainder(i + 1,vNum);
+                        Vector2 d1 = new Vector2(xrem[upper] - xrem[i],yrem[upper] - yrem[i]);
+                        Vector2 d2 = new Vector2(xrem[i] - xrem[lower],yrem[i] - yrem[lower]);
+                        Vector2 d3 = new Vector2(xrem[lower] - xrem[upper],yrem[lower] - yrem[upper]);
 
                         d1.Normalize( );
                         d2.Normalize( );
                         d3.Normalize( );
-                        MathUtils.Cross( ref d1, ref d2, out float cross12 );
-                        cross12 = Math.Abs( cross12 );
+                        MathUtils.Cross(ref d1,ref d2,out float cross12);
+                        cross12 = Math.Abs(cross12);
 
-                        MathUtils.Cross( ref d2, ref d3, out float cross23 );
-                        cross23 = Math.Abs( cross23 );
+                        MathUtils.Cross(ref d2,ref d3,out float cross23);
+                        cross23 = Math.Abs(cross23);
 
-                        MathUtils.Cross( ref d3, ref d1, out float cross31 );
-                        cross31 = Math.Abs( cross31 );
+                        MathUtils.Cross(ref d3,ref d1,out float cross31);
+                        cross31 = Math.Abs(cross31);
 
                         //Find the maximum minimum angle
-                        float minCross = Math.Min( cross12, Math.Min( cross23, cross31 ) );
-                        if ( minCross > earMaxMinCross )
+                        float minCross = Math.Min(cross12,Math.Min(cross23,cross31));
+                        if( minCross > earMaxMinCross )
                         {
                             earIndex = i;
                             earMaxMinCross = minCross;
@@ -143,11 +143,11 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
                 // Note: sometimes this is happening because the
                 // remaining points are collinear.  Really these
                 // should just be thrown out without halting triangulation.
-                if ( earIndex == -1 )
+                if( earIndex == -1 )
                 {
-                    for ( int i = 0; i < bufferSize; i++ )
+                    for( int i = 0; i < bufferSize; i++ )
                     {
-                        results.Add( buffer[ i ] );
+                        results.Add(buffer[i]);
                     }
 
                     return results;
@@ -157,24 +157,24 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
                 // - remove the ear tip from the list
 
                 --vNum;
-                float[ ] newx = new float[ vNum ];
-                float[ ] newy = new float[ vNum ];
+                float[ ] newx = new float[vNum];
+                float[ ] newy = new float[vNum];
                 int currDest = 0;
-                for ( int i = 0; i < vNum; ++i )
+                for( int i = 0; i < vNum; ++i )
                 {
-                    if ( currDest == earIndex )
+                    if( currDest == earIndex )
                         ++currDest;
-                    newx[ i ] = xrem[ currDest ];
-                    newy[ i ] = yrem[ currDest ];
+                    newx[i] = xrem[currDest];
+                    newy[i] = yrem[currDest];
                     ++currDest;
                 }
 
                 // - add the clipped triangle to the triangle list
                 int under = earIndex == 0 ? vNum : earIndex - 1;
                 int over = earIndex == vNum ? 0 : earIndex + 1;
-                Triangle toAdd = new Triangle( xrem[ earIndex ], yrem[ earIndex ], xrem[ over ], yrem[ over ], xrem[ under ],
-                    yrem[ under ] );
-                buffer[ bufferSize ] = toAdd;
+                Triangle toAdd = new Triangle(xrem[earIndex],yrem[earIndex],xrem[over],yrem[over],xrem[under],
+                    yrem[under]);
+                buffer[bufferSize] = toAdd;
                 ++bufferSize;
 
                 // - replace the old list with the new one
@@ -182,13 +182,13 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
                 yrem = newy;
             }
 
-            Triangle tooAdd = new Triangle( xrem[ 1 ], yrem[ 1 ], xrem[ 2 ], yrem[ 2 ], xrem[ 0 ], yrem[ 0 ] );
-            buffer[ bufferSize ] = tooAdd;
+            Triangle tooAdd = new Triangle(xrem[1],yrem[1],xrem[2],yrem[2],xrem[0],yrem[0]);
+            buffer[bufferSize] = tooAdd;
             ++bufferSize;
 
-            for ( int i = 0; i < bufferSize; i++ )
+            for( int i = 0; i < bufferSize; i++ )
             {
-                results.Add( new Vertices( buffer[ i ] ) );
+                results.Add(new Vertices(buffer[i]));
             }
 
             return results;
@@ -203,24 +203,24 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
         /// <param name="poutA">The pout A.</param>
         /// <param name="poutB">The pout B.</param>
         /// <param name="tolerance"></param>
-        private static bool ResolvePinchPoint( Vertices pin, out Vertices poutA, out Vertices poutB, float tolerance )
+        private static bool ResolvePinchPoint( Vertices pin,out Vertices poutA,out Vertices poutB,float tolerance )
         {
             poutA = new Vertices( );
             poutB = new Vertices( );
 
-            if ( pin.Count < 3 )
+            if( pin.Count < 3 )
                 return false;
 
             bool hasPinchPoint = false;
             int pinchIndexA = -1;
             int pinchIndexB = -1;
-            for ( int i = 0; i < pin.Count; ++i )
+            for( int i = 0; i < pin.Count; ++i )
             {
-                for ( int j = i + 1; j < pin.Count; ++j )
+                for( int j = i + 1; j < pin.Count; ++j )
                 {
                     //Don't worry about pinch points where the points
                     //are actually just dupe neighbors
-                    if ( Math.Abs( pin[ i ].X - pin[ j ].X ) < tolerance && Math.Abs( pin[ i ].Y - pin[ j ].Y ) < tolerance && j != i + 1 )
+                    if( Math.Abs(pin[i].X - pin[j].X) < tolerance && Math.Abs(pin[i].Y - pin[j].Y) < tolerance && j != i + 1 )
                     {
                         pinchIndexA = i;
                         pinchIndexB = j;
@@ -228,25 +228,25 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
                         break;
                     }
                 }
-                if ( hasPinchPoint )
+                if( hasPinchPoint )
                     break;
             }
-            if ( hasPinchPoint )
+            if( hasPinchPoint )
             {
                 int sizeA = pinchIndexB - pinchIndexA;
-                if ( sizeA == pin.Count )
+                if( sizeA == pin.Count )
                     return false; //has dupe points at wraparound, not a problem here
-                for ( int i = 0; i < sizeA; ++i )
+                for( int i = 0; i < sizeA; ++i )
                 {
-                    int ind = Remainder( pinchIndexA + i, pin.Count ); // is this right
-                    poutA.Add( pin[ ind ] );
+                    int ind = Remainder(pinchIndexA + i,pin.Count); // is this right
+                    poutA.Add(pin[ind]);
                 }
 
                 int sizeB = pin.Count - sizeA;
-                for ( int i = 0; i < sizeB; ++i )
+                for( int i = 0; i < sizeB; ++i )
                 {
-                    int ind = Remainder( pinchIndexB + i, pin.Count ); // is this right    
-                    poutB.Add( pin[ ind ] );
+                    int ind = Remainder(pinchIndexB + i,pin.Count); // is this right    
+                    poutB.Add(pin[ind]);
                 }
             }
             return hasPinchPoint;
@@ -256,10 +256,10 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
         /// <param name="x">The x.</param>
         /// <param name="modulus">The modulus.</param>
         /// <returns></returns>
-        private static int Remainder( int x, int modulus )
+        private static int Remainder( int x,int modulus )
         {
             int rem = x % modulus;
-            while ( rem < 0 )
+            while( rem < 0 )
             {
                 rem += modulus;
             }
@@ -273,49 +273,49 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Earclip
         /// <param name="xvLength">Length of the xv.</param>
         /// <remarks>Assumes clockwise orientation of polygon.</remarks>
         /// <returns><c>true</c> if the specified i is ear; otherwise, <c>false</c>.</returns>
-        private static bool IsEar( int i, float[ ] xv, float[ ] yv, int xvLength )
+        private static bool IsEar( int i,float[ ] xv,float[ ] yv,int xvLength )
         {
             float dx0, dy0, dx1, dy1;
-            if ( i >= xvLength || i < 0 || xvLength < 3 )
+            if( i >= xvLength || i < 0 || xvLength < 3 )
                 return false;
             int upper = i + 1;
             int lower = i - 1;
-            if ( i == 0 )
+            if( i == 0 )
             {
-                dx0 = xv[ 0 ] - xv[ xvLength - 1 ];
-                dy0 = yv[ 0 ] - yv[ xvLength - 1 ];
-                dx1 = xv[ 1 ] - xv[ 0 ];
-                dy1 = yv[ 1 ] - yv[ 0 ];
+                dx0 = xv[0] - xv[xvLength - 1];
+                dy0 = yv[0] - yv[xvLength - 1];
+                dx1 = xv[1] - xv[0];
+                dy1 = yv[1] - yv[0];
                 lower = xvLength - 1;
             }
-            else if ( i == xvLength - 1 )
+            else if( i == xvLength - 1 )
             {
-                dx0 = xv[ i ] - xv[ i - 1 ];
-                dy0 = yv[ i ] - yv[ i - 1 ];
-                dx1 = xv[ 0 ] - xv[ i ];
-                dy1 = yv[ 0 ] - yv[ i ];
+                dx0 = xv[i] - xv[i - 1];
+                dy0 = yv[i] - yv[i - 1];
+                dx1 = xv[0] - xv[i];
+                dy1 = yv[0] - yv[i];
                 upper = 0;
             }
             else
             {
-                dx0 = xv[ i ] - xv[ i - 1 ];
-                dy0 = yv[ i ] - yv[ i - 1 ];
-                dx1 = xv[ i + 1 ] - xv[ i ];
-                dy1 = yv[ i + 1 ] - yv[ i ];
+                dx0 = xv[i] - xv[i - 1];
+                dy0 = yv[i] - yv[i - 1];
+                dx1 = xv[i + 1] - xv[i];
+                dy1 = yv[i + 1] - yv[i];
             }
 
             float cross = dx0 * dy1 - dx1 * dy0;
 
-            if ( cross > 0 )
+            if( cross > 0 )
                 return false;
 
-            Triangle myTri = new Triangle( xv[ i ], yv[ i ], xv[ upper ], yv[ upper ], xv[ lower ], yv[ lower ] );
+            Triangle myTri = new Triangle(xv[i],yv[i],xv[upper],yv[upper],xv[lower],yv[lower]);
 
-            for ( int j = 0; j < xvLength; ++j )
+            for( int j = 0; j < xvLength; ++j )
             {
-                if ( j == i || j == lower || j == upper )
+                if( j == i || j == lower || j == upper )
                     continue;
-                if ( myTri.IsInside( xv[ j ], yv[ j ] ) )
+                if( myTri.IsInside(xv[j],yv[j]) )
                     return false;
             }
             return true;

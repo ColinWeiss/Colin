@@ -23,7 +23,7 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.PhysicsLogicBase
         /// <returns><c>true</c> if the body has the specified flag; otherwise, <c>false</c>.</returns>
         public bool IsPhysicsLogicIgnored( PhysicsLogicType type )
         {
-            return ( ControllerIgnores & type ) == type;
+            return (ControllerIgnores & type) == type;
         }
     }
 }

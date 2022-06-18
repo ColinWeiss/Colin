@@ -1,5 +1,4 @@
-﻿using Colin.Common.Code.Physics.Extensions.DebugView;
-using Colin.Common.Graphics;
+﻿using Colin.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -36,7 +35,7 @@ namespace Colin
         {
             Instance = this;
             IsFixedTimeStep = true;
-            EngineInfo.Graphics = new GraphicsDeviceManager( this )
+            EngineInfo.Graphics = new GraphicsDeviceManager(this)
             {
                 PreferHalfPixelOffset = true,
                 HardwareModeSwitch = false,
@@ -45,14 +44,14 @@ namespace Colin
             Window.AllowUserResizing = true;
             IsFixedTimeStep = true;
             EngineInfo.Graphics.SynchronizeWithVerticalRetrace = false;
-            TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / TargetFrame ) );
+            TargetElapsedTime = new TimeSpan(0,0,0,0,(int)Math.Round(1000f / TargetFrame));
             Content.RootDirectory = "Contents";
         }
 
         protected override sealed void Initialize( )
         {
-            EngineInfo.SpriteBatch = new SpriteBatch( GraphicsDevice );
-            if ( EngineInfo.Graphics != null )
+            EngineInfo.SpriteBatch = new SpriteBatch(GraphicsDevice);
+            if( EngineInfo.Graphics != null )
             {
                 EngineInfo.Graphics.PreferredBackBufferWidth = 1280;
                 EngineInfo.Graphics.PreferredBackBufferHeight = 720;
@@ -61,26 +60,26 @@ namespace Colin
             EngineRenderTarget = new RenderTarget2D(
                     EngineInfo.Graphics.GraphicsDevice,
                     EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height);
             EngineRenderTargetSwap = new RenderTarget2D(
                     EngineInfo.Graphics.GraphicsDevice,
                     EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height);
             Window.ClientSizeChanged += Window_ClientSizeChanged;
-            void Window_ClientSizeChanged( object? sender, EventArgs e )
+            void Window_ClientSizeChanged( object? sender,EventArgs e )
             {
                 EngineRenderTarget = new RenderTarget2D(
                     EngineInfo.Graphics.GraphicsDevice,
                     EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height);
                 EngineRenderTargetSwap = new RenderTarget2D(
                     EngineInfo.Graphics.GraphicsDevice,
                     EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
-                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
+                    EngineInfo.Graphics.GraphicsDevice.Viewport.Height);
             }
             Initialization( );
-            for ( int count = Components.Count - 1; count > 0; count-- )
-                ( Components[ count ] as GameComponent ).UpdateOrder = count;
+            for( int count = Components.Count - 1; count > 0; count-- )
+                (Components[count] as GameComponent).UpdateOrder = count;
             base.Initialize( );
         }
 
@@ -95,9 +94,9 @@ namespace Colin
 
         protected override sealed void Update( GameTime gameTime )
         {
-            EngineInfo.GetInformationFromDevice( gameTime );
+            EngineInfo.GetInformationFromDevice(gameTime);
             Input.GetInformationFromDevice( );
-            base.Update( gameTime );
+            base.Update(gameTime);
             Input.ResetInfomation( );
         }
 
@@ -105,9 +104,9 @@ namespace Colin
 
         protected override sealed void Draw( GameTime gameTime )
         {
-            GraphicsDevice.Clear( Color.Black );
-            GraphicsDevice.SetRenderTarget( EngineRenderTarget );
-            base.Draw( gameTime );
+            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.SetRenderTarget(EngineRenderTarget);
+            base.Draw(gameTime);
             ScreenRender.RenderFrame( );
             Input.ResetInfomation( );
         }

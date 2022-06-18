@@ -3,5 +3,5 @@ using Colin.Common.Code.Physics.Dynamics.Solver;
 
 namespace Colin.Common.Code.Physics.Dynamics.Handlers
 {
-    public delegate void PostSolveHandler( Contact contact, ContactVelocityConstraint impulse );
+    public delegate void PostSolveHandler( Contact contact,ContactVelocityConstraint impulse );
 }

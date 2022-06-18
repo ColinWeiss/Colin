@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Common.Code.UI
+﻿namespace Colin.Common.Code.UI
 {
     internal class ContainerPage : Container
     {
@@ -14,8 +8,8 @@ namespace Colin.Common.Code.UI
         }
         protected override sealed void SetLayerout( ref ContainerElement containerElement )
         {
-            containerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
-            base.SetLayerout( ref containerElement );
+            containerElement.SetLayerout(0,0,EngineInfo.GameViewWidth,EngineInfo.GameViewHeight);
+            base.SetLayerout(ref containerElement);
         }
     }
 }

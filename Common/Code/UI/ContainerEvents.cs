@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Common.Code.UI
 {
@@ -77,10 +72,10 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoMouseLeftClickEvent( )
         {
-            if ( Drop )
+            if( Drop )
             {
                 Droping = true;
-                SelectPoint = new Vector2( Mouse.GetState( ).X, Mouse.GetState( ).Y ) - Container.Location;
+                SelectPoint = new Vector2(Mouse.GetState( ).X,Mouse.GetState( ).Y) - Container.Location;
             }
             OnMouseLeftClick.Invoke( );
         }
@@ -198,22 +193,22 @@ namespace Colin.Common.Code.UI
 
         public virtual void Update( )
         {
-            if ( Input.MouseReleased && Drop && Droping )
+            if( Input.MouseReleased && Drop && Droping )
                 Droping = false;
             Interview = Container.GetInterviewState( );
-            if ( Interview )
+            if( Interview )
                 DoInterviewEvent( );
-            if ( Input.MouseLeftClick )
+            if( Input.MouseLeftClick )
                 DoMouseLeftClickEvent( );
-            else if ( Input.MouseLeftDown && Container._scuiLayer.LeftClickContainer.Equals( Container ) )
+            else if( Input.MouseLeftDown && Container._scuiLayer.LeftClickContainer.Equals(Container) )
                 DoMouseLeftDownEvent( );
-            else if ( Input.MouseLeftUp && Container._scuiLayer.LeftClickContainer.Equals( Container ) )
+            else if( Input.MouseLeftUp && Container._scuiLayer.LeftClickContainer.Equals(Container) )
                 DoMouseLeftUpEvent( );
-            if ( Input.MouseRightClick )
+            if( Input.MouseRightClick )
                 DoMouseRightClickEvent( );
-            else if ( Input.MouseRightDown && Container._scuiLayer.RightClickContainer.Equals( Container ) )
+            else if( Input.MouseRightDown && Container._scuiLayer.RightClickContainer.Equals(Container) )
                 DoMouseRightDownEvent( );
-            else if ( Input.MouseRightUp && Container._scuiLayer.RightClickContainer.Equals( Container ) )
+            else if( Input.MouseRightUp && Container._scuiLayer.RightClickContainer.Equals(Container) )
                 DoMouseRightUpEvent( );
 
         }

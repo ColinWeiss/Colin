@@ -12,7 +12,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
     /// </summary>
     public sealed class DistanceJointDef : JointDef
     {
-        public DistanceJointDef( ) : base( JointType.Distance )
+        public DistanceJointDef( ) : base(JointType.Distance)
         {
             SetDefaults( );
         }
@@ -38,14 +38,14 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         /// <summary>The local anchor point relative to bodyB's origin.</summary>
         public Vector2 LocalAnchorB { get; set; }
 
-        public void Initialize( Body b1, Body b2, Vector2 anchor1, Vector2 anchor2 )
+        public void Initialize( Body b1,Body b2,Vector2 anchor1,Vector2 anchor2 )
         {
             BodyA = b1;
             BodyB = b2;
-            LocalAnchorA = BodyA.GetLocalPoint( anchor1 );
-            LocalAnchorB = BodyB.GetLocalPoint( anchor2 );
+            LocalAnchorA = BodyA.GetLocalPoint(anchor1);
+            LocalAnchorB = BodyB.GetLocalPoint(anchor2);
             Vector2 d = anchor2 - anchor1;
-            Length = MathUtils.Max( d.Length( ), Settings.LinearSlop );
+            Length = MathUtils.Max(d.Length( ),Settings.LinearSlop);
             MinLength = Length;
             MaxLength = Length;
         }

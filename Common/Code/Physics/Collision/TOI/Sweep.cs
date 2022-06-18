@@ -31,33 +31,33 @@ namespace Colin.Common.Code.Physics.Collision.TOI
         /// <summary>Get the interpolated transform at a specific time.</summary>
         /// <param name="xfb">The transform.</param>
         /// <param name="beta">beta is a factor in [0,1], where 0 indicates alpha0.</param>
-        public void GetTransform( out Transform xfb, float beta )
+        public void GetTransform( out Transform xfb,float beta )
         {
             xfb = new Transform( );
-            xfb.p.X = ( 1.0f - beta ) * C0.X + beta * C.X;
-            xfb.p.Y = ( 1.0f - beta ) * C0.Y + beta * C.Y;
-            float angle = ( 1.0f - beta ) * A0 + beta * A;
-            xfb.q.Set( angle );
+            xfb.p.X = (1.0f - beta) * C0.X + beta * C.X;
+            xfb.p.Y = (1.0f - beta) * C0.Y + beta * C.Y;
+            float angle = (1.0f - beta) * A0 + beta * A;
+            xfb.q.Set(angle);
 
             // Shift to origin
-            xfb.p -= MathUtils.Mul( xfb.q, LocalCenter );
+            xfb.p -= MathUtils.Mul(xfb.q,LocalCenter);
         }
 
         /// <summary>Advance the sweep forward, yielding a new initial state.</summary>
         /// <param name="alpha">new initial time</param>
         public void Advance( float alpha )
         {
-            Debug.Assert( Alpha0 < 1.0f );
-            float beta = ( alpha - Alpha0 ) / ( 1.0f - Alpha0 );
-            C0 += beta * ( C - C0 );
-            A0 += beta * ( A - A0 );
+            Debug.Assert(Alpha0 < 1.0f);
+            float beta = (alpha - Alpha0) / (1.0f - Alpha0);
+            C0 += beta * (C - C0);
+            A0 += beta * (A - A0);
             Alpha0 = alpha;
         }
 
         /// <summary>Normalize the angles.</summary>
         public void Normalize( )
         {
-            float d = MathConstants.TwoPi * (float)Math.Floor( A0 / MathConstants.TwoPi );
+            float d = MathConstants.TwoPi * (float)Math.Floor(A0 / MathConstants.TwoPi);
             A0 -= d;
             A -= d;
         }

@@ -5,7 +5,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
 {
     public sealed class GearJointDef : JointDef
     {
-        public GearJointDef( ) : base( JointType.Gear )
+        public GearJointDef( ) : base(JointType.Gear)
         {
             SetDefaults( );
         }

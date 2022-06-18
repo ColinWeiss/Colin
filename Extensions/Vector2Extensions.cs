@@ -25,10 +25,10 @@ namespace Colin.Extensions
         /// <param name="vec">要旋转的向量.</param>
         /// <param name="radian">要旋转的角度.</param>
         /// <returns></returns>
-        public static Vector2 GetRotateTo( this Vector2 vec, float radian )
+        public static Vector2 GetRotateTo( this Vector2 vec,float radian )
         {
             float l = vec.Length( );
-            return new Vector2( (float)Math.Cos( radian ) * l, (float)Math.Sin( radian ) * l );
+            return new Vector2((float)Math.Cos(radian) * l,(float)Math.Sin(radian) * l);
         }
 
         /// <summary>
@@ -38,11 +38,11 @@ namespace Colin.Extensions
         /// <param name="radian">要旋转的角度.</param>
         /// <param name="center">作为旋转中心的坐标.</param>
         /// <returns></returns>
-        public static Vector2 GetRotateTo( this Vector2 vec, float radian, Vector2 center )
+        public static Vector2 GetRotateTo( this Vector2 vec,float radian,Vector2 center )
         {
             vec -= center;
             float l = vec.Length( );
-            return new Vector2( (float)Math.Cos( radian ) * l, (float)Math.Sin( radian ) * l ) + center;
+            return new Vector2((float)Math.Cos(radian) * l,(float)Math.Sin(radian) * l) + center;
         }
 
         /// <summary>
@@ -51,11 +51,11 @@ namespace Colin.Extensions
         /// <param name="vec"></param>
         /// <param name="radian"></param>
         /// <returns></returns>
-        public static Vector2 GetRotate( this Vector2 vec, float radian )
+        public static Vector2 GetRotate( this Vector2 vec,float radian )
         {
-            float c = (float)Math.Cos( radian );
-            float s = (float)Math.Sin( radian );
-            return new Vector2( c * vec.X - s * vec.Y, s * vec.X + c * vec.Y );
+            float c = (float)Math.Cos(radian);
+            float s = (float)Math.Sin(radian);
+            return new Vector2(c * vec.X - s * vec.Y,s * vec.X + c * vec.Y);
         }
 
         /// <summary>
@@ -65,12 +65,12 @@ namespace Colin.Extensions
         /// <param name="radian">要旋转的角度.</param>
         /// <param name="center">作为旋转中心的坐标.</param>
         /// <returns></returns>
-        public static Vector2 GetRotate( this Vector2 vec, float radian, Vector2 center = default )
+        public static Vector2 GetRotate( this Vector2 vec,float radian,Vector2 center = default )
         {
             vec -= center;
-            float c = (float)Math.Cos( radian );
-            float s = (float)Math.Sin( radian );
-            return new Vector2( c * vec.X - s * vec.Y, s * vec.X + c * vec.Y ) + center;
+            float c = (float)Math.Cos(radian);
+            float s = (float)Math.Sin(radian);
+            return new Vector2(c * vec.X - s * vec.Y,s * vec.X + c * vec.Y) + center;
         }
 
         /// <summary>
@@ -80,12 +80,12 @@ namespace Colin.Extensions
         /// <returns></returns>
         public static Vector2 GetFloor( this Vector2 vec )
         {
-            return new Vector2( (int)vec.X, (int)vec.Y );
+            return new Vector2((int)vec.X,(int)vec.Y);
         }
 
         public static Vector2 GetAngle( this float value )
         {
-            return new Vector2( (float)Math.Cos( value ), (float)Math.Sin( value ) );
+            return new Vector2((float)Math.Cos(value),(float)Math.Sin(value));
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Colin.Extensions
         /// <returns></returns>
         public static float GetAngle( this Vector2 vec )
         {
-            return (float)Math.Atan2( vec.Y, vec.X );
+            return (float)Math.Atan2(vec.Y,vec.X);
         }
 
         /// <summary>
@@ -104,9 +104,9 @@ namespace Colin.Extensions
         /// <param name="a">参与计算的向量.</param>
         /// <param name="b">参与计算的向量.</param>
         /// <returns></returns>
-        public static float GetAngleBetween( this Vector2 a, Vector2 b )
+        public static float GetAngleBetween( this Vector2 a,Vector2 b )
         {
-            return Math.Abs( a.GetAngle( ) - b.GetAngle( ) );
+            return Math.Abs(a.GetAngle( ) - b.GetAngle( ));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Colin.Extensions
         /// <returns></returns>
         public static Vector2 GetCeiling( this Vector2 vec )
         {
-            return new Vector2( (float)Math.Ceiling( vec.X ), (float)Math.Ceiling( vec.Y ) );
+            return new Vector2((float)Math.Ceiling(vec.X),(float)Math.Ceiling(vec.Y));
         }
 
         /// <summary>
@@ -127,9 +127,9 @@ namespace Colin.Extensions
         /// <param name="progress">当前所在段数.</param>
         /// <param name="max">总分段数.</param>
         /// <returns></returns>
-        public static Vector2 LerpTo( this Vector2 a, Vector2 b, float progress, float max )
+        public static Vector2 LerpTo( this Vector2 a,Vector2 b,float progress,float max )
         {
-            return progress / max * b + ( max - progress ) / max * a;
+            return progress / max * b + (max - progress) / max * a;
         }
 
         /// <summary>
@@ -183,9 +183,9 @@ namespace Colin.Extensions
         /// <param name="x">X 增量.</param>
         /// <param name="y">Y 增量</param>
         /// <returns></returns>
-        public static Vector2 Plus( this Vector2 vec, float x, float y )
+        public static Vector2 Plus( this Vector2 vec,float x,float y )
         {
-            return vec + new Vector2( x, y );
+            return vec + new Vector2(x,y);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace Colin.Extensions
         /// <returns></returns>
         public static Vector2 GetUnitX( this Vector2 vec )
         {
-            return new Vector2( vec.X, 0 );
+            return new Vector2(vec.X,0);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Colin.Extensions
         /// <returns></returns>
         public static Vector2 GetUnitY( this Vector2 vec )
         {
-            return new Vector2( 0, vec.Y );
+            return new Vector2(0,vec.Y);
         }
 
         /// <summary>
@@ -214,9 +214,9 @@ namespace Colin.Extensions
         /// <param name="vec">参与计算的向量.</param>
         /// <param name="xVec">参与计算的增向量.</param>
         /// <returns></returns>
-        public static Vector2 GetUnitXPlus( this Vector2 vec, Vector2 xVec )
+        public static Vector2 GetUnitXPlus( this Vector2 vec,Vector2 xVec )
         {
-            return new Vector2( vec.X + xVec.X, 0 );
+            return new Vector2(vec.X + xVec.X,0);
         }
 
         /// <summary>
@@ -225,9 +225,9 @@ namespace Colin.Extensions
         /// <param name="vec">参与计算的向量.</param>
         /// <param name="yVec">参与计算的增向量.</param>
         /// <returns></returns>
-        public static Vector2 GetUnitYPlus( this Vector2 vec, Vector2 yVec )
+        public static Vector2 GetUnitYPlus( this Vector2 vec,Vector2 yVec )
         {
-            return new Vector2( 0, vec.Y + yVec.Y );
+            return new Vector2(0,vec.Y + yVec.Y);
         }
 
         /// <summary>
@@ -237,27 +237,27 @@ namespace Colin.Extensions
         /// <returns></returns>
         public static Vector2 SwapXY( this Vector2 a )
         {
-            return new Vector2( a.Y, a.X );
+            return new Vector2(a.Y,a.X);
         }
 
         public static Vector2 GetVector2( this Vector3 vec )
         {
-            return new Vector2( vec.X, vec.Y );
+            return new Vector2(vec.X,vec.Y);
         }
 
-        public static Color GetColor( this Vector3 vec, float a = 1 )
+        public static Color GetColor( this Vector3 vec,float a = 1 )
         {
-            return new Color( vec.X, vec.Y, vec.Z, a );
+            return new Color(vec.X,vec.Y,vec.Z,a);
         }
 
-        public static float GetDot( this Vector3 vec1, Vector3 vec2 )
+        public static float GetDot( this Vector3 vec1,Vector3 vec2 )
         {
-            return Vector3.Dot( vec1, vec2 );
+            return Vector3.Dot(vec1,vec2);
         }
 
         public static Vector3 GetVector3( this Vector4 vec )
         {
-            return new Vector3( vec.X, vec.Y, vec.Z );
+            return new Vector3(vec.X,vec.Y,vec.Z);
         }
     }
 }

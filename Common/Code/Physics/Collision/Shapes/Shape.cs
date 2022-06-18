@@ -38,10 +38,10 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         internal ShapeType _shapeType;
         internal MassData _massData;
 
-        protected Shape( ShapeType type, float radius = 0, float density = 0 )
+        protected Shape( ShapeType type,float radius = 0,float density = 0 )
         {
-            Debug.Assert( radius >= 0 );
-            Debug.Assert( density >= 0 );
+            Debug.Assert(radius >= 0);
+            Debug.Assert(density >= 0);
 
             _shapeType = type;
             _radius = radius;
@@ -70,9 +70,9 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             get => _radius;
             set
             {
-                Debug.Assert( value >= 0 );
+                Debug.Assert(value >= 0);
 
-                if ( _radius != value )
+                if( _radius != value )
                 {
                     _radius = value;
                     ComputeProperties( );
@@ -88,9 +88,9 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             get => _density;
             set
             {
-                Debug.Assert( value >= 0 );
+                Debug.Assert(value >= 0);
 
-                if ( _density != value )
+                if( _density != value )
                 {
                     _density = value;
                     ComputeProperties( );
@@ -106,7 +106,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <param name="transform">The shape world transform.</param>
         /// <param name="point">A point in world coordinates.</param>
         /// <returns>True if the point is inside the shape</returns>
-        public abstract bool TestPoint( ref Transform transform, ref Vector2 point );
+        public abstract bool TestPoint( ref Transform transform,ref Vector2 point );
 
         /// <summary>Cast a ray against a child shape.</summary>
         /// <param name="input">The ray-cast input parameters.</param>
@@ -114,13 +114,13 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <param name="childIndex">The child shape index.</param>
         /// <param name="output">The ray-cast results.</param>
         /// <returns>True if the ray-cast hits the shape</returns>
-        public abstract bool RayCast( ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output );
+        public abstract bool RayCast( ref RayCastInput input,ref Transform transform,int childIndex,out RayCastOutput output );
 
         /// <summary>Given a transform, compute the associated axis aligned bounding box for a child shape.</summary>
         /// <param name="transform">The world transform of the shape.</param>
         /// <param name="childIndex">The child shape index.</param>
         /// <param name="aabb">The AABB results.</param>
-        public abstract void ComputeAABB( ref Transform transform, int childIndex, out AABB aabb );
+        public abstract void ComputeAABB( ref Transform transform,int childIndex,out AABB aabb );
 
         /// <summary>
         /// Compute the mass properties of this shape using its dimensions and density. The inertia tensor is computed

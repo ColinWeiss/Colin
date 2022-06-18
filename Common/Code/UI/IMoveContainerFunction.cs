@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace Colin.Common.Code.UI
+﻿namespace Colin.Common.Code.UI
 {
     /// <summary>
     /// 表示一个根据一组速度数据进行移动的容器方法.

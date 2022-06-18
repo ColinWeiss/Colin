@@ -22,7 +22,7 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Velocity
         /// to Settings.MaxTranslation Sets the max angular velocity to Settings.MaxRotation
         /// </summary>
         public VelocityLimitController( )
-            : base( ControllerType.VelocityLimitController )
+            : base(ControllerType.VelocityLimitController)
         {
             MaxLinearVelocity = Settings.MaxTranslation;
             MaxAngularVelocity = Settings.MaxRotation;
@@ -34,13 +34,13 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Velocity
         /// </summary>
         /// <param name="maxLinearVelocity">The max linear velocity.</param>
         /// <param name="maxAngularVelocity">The max angular velocity.</param>
-        public VelocityLimitController( float maxLinearVelocity, float maxAngularVelocity )
-            : base( ControllerType.VelocityLimitController )
+        public VelocityLimitController( float maxLinearVelocity,float maxAngularVelocity )
+            : base(ControllerType.VelocityLimitController)
         {
-            if ( maxLinearVelocity == 0 || maxLinearVelocity == float.MaxValue )
+            if( maxLinearVelocity == 0 || maxLinearVelocity == float.MaxValue )
                 LimitLinearVelocity = false;
 
-            if ( maxAngularVelocity == 0 || maxAngularVelocity == float.MaxValue )
+            if( maxAngularVelocity == 0 || maxAngularVelocity == float.MaxValue )
                 LimitAngularVelocity = false;
 
             MaxLinearVelocity = maxLinearVelocity;
@@ -73,12 +73,12 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Velocity
 
         public override void Update( float dt )
         {
-            foreach ( Body body in _bodies )
+            foreach( Body body in _bodies )
             {
-                if ( !IsActiveOn( body ) )
+                if( !IsActiveOn(body) )
                     continue;
 
-                if ( LimitLinearVelocity )
+                if( LimitLinearVelocity )
                 {
                     //Translation
                     // Check for large velocities.
@@ -86,9 +86,9 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Velocity
                     float translationY = dt * body._linearVelocity.Y;
                     float result = translationX * translationX + translationY * translationY;
 
-                    if ( result > dt * _maxLinearSqared )
+                    if( result > dt * _maxLinearSqared )
                     {
-                        float sq = (float)Math.Sqrt( result );
+                        float sq = (float)Math.Sqrt(result);
 
                         float ratio = _maxLinearVelocity / sq;
                         body._linearVelocity.X *= ratio;
@@ -96,13 +96,13 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Velocity
                     }
                 }
 
-                if ( LimitAngularVelocity )
+                if( LimitAngularVelocity )
                 {
                     //Rotation
                     float rotation = dt * body._angularVelocity;
-                    if ( rotation * rotation > _maxAngularSqared )
+                    if( rotation * rotation > _maxAngularSqared )
                     {
-                        float ratio = _maxAngularVelocity / Math.Abs( rotation );
+                        float ratio = _maxAngularVelocity / Math.Abs(rotation);
                         body._angularVelocity *= ratio;
                     }
                 }
@@ -111,12 +111,12 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.Velocity
 
         public void AddBody( Body body )
         {
-            _bodies.Add( body );
+            _bodies.Add(body);
         }
 
         public void RemoveBody( Body body )
         {
-            _bodies.Remove( body );
+            _bodies.Remove(body);
         }
     }
 }

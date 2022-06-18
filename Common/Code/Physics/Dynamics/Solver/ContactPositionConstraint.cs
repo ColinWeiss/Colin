@@ -12,7 +12,7 @@ namespace Colin.Common.Code.Physics.Dynamics.Solver
         public Vector2 LocalCenterA, LocalCenterB;
         public Vector2 LocalNormal;
         public Vector2 LocalPoint;
-        public Vector2[ ] LocalPoints = new Vector2[ Settings.MaxManifoldPoints ];
+        public Vector2[ ] LocalPoints = new Vector2[Settings.MaxManifoldPoints];
         public int PointCount;
         public float RadiusA, RadiusB;
         public ManifoldType Type;

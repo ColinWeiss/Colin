@@ -41,18 +41,18 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <summary>Create a new EdgeShape with the specified start and end. This edge supports two-sided collision.</summary>
         /// <param name="start">The start of the edge.</param>
         /// <param name="end">The end of the edge.</param>
-        public EdgeShape( Vector2 start, Vector2 end ) : base( ShapeType.Edge, Settings.PolygonRadius )
+        public EdgeShape( Vector2 start,Vector2 end ) : base(ShapeType.Edge,Settings.PolygonRadius)
         {
-            SetTwoSided( start, end );
+            SetTwoSided(start,end);
         }
 
         /// <summary>Create a new EdgeShape with ghost vertices for smooth collision. This edge only supports one-sided collision.</summary>
-        public EdgeShape( Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3 ) : base( ShapeType.Edge, Settings.PolygonRadius )
+        public EdgeShape( Vector2 v0,Vector2 v1,Vector2 v2,Vector2 v3 ) : base(ShapeType.Edge,Settings.PolygonRadius)
         {
-            SetOneSided( v0, v1, v2, v3 );
+            SetOneSided(v0,v1,v2,v3);
         }
 
-        public EdgeShape( ) : base( ShapeType.Edge, Settings.PolygonRadius ) { }
+        public EdgeShape( ) : base(ShapeType.Edge,Settings.PolygonRadius) { }
 
         public override int ChildCount => 1;
 
@@ -95,7 +95,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             }
         }
 
-        public void SetOneSided( Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3 )
+        public void SetOneSided( Vector2 v0,Vector2 v1,Vector2 v2,Vector2 v3 )
         {
             _vertex0 = v0;
             _vertex1 = v1;
@@ -106,7 +106,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             ComputeProperties( );
         }
 
-        public void SetTwoSided( Vector2 start, Vector2 end )
+        public void SetTwoSided( Vector2 start,Vector2 end )
         {
             _vertex1 = start;
             _vertex2 = end;
@@ -115,24 +115,24 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             ComputeProperties( );
         }
 
-        public override bool TestPoint( ref Transform transform, ref Vector2 point )
+        public override bool TestPoint( ref Transform transform,ref Vector2 point )
         {
             return false;
         }
 
-        public override bool RayCast( ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output )
+        public override bool RayCast( ref RayCastInput input,ref Transform transform,int childIndex,out RayCastOutput output )
         {
-            return RayCastHelper.RayCastEdge( ref _vertex1, ref _vertex2, _oneSided, ref input, ref transform, out output );
+            return RayCastHelper.RayCastEdge(ref _vertex1,ref _vertex2,_oneSided,ref input,ref transform,out output);
         }
 
-        public override void ComputeAABB( ref Transform transform, int childIndex, out AABB aabb )
+        public override void ComputeAABB( ref Transform transform,int childIndex,out AABB aabb )
         {
-            AABBHelper.ComputeEdgeAABB( ref _vertex1, ref _vertex2, ref transform, out aabb );
+            AABBHelper.ComputeEdgeAABB(ref _vertex1,ref _vertex2,ref transform,out aabb);
         }
 
         protected sealed override void ComputeProperties( )
         {
-            _massData._centroid = 0.5f * ( _vertex1 + _vertex2 );
+            _massData._centroid = 0.5f * (_vertex1 + _vertex2);
         }
 
         public override Shape Clone( )

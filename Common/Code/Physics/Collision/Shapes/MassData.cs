@@ -42,7 +42,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <summary>The equal operator</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        public static bool operator ==( MassData left, MassData right )
+        public static bool operator ==( MassData left,MassData right )
         {
             return left._area == right._area && left._mass == right._mass && left._centroid == right._centroid && left._inertia == right._inertia;
         }
@@ -50,9 +50,9 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// <summary>The not equal operator</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        public static bool operator !=( MassData left, MassData right )
+        public static bool operator !=( MassData left,MassData right )
         {
-            return !( left == right );
+            return !(left == right);
         }
 
         public bool Equals( MassData other )
@@ -62,13 +62,13 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
 
         public override bool Equals( object obj )
         {
-            if ( ReferenceEquals( null, obj ) )
+            if( ReferenceEquals(null,obj) )
                 return false;
 
-            if ( obj.GetType( ) != typeof( MassData ) )
+            if( obj.GetType( ) != typeof(MassData) )
                 return false;
 
-            return Equals( (MassData)obj );
+            return Equals((MassData)obj);
         }
 
         public override int GetHashCode( )

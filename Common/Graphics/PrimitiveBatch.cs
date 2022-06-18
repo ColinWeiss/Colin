@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Input;
-using Colin.Extensions;
 
 namespace Colin.Common.Graphics
 {
@@ -33,7 +27,7 @@ namespace Colin.Common.Graphics
             get
             {
                 int result = 0;
-                switch ( PrimitiveType )
+                switch( PrimitiveType )
                 {
                     case PrimitiveType.LineList:
                         result = 2;
@@ -83,11 +77,11 @@ namespace Colin.Common.Graphics
         public PrimitiveBatch( int bufferSize )
         {
             DefaultBufferSize = bufferSize;
-            Vertices = new VertexPositionColorTexture[ DefaultBufferSize ];
-            BasicEffect = new BasicEffect( Engine.Instance.GraphicsDevice )
+            Vertices = new VertexPositionColorTexture[DefaultBufferSize];
+            BasicEffect = new BasicEffect(Engine.Instance.GraphicsDevice)
             {
                 VertexColorEnabled = true,
-                Projection = Matrix.CreateOrthographicOffCenter( 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight, 0, 0, 1 )
+                Projection = Matrix.CreateOrthographicOffCenter(0,EngineInfo.GameViewWidth,EngineInfo.GameViewHeight,0,0,1)
             };
         }
 
@@ -96,16 +90,16 @@ namespace Colin.Common.Graphics
         /// </summary>
         /// <param name="bufferSize">顶点缓冲区的大小.</param>
         /// <param name="texture">纹理.</param>
-        public PrimitiveBatch( int bufferSize, Texture2D texture )
+        public PrimitiveBatch( int bufferSize,Texture2D texture )
         {
             DefaultBufferSize = bufferSize;
-            Vertices = new VertexPositionColorTexture[ DefaultBufferSize ];
-            BasicEffect = new BasicEffect( Engine.Instance.GraphicsDevice )
+            Vertices = new VertexPositionColorTexture[DefaultBufferSize];
+            BasicEffect = new BasicEffect(Engine.Instance.GraphicsDevice)
             {
                 VertexColorEnabled = true,
                 TextureEnabled = true,
                 Texture = texture,
-                Projection = Matrix.CreateOrthographicOffCenter( 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight, 0, 0, 1 )
+                Projection = Matrix.CreateOrthographicOffCenter(0,EngineInfo.GameViewWidth,EngineInfo.GameViewHeight,0,0,1)
             };
         }
 
@@ -115,9 +109,9 @@ namespace Colin.Common.Graphics
         /// <param name="primitiveType">顶点数据排序方式.</param>
         public void Begin( PrimitiveType primitiveType )
         {
-            if ( _hasBegun ) throw new InvalidOperationException( "End must be called before Begin can be called again." );
+            if( _hasBegun ) throw new InvalidOperationException("End must be called before Begin can be called again.");
             PrimitiveType = primitiveType;
-            BasicEffect.CurrentTechnique.Passes[ 0 ].Apply( );
+            BasicEffect.CurrentTechnique.Passes[0].Apply( );
             _hasBegun = true;
             EngineInfo.Graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
         }
@@ -129,10 +123,10 @@ namespace Colin.Common.Graphics
         /// </summary>
         /// <param name="vertexPosition">顶点位置.</param>
         /// <param name="color">顶点颜色.</param>
-        public void AddVertex( Vector2 vertexPosition, Color color )
+        public void AddVertex( Vector2 vertexPosition,Color color )
         {
             BasicEffect.TextureEnabled = false;
-            AddVertex( Vector2.Zero, vertexPosition, color );
+            AddVertex(Vector2.Zero,vertexPosition,color);
         }
 
         /// <summary>
@@ -141,16 +135,16 @@ namespace Colin.Common.Graphics
         /// <param name="textureCoordinate">顶点映射的UV纹理坐标.</param>
         /// <param name="vertexPosition">顶点位置.</param>
         /// <param name="color">顶点颜色.</param>
-        public void AddVertex( Vector2 textureCoordinate, Vector2 vertexPosition, Color color )
+        public void AddVertex( Vector2 textureCoordinate,Vector2 vertexPosition,Color color )
         {
-            if ( !_hasBegun )
-                throw new InvalidOperationException( "Begin must be called before AddVertex can be called." );
+            if( !_hasBegun )
+                throw new InvalidOperationException("Begin must be called before AddVertex can be called.");
             bool newPrimitive = _positionInBuffer % NumVertsPerPrimitive == 0;
-            if ( newPrimitive && _positionInBuffer + NumVertsPerPrimitive >= Vertices.Length )
+            if( newPrimitive && _positionInBuffer + NumVertsPerPrimitive >= Vertices.Length )
                 Flush( );
-            Vertices[ _positionInBuffer ].TextureCoordinate = textureCoordinate;
-            Vertices[ _positionInBuffer ].Position = new Vector3( vertexPosition, 0 );
-            Vertices[ _positionInBuffer ].Color = color;
+            Vertices[_positionInBuffer].TextureCoordinate = textureCoordinate;
+            Vertices[_positionInBuffer].Position = new Vector3(vertexPosition,0);
+            Vertices[_positionInBuffer].Color = color;
             _positionInBuffer++;
         }
 
@@ -160,17 +154,17 @@ namespace Colin.Common.Graphics
         /// <param name="position">位置.</param>
         /// <param name="size">大小.</param>
         /// <param name="color">矩形颜色.</param>
-        public void RenderRectangle( Vector2 position, Vector2 size, Color color )
+        public void RenderRectangle( Vector2 position,Vector2 size,Color color )
         {
-            if ( !_hasBegun )
-                Begin( PrimitiveType );
-            AddVertex( position, color );
-            AddVertex( position + Vector2.UnitX * size.X, color );
-            AddVertex( position + Vector2.UnitY * size.Y, color );
-            AddVertex( position + Vector2.UnitX * size.X, color );
-            AddVertex( position + size, color );
-            AddVertex( position + Vector2.UnitY * size.Y, color );
-            if ( _hasBegun )
+            if( !_hasBegun )
+                Begin(PrimitiveType);
+            AddVertex(position,color);
+            AddVertex(position + Vector2.UnitX * size.X,color);
+            AddVertex(position + Vector2.UnitY * size.Y,color);
+            AddVertex(position + Vector2.UnitX * size.X,color);
+            AddVertex(position + size,color);
+            AddVertex(position + Vector2.UnitY * size.Y,color);
+            if( _hasBegun )
                 End( );
         }
 
@@ -179,8 +173,8 @@ namespace Colin.Common.Graphics
         /// </summary>
         public void End( )
         {
-            if ( !_hasBegun )
-                throw new InvalidOperationException( "必须先调用Begin, 然后才能调用End." );
+            if( !_hasBegun )
+                throw new InvalidOperationException("必须先调用Begin, 然后才能调用End.");
             Flush( );
             _hasBegun = false;
         }
@@ -190,26 +184,26 @@ namespace Colin.Common.Graphics
         /// </summary>
         protected void Flush( )
         {
-            if ( !_hasBegun )
-                throw new InvalidOperationException( "必须先调用Begin, 然后才能调用Flush." );
-            if ( _positionInBuffer == 0 )
+            if( !_hasBegun )
+                throw new InvalidOperationException("必须先调用Begin, 然后才能调用Flush.");
+            if( _positionInBuffer == 0 )
                 return;
             int primitiveCount = _positionInBuffer / NumVertsPerPrimitive;
-            Engine.Instance.GraphicsDevice.DrawUserPrimitives( PrimitiveType, Vertices, 0, primitiveCount );
+            Engine.Instance.GraphicsDevice.DrawUserPrimitives(PrimitiveType,Vertices,0,primitiveCount);
             _positionInBuffer = 0;
         }
 
         public void Dispose( )
         {
-            Dispose( true );
-            GC.SuppressFinalize( this );
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose( bool disposing )
         {
-            if ( disposing && !_isDisposed )
+            if( disposing && !_isDisposed )
             {
-                if ( BasicEffect != null )
+                if( BasicEffect != null )
                     BasicEffect.Dispose( );
                 _isDisposed = true;
             }

@@ -21,7 +21,7 @@ namespace Colin.Common.DataStructures
         /// <summary>
         /// 构建一个新的圆.
         /// </summary>
-        public Circle( Vector2 position, float radius )
+        public Circle( Vector2 position,float radius )
         {
             Center = position;
             Radius = radius;
@@ -32,7 +32,7 @@ namespace Colin.Common.DataStructures
         /// </summary>
         public bool Intersects( Circle circle )
         {
-            return Vector2.Distance( Center, circle.Center ) < Radius + circle.Radius;
+            return Vector2.Distance(Center,circle.Center) < Radius + circle.Radius;
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Colin.Common.DataStructures
         public bool Intersects( Rectangle rectangle )
         {
             Vector2 v = new Vector2(
-                MathHelper.Clamp( Center.X, rectangle.Left, rectangle.Right ),
-                MathHelper.Clamp( Center.Y, rectangle.Top, rectangle.Bottom ) );
+                MathHelper.Clamp(Center.X,rectangle.Left,rectangle.Right),
+                MathHelper.Clamp(Center.Y,rectangle.Top,rectangle.Bottom));
             Vector2 direction = Center - v;
             float distanceSquared = direction.LengthSquared( );
             return distanceSquared > 0 && distanceSquared < Radius * Radius;

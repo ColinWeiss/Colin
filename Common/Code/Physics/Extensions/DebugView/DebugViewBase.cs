@@ -38,19 +38,19 @@ namespace Colin.Common.Code.Physics.Extensions.DebugView
         }
 
         /// <summary>Render a closed polygon provided in CCW order.</summary>
-        public abstract void RenderPolygon( Vector2[ ] vertices, int count, Color color, bool closed = true );
+        public abstract void RenderPolygon( Vector2[ ] vertices,int count,Color color,bool closed = true );
 
         /// <summary>Render a solid closed polygon provided in CCW order.</summary>
-        public abstract void RenderSolidPolygon( Vector2[ ] vertices, int count, Color color, bool outline = true );
+        public abstract void RenderSolidPolygon( Vector2[ ] vertices,int count,Color color,bool outline = true );
 
         /// <summary>Render a circle.</summary>
-        public abstract void RenderCircle( Vector2 center, float radius, Color color );
+        public abstract void RenderCircle( Vector2 center,float radius,Color color );
 
         /// <summary>Render a solid circle.</summary>
-        public abstract void RenderSolidCircle( Vector2 center, float radius, Vector2 axis, Color color );
+        public abstract void RenderSolidCircle( Vector2 center,float radius,Vector2 axis,Color color );
 
         /// <summary>Render a line segment.</summary>
-        public abstract void RenderSegment( Vector2 start, Vector2 end, Color color );
+        public abstract void RenderSegment( Vector2 start,Vector2 end,Color color );
 
         /// <summary>Render a transform. Choose your own length scale.</summary>
         /// <param name="transform">The transform.</param>

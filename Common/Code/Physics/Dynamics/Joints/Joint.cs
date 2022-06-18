@@ -55,24 +55,24 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
             _enabled = true;
         }
 
-        protected Joint( Body bodyA, Body bodyB, JointType jointType ) : this( jointType )
+        protected Joint( Body bodyA,Body bodyB,JointType jointType ) : this(jointType)
         {
             //Can't connect a joint to the same body twice.
-            Debug.Assert( bodyA != bodyB );
+            Debug.Assert(bodyA != bodyB);
 
             _bodyA = bodyA;
             _bodyB = bodyB;
         }
 
         /// <summary>Constructor for fixed joint</summary>
-        protected Joint( Body body, JointType jointType ) : this( jointType )
+        protected Joint( Body body,JointType jointType ) : this(jointType)
         {
             _bodyA = body;
         }
 
-        protected Joint( JointDef def ) : this( def.Type )
+        protected Joint( JointDef def ) : this(def.Type)
         {
-            Debug.Assert( def.BodyA != def.BodyB );
+            Debug.Assert(def.BodyA != def.BodyB);
 
             _jointType = def.Type;
             _bodyA = def.BodyA;
@@ -136,7 +136,7 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
         }
 
         /// <summary>Fires when the joint is broken.</summary>
-        public event Action<Joint, float> Broke;
+        public event Action<Joint,float> Broke;
 
         /// <summary>Get the reaction force on body at the joint anchor in Newtons.</summary>
         /// <param name="invDt">The inverse delta time.</param>
@@ -153,10 +153,10 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
 
         protected void WakeBodies( )
         {
-            if ( BodyA != null )
+            if( BodyA != null )
                 BodyA.Awake = true;
 
-            if ( BodyB != null )
+            if( BodyB != null )
                 BodyB.Awake = true;
         }
 
@@ -176,17 +176,17 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
 
         internal void Validate( float invDt )
         {
-            if ( !_enabled )
+            if( !_enabled )
                 return;
 
-            float jointErrorSquared = GetReactionForce( invDt ).LengthSquared( );
+            float jointErrorSquared = GetReactionForce(invDt).LengthSquared( );
 
-            if ( Math.Abs( jointErrorSquared ) <= _breakpoint * _breakpoint )
+            if( Math.Abs(jointErrorSquared) <= _breakpoint * _breakpoint )
                 return;
 
             _enabled = false;
 
-            Broke?.Invoke( this, (float)Math.Sqrt( jointErrorSquared ) );
+            Broke?.Invoke(this,(float)Math.Sqrt(jointErrorSquared));
         }
 
         internal abstract void SolveVelocityConstraints( ref SolverData data );
@@ -198,30 +198,30 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
 
         public static Joint Create( JointDef def )
         {
-            switch ( def.Type )
+            switch( def.Type )
             {
                 case JointType.Distance:
-                    return new DistanceJoint( (DistanceJointDef)def );
+                    return new DistanceJoint((DistanceJointDef)def);
                 case JointType.FixedMouse:
-                    return new FixedMouseJoint( (FixedMouseJointDef)def );
+                    return new FixedMouseJoint((FixedMouseJointDef)def);
                 case JointType.Prismatic:
-                    return new PrismaticJoint( (PrismaticJointDef)def );
+                    return new PrismaticJoint((PrismaticJointDef)def);
                 case JointType.Revolute:
-                    return new RevoluteJoint( (RevoluteJointDef)def );
+                    return new RevoluteJoint((RevoluteJointDef)def);
                 case JointType.Pulley:
-                    return new PulleyJoint( (PulleyJointDef)def );
+                    return new PulleyJoint((PulleyJointDef)def);
                 case JointType.Gear:
-                    return new GearJoint( (GearJointDef)def );
+                    return new GearJoint((GearJointDef)def);
                 case JointType.Wheel:
-                    return new WheelJoint( (WheelJointDef)def );
+                    return new WheelJoint((WheelJointDef)def);
                 case JointType.Weld:
-                    return new WeldJoint( (WeldJointDef)def );
+                    return new WeldJoint((WeldJointDef)def);
                 case JointType.Friction:
-                    return new FrictionJoint( (FrictionJointDef)def );
+                    return new FrictionJoint((FrictionJointDef)def);
                 case JointType.Motor:
-                    return new MotorJoint( (MotorJointDef)def );
+                    return new MotorJoint((MotorJointDef)def);
                 default:
-                    Debug.Assert( false );
+                    Debug.Assert(false);
                     break;
             }
 

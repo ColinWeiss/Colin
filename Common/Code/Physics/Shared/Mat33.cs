@@ -12,7 +12,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <param name="c1">The c1.</param>
         /// <param name="c2">The c2.</param>
         /// <param name="c3">The c3.</param>
-        public Mat33( Vector3 c1, Vector3 c2, Vector3 c3 )
+        public Mat33( Vector3 c1,Vector3 c2,Vector3 c3 )
         {
             ex = c1;
             ey = c2;
@@ -35,11 +35,11 @@ namespace Colin.Common.Code.Physics.Shared
         /// <returns></returns>
         public Vector3 Solve33( Vector3 b )
         {
-            float det = Vector3.Dot( ex, Vector3.Cross( ey, ez ) );
-            if ( det != 0.0f )
+            float det = Vector3.Dot(ex,Vector3.Cross(ey,ez));
+            if( det != 0.0f )
                 det = 1.0f / det;
 
-            return new Vector3( det * Vector3.Dot( b, Vector3.Cross( ey, ez ) ), det * Vector3.Dot( ex, Vector3.Cross( b, ez ) ), det * Vector3.Dot( ex, Vector3.Cross( ey, b ) ) );
+            return new Vector3(det * Vector3.Dot(b,Vector3.Cross(ey,ez)),det * Vector3.Dot(ex,Vector3.Cross(b,ez)),det * Vector3.Dot(ex,Vector3.Cross(ey,b)));
         }
 
         /// <summary>
@@ -53,10 +53,10 @@ namespace Colin.Common.Code.Physics.Shared
             float a11 = ex.X, a12 = ey.X, a21 = ex.Y, a22 = ey.Y;
             float det = a11 * a22 - a12 * a21;
 
-            if ( det != 0.0f )
+            if( det != 0.0f )
                 det = 1.0f / det;
 
-            return new Vector2( det * ( a22 * b.X - a12 * b.Y ), det * ( a11 * b.Y - a21 * b.X ) );
+            return new Vector2(det * (a22 * b.X - a12 * b.Y),det * (a11 * b.Y - a21 * b.X));
         }
 
         /// Get the inverse of this matrix as a 2-by-2.
@@ -65,7 +65,7 @@ namespace Colin.Common.Code.Physics.Shared
         {
             float a = ex.X, b = ey.X, c = ex.Y, d = ey.Y;
             float det = a * d - b * c;
-            if ( det != 0.0f )
+            if( det != 0.0f )
                 det = 1.0f / det;
 
             M.ex.X = det * d;
@@ -83,25 +83,25 @@ namespace Colin.Common.Code.Physics.Shared
         /// Returns the zero matrix if singular.
         public void GetSymInverse33( ref Mat33 M )
         {
-            float det = MathUtils.Dot( ex, MathUtils.Cross( ey, ez ) );
-            if ( det != 0.0f )
+            float det = MathUtils.Dot(ex,MathUtils.Cross(ey,ez));
+            if( det != 0.0f )
                 det = 1.0f / det;
 
             float a11 = ex.X, a12 = ey.X, a13 = ez.X;
             float a22 = ey.Y, a23 = ez.Y;
             float a33 = ez.Z;
 
-            M.ex.X = det * ( a22 * a33 - a23 * a23 );
-            M.ex.Y = det * ( a13 * a23 - a12 * a33 );
-            M.ex.Z = det * ( a12 * a23 - a13 * a22 );
+            M.ex.X = det * (a22 * a33 - a23 * a23);
+            M.ex.Y = det * (a13 * a23 - a12 * a33);
+            M.ex.Z = det * (a12 * a23 - a13 * a22);
 
             M.ey.X = M.ex.Y;
-            M.ey.Y = det * ( a11 * a33 - a13 * a13 );
-            M.ey.Z = det * ( a13 * a12 - a11 * a23 );
+            M.ey.Y = det * (a11 * a33 - a13 * a13);
+            M.ey.Z = det * (a13 * a12 - a11 * a23);
 
             M.ez.X = M.ex.Z;
             M.ez.Y = M.ey.Z;
-            M.ez.Z = det * ( a11 * a22 - a12 * a12 );
+            M.ez.Z = det * (a11 * a22 - a12 * a12);
         }
     }
 }

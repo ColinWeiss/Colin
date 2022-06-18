@@ -5,7 +5,7 @@ namespace Colin.Common.Code.Physics.Definitions.Shapes
 {
     public sealed class CircleShapeDef : ShapeDef
     {
-        public CircleShapeDef( ) : base( ShapeType.Circle )
+        public CircleShapeDef( ) : base(ShapeType.Circle)
         {
             SetDefaults( );
         }

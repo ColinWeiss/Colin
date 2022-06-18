@@ -11,7 +11,7 @@ namespace Colin.Common.Code.Physics.Definitions.Shapes
     /// </summary>
     public sealed class ChainShapeDef : ShapeDef
     {
-        public ChainShapeDef( ) : base( ShapeType.Chain )
+        public ChainShapeDef( ) : base(ShapeType.Chain)
         {
             SetDefaults( );
         }

@@ -23,7 +23,7 @@ namespace Colin.Common.Code.Physics.Extensions.Controllers.ControllerBase
         /// <returns><c>true</c> if the body has the specified flag; otherwise, <c>false</c>.</returns>
         public bool IsControllerIgnored( ControllerType controller )
         {
-            return ( ControllerFlags & controller ) == controller;
+            return (ControllerFlags & controller) == controller;
         }
     }
 }

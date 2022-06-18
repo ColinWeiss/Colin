@@ -135,17 +135,17 @@ namespace Colin
             MouseState = Mouse.GetState( );
             KeyboardStateLast = KeyboardState;
             KeyboardState = Keyboard.GetState( );
-            if ( MouseLeftUp && _doubleLeftClickTimer <= 0 && !MouseDoubleLeftClick )
+            if( MouseLeftUp && _doubleLeftClickTimer <= 0 && !MouseDoubleLeftClick )
             {
                 _doubleLeftClickTimer = 30;
             }
-            else if ( MouseLeftUp && _doubleLeftClickTimer > 0 )
+            else if( MouseLeftUp && _doubleLeftClickTimer > 0 )
             {
                 MouseDoubleLeftClick = true;
             }
-            else if ( _doubleLeftClickTimer <= 0 )
+            else if( _doubleLeftClickTimer <= 0 )
                 MouseDoubleLeftClick = false;
-            if ( _doubleLeftClickTimer > 0 )
+            if( _doubleLeftClickTimer > 0 )
                 _doubleLeftClickTimer--;
         }
 
@@ -173,7 +173,7 @@ namespace Colin
         /// <returns>如若是, 返回 <seealso href="true"/>, 否则返回 <seealso href="false"/>.</returns>
         public static bool KeyClick( Keys keys )
         {
-            return KeyboardState.IsKeyDown( keys ) && KeyboardStateLast.IsKeyUp( keys );
+            return KeyboardState.IsKeyDown(keys) && KeyboardStateLast.IsKeyUp(keys);
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Colin
         /// <returns>如若是, 返回 <seealso href="true"/>, 否则返回 <seealso href="false"/>.</returns>
         public static bool KeyUp( Keys keys )
         {
-            return KeyboardState.IsKeyUp( keys ) && KeyboardStateLast.IsKeyDown( keys );
+            return KeyboardState.IsKeyUp(keys) && KeyboardStateLast.IsKeyDown(keys);
         }
 
     }

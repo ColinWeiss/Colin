@@ -29,44 +29,44 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay
         /// <summary>Decompose the polygon into several smaller non-concave polygon.</summary>
         public static List<Vertices> ConvexPartition( Vertices vertices )
         {
-            Debug.Assert( vertices.Count > 3 );
+            Debug.Assert(vertices.Count > 3);
 
             Polygon.Polygon poly = new Polygon.Polygon( );
 
-            foreach ( Vector2 vertex in vertices )
+            foreach( Vector2 vertex in vertices )
             {
-                poly.Points.Add( new TriangulationPoint( vertex.X, vertex.Y ) );
+                poly.Points.Add(new TriangulationPoint(vertex.X,vertex.Y));
             }
 
-            if ( vertices.Holes != null )
+            if( vertices.Holes != null )
             {
-                foreach ( Vertices holeVertices in vertices.Holes )
+                foreach( Vertices holeVertices in vertices.Holes )
                 {
                     Polygon.Polygon hole = new Polygon.Polygon( );
 
-                    foreach ( Vector2 vertex in holeVertices )
+                    foreach( Vector2 vertex in holeVertices )
                     {
-                        hole.Points.Add( new TriangulationPoint( vertex.X, vertex.Y ) );
+                        hole.Points.Add(new TriangulationPoint(vertex.X,vertex.Y));
                     }
 
-                    poly.AddHole( hole );
+                    poly.AddHole(hole);
                 }
             }
 
             DTSweepContext tcx = new DTSweepContext( );
-            tcx.PrepareTriangulation( poly );
-            DTSweep.Triangulate( tcx );
+            tcx.PrepareTriangulation(poly);
+            DTSweep.Triangulate(tcx);
 
             List<Vertices> results = new List<Vertices>( );
 
-            foreach ( DelaunayTriangle triangle in poly.Triangles )
+            foreach( DelaunayTriangle triangle in poly.Triangles )
             {
                 Vertices v = new Vertices( );
-                foreach ( TriangulationPoint p in triangle.Points )
+                foreach( TriangulationPoint p in triangle.Points )
                 {
-                    v.Add( new Vector2( (float)p.X, (float)p.Y ) );
+                    v.Add(new Vector2((float)p.X,(float)p.Y));
                 }
-                results.Add( v );
+                results.Add(v);
             }
 
             return results;

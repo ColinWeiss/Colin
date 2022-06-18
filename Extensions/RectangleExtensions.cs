@@ -9,7 +9,7 @@ namespace Colin.Extensions
         /// </summary>
         public static Vector2 GetBottomCenter( this Rectangle rect )
         {
-            return new Vector2( rect.X + rect.Width / 2.0f, rect.Bottom );
+            return new Vector2(rect.X + rect.Width / 2.0f,rect.Bottom);
         }
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace Colin.Extensions
         /// <returns>如若是, 返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
         public static bool IntersectMouse( this Rectangle rectangle )
         {
-            return rectangle.Intersects( new Rectangle( Input.MousePosition.ToPoint( ), Point.Zero ) );
+            return rectangle.Intersects(new Rectangle(Input.MousePosition.ToPoint( ),Point.Zero));
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Colin.Extensions
         /// <returns>如若是, 返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
         public static bool IntersectMouseLast( this Rectangle rectangle )
         {
-            return rectangle.Intersects( new Rectangle( Input.MouseStateLast.Position, Point.Zero ) );
+            return rectangle.Intersects(new Rectangle(Input.MouseStateLast.Position,Point.Zero));
         }
 
     }

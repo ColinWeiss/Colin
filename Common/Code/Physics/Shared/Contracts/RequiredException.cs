@@ -2,6 +2,6 @@
 {
     public class RequiredException : Exception
     {
-        public RequiredException( string message ) : base( message ) { }
+        public RequiredException( string message ) : base(message) { }
     }
 }

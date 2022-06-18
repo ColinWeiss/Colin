@@ -9,7 +9,7 @@
             CategoryMask = Settings.DefaultFixtureCollidesWith;
         }
 
-        public Filter( short group, Category category, Category mask )
+        public Filter( short group,Category category,Category mask )
         {
             Group = group;
             Category = category;

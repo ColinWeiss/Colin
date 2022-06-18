@@ -15,7 +15,7 @@ namespace Colin.Common.Graphics
         {
             get
             {
-                if ( _instance == null )
+                if( _instance == null )
                     _instance = new ScreenRender( );
                 return _instance;
             }
@@ -33,11 +33,11 @@ namespace Colin.Common.Graphics
         /// <param name="data">要添加的屏幕着色器.</param>
         public static void AddScreenShaderData( ScreenShader data )
         {
-            if ( !data.ForInternalOptimizationBoolen )
+            if( !data.ForInternalOptimizationBoolen )
             {
-                if ( !Instance.ScreenShaders.Contains( data ) )
+                if( !Instance.ScreenShaders.Contains(data) )
                 {
-                    Instance.ScreenShaders.Add( data );
+                    Instance.ScreenShaders.Add(data);
                     data.ForInternalOptimizationBoolen = true;
                 }
             }
@@ -51,10 +51,10 @@ namespace Colin.Common.Graphics
         /// <returns></returns>
         public static T GetScreenShaderData<T>( ) where T : ScreenShader, new()
         {
-            int num = Instance.ScreenShaders.FindIndex( a => typeof( T ).FullName == a.GetType( ).FullName );
-            if ( num == -1 )
+            int num = Instance.ScreenShaders.FindIndex(a => typeof(T).FullName == a.GetType( ).FullName);
+            if( num == -1 )
                 return null;
-            return Instance.ScreenShaders[ num ] as T;
+            return Instance.ScreenShaders[num] as T;
         }
 
         /// <summary>
@@ -65,10 +65,10 @@ namespace Colin.Common.Graphics
         /// <returns></returns>
         public static ScreenShader GetScreenShaderData( string screenShaderName )
         {
-            int num = Instance.ScreenShaders.FindIndex( a => a.ScreenShaderName == screenShaderName );
-            if ( num == -1 )
+            int num = Instance.ScreenShaders.FindIndex(a => a.ScreenShaderName == screenShaderName);
+            if( num == -1 )
                 return null;
-            return Instance.ScreenShaders[ num ];
+            return Instance.ScreenShaders[num];
         }
 
         /// <summary>
@@ -78,11 +78,11 @@ namespace Colin.Common.Graphics
         /// <param name="data">要删除的屏幕着色器.</param>
         public static void RemoveShaderData( ScreenShader data )
         {
-            if ( data.ForInternalOptimizationBoolen )
+            if( data.ForInternalOptimizationBoolen )
             {
-                if ( !Instance.ScreenShaders.Contains( data ) )
+                if( !Instance.ScreenShaders.Contains(data) )
                 {
-                    Instance.ScreenShaders.Remove( data );
+                    Instance.ScreenShaders.Remove(data);
                     data.ForInternalOptimizationBoolen = false;
                 }
             }
@@ -90,12 +90,12 @@ namespace Colin.Common.Graphics
 
         public override void Update( GameTime gameTime )
         {
-            foreach ( ScreenShader item in ScreenShaders )
+            foreach( ScreenShader item in ScreenShaders )
             {
-                if ( item.Enable )
-                    item.UpdateShader( gameTime );
+                if( item.Enable )
+                    item.UpdateShader(gameTime);
             }
-            base.Update( gameTime );
+            base.Update(gameTime);
         }
 
         /// <summary>
@@ -103,42 +103,42 @@ namespace Colin.Common.Graphics
         /// </summary>
         internal static void RenderFrame( )
         {
-            Engine.Instance.GraphicsDevice.SetRenderTarget( Engine.Instance.EngineRenderTargetSwap );
-            for ( int screenShaderCount = 0; screenShaderCount < Instance.ScreenShaders.Count; screenShaderCount++ )
+            Engine.Instance.GraphicsDevice.SetRenderTarget(Engine.Instance.EngineRenderTargetSwap);
+            for( int screenShaderCount = 0; screenShaderCount < Instance.ScreenShaders.Count; screenShaderCount++ )
             {
-                EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.NonPremultiplied );
-                if ( Engine._engineRenderTargetSwitch )
+                EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate,BlendState.NonPremultiplied);
+                if( Engine._engineRenderTargetSwitch )
                 {
-                    Instance.ScreenShaders[ screenShaderCount ].ApplyPass( "ScreenPass" );
-                    EngineInfo.SpriteBatch.Draw( Engine.Instance.EngineRenderTarget, Vector2.Zero, Color.White );
-                    Engine.Instance.GraphicsDevice.SetRenderTarget( Engine.Instance.EngineRenderTarget );
+                    Instance.ScreenShaders[screenShaderCount].ApplyPass("ScreenPass");
+                    EngineInfo.SpriteBatch.Draw(Engine.Instance.EngineRenderTarget,Vector2.Zero,Color.White);
+                    Engine.Instance.GraphicsDevice.SetRenderTarget(Engine.Instance.EngineRenderTarget);
                 }
                 else
                 {
-                    Instance.ScreenShaders[ screenShaderCount ].ApplyPass( "ScreenPass" );
-                    EngineInfo.SpriteBatch.Draw( Engine.Instance.EngineRenderTargetSwap, Vector2.Zero, Color.White );
-                    Engine.Instance.GraphicsDevice.SetRenderTarget( Engine.Instance.EngineRenderTargetSwap );
+                    Instance.ScreenShaders[screenShaderCount].ApplyPass("ScreenPass");
+                    EngineInfo.SpriteBatch.Draw(Engine.Instance.EngineRenderTargetSwap,Vector2.Zero,Color.White);
+                    Engine.Instance.GraphicsDevice.SetRenderTarget(Engine.Instance.EngineRenderTargetSwap);
                 }
-                if ( Instance.ScreenShaders.Count > 1 )
+                if( Instance.ScreenShaders.Count > 1 )
                     Engine._engineRenderTargetSwitch = !Engine._engineRenderTargetSwitch;
                 EngineInfo.SpriteBatch.End( );
             }
-            Engine.Instance.GraphicsDevice.SetRenderTarget( null );
-            if ( Engine._engineRenderTargetSwitch )
+            Engine.Instance.GraphicsDevice.SetRenderTarget(null);
+            if( Engine._engineRenderTargetSwitch )
             {
-                EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend );
-                EngineInfo.SpriteBatch.Draw( Engine.Instance.EngineRenderTarget, Vector2.Zero, Color.White );
+                EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend);
+                EngineInfo.SpriteBatch.Draw(Engine.Instance.EngineRenderTarget,Vector2.Zero,Color.White);
                 EngineInfo.SpriteBatch.End( );
             }
             else
             {
-                EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend );
-                EngineInfo.SpriteBatch.Draw( Engine.Instance.EngineRenderTargetSwap, Vector2.Zero, Color.White );
+                EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend);
+                EngineInfo.SpriteBatch.Draw(Engine.Instance.EngineRenderTargetSwap,Vector2.Zero,Color.White);
                 EngineInfo.SpriteBatch.End( );
             }
         }
 
-        public ScreenRender( ) : base( Engine.Instance )
+        public ScreenRender( ) : base(Engine.Instance)
         {
             Engine._engineRenderTargetSwitch = true;
         }

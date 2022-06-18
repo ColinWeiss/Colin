@@ -11,7 +11,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
     /// mass will be. 2. if you add/remove shapes from a body and recompute the mass, the joints will be broken.</summary>
     public sealed class RevoluteJointDef : JointDef
     {
-        public RevoluteJointDef( ) : base( JointType.Revolute )
+        public RevoluteJointDef( ) : base(JointType.Revolute)
         {
             SetDefaults( );
         }
@@ -43,12 +43,12 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         /// <summary>The upper angle for the joint limit (radians).</summary>
         public float UpperAngle { get; set; }
 
-        public void Initialize( Body bA, Body bB, Vector2 anchor )
+        public void Initialize( Body bA,Body bB,Vector2 anchor )
         {
             BodyA = bA;
             BodyB = bB;
-            LocalAnchorA = BodyA.GetLocalPoint( anchor );
-            LocalAnchorB = BodyB.GetLocalPoint( anchor );
+            LocalAnchorA = BodyA.GetLocalPoint(anchor);
+            LocalAnchorB = BodyB.GetLocalPoint(anchor);
             ReferenceAngle = BodyB.Rotation - BodyA.Rotation;
         }
 

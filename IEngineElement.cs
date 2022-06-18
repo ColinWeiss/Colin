@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin
+﻿namespace Colin
 {
     /// <summary>
     /// 表示一个引擎中可执行初始化、逻辑刷新、绘制相关操作的对象.

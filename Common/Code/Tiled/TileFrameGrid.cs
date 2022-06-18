@@ -40,12 +40,19 @@ namespace Colin.Common.Code.Tiled
             FrameHeight * Tile.TileMap.GridSize
             );
 
+        public Rectangle Rectangle => new Rectangle(
+            FrameX,
+            FrameY,
+            FrameWidth,
+            FrameHeight
+            );
+
         /// <summary>
         /// 设置物块帧格.
         /// </summary>
         /// <param name="start">帧格选取起点.</param>
         /// <param name="size">帧格大小.</param>
-        public void SetFrame( Point start , Point size )
+        public void SetFrame( Point start,Point size )
         {
             FrameX = start.X;
             FrameY = start.Y;
@@ -60,7 +67,7 @@ namespace Colin.Common.Code.Tiled
         /// <param name="frameY">帧格选取纵坐标.</param>
         /// <param name="frameWidth">帧格宽度.</param>
         /// <param name="frameHeight">帧格高度.</param>
-        public void SetFrame( int frameX , int frameY , int frameWidth , int frameHeight )
+        public void SetFrame( int frameX,int frameY,int frameWidth,int frameHeight )
         {
             FrameX = frameX;
             FrameY = frameY;
@@ -87,8 +94,6 @@ namespace Colin.Common.Code.Tiled
             FrameY = 0;
             FrameWidth = 0;
             FrameHeight = 0;
-            frameCache = Rectangle.Empty;
         }
-
     }
 }

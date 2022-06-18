@@ -2,11 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Common.Code.UI
 {
@@ -23,9 +18,9 @@ namespace Colin.Common.Code.UI
 
         public Container( )
         {
-            Events = new ContainerEvents( this );
-            ContainerElement = new ContainerElement( this );
-            ContainerPointer = new ContainerPointer( this );
+            Events = new ContainerEvents(this);
+            ContainerElement = new ContainerElement(this);
+            ContainerPointer = new ContainerPointer(this);
             ContainerItems = new List<Container>( );
         }
 
@@ -58,9 +53,9 @@ namespace Colin.Common.Code.UI
         public List<Container> GetContainerTree( )
         {
             List<Container> result = new List<Container>( );
-            result.Add( this );
-            for ( int count = 0; count < ContainerItems.Count; count++ )
-                result.Concat( ContainerItems[ count ].GetContainerTree( ) );
+            result.Add(this);
+            for( int count = 0; count < ContainerItems.Count; count++ )
+                result.Concat(ContainerItems[count].GetContainerTree( ));
             return result;
         }
 
@@ -71,11 +66,11 @@ namespace Colin.Common.Code.UI
         public List<Container> GetActiveContainerTree( )
         {
             List<Container> result = new List<Container>( );
-            if ( UpdateEnable )
-                result.Add( this );
-            for ( int sub = 0; sub < ContainerItems.Count; sub++ )
-                if ( ContainerItems[ sub ].UpdateEnable )
-                    result.Concat( ContainerItems[ sub ].GetActiveContainerTree( ) );
+            if( UpdateEnable )
+                result.Add(this);
+            for( int sub = 0; sub < ContainerItems.Count; sub++ )
+                if( ContainerItems[sub].UpdateEnable )
+                    result.Concat(ContainerItems[sub].GetActiveContainerTree( ));
             return result;
         }
 
@@ -88,19 +83,19 @@ namespace Colin.Common.Code.UI
         public void Register( Container container )
         {
             container.ParentContainer = this;
-            ContainerItems.Add( container );
+            ContainerItems.Add(container);
         }
 
         public ContainerElement ContainerElement;
 
-        public Vector2 Size => new Vector2( ContainerElement.Width, ContainerElement.Height );
+        public Vector2 Size => new Vector2(ContainerElement.Width,ContainerElement.Height);
 
-        public Vector2 Location => new Vector2( ContainerElement.LocationX, ContainerElement.LocationY );
+        public Vector2 Location => new Vector2(ContainerElement.LocationX,ContainerElement.LocationY);
 
         /// <summary>
         /// 获取该容器的基础矩形.
         /// </summary>
-        public Rectangle BaseRectangle => new Rectangle( (int)ContainerElement.LocationX, (int)ContainerElement.LocationY, (int)ContainerElement.Width, (int)ContainerElement.Height );
+        public Rectangle BaseRectangle => new Rectangle((int)ContainerElement.LocationX,(int)ContainerElement.LocationY,(int)ContainerElement.Width,(int)ContainerElement.Height);
 
         /// <summary>
         /// 指示该容器是否启用剪裁功能.
@@ -134,19 +129,19 @@ namespace Colin.Common.Code.UI
         public virtual Container SeekAt( )
         {
             Container target = null;
-            for ( int sub = 0; sub < ContainerItems.Count; sub++ )
+            for( int sub = 0; sub < ContainerItems.Count; sub++ )
             {
-                if ( ContainerItems[ sub ].SeekAt( ) == null )
+                if( ContainerItems[sub].SeekAt( ) == null )
                 {
                     target = null;
                 }
-                else if ( ContainerItems[ sub ].SeekAt( ) != null )
+                else if( ContainerItems[sub].SeekAt( ) != null )
                 {
-                    target = ContainerItems[ sub ].SeekAt( );
+                    target = ContainerItems[sub].SeekAt( );
                     return target;
                 }
             }
-            if ( GetInterviewState( ) )
+            if( GetInterviewState( ) )
             {
                 return this;
             }
@@ -159,8 +154,8 @@ namespace Colin.Common.Code.UI
         /// <returns>若是, 返回 <seealso href="true"/> , 否则返回 <seealso href="false"/>.</returns>
         public virtual bool GetInterviewState( )
         {
-            if ( ScissorRectangle.Contains( Input.MousePosition ) &&
-                BaseRectangle.Contains( Input.MousePosition ) )
+            if( ScissorRectangle.Contains(Input.MousePosition) &&
+                BaseRectangle.Contains(Input.MousePosition) )
             {
                 Input.MouseContorl = true;
                 return true;
@@ -187,8 +182,8 @@ namespace Colin.Common.Code.UI
         /// </summary>
         protected virtual void InitializeContainerItems( )
         {
-            for ( int count = 0; count < ContainerItems.Count; count++ )
-                ContainerItems[ count ].DoInitialize( );
+            for( int count = 0; count < ContainerItems.Count; count++ )
+                ContainerItems[count].DoInitialize( );
         }
 
         bool _started = false;
@@ -206,9 +201,9 @@ namespace Colin.Common.Code.UI
         public void DoReset( )
         {
             ResetUpdate( );
-            for ( int count = 0; count < ContainerItems.Count; count++ )
-                if ( ContainerItems[ count ].UpdateEnable )
-                    ContainerItems[ count ].DoReset( );
+            for( int count = 0; count < ContainerItems.Count; count++ )
+                if( ContainerItems[count].UpdateEnable )
+                    ContainerItems[count].DoReset( );
         }
 
         /// <summary>
@@ -226,26 +221,26 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoUpdate( )
         {
-            if ( !_started )
+            if( !_started )
             {
                 _started = true;
                 UpdateStart( );
             }
-            if ( Events.Droping && _scuiLayer.LeftClickContainer == this )
-                ContainerElement.SetLocation( new Vector2( Mouse.GetState( ).X, Mouse.GetState( ).Y ) - Events.SelectPoint );
+            if( Events.Droping && _scuiLayer.LeftClickContainer == this )
+                ContainerElement.SetLocation(new Vector2(Mouse.GetState( ).X,Mouse.GetState( ).Y) - Events.SelectPoint);
             this?.UpdateSelf( );
             this?.UpdateContainerItems( );
             ScissorRectangle = BaseRectangle;
-            if ( ParentContainer != null && ParentContainer.CanSeek )
+            if( ParentContainer != null && ParentContainer.CanSeek )
                 ScissorRectangle = ParentContainer.BaseRectangle;
-            if ( ParentContainer != null && ParentContainer.CanSeek && ParentContainer.EnableScissor )
+            if( ParentContainer != null && ParentContainer.CanSeek && ParentContainer.EnableScissor )
                 EnableScissor = true;
-            SetLayerout( ref ContainerElement );
+            SetLayerout(ref ContainerElement);
             ContainerElement.UpdateElement( );
-            MoveFunction?.UpdateLocation( ContainerElement );
-            if ( MoveFunction != null )
-                ContainerElement.SetLocation( Location.X + MoveFunction.VelocityX, Location.Y + MoveFunction.VelocityY );
-            ScaleFunction?.UpdateScale( ContainerElement );
+            MoveFunction?.UpdateLocation(ContainerElement);
+            if( MoveFunction != null )
+                ContainerElement.SetLocation(Location.X + MoveFunction.VelocityX,Location.Y + MoveFunction.VelocityY);
+            ScaleFunction?.UpdateScale(ContainerElement);
             this?.PostUpdate( );
         }
         /// <summary>
@@ -272,9 +267,9 @@ namespace Colin.Common.Code.UI
         /// </summary>
         protected virtual void UpdateContainerItems( )
         {
-            for ( int count = 0; count < ContainerItems.Count; count++ )
-                if ( ContainerItems[ count ].UpdateEnable )
-                    ContainerItems[ count ].DoUpdate( );
+            for( int count = 0; count < ContainerItems.Count; count++ )
+                if( ContainerItems[count].UpdateEnable )
+                    ContainerItems[count].DoUpdate( );
         }
         /// <summary>
         /// 执行于该容器进行交互检测后.
@@ -295,7 +290,7 @@ namespace Colin.Common.Code.UI
         /// </summary>
         public void DoRender( )
         {
-            if ( EnableScissor )
+            if( EnableScissor )
             {
                 EngineInfo.SpriteBatch.End( );
                 RasterizerState OverflowHiddenRasterizerState = new RasterizerState
@@ -305,18 +300,18 @@ namespace Colin.Common.Code.UI
                 };
                 EngineInfo.SpriteBatch.GraphicsDevice.ScissorRectangle = ScissorRectangle;
                 EngineInfo.SpriteBatch.GraphicsDevice.RasterizerState = OverflowHiddenRasterizerState;
-                if ( !EnableScissorShader )
-                    EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null );
+                if( !EnableScissorShader )
+                    EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.AnisotropicClamp,DepthStencilState.None,OverflowHiddenRasterizerState,null);
                 else
-                    EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null );
+                    EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend,SamplerState.AnisotropicClamp,DepthStencilState.None,OverflowHiddenRasterizerState,null);
             }
             this?.RenderSelf( );
             this?.RenderContainerItems( );
             this?.PostRender( );
-            if ( EnableScissor )
+            if( EnableScissor )
             {
                 EngineInfo.SpriteBatch.End( );
-                EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null );
+                EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointWrap,null,null);
             }
         }
         /// <summary>
@@ -332,9 +327,9 @@ namespace Colin.Common.Code.UI
         /// </summary>
         protected virtual void RenderContainerItems( )
         {
-            for ( int count = ContainerItems.Count - 1; count >= 0; count-- )
-                if ( ContainerItems[ count ].Visable )
-                    ContainerItems[ count ].DoRender( );
+            for( int count = ContainerItems.Count - 1; count >= 0; count-- )
+                if( ContainerItems[count].Visable )
+                    ContainerItems[count].DoRender( );
         }
         /// <summary>
         /// 绘制于该容器进行自身及其子容器的绘制后.

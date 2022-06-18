@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Common.Code.UI
+﻿namespace Colin.Common.Code.UI
 {
     /// <summary>
     /// 指示当前操作指向的容器.
@@ -27,10 +21,10 @@ namespace Colin.Common.Code.UI
         public void LastControl( )
         {
             Count--;
-            if ( Count < 0 )
+            if( Count < 0 )
                 Count = Container.GetActiveContainerTree( ).Count - 1;
-            Container = Container.GetActiveContainerTree( )[ Count ];
-            if ( !Container.Events.CanGetForPointer )
+            Container = Container.GetActiveContainerTree( )[Count];
+            if( !Container.Events.CanGetForPointer )
                 LastControl( );
         }
 
@@ -40,10 +34,10 @@ namespace Colin.Common.Code.UI
         public void NextControl( )
         {
             Count++;
-            if ( Count > Container.GetActiveContainerTree( ).Count - 1 )
+            if( Count > Container.GetActiveContainerTree( ).Count - 1 )
                 Count = 0;
-            Container = Container.GetActiveContainerTree( )[ Count ];
-            if ( !Container.Events.CanGetForPointer )
+            Container = Container.GetActiveContainerTree( )[Count];
+            if( !Container.Events.CanGetForPointer )
                 NextControl( );
         }
 

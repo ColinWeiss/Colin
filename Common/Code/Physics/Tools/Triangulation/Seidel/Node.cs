@@ -7,16 +7,16 @@
         public List<Node> ParentList;
         protected Node RightChild;
 
-        protected Node( Node left, Node right )
+        protected Node( Node left,Node right )
         {
             ParentList = new List<Node>( );
             LeftChild = left;
             RightChild = right;
 
-            if ( left != null )
-                left.ParentList.Add( this );
-            if ( right != null )
-                right.ParentList.Add( this );
+            if( left != null )
+                left.ParentList.Add(this);
+            if( right != null )
+                right.ParentList.Add(this);
         }
 
         public abstract Sink Locate( Edge s );
@@ -25,15 +25,15 @@
         // Make sure parent pointers are updated
         public void Replace( Node node )
         {
-            foreach ( Node parent in node.ParentList )
+            foreach( Node parent in node.ParentList )
             {
                 // Select the correct node to replace (left or right child)
-                if ( parent.LeftChild == node )
+                if( parent.LeftChild == node )
                     parent.LeftChild = this;
                 else
                     parent.RightChild = this;
             }
-            ParentList.AddRange( node.ParentList );
+            ParentList.AddRange(node.ParentList);
         }
     }
 }

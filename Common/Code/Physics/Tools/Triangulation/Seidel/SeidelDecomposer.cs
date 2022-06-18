@@ -32,31 +32,31 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Seidel
         /// <param name="vertices">The polygon to decompose.</param>
         /// <param name="sheer">The sheer to use if you get bad results, try using a higher value.</param>
         /// <returns>A list of triangles</returns>
-        public static List<Vertices> ConvexPartition( Vertices vertices, float sheer = 0.001f )
+        public static List<Vertices> ConvexPartition( Vertices vertices,float sheer = 0.001f )
         {
-            Debug.Assert( vertices.Count > 3 );
+            Debug.Assert(vertices.Count > 3);
 
-            List<Point> compatList = new List<Point>( vertices.Count );
+            List<Point> compatList = new List<Point>(vertices.Count);
 
-            foreach ( Vector2 vertex in vertices )
+            foreach( Vector2 vertex in vertices )
             {
-                compatList.Add( new Point( vertex.X, vertex.Y ) );
+                compatList.Add(new Point(vertex.X,vertex.Y));
             }
 
-            Triangulator t = new Triangulator( compatList, sheer );
+            Triangulator t = new Triangulator(compatList,sheer);
 
             List<Vertices> list = new List<Vertices>( );
 
-            foreach ( List<Point> triangle in t.Triangles )
+            foreach( List<Point> triangle in t.Triangles )
             {
-                Vertices outTriangles = new Vertices( triangle.Count );
+                Vertices outTriangles = new Vertices(triangle.Count);
 
-                foreach ( Point outTriangle in triangle )
+                foreach( Point outTriangle in triangle )
                 {
-                    outTriangles.Add( new Vector2( outTriangle.X, outTriangle.Y ) );
+                    outTriangles.Add(new Vector2(outTriangle.X,outTriangle.Y));
                 }
 
-                list.Add( outTriangles );
+                list.Add(outTriangles);
             }
 
             return list;
@@ -66,30 +66,30 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Seidel
         /// <param name="vertices">The polygon to decompose.</param>
         /// <param name="sheer">The sheer to use if you get bad results, try using a higher value.</param>
         /// <returns>A list of trapezoids</returns>
-        public static List<Vertices> ConvexPartitionTrapezoid( Vertices vertices, float sheer = 0.001f )
+        public static List<Vertices> ConvexPartitionTrapezoid( Vertices vertices,float sheer = 0.001f )
         {
-            List<Point> compatList = new List<Point>( vertices.Count );
+            List<Point> compatList = new List<Point>(vertices.Count);
 
-            foreach ( Vector2 vertex in vertices )
+            foreach( Vector2 vertex in vertices )
             {
-                compatList.Add( new Point( vertex.X, vertex.Y ) );
+                compatList.Add(new Point(vertex.X,vertex.Y));
             }
 
-            Triangulator t = new Triangulator( compatList, sheer );
+            Triangulator t = new Triangulator(compatList,sheer);
 
             List<Vertices> list = new List<Vertices>( );
 
-            foreach ( Trapezoid trapezoid in t.Trapezoids )
+            foreach( Trapezoid trapezoid in t.Trapezoids )
             {
                 Vertices verts = new Vertices( );
 
                 List<Point> points = trapezoid.GetVertices( );
-                foreach ( Point point in points )
+                foreach( Point point in points )
                 {
-                    verts.Add( new Vector2( point.X, point.Y ) );
+                    verts.Add(new Vector2(point.X,point.Y));
                 }
 
-                list.Add( verts );
+                list.Add(verts);
             }
 
             return list;

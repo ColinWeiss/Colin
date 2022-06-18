@@ -10,7 +10,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
     /// local axis helps when saving and loading a game.</summary>
     public sealed class PrismaticJointDef : JointDef
     {
-        public PrismaticJointDef( ) : base( JointType.Prismatic )
+        public PrismaticJointDef( ) : base(JointType.Prismatic)
         {
             SetDefaults( );
         }
@@ -45,13 +45,13 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         /// <summary>The upper translation limit, usually in meters.</summary>
         public float UpperTranslation { get; set; }
 
-        public void Initialize( Body bA, Body bB, Vector2 anchor, Vector2 axis )
+        public void Initialize( Body bA,Body bB,Vector2 anchor,Vector2 axis )
         {
             BodyA = bA;
             BodyB = bB;
-            LocalAnchorA = BodyA.GetLocalPoint( anchor );
-            LocalAnchorB = BodyB.GetLocalPoint( anchor );
-            LocalAxisA = BodyA.GetLocalVector( axis );
+            LocalAnchorA = BodyA.GetLocalPoint(anchor);
+            LocalAnchorB = BodyB.GetLocalPoint(anchor);
+            LocalAxisA = BodyA.GetLocalVector(axis);
             ReferenceAngle = BodyB.Rotation - BodyA.Rotation;
         }
 
@@ -59,7 +59,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         {
             LocalAnchorA = Vector2.Zero;
             LocalAnchorB = Vector2.Zero;
-            LocalAxisA = new Vector2( 1.0f, 0.0f );
+            LocalAxisA = new Vector2(1.0f,0.0f);
             ReferenceAngle = 0.0f;
             EnableLimit = false;
             LowerTranslation = 0.0f;

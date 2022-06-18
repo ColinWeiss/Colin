@@ -15,7 +15,7 @@ namespace Colin.Common.Code.Physics.Shared
 
         public Graph( EqualityComparer<T> comparer )
         {
-            Contract.Requires( comparer != null, "You supplied a null comparer" );
+            Contract.Requires(comparer != null,"You supplied a null comparer");
 
             _comparer = comparer;
         }
@@ -30,7 +30,7 @@ namespace Colin.Common.Code.Physics.Shared
         {
             GraphNode<T> node = First;
 
-            for ( int i = 0; i < Count; i++ )
+            for( int i = 0; i < Count; i++ )
             {
                 GraphNode<T> node0 = node;
                 node = node.Next;
@@ -48,8 +48,8 @@ namespace Colin.Common.Code.Physics.Shared
         /// <returns>The node that represents the value</returns>
         public GraphNode<T> Add( T value )
         {
-            GraphNode<T> result = new GraphNode<T>( value );
-            Add( result );
+            GraphNode<T> result = new GraphNode<T>(value);
+            Add(result);
             return result;
         }
 
@@ -57,9 +57,9 @@ namespace Colin.Common.Code.Physics.Shared
         /// <remarks>Note that this method is O(1) in worst case.</remarks>
         public void Add( GraphNode<T> node )
         {
-            Contract.Requires( node != null, nameof( node ) + " must not be null" );
+            Contract.Requires(node != null,nameof(node) + " must not be null");
 
-            if ( First == null )
+            if( First == null )
             {
                 node.Next = node;
                 node.Prev = node;
@@ -81,7 +81,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <returns>True if it found the value, otherwise false.</returns>
         public bool Contains( T value )
         {
-            return Find( value ) != null;
+            return Find(value) != null;
         }
 
         /// <summary>Finds the specified value</summary>
@@ -91,28 +91,28 @@ namespace Colin.Common.Code.Physics.Shared
         {
             GraphNode<T> node = First;
 
-            if ( node == null )
+            if( node == null )
                 return null;
 
-            if ( value != null )
+            if( value != null )
             {
                 do
                 {
-                    if ( _comparer.Equals( node.Item, value ) )
+                    if( _comparer.Equals(node.Item,value) )
                         return node;
 
                     node = node.Next;
-                } while ( node != First );
+                } while( node != First );
             }
             else
             {
                 do
                 {
-                    if ( node.Item == null )
+                    if( node.Item == null )
                         return node;
 
                     node = node.Next;
-                } while ( node != First );
+                } while( node != First );
             }
             return null;
         }
@@ -121,7 +121,7 @@ namespace Colin.Common.Code.Physics.Shared
         {
             GraphNode<T> node = First;
 
-            for ( int i = 0; i < Count; i++ )
+            for( int i = 0; i < Count; i++ )
             {
                 GraphNode<T> node0 = node;
                 node = node.Next;
@@ -134,12 +134,12 @@ namespace Colin.Common.Code.Physics.Shared
         /// <returns>True if the value was removed, otherwise false.</returns>
         public bool Remove( T value )
         {
-            GraphNode<T> node = Find( value );
+            GraphNode<T> node = Find(value);
 
-            if ( node == null )
+            if( node == null )
                 return false;
 
-            Remove( node );
+            Remove(node);
             return true;
         }
 
@@ -147,21 +147,21 @@ namespace Colin.Common.Code.Physics.Shared
         /// <remarks>Note that this method is O(1) in worst case.</remarks>
         public void Remove( GraphNode<T> node )
         {
-            Contract.Requires( node != null, nameof( node ) + " must not be null" );
-            Contract.Warn( First != null, "You are trying to remove an item from an empty list." );
+            Contract.Requires(node != null,nameof(node) + " must not be null");
+            Contract.Warn(First != null,"You are trying to remove an item from an empty list.");
 
             //Invalid node
-            if ( node.Next == null && node.Prev == null )
+            if( node.Next == null && node.Prev == null )
                 return;
 
-            if ( node.Next == node )
+            if( node.Next == node )
                 First = null;
             else
             {
                 node.Next.Prev = node.Prev;
                 node.Prev.Next = node.Next;
 
-                if ( First == node )
+                if( First == node )
                     First = node.Next;
             }
 
@@ -173,7 +173,7 @@ namespace Colin.Common.Code.Physics.Shared
         {
             GraphNode<T> node = First;
 
-            for ( int i = 0; i < Count; i++ )
+            for( int i = 0; i < Count; i++ )
             {
                 GraphNode<T> node0 = node;
                 node = node.Next;

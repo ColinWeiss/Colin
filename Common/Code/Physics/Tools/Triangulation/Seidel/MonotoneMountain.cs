@@ -36,12 +36,12 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Seidel
         // Append a point to the list
         public void Add( Point point )
         {
-            if ( _size == 0 )
+            if( _size == 0 )
             {
                 _head = point;
                 _size = 1;
             }
-            else if ( _size == 1 )
+            else if( _size == 1 )
             {
                 // Keep repeat points out of the list
                 _tail = point;
@@ -82,15 +82,15 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Seidel
             // Initialize internal angles at each nonbase vertex
             // Link strictly convex vertices into a list, ignore reflex vertices
             Point p = _head.Next;
-            while ( p.Neq( _tail ) )
+            while( p.Neq(_tail) )
             {
-                float a = Angle( p );
+                float a = Angle(p);
 
                 // If the point is almost colinear with it's neighbor, remove it!
-                if ( a >= PiSlop || a <= -PiSlop || a == 0.0f )
-                    Remove( p );
-                else if ( IsConvex( p ) )
-                    _convexPoints.Add( p );
+                if( a >= PiSlop || a <= -PiSlop || a == 0.0f )
+                    Remove(p);
+                else if( IsConvex(p) )
+                    _convexPoints.Add(p);
                 p = p.Next;
             }
 
@@ -99,48 +99,48 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Seidel
 
         private void Triangulate( )
         {
-            while ( _convexPoints.Count != 0 )
+            while( _convexPoints.Count != 0 )
             {
-                using ( IEnumerator<Point> e = _convexPoints.GetEnumerator( ) )
+                using( IEnumerator<Point> e = _convexPoints.GetEnumerator( ) )
                 {
                     e.MoveNext( );
                     Point ear = e.Current;
 
-                    _convexPoints.Remove( ear );
+                    _convexPoints.Remove(ear);
                     Point a = ear.Prev;
                     Point b = ear;
                     Point c = ear.Next;
-                    List<Point> triangle = new List<Point>( 3 );
-                    triangle.Add( a );
-                    triangle.Add( b );
-                    triangle.Add( c );
+                    List<Point> triangle = new List<Point>(3);
+                    triangle.Add(a);
+                    triangle.Add(b);
+                    triangle.Add(c);
 
-                    Triangles.Add( triangle );
+                    Triangles.Add(triangle);
 
                     // Remove ear, update angles and convex list
-                    Remove( ear );
-                    if ( Valid( a ) )
-                        _convexPoints.Add( a );
-                    if ( Valid( c ) )
-                        _convexPoints.Add( c );
+                    Remove(ear);
+                    if( Valid(a) )
+                        _convexPoints.Add(a);
+                    if( Valid(c) )
+                        _convexPoints.Add(c);
                 }
             }
 
-            Debug.Assert( _size <= 3, "Triangulation bug, please report" );
+            Debug.Assert(_size <= 3,"Triangulation bug, please report");
         }
 
         private bool Valid( Point p )
         {
-            return p.Neq( _head ) && p.Neq( _tail ) && IsConvex( p );
+            return p.Neq(_head) && p.Neq(_tail) && IsConvex(p);
         }
 
         // Create the monotone polygon
         private void GenMonoPoly( )
         {
             Point p = _head;
-            while ( p != null )
+            while( p != null )
             {
-                _monoPoly.Add( p );
+                _monoPoly.Add(p);
                 p = p.Next;
             }
         }
@@ -149,20 +149,20 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Seidel
         {
             Point a = p.Next - p;
             Point b = p.Prev - p;
-            return (float)Math.Atan2( a.Cross( b ), a.Dot( b ) );
+            return (float)Math.Atan2(a.Cross(b),a.Dot(b));
         }
 
         private bool AngleSign( )
         {
             Point a = _head.Next - _head;
             Point b = _tail - _head;
-            return Math.Atan2( a.Cross( b ), a.Dot( b ) ) >= 0;
+            return Math.Atan2(a.Cross(b),a.Dot(b)) >= 0;
         }
 
         // Determines if the inslide angle is convex or reflex
         private bool IsConvex( Point p )
         {
-            if ( _positive != Angle( p ) >= 0 )
+            if( _positive != Angle(p) >= 0 )
                 return false;
             return true;
         }

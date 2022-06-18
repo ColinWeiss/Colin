@@ -22,8 +22,8 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
         private float _maxImpulse;
         private float _softness;
 
-        public AngleJoint( Body bodyA, Body bodyB )
-            : base( bodyA, bodyB, JointType.Angle )
+        public AngleJoint( Body bodyA,Body bodyB )
+            : base(bodyA,bodyB,JointType.Angle)
         {
             _biasFactor = .2f;
             _maxImpulse = float.MaxValue;
@@ -32,13 +32,13 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
         public override Vector2 WorldAnchorA
         {
             get => _bodyA.Position;
-            set => Debug.Assert( false, "You can't set the world anchor on this joint type." );
+            set => Debug.Assert(false,"You can't set the world anchor on this joint type.");
         }
 
         public override Vector2 WorldAnchorB
         {
             get => _bodyB.Position;
-            set => Debug.Assert( false, "You can't set the world anchor on this joint type." );
+            set => Debug.Assert(false,"You can't set the world anchor on this joint type.");
         }
 
         /// <summary>The desired angle between BodyA and BodyB</summary>
@@ -47,7 +47,7 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
             get => _targetAngle;
             set
             {
-                if ( _targetAngle != value )
+                if( _targetAngle != value )
                 {
                     _targetAngle = value;
                     WakeBodies( );
@@ -91,12 +91,12 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
             int indexA = _bodyA.IslandIndex;
             int indexB = _bodyB.IslandIndex;
 
-            float aW = data.Positions[ indexA ].A;
-            float bW = data.Positions[ indexB ].A;
+            float aW = data.Positions[indexA].A;
+            float bW = data.Positions[indexB].A;
 
             _jointError = bW - aW - _targetAngle;
             _bias = -_biasFactor * data.Step.InvertedDeltaTime * _jointError;
-            _massFactor = ( 1 - _softness ) / ( _bodyA._invI + _bodyB._invI );
+            _massFactor = (1 - _softness) / (_bodyA._invI + _bodyB._invI);
         }
 
         internal override void SolveVelocityConstraints( ref SolverData data )
@@ -104,10 +104,10 @@ namespace Colin.Common.Code.Physics.Dynamics.Joints
             int indexA = _bodyA.IslandIndex;
             int indexB = _bodyB.IslandIndex;
 
-            float p = ( _bias - data.Velocities[ indexB ].W + data.Velocities[ indexA ].W ) * _massFactor;
+            float p = (_bias - data.Velocities[indexB].W + data.Velocities[indexA].W) * _massFactor;
 
-            data.Velocities[ indexA ].W -= _bodyA._invI * MathUtils.Sign( p ) * MathUtils.Min( MathUtils.Abs( p ), _maxImpulse );
-            data.Velocities[ indexB ].W += _bodyB._invI * MathUtils.Sign( p ) * MathUtils.Min( MathUtils.Abs( p ), _maxImpulse );
+            data.Velocities[indexA].W -= _bodyA._invI * MathUtils.Sign(p) * MathUtils.Min(MathUtils.Abs(p),_maxImpulse);
+            data.Velocities[indexB].W += _bodyB._invI * MathUtils.Sign(p) * MathUtils.Min(MathUtils.Abs(p),_maxImpulse);
         }
 
         internal override bool SolvePositionConstraints( ref SolverData data )

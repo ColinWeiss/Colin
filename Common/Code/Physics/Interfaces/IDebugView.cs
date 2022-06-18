@@ -8,6 +8,6 @@ namespace Colin.Common.Code.Physics.Interfaces
     public interface IDebugView
     {
         void RenderJoint( Joint joint );
-        void RenderShape( Shape shape, ref Transform transform, Color color );
+        void RenderShape( Shape shape,ref Transform transform,Color color );
     }
 }

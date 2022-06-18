@@ -5,7 +5,7 @@ namespace Colin.Common.Code.Physics.Definitions.Shapes
 {
     public sealed class PolygonShapeDef : ShapeDef
     {
-        public PolygonShapeDef( ) : base( ShapeType.Polygon )
+        public PolygonShapeDef( ) : base(ShapeType.Polygon)
         {
             SetDefaults( );
         }

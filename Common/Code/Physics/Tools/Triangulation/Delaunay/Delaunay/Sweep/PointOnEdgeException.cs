@@ -34,6 +34,6 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Delaunay.Sweep
     internal class PointOnEdgeException : NotImplementedException
     {
         public PointOnEdgeException( string message )
-            : base( message ) { }
+            : base(message) { }
     }
 }

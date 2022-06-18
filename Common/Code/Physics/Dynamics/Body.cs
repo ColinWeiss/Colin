@@ -67,21 +67,21 @@ namespace Colin.Common.Code.Physics.Dynamics
 
         internal Body( BodyDef def )
         {
-            _fixtureList = new List<Fixture>( 1 );
+            _fixtureList = new List<Fixture>(1);
 
-            if ( def.IsBullet )
+            if( def.IsBullet )
                 _flags |= BodyFlags.BulletFlag;
-            if ( def.FixedRotation )
+            if( def.FixedRotation )
                 _flags |= BodyFlags.FixedRotationFlag;
-            if ( def.AllowSleep )
+            if( def.AllowSleep )
                 _flags |= BodyFlags.AutoSleepFlag;
-            if ( def.Awake )
+            if( def.Awake )
                 _flags |= BodyFlags.AwakeFlag;
-            if ( def.Enabled )
+            if( def.Enabled )
                 _flags |= BodyFlags.Enabled;
 
             _xf.p = def.Position;
-            _xf.q.Set( def.Angle );
+            _xf.q.Set(def.Angle);
 
             _sweep.C0 = _xf.p;
             _sweep.C = _xf.p;
@@ -169,18 +169,18 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _type;
             set
             {
-                Debug.Assert( !_world._isLocked );
-                if ( _world._isLocked )
+                Debug.Assert(!_world._isLocked);
+                if( _world._isLocked )
                     return;
 
-                if ( _type == value )
+                if( _type == value )
                     return;
 
                 _type = value;
 
                 ResetMassData( );
 
-                if ( _type == BodyType.Static )
+                if( _type == BodyType.Static )
                 {
                     _linearVelocity = Vector2.Zero;
                     _angularVelocity = 0.0f;
@@ -197,23 +197,23 @@ namespace Colin.Common.Code.Physics.Dynamics
 
                 // Delete the attached contacts.
                 ContactEdge ce = _contactList;
-                while ( ce != null )
+                while( ce != null )
                 {
                     ContactEdge ce0 = ce;
                     ce = ce.Next;
-                    _world.ContactManager.Remove( ce0.Contact );
+                    _world.ContactManager.Remove(ce0.Contact);
                 }
 
                 _contactList = null;
 
                 // Touch the proxies so that new contacts will be created (when appropriate)
                 IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-                foreach ( Fixture fixture in _fixtureList )
+                foreach( Fixture fixture in _fixtureList )
                 {
                     int proxyCount = fixture.ProxyCount;
-                    for ( int j = 0; j < proxyCount; j++ )
+                    for( int j = 0; j < proxyCount; j++ )
                     {
-                        broadPhase.TouchProxy( fixture.Proxies[ j ].ProxyId );
+                        broadPhase.TouchProxy(fixture.Proxies[j].ProxyId);
                     }
                 }
             }
@@ -226,12 +226,12 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _linearVelocity;
             set
             {
-                Debug.Assert( !float.IsNaN( value.X ) && !float.IsNaN( value.Y ) );
+                Debug.Assert(!float.IsNaN(value.X) && !float.IsNaN(value.Y));
 
-                if ( _type == BodyType.Static )
+                if( _type == BodyType.Static )
                     return;
 
-                if ( Vector2.Dot( value, value ) > 0.0f )
+                if( Vector2.Dot(value,value) > 0.0f )
                     Awake = true;
 
                 _linearVelocity = value;
@@ -245,12 +245,12 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _angularVelocity;
             set
             {
-                Debug.Assert( !float.IsNaN( value ) );
+                Debug.Assert(!float.IsNaN(value));
 
-                if ( _type == BodyType.Static )
+                if( _type == BodyType.Static )
                     return;
 
-                if ( value * value > 0.0f )
+                if( value * value > 0.0f )
                     Awake = true;
 
                 _angularVelocity = value;
@@ -277,10 +277,10 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <value><c>true</c> if this instance is included in CCD; otherwise, <c>false</c>.</value>
         public bool IsBullet
         {
-            get => ( _flags & BodyFlags.BulletFlag ) == BodyFlags.BulletFlag;
+            get => (_flags & BodyFlags.BulletFlag) == BodyFlags.BulletFlag;
             set
             {
-                if ( value )
+                if( value )
                     _flags |= BodyFlags.BulletFlag;
                 else
                     _flags &= ~BodyFlags.BulletFlag;
@@ -291,10 +291,10 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <value><c>true</c> if sleeping is allowed; otherwise, <c>false</c>.</value>
         public bool SleepingAllowed
         {
-            get => ( _flags & BodyFlags.AutoSleepFlag ) == BodyFlags.AutoSleepFlag;
+            get => (_flags & BodyFlags.AutoSleepFlag) == BodyFlags.AutoSleepFlag;
             set
             {
-                if ( value )
+                if( value )
                     _flags |= BodyFlags.AutoSleepFlag;
                 else
                 {
@@ -308,13 +308,13 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <value><c>true</c> if awake; otherwise, <c>false</c>.</value>
         public bool Awake
         {
-            get => ( _flags & BodyFlags.AwakeFlag ) == BodyFlags.AwakeFlag;
+            get => (_flags & BodyFlags.AwakeFlag) == BodyFlags.AwakeFlag;
             set
             {
-                if ( _type == BodyType.Static )
+                if( _type == BodyType.Static )
                     return;
 
-                if ( value )
+                if( value )
                 {
                     _flags |= BodyFlags.AwakeFlag;
                     _sleepTime = 0.0f;
@@ -339,24 +339,24 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <value><c>true</c> if active; otherwise, <c>false</c>.</value>
         public bool Enabled
         {
-            get => ( _flags & BodyFlags.Enabled ) == BodyFlags.Enabled;
+            get => (_flags & BodyFlags.Enabled) == BodyFlags.Enabled;
 
             set
             {
-                Debug.Assert( !_world._isLocked );
+                Debug.Assert(!_world._isLocked);
 
-                if ( value == Enabled )
+                if( value == Enabled )
                     return;
 
-                if ( value )
+                if( value )
                 {
                     _flags |= BodyFlags.Enabled;
 
                     // Create all proxies.
                     IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-                    for ( int i = 0; i < _fixtureList.Count; i++ )
+                    for( int i = 0; i < _fixtureList.Count; i++ )
                     {
-                        _fixtureList[ i ].CreateProxies( broadPhase, ref _xf );
+                        _fixtureList[i].CreateProxies(broadPhase,ref _xf);
                     }
 
                     // Contacts are created the next time step.
@@ -369,18 +369,18 @@ namespace Colin.Common.Code.Physics.Dynamics
                     // Destroy all proxies.
                     IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
 
-                    for ( int i = 0; i < _fixtureList.Count; i++ )
+                    for( int i = 0; i < _fixtureList.Count; i++ )
                     {
-                        _fixtureList[ i ].DestroyProxies( broadPhase );
+                        _fixtureList[i].DestroyProxies(broadPhase);
                     }
 
                     // Destroy the attached contacts.
                     ContactEdge ce = _contactList;
-                    while ( ce != null )
+                    while( ce != null )
                     {
                         ContactEdge ce0 = ce;
                         ce = ce.Next;
-                        _world.ContactManager.Remove( ce0.Contact );
+                        _world.ContactManager.Remove(ce0.Contact);
                     }
                     _contactList = null;
                 }
@@ -391,13 +391,13 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <value><c>true</c> if it has fixed rotation; otherwise, <c>false</c>.</value>
         public bool FixedRotation
         {
-            get => ( _flags & BodyFlags.FixedRotationFlag ) == BodyFlags.FixedRotationFlag;
+            get => (_flags & BodyFlags.FixedRotationFlag) == BodyFlags.FixedRotationFlag;
             set
             {
-                if ( value == FixedRotation )
+                if( value == FixedRotation )
                     return;
 
-                if ( value )
+                if( value )
                     _flags |= BodyFlags.FixedRotationFlag;
                 else
                     _flags &= ~BodyFlags.FixedRotationFlag;
@@ -429,9 +429,9 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _xf.p;
             set
             {
-                Debug.Assert( !float.IsNaN( value.X ) && !float.IsNaN( value.Y ) );
+                Debug.Assert(!float.IsNaN(value.X) && !float.IsNaN(value.Y));
 
-                SetTransform( ref value, _sweep.A );
+                SetTransform(ref value,_sweep.A);
             }
         }
 
@@ -442,14 +442,14 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _sweep.A;
             set
             {
-                Debug.Assert( !float.IsNaN( value ) );
+                Debug.Assert(!float.IsNaN(value));
 
-                SetTransform( ref _xf.p, value );
+                SetTransform(ref _xf.p,value);
             }
         }
 
         //Velcro: We don't add a setter here since it requires a branch, and we only use it internally
-        internal bool IsIsland => ( _flags & BodyFlags.IslandFlag ) == BodyFlags.IslandFlag;
+        internal bool IsIsland => (_flags & BodyFlags.IslandFlag) == BodyFlags.IslandFlag;
 
         public bool IsStatic => _type == BodyType.Static;
 
@@ -468,7 +468,7 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _sweep.LocalCenter;
             set
             {
-                if ( _type != BodyType.Dynamic )
+                if( _type != BodyType.Dynamic )
                     return;
 
                 //Velcro: We support setting the mass independently
@@ -476,11 +476,11 @@ namespace Colin.Common.Code.Physics.Dynamics
                 // Move center of mass.
                 Vector2 oldCenter = _sweep.C;
                 _sweep.LocalCenter = value;
-                _sweep.C0 = _sweep.C = MathUtils.Mul( ref _xf, ref _sweep.LocalCenter );
+                _sweep.C0 = _sweep.C = MathUtils.Mul(ref _xf,ref _sweep.LocalCenter);
 
                 // Update center of mass velocity.
                 Vector2 a = _sweep.C - oldCenter;
-                _linearVelocity += new Vector2( -_angularVelocity * a.Y, _angularVelocity * a.X );
+                _linearVelocity += new Vector2(-_angularVelocity * a.Y,_angularVelocity * a.X);
             }
         }
 
@@ -491,15 +491,15 @@ namespace Colin.Common.Code.Physics.Dynamics
             get => _mass;
             set
             {
-                Debug.Assert( !float.IsNaN( value ) );
+                Debug.Assert(!float.IsNaN(value));
 
-                if ( _type != BodyType.Dynamic )
+                if( _type != BodyType.Dynamic )
                     return;
 
                 //Velcro: We support setting the mass independently
                 _mass = value;
 
-                if ( _mass <= 0.0f )
+                if( _mass <= 0.0f )
                     _mass = 1.0f;
 
                 _invMass = 1.0f / _mass;
@@ -510,19 +510,19 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <value>The inertia.</value>
         public float Inertia
         {
-            get => _inertia + _mass * Vector2.Dot( _sweep.LocalCenter, _sweep.LocalCenter );
+            get => _inertia + _mass * Vector2.Dot(_sweep.LocalCenter,_sweep.LocalCenter);
             set
             {
-                Debug.Assert( !float.IsNaN( value ) );
+                Debug.Assert(!float.IsNaN(value));
 
-                if ( _type != BodyType.Dynamic )
+                if( _type != BodyType.Dynamic )
                     return;
 
                 //Velcro: We support setting the inertia independently
-                if ( value > 0.0f && !FixedRotation )
+                if( value > 0.0f && !FixedRotation )
                 {
-                    _inertia = value - _mass * Vector2.Dot( _sweep.LocalCenter, _sweep.LocalCenter );
-                    Debug.Assert( _inertia > 0.0f );
+                    _inertia = value - _mass * Vector2.Dot(_sweep.LocalCenter,_sweep.LocalCenter);
+                    Debug.Assert(_inertia > 0.0f);
                     _invI = 1.0f / _inertia;
                 }
             }
@@ -532,9 +532,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].Restitution = value;
+                    _fixtureList[i].Restitution = value;
                 }
             }
         }
@@ -543,9 +543,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].Friction = value;
+                    _fixtureList[i].Friction = value;
                 }
             }
         }
@@ -554,7 +554,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             data = new MassData( );
             data._mass = _mass;
-            data._inertia = _inertia + _mass * MathUtils.Dot( ref _sweep.LocalCenter, ref _sweep.LocalCenter );
+            data._inertia = _inertia + _mass * MathUtils.Dot(ref _sweep.LocalCenter,ref _sweep.LocalCenter);
             data._centroid = _sweep.LocalCenter;
         }
 
@@ -562,9 +562,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].CollisionCategories = value;
+                    _fixtureList[i].CollisionCategories = value;
                 }
             }
         }
@@ -573,9 +573,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].CollidesWith = value;
+                    _fixtureList[i].CollidesWith = value;
                 }
             }
         }
@@ -589,9 +589,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].IgnoreCcdWith = value;
+                    _fixtureList[i].IgnoreCcdWith = value;
                 }
             }
         }
@@ -600,9 +600,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].CollisionGroup = value;
+                    _fixtureList[i].CollisionGroup = value;
                 }
             }
         }
@@ -611,19 +611,19 @@ namespace Colin.Common.Code.Physics.Dynamics
         {
             set
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].IsSensor = value;
+                    _fixtureList[i].IsSensor = value;
                 }
             }
         }
 
         public bool IgnoreCCD
         {
-            get => ( _flags & BodyFlags.IgnoreCCD ) == BodyFlags.IgnoreCCD;
+            get => (_flags & BodyFlags.IgnoreCCD) == BodyFlags.IgnoreCCD;
             set
             {
-                if ( value )
+                if( value )
                     _flags |= BodyFlags.IgnoreCCD;
                 else
                     _flags &= ~BodyFlags.IgnoreCCD;
@@ -646,24 +646,24 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         public Fixture AddFixture( FixtureDef def )
         {
-            Debug.Assert( !_world._isLocked );
-            if ( _world._isLocked )
+            Debug.Assert(!_world._isLocked);
+            if( _world._isLocked )
                 return null;
 
-            Fixture fixture = new Fixture( def );
+            Fixture fixture = new Fixture(def);
 
-            if ( ( _flags & BodyFlags.Enabled ) == BodyFlags.Enabled )
+            if( (_flags & BodyFlags.Enabled) == BodyFlags.Enabled )
             {
                 IBroadPhase broadPhase = _world._contactManager.BroadPhase;
-                fixture.CreateProxies( broadPhase, ref _xf );
+                fixture.CreateProxies(broadPhase,ref _xf);
             }
 
-            _fixtureList.Add( fixture );
+            _fixtureList.Add(fixture);
 
             fixture._body = this;
 
             // Adjust mass properties if needed.
-            if ( fixture._shape._density > 0.0f )
+            if( fixture._shape._density > 0.0f )
             {
                 ResetMassData( );
             }
@@ -671,7 +671,7 @@ namespace Colin.Common.Code.Physics.Dynamics
             _world._newContacts = true;
 
             //Velcro: Added this code to raise the FixtureAdded event
-            _world.RaiseNewFixtureEvent( fixture );
+            _world.RaiseNewFixtureEvent(fixture);
 
             return fixture;
         }
@@ -683,14 +683,14 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         public Fixture AddFixture( Shape shape )
         {
-            Debug.Assert( !_world._isLocked );
-            if ( _world._isLocked )
+            Debug.Assert(!_world._isLocked);
+            if( _world._isLocked )
                 return null;
 
             FixtureDef template = new FixtureDef( );
             template.Shape = shape;
 
-            return AddFixture( template );
+            return AddFixture(template);
         }
 
         /// <summary>
@@ -702,24 +702,24 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <param name="fixture">The fixture to be removed.</param>
         public void RemoveFixture( Fixture fixture )
         {
-            Debug.Assert( !_world._isLocked );
-            if ( _world._isLocked )
+            Debug.Assert(!_world._isLocked);
+            if( _world._isLocked )
                 return;
 
-            if ( fixture == null )
+            if( fixture == null )
                 return;
 
-            Debug.Assert( fixture.Body == this );
+            Debug.Assert(fixture.Body == this);
 
             // Remove the fixture from this body's singly linked list.
-            Debug.Assert( _fixtureList.Count > 0 );
+            Debug.Assert(_fixtureList.Count > 0);
 
             // You tried to remove a fixture that not present in the fixturelist.
-            Debug.Assert( _fixtureList.Contains( fixture ) );
+            Debug.Assert(_fixtureList.Contains(fixture));
 
             // Destroy any contacts associated with the fixture.
             ContactEdge edge = _contactList;
-            while ( edge != null )
+            while( edge != null )
             {
                 Contact c = edge.Contact;
                 edge = edge.Next;
@@ -727,21 +727,21 @@ namespace Colin.Common.Code.Physics.Dynamics
                 Fixture fixtureA = c._fixtureA;
                 Fixture fixtureB = c._fixtureB;
 
-                if ( fixture == fixtureA || fixture == fixtureB )
+                if( fixture == fixtureA || fixture == fixtureB )
                 {
                     // This destroys the contact and removes it from
                     // this body's contact list.
-                    _world.ContactManager.Remove( c );
+                    _world.ContactManager.Remove(c);
                 }
             }
 
-            if ( ( _flags & BodyFlags.Enabled ) == BodyFlags.Enabled )
+            if( (_flags & BodyFlags.Enabled) == BodyFlags.Enabled )
             {
                 IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-                fixture.DestroyProxies( broadPhase );
+                fixture.DestroyProxies(broadPhase);
             }
 
-            _fixtureList.Remove( fixture );
+            _fixtureList.Remove(fixture);
             fixture.Destroy( );
             fixture._body = null;
 
@@ -754,9 +754,9 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         /// <param name="position">The world position of the body's local origin.</param>
         /// <param name="rotation">The world rotation in radians.</param>
-        public void SetTransform( Vector2 position, float rotation )
+        public void SetTransform( Vector2 position,float rotation )
         {
-            SetTransform( ref position, rotation );
+            SetTransform(ref position,rotation);
         }
 
         /// <summary>
@@ -765,25 +765,25 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         /// <param name="position">The world position of the body's local origin.</param>
         /// <param name="rotation">The world rotation in radians.</param>
-        public void SetTransform( ref Vector2 position, float rotation )
+        public void SetTransform( ref Vector2 position,float rotation )
         {
-            Debug.Assert( !_world._isLocked );
-            if ( _world._isLocked )
+            Debug.Assert(!_world._isLocked);
+            if( _world._isLocked )
                 return;
 
-            _xf.q.Set( rotation );
+            _xf.q.Set(rotation);
             _xf.p = position;
 
-            _sweep.C = MathUtils.Mul( ref _xf, _sweep.LocalCenter );
+            _sweep.C = MathUtils.Mul(ref _xf,_sweep.LocalCenter);
             _sweep.A = rotation;
 
             _sweep.C0 = _sweep.C;
             _sweep.A0 = rotation;
 
             IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-            for ( int i = 0; i < _fixtureList.Count; i++ )
+            for( int i = 0; i < _fixtureList.Count; i++ )
             {
-                _fixtureList[ i ].Synchronize( broadPhase, ref _xf, ref _xf );
+                _fixtureList[i].Synchronize(broadPhase,ref _xf,ref _xf);
             }
 
             // Check for new contacts the next step
@@ -803,23 +803,23 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         /// <param name="force">The world force vector, usually in Newtons (N).</param>
         /// <param name="point">The world position of the point of application.</param>
-        public void ApplyForce( Vector2 force, Vector2 point )
+        public void ApplyForce( Vector2 force,Vector2 point )
         {
-            ApplyForce( ref force, ref point );
+            ApplyForce(ref force,ref point);
         }
 
         /// <summary>Applies a force at the center of mass.</summary>
         /// <param name="force">The force.</param>
         public void ApplyForce( ref Vector2 force )
         {
-            ApplyForce( ref force, ref _xf.p );
+            ApplyForce(ref force,ref _xf.p);
         }
 
         /// <summary>Applies a force at the center of mass.</summary>
         /// <param name="force">The force.</param>
         public void ApplyForce( Vector2 force )
         {
-            ApplyForce( ref force, ref _xf.p );
+            ApplyForce(ref force,ref _xf.p);
         }
 
         /// <summary>
@@ -828,35 +828,35 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         /// <param name="force">The world force vector, usually in Newtons (N).</param>
         /// <param name="point">The world position of the point of application.</param>
-        public void ApplyForce( ref Vector2 force, ref Vector2 point )
+        public void ApplyForce( ref Vector2 force,ref Vector2 point )
         {
-            Debug.Assert( !float.IsNaN( force.X ) );
-            Debug.Assert( !float.IsNaN( force.Y ) );
-            Debug.Assert( !float.IsNaN( point.X ) );
-            Debug.Assert( !float.IsNaN( point.Y ) );
+            Debug.Assert(!float.IsNaN(force.X));
+            Debug.Assert(!float.IsNaN(force.Y));
+            Debug.Assert(!float.IsNaN(point.X));
+            Debug.Assert(!float.IsNaN(point.Y));
 
-            if ( _type != BodyType.Dynamic )
+            if( _type != BodyType.Dynamic )
                 return;
 
             //Velcro: We always wake the body. You told it to move.
-            if ( !Awake )
+            if( !Awake )
                 Awake = true;
 
             _force += force;
-            _torque += MathUtils.Cross( point - _sweep.C, force );
+            _torque += MathUtils.Cross(point - _sweep.C,force);
         }
 
         /// <summary>Apply a torque. This affects the angular velocity without affecting the linear velocity of the center of mass.</summary>
         /// <param name="torque">The torque about the z-axis (out of the screen), usually in N-m.</param>
         public void ApplyTorque( float torque )
         {
-            Debug.Assert( !float.IsNaN( torque ) );
+            Debug.Assert(!float.IsNaN(torque));
 
-            if ( _type != BodyType.Dynamic )
+            if( _type != BodyType.Dynamic )
                 return;
 
             //Velcro: We always wake the body. You told it to move.
-            if ( !Awake )
+            if( !Awake )
                 Awake = true;
 
             _torque += torque;
@@ -866,7 +866,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <param name="impulse">The world impulse vector, usually in N-seconds or kg-m/s.</param>
         public void ApplyLinearImpulse( Vector2 impulse )
         {
-            ApplyLinearImpulse( ref impulse );
+            ApplyLinearImpulse(ref impulse);
         }
 
         /// <summary>
@@ -875,20 +875,20 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         /// <param name="impulse">The world impulse vector, usually in N-seconds or kg-m/s.</param>
         /// <param name="point">The world position of the point of application.</param>
-        public void ApplyLinearImpulse( Vector2 impulse, Vector2 point )
+        public void ApplyLinearImpulse( Vector2 impulse,Vector2 point )
         {
-            ApplyLinearImpulse( ref impulse, ref point );
+            ApplyLinearImpulse(ref impulse,ref point);
         }
 
         /// <summary>Apply an impulse at a point. This immediately modifies the velocity. This wakes up the body.</summary>
         /// <param name="impulse">The world impulse vector, usually in N-seconds or kg-m/s.</param>
         public void ApplyLinearImpulse( ref Vector2 impulse )
         {
-            if ( _type != BodyType.Dynamic )
+            if( _type != BodyType.Dynamic )
                 return;
 
             //Velcro: We always wake the body. You told it to move.
-            if ( !Awake )
+            if( !Awake )
                 Awake = true;
 
             _linearVelocity += _invMass * impulse;
@@ -900,28 +900,28 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// </summary>
         /// <param name="impulse">The world impulse vector, usually in N-seconds or kg-m/s.</param>
         /// <param name="point">The world position of the point of application.</param>
-        public void ApplyLinearImpulse( ref Vector2 impulse, ref Vector2 point )
+        public void ApplyLinearImpulse( ref Vector2 impulse,ref Vector2 point )
         {
-            if ( _type != BodyType.Dynamic )
+            if( _type != BodyType.Dynamic )
                 return;
 
             //Velcro: We always wake the body. You told it to move.
-            if ( !Awake )
+            if( !Awake )
                 Awake = true;
 
             _linearVelocity += _invMass * impulse;
-            _angularVelocity += _invI * MathUtils.Cross( point - _sweep.C, impulse );
+            _angularVelocity += _invI * MathUtils.Cross(point - _sweep.C,impulse);
         }
 
         /// <summary>Apply an angular impulse.</summary>
         /// <param name="impulse">The angular impulse in units of kg*m*m/s.</param>
         public void ApplyAngularImpulse( float impulse )
         {
-            if ( _type != BodyType.Dynamic )
+            if( _type != BodyType.Dynamic )
                 return;
 
             //Velcro: We always wake the body. You told it to move.
-            if ( !Awake )
+            if( !Awake )
                 Awake = true;
 
             _angularVelocity += _invI * impulse;
@@ -942,7 +942,7 @@ namespace Colin.Common.Code.Physics.Dynamics
 
             //Velcro: We have mass on static bodies to support attaching joints to them
             // Kinematic bodies have zero mass.
-            if ( _type == BodyType.Kinematic )
+            if( _type == BodyType.Kinematic )
             {
                 _sweep.C0 = _xf.p;
                 _sweep.C = _xf.p;
@@ -950,13 +950,13 @@ namespace Colin.Common.Code.Physics.Dynamics
                 return;
             }
 
-            Debug.Assert( _type == BodyType.Dynamic || _type == BodyType.Static );
+            Debug.Assert(_type == BodyType.Dynamic || _type == BodyType.Static);
 
             // Accumulate mass over all fixtures.
             Vector2 localCenter = Vector2.Zero;
-            foreach ( Fixture f in _fixtureList )
+            foreach( Fixture f in _fixtureList )
             {
-                if ( f.Shape._density == 0.0f )
+                if( f.Shape._density == 0.0f )
                     continue;
 
                 MassData massData = f.Shape._massData;
@@ -966,25 +966,25 @@ namespace Colin.Common.Code.Physics.Dynamics
             }
 
             //Velcro: Static bodies only have mass, they don't have other properties. A little hacky tho...
-            if ( _type == BodyType.Static )
+            if( _type == BodyType.Static )
             {
                 _sweep.C0 = _sweep.C = _xf.p;
                 return;
             }
 
             // Compute center of mass.
-            if ( _mass > 0.0f )
+            if( _mass > 0.0f )
             {
                 _invMass = 1.0f / _mass;
                 localCenter *= _invMass;
             }
 
-            if ( _inertia > 0.0f && ( _flags & BodyFlags.FixedRotationFlag ) == 0 )
+            if( _inertia > 0.0f && (_flags & BodyFlags.FixedRotationFlag) == 0 )
             {
                 // Center the inertia about the center of mass.
-                _inertia -= _mass * Vector2.Dot( localCenter, localCenter );
+                _inertia -= _mass * Vector2.Dot(localCenter,localCenter);
 
-                Debug.Assert( _inertia > 0.0f );
+                Debug.Assert(_inertia > 0.0f);
                 _invI = 1.0f / _inertia;
             }
             else
@@ -996,11 +996,11 @@ namespace Colin.Common.Code.Physics.Dynamics
             // Move center of mass.
             Vector2 oldCenter = _sweep.C;
             _sweep.LocalCenter = localCenter;
-            _sweep.C0 = _sweep.C = MathUtils.Mul( ref _xf, ref _sweep.LocalCenter );
+            _sweep.C0 = _sweep.C = MathUtils.Mul(ref _xf,ref _sweep.LocalCenter);
 
             // Update center of mass velocity.
             Vector2 a = _sweep.C - oldCenter;
-            _linearVelocity += new Vector2( -_angularVelocity * a.Y, _angularVelocity * a.X );
+            _linearVelocity += new Vector2(-_angularVelocity * a.Y,_angularVelocity * a.X);
         }
 
         /// <summary>Get the world coordinates of a point given the local coordinates.</summary>
@@ -1008,7 +1008,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The same point expressed in world coordinates.</returns>
         public Vector2 GetWorldPoint( ref Vector2 localPoint )
         {
-            return MathUtils.Mul( ref _xf, ref localPoint );
+            return MathUtils.Mul(ref _xf,ref localPoint);
         }
 
         /// <summary>Get the world coordinates of a point given the local coordinates.</summary>
@@ -1016,7 +1016,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The same point expressed in world coordinates.</returns>
         public Vector2 GetWorldPoint( Vector2 localPoint )
         {
-            return GetWorldPoint( ref localPoint );
+            return GetWorldPoint(ref localPoint);
         }
 
         /// <summary>
@@ -1027,7 +1027,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The same vector expressed in world coordinates.</returns>
         public Vector2 GetWorldVector( ref Vector2 localVector )
         {
-            return MathUtils.Mul( ref _xf.q, localVector );
+            return MathUtils.Mul(ref _xf.q,localVector);
         }
 
         /// <summary>Get the world coordinates of a vector given the local coordinates.</summary>
@@ -1035,7 +1035,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The same vector expressed in world coordinates.</returns>
         public Vector2 GetWorldVector( Vector2 localVector )
         {
-            return GetWorldVector( ref localVector );
+            return GetWorldVector(ref localVector);
         }
 
         /// <summary>
@@ -1046,7 +1046,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The corresponding local point relative to the body's origin.</returns>
         public Vector2 GetLocalPoint( ref Vector2 worldPoint )
         {
-            return MathUtils.MulT( ref _xf, worldPoint );
+            return MathUtils.MulT(ref _xf,worldPoint);
         }
 
         /// <summary>Gets a local point relative to the body's origin given a world point.</summary>
@@ -1054,7 +1054,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The corresponding local point relative to the body's origin.</returns>
         public Vector2 GetLocalPoint( Vector2 worldPoint )
         {
-            return GetLocalPoint( ref worldPoint );
+            return GetLocalPoint(ref worldPoint);
         }
 
         /// <summary>
@@ -1065,7 +1065,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The corresponding local vector.</returns>
         public Vector2 GetLocalVector( ref Vector2 worldVector )
         {
-            return MathUtils.MulT( _xf.q, worldVector );
+            return MathUtils.MulT(_xf.q,worldVector);
         }
 
         /// <summary>
@@ -1076,7 +1076,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The corresponding local vector.</returns>
         public Vector2 GetLocalVector( Vector2 worldVector )
         {
-            return GetLocalVector( ref worldVector );
+            return GetLocalVector(ref worldVector);
         }
 
         /// <summary>Get the world linear velocity of a world point attached to this body.</summary>
@@ -1084,7 +1084,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The world velocity of a point.</returns>
         public Vector2 GetLinearVelocityFromWorldPoint( Vector2 worldPoint )
         {
-            return GetLinearVelocityFromWorldPoint( ref worldPoint );
+            return GetLinearVelocityFromWorldPoint(ref worldPoint);
         }
 
         /// <summary>Get the world linear velocity of a world point attached to this body.</summary>
@@ -1092,7 +1092,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The world velocity of a point.</returns>
         public Vector2 GetLinearVelocityFromWorldPoint( ref Vector2 worldPoint )
         {
-            return _linearVelocity + MathUtils.Cross( _angularVelocity, worldPoint - _sweep.C );
+            return _linearVelocity + MathUtils.Cross(_angularVelocity,worldPoint - _sweep.C);
         }
 
         /// <summary>Get the world velocity of a local point.</summary>
@@ -1100,7 +1100,7 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The world velocity of a point.</returns>
         public Vector2 GetLinearVelocityFromLocalPoint( Vector2 localPoint )
         {
-            return GetLinearVelocityFromLocalPoint( ref localPoint );
+            return GetLinearVelocityFromLocalPoint(ref localPoint);
         }
 
         /// <summary>Get the world velocity of a local point.</summary>
@@ -1108,43 +1108,43 @@ namespace Colin.Common.Code.Physics.Dynamics
         /// <returns>The world velocity of a point.</returns>
         public Vector2 GetLinearVelocityFromLocalPoint( ref Vector2 localPoint )
         {
-            return GetLinearVelocityFromWorldPoint( GetWorldPoint( ref localPoint ) );
+            return GetLinearVelocityFromWorldPoint(GetWorldPoint(ref localPoint));
         }
 
         /// <summary> Calling this will remove the body from its associated world.</summary>
         public void RemoveFromWorld( )
         {
-            _world.RemoveBody( this );
+            _world.RemoveBody(this);
         }
 
         internal void SynchronizeFixtures( )
         {
             IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
 
-            if ( ( _flags & BodyFlags.AwakeFlag ) == BodyFlags.AwakeFlag )
+            if( (_flags & BodyFlags.AwakeFlag) == BodyFlags.AwakeFlag )
             {
                 Transform xf1 = new Transform( );
-                xf1.q.Set( _sweep.A0 );
-                xf1.p = _sweep.C0 - MathUtils.Mul( xf1.q, _sweep.LocalCenter );
+                xf1.q.Set(_sweep.A0);
+                xf1.p = _sweep.C0 - MathUtils.Mul(xf1.q,_sweep.LocalCenter);
 
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].Synchronize( broadPhase, ref xf1, ref _xf );
+                    _fixtureList[i].Synchronize(broadPhase,ref xf1,ref _xf);
                 }
             }
             else
             {
-                for ( int i = 0; i < _fixtureList.Count; i++ )
+                for( int i = 0; i < _fixtureList.Count; i++ )
                 {
-                    _fixtureList[ i ].Synchronize( broadPhase, ref _xf, ref _xf );
+                    _fixtureList[i].Synchronize(broadPhase,ref _xf,ref _xf);
                 }
             }
         }
 
         internal void SynchronizeTransform( )
         {
-            _xf.q.Set( _sweep.A );
-            _xf.p = _sweep.C - MathUtils.Mul( _xf.q, _sweep.LocalCenter );
+            _xf.q.Set(_sweep.A);
+            _xf.p = _sweep.C - MathUtils.Mul(_xf.q,_sweep.LocalCenter);
         }
 
         /// <summary>This is used to prevent connected bodies from colliding. It may lie, depending on the collideConnected flag.</summary>
@@ -1152,15 +1152,15 @@ namespace Colin.Common.Code.Physics.Dynamics
         internal bool ShouldCollide( Body other )
         {
             // At least one body should be dynamic.
-            if ( _type != BodyType.Dynamic && other._type != BodyType.Dynamic )
+            if( _type != BodyType.Dynamic && other._type != BodyType.Dynamic )
                 return false;
 
             // Does a joint prevent collision?
-            for ( JointEdge jn = _jointList; jn != null; jn = jn.Next )
+            for( JointEdge jn = _jointList; jn != null; jn = jn.Next )
             {
-                if ( jn.Other == other )
+                if( jn.Other == other )
                 {
-                    if ( !jn.Joint.CollideConnected )
+                    if( !jn.Joint.CollideConnected )
                         return false;
                 }
             }
@@ -1171,11 +1171,11 @@ namespace Colin.Common.Code.Physics.Dynamics
         internal void Advance( float alpha )
         {
             // Advance to the new safe time. This doesn't sync the broad-phase.
-            _sweep.Advance( alpha );
+            _sweep.Advance(alpha);
             _sweep.C = _sweep.C0;
             _sweep.A = _sweep.A0;
-            _xf.q.Set( _sweep.A );
-            _xf.p = _sweep.C - MathUtils.Mul( _xf.q, _sweep.LocalCenter );
+            _xf.q.Set(_sweep.A);
+            _xf.p = _sweep.C - MathUtils.Mul(_xf.q,_sweep.LocalCenter);
         }
     }
 }

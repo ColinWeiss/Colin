@@ -6,11 +6,11 @@ namespace Colin.Common.Code.Physics.Shared.Optimization
     {
         public T Value0, Value1, Value2;
 
-        public T this[ int index ]
+        public T this[int index]
         {
             get
             {
-                switch ( index )
+                switch( index )
                 {
                     case 0:
                         return Value0;
@@ -19,12 +19,12 @@ namespace Colin.Common.Code.Physics.Shared.Optimization
                     case 2:
                         return Value2;
                     default:
-                        throw new IndexOutOfRangeException( nameof( index ) );
+                        throw new IndexOutOfRangeException(nameof(index));
                 }
             }
             set
             {
-                switch ( index )
+                switch( index )
                 {
                     case 0:
                         Value0 = value;
@@ -36,7 +36,7 @@ namespace Colin.Common.Code.Physics.Shared.Optimization
                         Value2 = value;
                         break;
                     default:
-                        throw new IndexOutOfRangeException( nameof( index ) );
+                        throw new IndexOutOfRangeException(nameof(index));
                 }
             }
         }
@@ -53,9 +53,9 @@ namespace Colin.Common.Code.Physics.Shared.Optimization
 
         public int IndexOf( T value )
         {
-            for ( int i = 0; i < 3; ++i )
+            for( int i = 0; i < 3; ++i )
             {
-                if ( this[ i ].Equals( value ) )
+                if( this[i].Equals(value) )
                     return i;
             }
             return -1;
@@ -68,9 +68,9 @@ namespace Colin.Common.Code.Physics.Shared.Optimization
 
         private IEnumerable<T> Enumerate( )
         {
-            for ( int i = 0; i < 3; ++i )
+            for( int i = 0; i < 3; ++i )
             {
-                yield return this[ i ];
+                yield return this[i];
             }
         }
     }

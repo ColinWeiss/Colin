@@ -1,11 +1,4 @@
 ﻿using Colin.Common.Code.UI;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Common.Code.Scenes
 {
@@ -47,9 +40,9 @@ namespace Colin.Common.Code.Scenes
         {
             ContainerPage = new ContainerPage( );
             ContainerPage.CanSeek = false;
-            ContainerPage.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
-            Engine.Instance.Window.ClientSizeChanged += ( s, e ) =>
-                ContainerPage.ContainerElement.SetLayerout( 0, 0, EngineInfo.GameViewWidth, EngineInfo.GameViewHeight );
+            ContainerPage.ContainerElement.SetLayerout(0,0,EngineInfo.GameViewWidth,EngineInfo.GameViewHeight);
+            Engine.Instance.Window.ClientSizeChanged += ( s,e ) =>
+                ContainerPage.ContainerElement.SetLayerout(0,0,EngineInfo.GameViewWidth,EngineInfo.GameViewHeight);
             InitializeUserInterface( );
             ContainerPage.DoInitialize( );
         }
@@ -62,9 +55,9 @@ namespace Colin.Common.Code.Scenes
         public void DoUpdate( )
         {
             ContainerPage.DoReset( );
-            if ( Input.MouseLeftClick && ContainerPage.SeekAt( ) != null )
+            if( Input.MouseLeftClick && ContainerPage.SeekAt( ) != null )
                 LeftClickContainer = ContainerPage.SeekAt( );
-            if ( Input.MouseRightClick && ContainerPage.SeekAt( ) != null )
+            if( Input.MouseRightClick && ContainerPage.SeekAt( ) != null )
                 RightClickContainer = ContainerPage.SeekAt( );
             ContainerPage.SeekAt( )?.Events.Update( );
             ContainerPage.CanSeek = false;
@@ -79,7 +72,7 @@ namespace Colin.Common.Code.Scenes
         public void Register( Container container )
         {
             container._scuiLayer = this;
-            ContainerPage.Register( container );
+            ContainerPage.Register(container);
         }
 
     }

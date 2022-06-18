@@ -10,7 +10,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
     /// local axis helps when saving and loading a game.</summary>
     public sealed class WheelJointDef : JointDef
     {
-        public WheelJointDef( ) : base( JointType.Wheel )
+        public WheelJointDef( ) : base(JointType.Wheel)
         {
             SetDefaults( );
         }
@@ -48,20 +48,20 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         /// <summary>The lower translation limit, usually in meters.</summary>
         public float LowerTranslation { get; set; }
 
-        public void Initialize( Body bA, Body bB, Vector2 anchor, Vector2 axis )
+        public void Initialize( Body bA,Body bB,Vector2 anchor,Vector2 axis )
         {
             BodyA = bA;
             BodyB = bB;
-            LocalAnchorA = BodyA.GetLocalPoint( anchor );
-            LocalAnchorB = BodyB.GetLocalPoint( anchor );
-            LocalAxisA = BodyA.GetLocalVector( axis );
+            LocalAnchorA = BodyA.GetLocalPoint(anchor);
+            LocalAnchorB = BodyB.GetLocalPoint(anchor);
+            LocalAxisA = BodyA.GetLocalVector(axis);
         }
 
         public override void SetDefaults( )
         {
             LocalAnchorA = Vector2.Zero;
             LocalAnchorB = Vector2.Zero;
-            LocalAxisA = new Vector2( 1.0f, 0.0f );
+            LocalAxisA = new Vector2(1.0f,0.0f);
             EnableLimit = false;
             LowerTranslation = 0.0f;
             UpperTranslation = 0.0f;

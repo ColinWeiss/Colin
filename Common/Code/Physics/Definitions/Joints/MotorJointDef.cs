@@ -6,7 +6,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
 {
     public sealed class MotorJointDef : JointDef
     {
-        public MotorJointDef( ) : base( JointType.Motor )
+        public MotorJointDef( ) : base(JointType.Motor)
         {
             SetDefaults( );
         }
@@ -26,12 +26,12 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         /// <summary>The maximum motor torque in N-m.</summary>
         public float MaxTorque { get; set; }
 
-        public void Initialize( Body bA, Body bB )
+        public void Initialize( Body bA,Body bB )
         {
             BodyA = bA;
             BodyB = bB;
             Vector2 xB = BodyB.Position;
-            LinearOffset = BodyA.GetLocalPoint( xB );
+            LinearOffset = BodyA.GetLocalPoint(xB);
 
             float angleA = BodyA.Rotation;
             float angleB = BodyB.Rotation;

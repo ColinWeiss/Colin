@@ -6,7 +6,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
     /// <summary>Mouse joint definition. This requires a world target point, tuning parameters, and the time step.</summary>
     public sealed class FixedMouseJointDef : JointDef
     {
-        public FixedMouseJointDef( ) : base( JointType.FixedMouse )
+        public FixedMouseJointDef( ) : base(JointType.FixedMouse)
         {
             SetDefaults( );
         }

@@ -45,14 +45,14 @@ namespace Colin.Common.Code.Physics.Tools.Triangulation.Delaunay.Polygon
 
         public PolygonSet( Polygon poly )
         {
-            _polygons.Add( poly );
+            _polygons.Add(poly);
         }
 
         public IEnumerable<Polygon> Polygons => _polygons;
 
         public void Add( Polygon p )
         {
-            _polygons.Add( p );
+            _polygons.Add(p);
         }
     }
 }

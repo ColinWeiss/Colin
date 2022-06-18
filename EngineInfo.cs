@@ -52,7 +52,7 @@ namespace Colin
         {
             get
             {
-                return new Vector2( GameViewWidth / 2, GameViewHeight / 2 );
+                return new Vector2(GameViewWidth / 2,GameViewHeight / 2);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Colin
         {
             get
             {
-                return new Rectangle( 0, 0, GameViewWidth, GameViewHeight );
+                return new Rectangle(0,0,GameViewWidth,GameViewHeight);
             }
         }
 

@@ -8,7 +8,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
     /// angle. The position of the anchor points is important for computing the reaction torque.</summary>
     public sealed class WeldJointDef : JointDef
     {
-        public WeldJointDef( ) : base( JointType.Weld )
+        public WeldJointDef( ) : base(JointType.Weld)
         {
             SetDefaults( );
         }
@@ -28,12 +28,12 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
         /// <summary>The bodyB angle minus bodyA angle in the reference state (radians).</summary>
         public float ReferenceAngle { get; set; }
 
-        public void Initialize( Body bA, Body bB, Vector2 anchor )
+        public void Initialize( Body bA,Body bB,Vector2 anchor )
         {
             BodyA = bA;
             BodyB = bB;
-            LocalAnchorA = BodyA.GetLocalPoint( anchor );
-            LocalAnchorB = BodyB.GetLocalPoint( anchor );
+            LocalAnchorA = BodyA.GetLocalPoint(anchor);
+            LocalAnchorB = BodyB.GetLocalPoint(anchor);
             ReferenceAngle = BodyB.Rotation - BodyA.Rotation;
         }
 

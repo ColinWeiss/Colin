@@ -13,16 +13,16 @@ namespace Colin.Common.Code.Physics.Shared
         /// <summary>The upper vertex</summary>
         public Vector2 UpperBound;
 
-        public AABB( Vector2 min, Vector2 max )
-            : this( ref min, ref max ) { }
+        public AABB( Vector2 min,Vector2 max )
+            : this(ref min,ref max) { }
 
-        public AABB( Vector2 center, float width, float height )
-            : this( center - new Vector2( width / 2, height / 2 ), center + new Vector2( width / 2, height / 2 ) ) { }
+        public AABB( Vector2 center,float width,float height )
+            : this(center - new Vector2(width / 2,height / 2),center + new Vector2(width / 2,height / 2)) { }
 
-        public AABB( ref Vector2 min, ref Vector2 max )
+        public AABB( ref Vector2 min,ref Vector2 max )
         {
-            LowerBound = new Vector2( Math.Min( min.X, max.X ), Math.Min( min.Y, max.Y ) );
-            UpperBound = new Vector2( Math.Max( min.X, max.X ), Math.Max( min.Y, max.Y ) );
+            LowerBound = new Vector2(Math.Min(min.X,max.X),Math.Min(min.Y,max.Y));
+            UpperBound = new Vector2(Math.Max(min.X,max.X),Math.Max(min.Y,max.Y));
         }
 
         public float Width => UpperBound.X - LowerBound.X;
@@ -30,10 +30,10 @@ namespace Colin.Common.Code.Physics.Shared
         public float Height => UpperBound.Y - LowerBound.Y;
 
         /// <summary>Get the center of the AABB.</summary>
-        public Vector2 Center => 0.5f * ( LowerBound + UpperBound );
+        public Vector2 Center => 0.5f * (LowerBound + UpperBound);
 
         /// <summary>Get the extents of the AABB (half-widths).</summary>
-        public Vector2 Extents => 0.5f * ( UpperBound - LowerBound );
+        public Vector2 Extents => 0.5f * (UpperBound - LowerBound);
 
         /// <summary>Get the perimeter length</summary>
         public float Perimeter
@@ -42,7 +42,7 @@ namespace Colin.Common.Code.Physics.Shared
             {
                 float wx = UpperBound.X - LowerBound.X;
                 float wy = UpperBound.Y - LowerBound.Y;
-                return 2.0f * ( wx + wy );
+                return 2.0f * (wx + wy);
             }
         }
 
@@ -52,26 +52,26 @@ namespace Colin.Common.Code.Physics.Shared
         {
             get
             {
-                Vertices vertices = new Vertices( 4 );
-                vertices.Add( UpperBound );
-                vertices.Add( new Vector2( UpperBound.X, LowerBound.Y ) );
-                vertices.Add( LowerBound );
-                vertices.Add( new Vector2( LowerBound.X, UpperBound.Y ) );
+                Vertices vertices = new Vertices(4);
+                vertices.Add(UpperBound);
+                vertices.Add(new Vector2(UpperBound.X,LowerBound.Y));
+                vertices.Add(LowerBound);
+                vertices.Add(new Vector2(LowerBound.X,UpperBound.Y));
                 return vertices;
             }
         }
 
         /// <summary>First quadrant</summary>
-        public AABB Q1 => new AABB( Center, UpperBound );
+        public AABB Q1 => new AABB(Center,UpperBound);
 
         /// <summary>Second quadrant</summary>
-        public AABB Q2 => new AABB( new Vector2( LowerBound.X, Center.Y ), new Vector2( Center.X, UpperBound.Y ) );
+        public AABB Q2 => new AABB(new Vector2(LowerBound.X,Center.Y),new Vector2(Center.X,UpperBound.Y));
 
         /// <summary>Third quadrant</summary>
-        public AABB Q3 => new AABB( LowerBound, Center );
+        public AABB Q3 => new AABB(LowerBound,Center);
 
         /// <summary>Forth quadrant</summary>
-        public AABB Q4 => new AABB( new Vector2( Center.X, LowerBound.Y ), new Vector2( UpperBound.X, Center.Y ) );
+        public AABB Q4 => new AABB(new Vector2(Center.X,LowerBound.Y),new Vector2(UpperBound.X,Center.Y));
 
         /// <summary>Verify that the bounds are sorted. And the bounds are valid numbers (not NaN).</summary>
         /// <returns><c>true</c> if this instance is valid; otherwise, <c>false</c>.</returns>
@@ -86,17 +86,17 @@ namespace Colin.Common.Code.Physics.Shared
         /// <param name="aabb">The AABB.</param>
         public void Combine( ref AABB aabb )
         {
-            LowerBound = Vector2.Min( LowerBound, aabb.LowerBound );
-            UpperBound = Vector2.Max( UpperBound, aabb.UpperBound );
+            LowerBound = Vector2.Min(LowerBound,aabb.LowerBound);
+            UpperBound = Vector2.Max(UpperBound,aabb.UpperBound);
         }
 
         /// <summary>Combine two AABBs into this one.</summary>
         /// <param name="aabb1">The aabb1.</param>
         /// <param name="aabb2">The aabb2.</param>
-        public void Combine( ref AABB aabb1, ref AABB aabb2 )
+        public void Combine( ref AABB aabb1,ref AABB aabb2 )
         {
-            LowerBound = Vector2.Min( aabb1.LowerBound, aabb2.LowerBound );
-            UpperBound = Vector2.Max( aabb1.UpperBound, aabb2.UpperBound );
+            LowerBound = Vector2.Min(aabb1.LowerBound,aabb2.LowerBound);
+            UpperBound = Vector2.Max(aabb1.UpperBound,aabb2.UpperBound);
         }
 
         /// <summary>Does this AABB contain the provided AABB.</summary>
@@ -125,7 +125,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <param name="a">The first AABB.</param>
         /// <param name="b">The second AABB.</param>
         /// <returns>True if they are overlapping.</returns>
-        public static bool TestOverlap( ref AABB a, ref AABB b )
+        public static bool TestOverlap( ref AABB a,ref AABB b )
         {
             Vector2 d1 = b.LowerBound - a.UpperBound;
             Vector2 d2 = a.LowerBound - b.UpperBound;
@@ -138,7 +138,7 @@ namespace Colin.Common.Code.Physics.Shared
         /// <param name="output">The results of the raycast.</param>
         /// <param name="doInteriorCheck"></param>
         /// <returns>True if the ray intersects the AABB</returns>
-        public bool RayCast( ref RayCastInput input, out RayCastOutput output, bool doInteriorCheck = true )
+        public bool RayCast( ref RayCastInput input,out RayCastOutput output,bool doInteriorCheck = true )
         {
             // From Real-time Collision Detection, p179.
 
@@ -149,21 +149,21 @@ namespace Colin.Common.Code.Physics.Shared
 
             Vector2 p = input.Point1;
             Vector2 d = input.Point2 - input.Point1;
-            Vector2 absD = MathUtils.Abs( d );
+            Vector2 absD = MathUtils.Abs(d);
 
             Vector2 normal = Vector2.Zero;
 
-            for ( int i = 0; i < 2; ++i )
+            for( int i = 0; i < 2; ++i )
             {
                 float absD_i = i == 0 ? absD.X : absD.Y;
                 float lowerBound_i = i == 0 ? LowerBound.X : LowerBound.Y;
                 float upperBound_i = i == 0 ? UpperBound.X : UpperBound.Y;
                 float p_i = i == 0 ? p.X : p.Y;
 
-                if ( absD_i < MathConstants.Epsilon )
+                if( absD_i < MathConstants.Epsilon )
                 {
                     // Parallel.
-                    if ( p_i < lowerBound_i || upperBound_i < p_i )
+                    if( p_i < lowerBound_i || upperBound_i < p_i )
                         return false;
                 }
                 else
@@ -171,22 +171,22 @@ namespace Colin.Common.Code.Physics.Shared
                     float d_i = i == 0 ? d.X : d.Y;
 
                     float inv_d = 1.0f / d_i;
-                    float t1 = ( lowerBound_i - p_i ) * inv_d;
-                    float t2 = ( upperBound_i - p_i ) * inv_d;
+                    float t1 = (lowerBound_i - p_i) * inv_d;
+                    float t2 = (upperBound_i - p_i) * inv_d;
 
                     // Sign of the normal vector.
                     float s = -1.0f;
 
-                    if ( t1 > t2 )
+                    if( t1 > t2 )
                     {
-                        MathUtils.Swap( ref t1, ref t2 );
+                        MathUtils.Swap(ref t1,ref t2);
                         s = 1.0f;
                     }
 
                     // Push the min up
-                    if ( t1 > tmin )
+                    if( t1 > tmin )
                     {
-                        if ( i == 0 )
+                        if( i == 0 )
                             normal.X = s;
                         else
                             normal.Y = s;
@@ -195,16 +195,16 @@ namespace Colin.Common.Code.Physics.Shared
                     }
 
                     // Pull the max down
-                    tmax = Math.Min( tmax, t2 );
+                    tmax = Math.Min(tmax,t2);
 
-                    if ( tmin > tmax )
+                    if( tmin > tmax )
                         return false;
                 }
             }
 
             // Does the ray start inside the box?
             // Does the ray intersect beyond the max fraction?
-            if ( doInteriorCheck && ( tmin < 0.0f || input.MaxFraction < tmin ) )
+            if( doInteriorCheck && (tmin < 0.0f || input.MaxFraction < tmin) )
                 return false;
 
             // Intersection.

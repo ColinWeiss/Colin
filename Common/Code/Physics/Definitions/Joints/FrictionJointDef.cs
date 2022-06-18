@@ -5,7 +5,7 @@ namespace Colin.Common.Code.Physics.Definitions.Joints
 {
     public sealed class FrictionJointDef : JointDef
     {
-        public FrictionJointDef( ) : base( JointType.Friction )
+        public FrictionJointDef( ) : base(JointType.Friction)
         {
             SetDefaults( );
         }

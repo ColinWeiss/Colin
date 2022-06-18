@@ -5,7 +5,7 @@
         public Trapezoid Trapezoid;
 
         private Sink( Trapezoid trapezoid )
-            : base( null, null )
+            : base(null,null)
         {
             Trapezoid = trapezoid;
             trapezoid.Sink = this;
@@ -13,8 +13,8 @@
 
         public static Sink Isink( Trapezoid trapezoid )
         {
-            if ( trapezoid.Sink == null )
-                return new Sink( trapezoid );
+            if( trapezoid.Sink == null )
+                return new Sink(trapezoid);
 
             return trapezoid.Sink;
         }

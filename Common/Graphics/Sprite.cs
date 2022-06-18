@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Common.Graphics
 {
@@ -13,7 +8,7 @@ namespace Colin.Common.Graphics
         private Texture2D _image;
         private Vector2 _origin;
 
-        public Sprite( Texture2D image, Vector2 origin )
+        public Sprite( Texture2D image,Vector2 origin )
         {
             _image = image;
             _origin = origin;
@@ -36,7 +31,7 @@ namespace Colin.Common.Graphics
             set
             {
                 _image = value;
-                _origin = new Vector2( _image.Width / 2f, _image.Height / 2f );
+                _origin = new Vector2(_image.Width / 2f,_image.Height / 2f);
             }
         }
     }

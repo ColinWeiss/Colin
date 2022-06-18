@@ -7,7 +7,7 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.PhysicsLogicBase
         private PhysicsLogicType _type;
         public World World;
 
-        protected PhysicsLogic( World world, PhysicsLogicType type )
+        protected PhysicsLogic( World world,PhysicsLogicType type )
         {
             _type = type;
             World = world;
@@ -15,10 +15,10 @@ namespace Colin.Common.Code.Physics.Extensions.PhysicsLogics.PhysicsLogicBase
 
         public override bool IsActiveOn( Body body )
         {
-            if ( body.PhysicsLogicFilter.IsPhysicsLogicIgnored( _type ) )
+            if( body.PhysicsLogicFilter.IsPhysicsLogicIgnored(_type) )
                 return false;
 
-            return base.IsActiveOn( body );
+            return base.IsActiveOn(body);
         }
     }
 }

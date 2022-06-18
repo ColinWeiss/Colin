@@ -26,14 +26,14 @@ namespace Colin
             RenderTarget = new RenderTarget2D(
                 EngineInfo.Graphics.GraphicsDevice,
                 EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
-                EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
+                EngineInfo.Graphics.GraphicsDevice.Viewport.Height);
             Engine.Instance.Window.ClientSizeChanged += Window_ClientSizeChanged;
-            void Window_ClientSizeChanged( object? sender, EventArgs e )
+            void Window_ClientSizeChanged( object? sender,EventArgs e )
             {
                 RenderTarget = new RenderTarget2D(
                 EngineInfo.Graphics.GraphicsDevice,
                 EngineInfo.Graphics.GraphicsDevice.Viewport.Width,
-                EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
+                EngineInfo.Graphics.GraphicsDevice.Viewport.Height);
             }
             Initialization( );
         }
@@ -46,8 +46,8 @@ namespace Colin
         bool _updateStarted;
         public override sealed void Update( GameTime gameTime )
         {
-            base.Update( gameTime );
-            if ( !_updateStarted )
+            base.Update(gameTime);
+            if( !_updateStarted )
             {
                 UpdateStart( );
                 _updateStarted = true;
@@ -69,14 +69,14 @@ namespace Colin
         bool _RenderStarted;
         public override sealed void Draw( GameTime gameTime )
         {
-            base.Draw( gameTime );
-            if ( !_RenderStarted )
+            base.Draw(gameTime);
+            if( !_RenderStarted )
             {
-                RenderStart( EngineInfo.SpriteBatch );
+                RenderStart(EngineInfo.SpriteBatch);
                 _RenderStarted = true;
             }
-            this?.RenderSelf( EngineInfo.SpriteBatch );
-            this?.PostRender( EngineInfo.SpriteBatch );
+            this?.RenderSelf(EngineInfo.SpriteBatch);
+            this?.PostRender(EngineInfo.SpriteBatch);
         }
         protected virtual void RenderStart( SpriteBatch spriteBatch )
         {
@@ -89,6 +89,6 @@ namespace Colin
         {
         }
 
-        public EngineComponent( ) : base( Engine.Instance ) { }
+        public EngineComponent( ) : base(Engine.Instance) { }
     }
 }

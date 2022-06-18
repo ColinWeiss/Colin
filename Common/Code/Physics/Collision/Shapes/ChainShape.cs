@@ -45,33 +45,33 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         /// Set to true to create a closed loop. It connects the first vertex to the last, and
         /// automatically adjusts connectivity to create smooth collisions along the chain.
         /// </param>
-        public ChainShape( Vertices vertices, bool createLoop = false ) : base( ShapeType.Chain, Settings.PolygonRadius )
+        public ChainShape( Vertices vertices,bool createLoop = false ) : base(ShapeType.Chain,Settings.PolygonRadius)
         {
-            Debug.Assert( vertices != null && vertices.Count >= 3 );
-            Debug.Assert( vertices[ 0 ] != vertices[ vertices.Count - 1 ] ); //Velcro. See http://www.box2d.org/forum/viewtopic.php?f=4&t=7973&p=35363
+            Debug.Assert(vertices != null && vertices.Count >= 3);
+            Debug.Assert(vertices[0] != vertices[vertices.Count - 1]); //Velcro. See http://www.box2d.org/forum/viewtopic.php?f=4&t=7973&p=35363
 
-            for ( int i = 1; i < vertices.Count; ++i )
+            for( int i = 1; i < vertices.Count; ++i )
             {
                 // If the code crashes here, it means your vertices are too close together.
-                Vector2 current = vertices[ i ];
-                Vector2 prev = vertices[ i - 1 ];
-                Debug.Assert( MathUtils.DistanceSquared( ref prev, ref current ) > Settings.LinearSlop * Settings.LinearSlop );
+                Vector2 current = vertices[i];
+                Vector2 prev = vertices[i - 1];
+                Debug.Assert(MathUtils.DistanceSquared(ref prev,ref current) > Settings.LinearSlop * Settings.LinearSlop);
             }
 
-            _vertices = new Vertices( vertices );
+            _vertices = new Vertices(vertices);
 
             //Velcro: Merged CreateLoop() and CreateChain() to this
-            if ( createLoop )
+            if( createLoop )
             {
-                _vertices.Add( vertices[ 0 ] );
-                _prevVertex = _vertices[ _vertices.Count - 2 ];
-                _nextVertex = _vertices[ 1 ];
+                _vertices.Add(vertices[0]);
+                _prevVertex = _vertices[_vertices.Count - 2];
+                _nextVertex = _vertices[1];
             }
 
             ComputeProperties( );
         }
 
-        private ChainShape( ) : base( ShapeType.Chain, Settings.PolygonRadius ) { }
+        private ChainShape( ) : base(ShapeType.Chain,Settings.PolygonRadius) { }
 
         /// <summary>The vertices. These are not owned/freed by the chain Shape.</summary>
         public Vertices Vertices => _vertices;
@@ -94,26 +94,26 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         }
 
         //Velcro: The original code returned an EdgeShape for each call. To reduce garbage we merge the properties onto an existing EdgeShape
-        internal void GetChildEdge( EdgeShape edge, int index )
+        internal void GetChildEdge( EdgeShape edge,int index )
         {
-            Debug.Assert( 0 <= index && index < _vertices.Count - 1 );
-            Debug.Assert( edge != null );
+            Debug.Assert(0 <= index && index < _vertices.Count - 1);
+            Debug.Assert(edge != null);
 
             //Velcro: It is already an edge shape
             //edge._shapeType = ShapeType.Edge;
             edge._radius = _radius;
 
-            edge._vertex1 = _vertices[ index + 0 ];
-            edge._vertex2 = _vertices[ index + 1 ];
+            edge._vertex1 = _vertices[index + 0];
+            edge._vertex2 = _vertices[index + 1];
             edge._oneSided = true;
 
-            if ( index > 0 )
-                edge._vertex0 = _vertices[ index - 1 ];
+            if( index > 0 )
+                edge._vertex0 = _vertices[index - 1];
             else
                 edge._vertex0 = _prevVertex;
 
-            if ( index < _vertices.Count - 2 )
-                edge._vertex3 = _vertices[ index + 2 ];
+            if( index < _vertices.Count - 2 )
+                edge._vertex3 = _vertices[index + 2];
             else
                 edge._vertex3 = _nextVertex;
         }
@@ -121,45 +121,45 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
         public EdgeShape GetChildEdge( int index )
         {
             EdgeShape edgeShape = new EdgeShape( );
-            GetChildEdge( edgeShape, index );
+            GetChildEdge(edgeShape,index);
             return edgeShape;
         }
 
-        public override bool TestPoint( ref Transform transform, ref Vector2 point )
+        public override bool TestPoint( ref Transform transform,ref Vector2 point )
         {
             return false;
         }
 
-        public override bool RayCast( ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output )
+        public override bool RayCast( ref RayCastInput input,ref Transform transform,int childIndex,out RayCastOutput output )
         {
-            Debug.Assert( childIndex < _vertices.Count );
+            Debug.Assert(childIndex < _vertices.Count);
 
             int i1 = childIndex;
             int i2 = childIndex + 1;
 
-            if ( i2 == _vertices.Count )
+            if( i2 == _vertices.Count )
                 i2 = 0;
 
-            Vector2 v1 = _vertices[ i1 ];
-            Vector2 v2 = _vertices[ i2 ];
+            Vector2 v1 = _vertices[i1];
+            Vector2 v2 = _vertices[i2];
 
-            return RayCastHelper.RayCastEdge( ref v1, ref v2, false, ref input, ref transform, out output );
+            return RayCastHelper.RayCastEdge(ref v1,ref v2,false,ref input,ref transform,out output);
         }
 
-        public override void ComputeAABB( ref Transform transform, int childIndex, out AABB aabb )
+        public override void ComputeAABB( ref Transform transform,int childIndex,out AABB aabb )
         {
-            Debug.Assert( childIndex < _vertices.Count );
+            Debug.Assert(childIndex < _vertices.Count);
 
             int i1 = childIndex;
             int i2 = childIndex + 1;
 
-            if ( i2 == _vertices.Count )
+            if( i2 == _vertices.Count )
                 i2 = 0;
 
-            Vector2 v1 = _vertices[ i1 ];
-            Vector2 v2 = _vertices[ i2 ];
+            Vector2 v1 = _vertices[i1];
+            Vector2 v2 = _vertices[i2];
 
-            AABBHelper.ComputeEdgeAABB( ref v1, ref v2, ref transform, out aabb );
+            AABBHelper.ComputeEdgeAABB(ref v1,ref v2,ref transform,out aabb);
         }
 
         protected sealed override void ComputeProperties( )
@@ -175,7 +175,7 @@ namespace Colin.Common.Code.Physics.Collision.Shapes
             clone._radius = _radius;
             clone._prevVertex = _prevVertex;
             clone._nextVertex = _nextVertex;
-            clone._vertices = new Vertices( _vertices );
+            clone._vertices = new Vertices(_vertices);
             return clone;
         }
     }
