@@ -129,10 +129,9 @@ namespace Colin.Common.Code.Tiled
             {
                 //↓根据物块在瓦片地图的坐标, 取余纹理长宽以达到循环纹理的目的.
                 TextureFrame.SetFrame(
-                    0,
-                    0,
-                    Tile.TileMap.GridSize,
-                    Tile.TileMap.GridSize);
+                   (CoordinateX % (LoopTextureWidth / Tile.TileMap.GridSize)),
+                    (CoordinateY % (LoopTextureHeight / Tile.TileMap.GridSize)),
+                     1 , 1 );
             }
         }
 
@@ -142,8 +141,7 @@ namespace Colin.Common.Code.Tiled
         /// </summary>
         public void RefreshBorderOriginFrame( )
         {
-            BorderOriginFrame.FrameX = new Random( ).Next(2) * 3;
-            BorderOriginFrame.FrameY = new Random( ).Next(2) * 3;
+            BorderOriginFrame.FrameY = new Random( ).Next(1) * 3;
         }
 
         /// <summary>
