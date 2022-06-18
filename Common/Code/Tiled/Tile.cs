@@ -11,15 +11,6 @@ namespace Colin.Common.Code.Tiled
     /// </summary>
     public class Tile : IEngineElement
     {
-        private Vertices vertices;
-        public Vertices Shape => vertices;
-
-        private Body body;
-        public Body Body => body;
-
-        private List<string> _userDatas = new List<string>( );
-        public List<string> UserDatas => _userDatas;
-
         public TileMap TileMap;
 
         public TileData TileData;
@@ -99,31 +90,6 @@ namespace Colin.Common.Code.Tiled
         /// </summary>
         public bool BorderVisible = true;
 
-        protected virtual void CreateVertices( ref Vertices vertices )
-        {
-            if( TileMap != null )
-            {
-                vertices = new Vertices( );
-                vertices.Add(new Vector2(-TileMap.GridSize / 2,-TileMap.GridSize / 2));
-                vertices.Add(new Vector2(TileMap.GridSize / 2,-TileMap.GridSize / 2));
-                vertices.Add(new Vector2(-TileMap.GridSize / 2,TileMap.GridSize / 2));
-                vertices.Add(new Vector2(TileMap.GridSize / 2,TileMap.GridSize / 2));
-            }
-        }
-
-        protected virtual void CreateBody( ref Body body )
-        {
-            if( TileMap != null )
-            {
-                body = BodyFactory.CreatePolygon(TileMap.world,vertices,1f);
-                body.BodyType = BodyType.Static;
-            }
-        }
-
-        protected virtual void CreateUserData( ref List<string> datas )
-        {
-        }
-
         protected virtual void SetTileData( ref TileData tileData )
         {
             tileData = new TileData(this);
@@ -141,16 +107,8 @@ namespace Colin.Common.Code.Tiled
         {
             OnPlaceTile = null;
             OnPlaceTile += PlaceTileEvent;
-            CreateVertices(ref vertices);
-            CreateBody(ref body);
-            if( body != null )
-            {
-                _userDatas.Add("Layer:Tile");
-                body.UserData = _userDatas;
-            }
             SetTileData(ref TileData);
             SetTexture(ref Texture);
-            CreateUserData(ref _userDatas);
         }
 
         public void DoUpdate( )

@@ -9,9 +9,6 @@ namespace Colin.Common.Code.Tiled
     /// </summary>
     public class TileMap : Entity
     {
-        public World world;
-        public World World => world;
-
         public virtual int GridSize => 16;
 
         protected Tile[ , ] tiles;
@@ -92,8 +89,6 @@ namespace Colin.Common.Code.Tiled
         /// <param name="coordinateY">物块格的纵坐标.</param>
         public void ClearGrid( int coordinateX,int coordinateY )
         {
-            if( tiles[coordinateX,coordinateY] != null && tiles[coordinateX,coordinateY].Body != null )
-                tiles[coordinateX,coordinateY].Body.RemoveFromWorld( );
             tiles[coordinateX,coordinateY] = new Tile( );
             tiles[coordinateX,coordinateY].DoInitialize( );
             tiles[coordinateX,coordinateY].Empty = true;
