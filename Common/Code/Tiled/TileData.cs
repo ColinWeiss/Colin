@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Colin.Common.Code.Physics.Dynamics;
+using Microsoft.Xna.Framework;
 
 namespace Colin.Common.Code.Tiled
 {
@@ -26,7 +27,6 @@ namespace Colin.Common.Code.Tiled
         {
             CoordinateX = coordinateX;
             CoordinateY = coordinateY;
-            Tile.Body.Position = new Vector2(coordinateX,coordinateY) * Tile.TileMap.GridSize;
         }
 
         public void SetCoordinate( Point coordinate )

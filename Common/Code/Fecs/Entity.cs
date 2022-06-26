@@ -10,9 +10,7 @@
         /// <summary>
         /// 该实体目前拥有的组件.
         /// </summary>
-        internal List<EntityComponent> Components { get; set; } = new List<EntityComponent>( );
-
-        public int ComponentCount => Components.Count;
+        protected List<EntityComponent> Components = new List<EntityComponent>( );
 
         /// <summary>
         /// 根据特定的 <seealso cref="EntityComponent"/> 类型, 从该 <seealso cref="Entity"/> 中判断是否可以获取到指定类型的 <seealso cref="EntityComponent"/>.

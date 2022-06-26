@@ -4,7 +4,7 @@
     /// 表示一个针对 <seealso cref="IPoolObject"/> 的对象池.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ObjectPool<T> where T : IPoolObject, new()
+    public class ObjectPool<T> : IEngineElement where T : IPoolObject, new()
     {
         /// <summary>
         /// 对象池缓存池.
@@ -39,7 +39,7 @@
             ts.Fill(t);
         }
 
-        public virtual void Initialize( )
+        public virtual void DoInitialize( )
         {
             for( int count = 0; count < Objects.Length; count++ )
                 Objects[count].DoInitialize( );
@@ -61,7 +61,7 @@
         {
             if( Enable )
                 return;
-            for( int count = 0; count < ActiveList.Count; count++ )
+            for( int count = ActiveList.Count - 1; count > 0; count-- )
                 ActiveList[count].DoRender( );
         }
 
@@ -99,6 +99,5 @@
             ActiveList[index].Active = false;
             ActiveList.RemoveAt(index);
         }
-
     }
 }

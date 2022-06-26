@@ -50,27 +50,35 @@ namespace Colin.Common.Code.UI
         /// 获取该容器的容器树..
         /// </summary>
         /// <returns>该容器的容器树.</returns>
-        public List<Container> GetContainerTree( )
+        public List<Container> GetContainerElements( )
         {
+            Container _c;
             List<Container> result = new List<Container>( );
             result.Add(this);
             for( int count = 0; count < ContainerItems.Count; count++ )
-                result.Concat(ContainerItems[count].GetContainerTree( ));
+            {
+                _c = ContainerItems[count];
+                result.Concat(_c.GetContainerElements( ));
+            }
             return result;
         }
 
         /// <summary>
-        /// 获取该容器的目前处于启用状态下的容器的树.
+        /// 获取该容器的目前处于启用状态下的容器的所有元素.
         /// </summary>
-        /// <returns>该容器的已启用的容器的树.</returns>
-        public List<Container> GetActiveContainerTree( )
+        /// <returns>该容器的已启用的容器的元素列表.</returns>
+        public List<Container> GetActiveContainerElements( )
         {
+            Container _c;
             List<Container> result = new List<Container>( );
             if( UpdateEnable )
                 result.Add(this);
             for( int sub = 0; sub < ContainerItems.Count; sub++ )
-                if( ContainerItems[sub].UpdateEnable )
-                    result.Concat(ContainerItems[sub].GetActiveContainerTree( ));
+            {
+                _c = ContainerItems[sub];
+                if( _c.UpdateEnable )
+                    result.Concat(_c.GetActiveContainerElements( ));
+            }
             return result;
         }
 
@@ -141,7 +149,7 @@ namespace Colin.Common.Code.UI
                     return target;
                 }
             }
-            if( GetInterviewState( ) )
+            if( GetInterviewState( ) && CanSeek )
             {
                 return this;
             }

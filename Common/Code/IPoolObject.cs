@@ -3,7 +3,7 @@
     /// <summary>
     /// 表示一个可被对象池加入的对象.
     /// </summary>
-    public interface IPoolObject
+    public interface IPoolObject : IEngineElement
     {
         /// <summary>
         /// 指示该对象在活跃池中的活跃状态.
@@ -30,19 +30,5 @@
         /// </summary>
         void OnDormancy( );
 
-        /// <summary>
-        /// 执行初始化相关操作.
-        /// </summary>
-        void DoInitialize( );
-
-        /// <summary>
-        /// 执行逻辑刷新相关操作.
-        /// </summary>
-        void DoUpdate( );
-
-        /// <summary>
-        /// 执行纹理绘制相关操作.
-        /// </summary>
-        void DoRender( );
     }
 }
