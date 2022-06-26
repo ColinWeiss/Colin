@@ -11,6 +11,8 @@ namespace Colin.Common.Code.Tiled
     {
         public virtual int GridSize => 16;
 
+        public World world;
+
         protected Tile[ , ] tiles;
         public Tile[ , ] Tiles => tiles;
 
@@ -53,24 +55,20 @@ namespace Colin.Common.Code.Tiled
 
         public void Render( GameTime gameTime )
         {
-            for( int _updateCountX = UpdateScope.X; _updateCountX < UpdateScope.Width; _updateCountX++ )
+            for( int _updateCountY = UpdateScope.Y; _updateCountY < UpdateScope.Height; _updateCountY++ )
             {
-                for( int _updateCountY = UpdateScope.Y; _updateCountY < UpdateScope.Height; _updateCountY++ )
+                for( int _updateCountX = UpdateScope.X; _updateCountX < UpdateScope.Width; _updateCountX++ )
                 {
-                    Tiles[_updateCountX,_updateCountY].RenderTexture( );
-                }
-            }
-            for( int _updateCountX = UpdateScope.X; _updateCountX < UpdateScope.Width; _updateCountX++ )
-            {
-                for( int _updateCountY = UpdateScope.Y; _updateCountY < UpdateScope.Height; _updateCountY++ )
-                {
-                    Tiles[_updateCountX,_updateCountY].RenderBorder( );
+                    Tiles[_updateCountX, _updateCountY].RenderTexture( );
+                    Tiles[_updateCountX, _updateCountY].RenderBorder( );
                 }
             }
         }
 
         public void PlaceTile( Tile tile,int coordinateX,int coordinateY,bool replace = false )
         {
+            if( coordinateX < 0 || coordinateY < 0 || coordinateX > Width - 1 || coordinateY > Height - 1 )
+                return;
             if( tiles[coordinateX,coordinateY].Empty || replace )
             {
                 ClearGrid(coordinateX,coordinateY);

@@ -1,5 +1,10 @@
-﻿using Colin.Common.Code.Physics.Dynamics;
+﻿using Colin.Common.Code.Physics.Collision.Shapes;
+using Colin.Common.Code.Physics.Dynamics;
+using Colin.Common.Code.Physics.Factories;
+using Colin.Common.Code.Physics.Shared;
+using Colin.Common.Code.Physics.Tools.Triangulation.Seidel;
 using Microsoft.Xna.Framework;
+using Point = Microsoft.Xna.Framework.Point;
 
 namespace Colin.Common.Code.Tiled
 {
@@ -23,7 +28,7 @@ namespace Colin.Common.Code.Tiled
         /// </summary>
         public int CoordinateY;
 
-        public void SetCoordinate( int coordinateX,int coordinateY )
+        public void SetCoordinate( int coordinateX, int coordinateY )
         {
             CoordinateX = coordinateX;
             CoordinateY = coordinateY;
@@ -31,7 +36,7 @@ namespace Colin.Common.Code.Tiled
 
         public void SetCoordinate( Point coordinate )
         {
-            SetCoordinate(coordinate.X,coordinate.Y);
+            SetCoordinate( coordinate.X, coordinate.Y );
         }
 
         /// <summary>
@@ -88,11 +93,12 @@ namespace Colin.Common.Code.Tiled
             LoopTextureHeight = 256;
             LoopTextureEnable = true;
             RoundState = TileRoundState.Center;
-            BorderRenderOffSet = new Point(0,0);
-            BorderFrame = new TileFrameGrid(tile);
-            TextureFrame = new TileFrameGrid(tile);
+            BorderRenderOffSet = new Point( 0, 0 );
+            BorderFrame = new TileFrameGrid( tile );
+            TextureFrame = new TileFrameGrid( tile );
             RoundStateLast = TileRoundState.Center;
-            BorderOriginFrame = new TileFrameGrid(tile);
+            BorderOriginFrame = new TileFrameGrid( tile );
+            Body = null;
         }
 
         /// <summary>
@@ -103,6 +109,7 @@ namespace Colin.Common.Code.Tiled
             RoundStateLast = RoundState;
             RefreshRoundState( );
             RefreshBorderFrame( );
+            RefreshPhysics( );
             if( RoundState == TileRoundState.LeftUpRightDown )
                 Tile.BorderVisible = false;
             else
@@ -118,6 +125,7 @@ namespace Colin.Common.Code.Tiled
             RefreshTextureFrame( );
             RefreshBorderOriginFrame( );
             RefreshBorderFrame( );
+            RefreshPhysics( );
         }
 
         /// <summary>
@@ -131,7 +139,7 @@ namespace Colin.Common.Code.Tiled
                 TextureFrame.SetFrame(
                    (CoordinateX % (LoopTextureWidth / Tile.TileMap.GridSize)),
                     (CoordinateY % (LoopTextureHeight / Tile.TileMap.GridSize)),
-                     1 , 1 );
+                     1, 1 );
             }
         }
 
@@ -141,7 +149,7 @@ namespace Colin.Common.Code.Tiled
         /// </summary>
         public void RefreshBorderOriginFrame( )
         {
-            BorderOriginFrame.FrameY = new Random( ).Next(1) * 3;
+            BorderOriginFrame.FrameY = new Random( ).Next( 1 ) * 3;
         }
 
         /// <summary>
@@ -157,7 +165,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 3;
                         BorderFrame.FrameHeight = 3;
-                        BorderRenderOffSet = new Point(-1,-1);
+                        BorderRenderOffSet = new Point( -1, -1 );
                     }
                     break;
                 case TileRoundState.Up:
@@ -166,7 +174,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 3;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(-1,0);
+                        BorderRenderOffSet = new Point( -1, 0 );
                     }
                     break;
                 case TileRoundState.Down:
@@ -175,7 +183,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 3;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(-1,-1);
+                        BorderRenderOffSet = new Point( -1, -1 );
                     }
                     break;
                 case TileRoundState.Left:
@@ -184,7 +192,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 3;
-                        BorderRenderOffSet = new Point(0,-1);
+                        BorderRenderOffSet = new Point( 0, -1 );
                     }
                     break;
                 case TileRoundState.Right:
@@ -193,7 +201,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 3;
-                        BorderRenderOffSet = new Point(-1,-1);
+                        BorderRenderOffSet = new Point( -1, -1 );
                     }
                     break;
                 case TileRoundState.LeftUp:
@@ -202,7 +210,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(0,0);
+                        BorderRenderOffSet = new Point( 0, 0 );
                     }
                     break;
                 case TileRoundState.DownLeft:
@@ -211,7 +219,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(0,-1);
+                        BorderRenderOffSet = new Point( 0, -1 );
                     }
                     break;
                 case TileRoundState.RightDown:
@@ -220,7 +228,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(-1,-1);
+                        BorderRenderOffSet = new Point( -1, -1 );
                     }
                     break;
                 case TileRoundState.UpRight:
@@ -229,7 +237,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(-1,0);
+                        BorderRenderOffSet = new Point( -1, 0 );
                     }
                     break;
                 case TileRoundState.UpDown:
@@ -238,7 +246,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 3;
                         BorderFrame.FrameHeight = 1;
-                        BorderRenderOffSet = new Point(-1,0);
+                        BorderRenderOffSet = new Point( -1, 0 );
                     }
                     break;
                 case TileRoundState.LeftRight:
@@ -247,7 +255,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 1;
                         BorderFrame.FrameHeight = 3;
-                        BorderRenderOffSet = new Point(0,-1);
+                        BorderRenderOffSet = new Point( 0, -1 );
                     }
                     break;
                 case TileRoundState.DownLeftUp:
@@ -256,7 +264,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 1;
-                        BorderRenderOffSet = new Point(0,0);
+                        BorderRenderOffSet = new Point( 0, 0 );
                     }
                     break;
                 case TileRoundState.UpRightDown:
@@ -265,7 +273,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 2;
                         BorderFrame.FrameHeight = 1;
-                        BorderRenderOffSet = new Point(-1,0);
+                        BorderRenderOffSet = new Point( -1, 0 );
                     }
                     break;
                 case TileRoundState.RightDownLeft:
@@ -274,7 +282,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 0;
                         BorderFrame.FrameWidth = 1;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(0,-1);
+                        BorderRenderOffSet = new Point( 0, -1 );
                     }
                     break;
                 case TileRoundState.LeftUpRight:
@@ -283,7 +291,7 @@ namespace Colin.Common.Code.Tiled
                         BorderFrame.FrameY = 1;
                         BorderFrame.FrameWidth = 1;
                         BorderFrame.FrameHeight = 2;
-                        BorderRenderOffSet = new Point(0,0);
+                        BorderRenderOffSet = new Point( 0, 0 );
                     }
                     break;
             }
@@ -309,16 +317,165 @@ namespace Colin.Common.Code.Tiled
             int _downIndex = CoordinateY + 1;
             if( _downIndex > Tile.TileMap.Height - 1 )
                 _downIndex = Tile.TileMap.Height - 1;
-            bool down = !Tile.TileMap.Tiles[CoordinateX,_downIndex].Empty;
-            bool left = !Tile.TileMap.Tiles[_leftIndex,CoordinateY].Empty;
-            bool right = !Tile.TileMap.Tiles[_rightIndex,CoordinateY].Empty;
-            bool up = !Tile.TileMap.Tiles[CoordinateX,_upIndex].Empty;
+            bool down = !Tile.TileMap.Tiles[CoordinateX, _downIndex].Empty;
+            bool left = !Tile.TileMap.Tiles[_leftIndex, CoordinateY].Empty;
+            bool right = !Tile.TileMap.Tiles[_rightIndex, CoordinateY].Empty;
+            bool up = !Tile.TileMap.Tiles[CoordinateX, _upIndex].Empty;
             int result = 0;
             result += down ? 1 : 0;
             result += right ? 2 : 0;
             result += up ? 4 : 0;
             result += left ? 8 : 0;
             RoundState = (TileRoundState)result;
+        }
+
+        public Body Body;
+
+        public void RefreshPhysics( )
+        {
+            if( RoundState != RoundStateLast )
+            {
+                if( Body != null )
+                    Body.RemoveFromWorld( );
+                Body = BodyFactory.CreateBody( Tile.TileMap.world, new Vector2( CoordinateX * Tile.TileMap.GridSize , CoordinateY * Tile.TileMap.GridSize ) );
+                {
+                    Vertices terrain = new Vertices( );
+                    switch( RoundState )
+                    {
+                        case TileRoundState.Center:
+                            {
+                                if( Body != null )
+                                    Body.RemoveFromWorld( );
+                                Body = null;
+                            }
+                            break;
+                        case TileRoundState.Up:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.Down:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.Left:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.Right:
+                            {
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.LeftUp:
+                            {
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.DownLeft:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.RightDown:
+                            {
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.UpRight:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                for( int i = 0; i < terrain.Count - 1; ++i )
+                                    FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                            }
+                            break;
+                        case TileRoundState.UpDown:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                                FixtureFactory.AttachEdge( terrain[2], terrain[3], Body );
+                            }
+                            break;
+                        case TileRoundState.LeftRight:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                                FixtureFactory.AttachEdge( terrain[2], terrain[3], Body );
+                            }
+                            break;
+                        case TileRoundState.DownLeftUp:
+                            {
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            }
+                            break;
+                        case TileRoundState.UpRightDown:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            }
+                            break;
+                        case TileRoundState.RightDownLeft:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            }
+                            break;
+                        case TileRoundState.LeftUpRight:
+                            {
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
     }

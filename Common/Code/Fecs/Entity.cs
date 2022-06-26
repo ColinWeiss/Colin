@@ -137,7 +137,8 @@
 
         public void DoRender( )
         {
-            for( int count = 0; count < Components.Count; count++ )
+            RenderSelf( );
+            for( int count = Components.Count - 1; count > 0 ; count-- )
             {
                 if( Components[count].Visable )
                     Components[count].Render( );
