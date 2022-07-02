@@ -84,6 +84,8 @@ namespace Colin.Common.Code.Tiled
         /// </summary>
         public TileRoundState RoundStateLast;
 
+        public Body Body;
+
         public TileData( Tile tile )
         {
             Tile = tile;
@@ -109,7 +111,7 @@ namespace Colin.Common.Code.Tiled
             RoundStateLast = RoundState;
             RefreshRoundState( );
             RefreshBorderFrame( );
-            RefreshPhysics( );
+            RefreshPhysics_Weak( );
             if( RoundState == TileRoundState.LeftUpRightDown )
                 Tile.BorderVisible = false;
             else
@@ -125,7 +127,7 @@ namespace Colin.Common.Code.Tiled
             RefreshTextureFrame( );
             RefreshBorderOriginFrame( );
             RefreshBorderFrame( );
-            RefreshPhysics( );
+            RefreshPhysics_Immediately( );
         }
 
         /// <summary>
@@ -329,24 +331,27 @@ namespace Colin.Common.Code.Tiled
             RoundState = (TileRoundState)result;
         }
 
-        public Body Body;
-
-        public void RefreshPhysics( )
+        public void RefreshPhysics_Weak( )
         {
             if( RoundState != RoundStateLast )
             {
                 if( Body != null )
                     Body.RemoveFromWorld( );
-                Body = BodyFactory.CreateBody( Tile.TileMap.world, new Vector2( CoordinateX * Tile.TileMap.GridSize , CoordinateY * Tile.TileMap.GridSize ) );
+                Body = BodyFactory.CreateBody( Tile.TileMap.world, new Vector2( CoordinateX * Tile.TileMap.GridSize, CoordinateY * Tile.TileMap.GridSize ) );
                 {
                     Vertices terrain = new Vertices( );
                     switch( RoundState )
                     {
                         case TileRoundState.Center:
                             {
-                                if( Body != null )
-                                    Body.RemoveFromWorld( );
-                                Body = null;
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                                terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                                FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                                FixtureFactory.AttachEdge( terrain[1], terrain[2], Body );
+                                FixtureFactory.AttachEdge( terrain[2], terrain[3], Body );
+                                FixtureFactory.AttachEdge( terrain[3], terrain[0], Body );
                             }
                             break;
                         case TileRoundState.Up:
@@ -474,6 +479,155 @@ namespace Colin.Common.Code.Tiled
                             }
                             break;
                     }
+                }
+            }
+        }
+
+        public void RefreshPhysics_Immediately( )
+        {
+            if( Body != null )
+                Body.RemoveFromWorld( );
+            Body = BodyFactory.CreateBody( Tile.TileMap.world, new Vector2( CoordinateX * Tile.TileMap.GridSize, CoordinateY * Tile.TileMap.GridSize ) );
+            {
+                Vertices terrain = new Vertices( );
+                switch( RoundState )
+                {
+                    case TileRoundState.Center:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            FixtureFactory.AttachEdge( terrain[1], terrain[2], Body );
+                            FixtureFactory.AttachEdge( terrain[2], terrain[3], Body );
+                            FixtureFactory.AttachEdge( terrain[3], terrain[0], Body );
+                        }
+                        break;
+                    case TileRoundState.Up:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.Down:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.Left:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.Right:
+                        {
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.LeftUp:
+                        {
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.DownLeft:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.RightDown:
+                        {
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.UpRight:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            for( int i = 0; i < terrain.Count - 1; ++i )
+                                FixtureFactory.AttachEdge( terrain[i], terrain[i + 1], Body );
+                        }
+                        break;
+                    case TileRoundState.UpDown:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            FixtureFactory.AttachEdge( terrain[2], terrain[3], Body );
+                        }
+                        break;
+                    case TileRoundState.LeftRight:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                            FixtureFactory.AttachEdge( terrain[2], terrain[3], Body );
+                        }
+                        break;
+                    case TileRoundState.DownLeftUp:
+                        {
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                        }
+                        break;
+                    case TileRoundState.UpRightDown:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                        }
+                        break;
+                    case TileRoundState.RightDownLeft:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, -Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                        }
+                        break;
+                    case TileRoundState.LeftUpRight:
+                        {
+                            terrain.Add( new Vector2( -Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            terrain.Add( new Vector2( Tile.TileMap.GridSize / 2, Tile.TileMap.GridSize / 2 ) );
+                            FixtureFactory.AttachEdge( terrain[0], terrain[1], Body );
+                        }
+                        break;
                 }
             }
         }

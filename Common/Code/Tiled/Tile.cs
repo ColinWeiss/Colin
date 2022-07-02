@@ -153,7 +153,7 @@ namespace Colin.Common.Code.Tiled
             if( Texture != null )
             {
                 EngineInfo.SpriteBatch.Draw(
-                Texture, Coordinate.ToVector2( ) * 32,
+                Texture, Coordinate.ToVector2( ) * TileMap.GridSize ,
                 TileData.TextureFrame.Frame,
                 Color.White,0f,Vector2.Zero,1f,SpriteEffects.None,TextureLayerDepth);
             }
@@ -170,7 +170,7 @@ namespace Colin.Common.Code.Tiled
             if( Texture != null )
             {
                 EngineInfo.SpriteBatch.Draw(
-                    Texture,(Coordinate.ToVector2( ) + TileData.BorderRenderOffSet.ToVector2( )) * TileMap.GridSize ,
+                    Texture,(Coordinate.ToVector2( ) + TileData.BorderRenderOffSet.ToVector2( )) * TileMap.GridSize,
                     TileData.BorderFrame.Frame,
                     Color.White,0f,Vector2.Zero,1f,SpriteEffects.None,BorderLayerDepth);
             }
