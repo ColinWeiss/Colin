@@ -27,7 +27,7 @@ namespace Colin.Common.Code.Tools
 
         public Matrix GetTransformation( )
         {
-            return Matrix.CreateTranslation(new Vector3(-(int)Position.X,-(int)Position.Y,0f)) *
+            return Matrix.CreateTranslation(new Vector3(-Position.X,-Position.Y,0f)) *
                         Matrix.CreateRotationZ(Rotation) *
                         Matrix.CreateScale(new Vector3(Zoom,Zoom,1f)) *
                         Matrix.CreateTranslation(new Vector3(

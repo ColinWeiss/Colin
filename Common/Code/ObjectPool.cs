@@ -17,9 +17,14 @@
         public List<T>? ActiveList { get; }
 
         /// <summary>
-        /// 指示当前对象池是否启用的值.
+        /// 指示当前对象池是否启用逻辑刷新的值.
         /// </summary>
-        public bool Enable { get; set; } = false;
+        public bool Enable = true;
+
+        /// <summary>
+        /// 指示当前对象池是否启用渲染的值.
+        /// </summary>
+        public bool Visiable = true;
 
         /// <summary>
         /// 实例化一个对象池.
@@ -32,7 +37,7 @@
             Span<T> ts = Objects;
             T t = new T
             {
-                Active = true,
+                Active = false,
                 ActiveIndex = -1,
                 PoolIndex = -1
             };
@@ -47,7 +52,7 @@
 
         public virtual void DoUpdate( )
         {
-            if( Enable )
+            if( !Enable )
                 return;
             for( int count = 0; count < ActiveList.Count; count++ )
             {
@@ -59,9 +64,9 @@
 
         public virtual void DoRender( )
         {
-            if( Enable )
+            if( !Visiable )
                 return;
-            for( int count = ActiveList.Count - 1; count > 0; count-- )
+            for( int count = ActiveList.Count - 1; count >= 0; count-- )
                 ActiveList[count].DoRender( );
         }
 
@@ -99,5 +104,6 @@
             ActiveList[index].Active = false;
             ActiveList.RemoveAt(index);
         }
+
     }
 }
