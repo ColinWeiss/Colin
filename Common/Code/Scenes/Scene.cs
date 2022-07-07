@@ -13,32 +13,40 @@ namespace Colin.Common.Code.Scenes
 
         SceneUserInterfaceLayer _uiLayer;
 
-        public World world;
-        public World World => world;
+        private World _physicWorld;
+        /// <summary>
+        /// 用于计算物理的 <see cref="World"/> 对象.
+        /// </summary>
+        public World PhysicWorld => _physicWorld;
 
         public Scene( )
         {
-            world = new World(Vector2.UnitY);
         }
 
         /// <summary>
         /// 设置场景的用户交互界面内容层.
         /// </summary>
         /// <returns></returns>
-        protected abstract SceneUserInterfaceLayer SetUserInterface( );
+        protected abstract void SetUserInterface( ref SceneUserInterfaceLayer uiLayer );
 
         protected override void Initialization( )
         {
-            _uiLayer = SetUserInterface( );
+            ModifyLayers( ref _contentLayers );
+            _physicWorld = new World( Vector2.UnitY );
+            SetPhysicWorld( ref _physicWorld );
+            SetUserInterface( ref _uiLayer );
             for( int count = 0; count < _contentLayers.Count; count++ )
                 _contentLayers[count].DoInitialize( );
             _uiLayer.DoInitialize( );
             base.Initialization( );
         }
+        protected virtual void ModifyLayers( ref List<SceneContentLayer> layers )
+        {
+        }
 
         protected override void UpdateSelf( )
         {
-            world.Step((float)EngineInfo.GameTimeCache.ElapsedGameTime.TotalSeconds,3,3);
+            _physicWorld.Step((float)EngineInfo.GameTimeCache.ElapsedGameTime.TotalSeconds,3,3);
             for( int count = 0; count < _contentLayers.Count; count++ )
                 if( _contentLayers[count].UpdateEnable )
                     _contentLayers[count].DoUpdate( );
@@ -55,6 +63,11 @@ namespace Colin.Common.Code.Scenes
             base.RenderSelf(spriteBatch);
         }
 
+        public virtual void SetPhysicWorld( ref World world )
+        {
+
+        }
+
         public void Register( SceneContentLayer layer )
         {
             _contentLayers.Add(layer);
@@ -63,6 +76,11 @@ namespace Colin.Common.Code.Scenes
         public void Register( SceneUserInterfaceLayer layer )
         {
             _uiLayer = layer;
+        }
+
+        public void Remove( SceneContentLayer layer )
+        {
+            _contentLayers.Remove( layer );
         }
 
     }

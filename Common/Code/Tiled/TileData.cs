@@ -337,7 +337,7 @@ namespace Colin.Common.Code.Tiled
             {
                 if( Body != null )
                     Body.RemoveFromWorld( );
-                Body = BodyFactory.CreateBody( Tile.TileMap.world, new Vector2( CoordinateX * Tile.TileMap.GridSize, CoordinateY * Tile.TileMap.GridSize ) );
+                Body = BodyFactory.CreateBody( Tile.TileMap._world, new Vector2( CoordinateX * Tile.TileMap.GridSize, CoordinateY * Tile.TileMap.GridSize ) );
                 {
                     Vertices terrain = new Vertices( );
                     switch( RoundState )
@@ -487,7 +487,7 @@ namespace Colin.Common.Code.Tiled
         {
             if( Body != null )
                 Body.RemoveFromWorld( );
-            Body = BodyFactory.CreateBody( Tile.TileMap.world, new Vector2( CoordinateX * Tile.TileMap.GridSize, CoordinateY * Tile.TileMap.GridSize ) );
+            Body = BodyFactory.CreateBody( Tile.TileMap._world, new Vector2( CoordinateX * Tile.TileMap.GridSize, CoordinateY * Tile.TileMap.GridSize ) );
             {
                 Vertices terrain = new Vertices( );
                 switch( RoundState )

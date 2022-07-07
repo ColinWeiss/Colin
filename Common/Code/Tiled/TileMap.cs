@@ -11,7 +11,7 @@ namespace Colin.Common.Code.Tiled
     {
         public virtual int GridSize => 16;
 
-        public World world;
+        internal World _world;
 
         protected Tile[ , ] tiles;
         public Tile[ , ] Tiles => tiles;
@@ -20,10 +20,11 @@ namespace Colin.Common.Code.Tiled
 
         public int Height;
 
-        public TileMap( int width,int height )
+        public TileMap( int width,int height, World world )
         {
             Width = width;
             Height = height;
+            _world = world;
         }
 
         /// <summary>

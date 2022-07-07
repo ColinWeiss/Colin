@@ -8,8 +8,8 @@
         }
         protected override sealed void SetLayerout( ref ContainerElement containerElement )
         {
-            containerElement.SetLayerout(0,0,EngineInfo.GameViewWidth,EngineInfo.GameViewHeight);
-            base.SetLayerout(ref containerElement);
+            containerElement.SetLayerout( 0, 0, 100, 100 );
+            base.SetLayerout( ref containerElement );
         }
     }
 }

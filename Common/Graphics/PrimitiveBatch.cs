@@ -169,6 +169,26 @@ namespace Colin.Common.Graphics
         }
 
         /// <summary>
+        /// 用该顶点批处理器绘制一个矩形.
+        /// </summary>
+        /// <param name="position">位置.</param>
+        /// <param name="size">大小.</param>
+        /// <param name="color">矩形颜色.</param>
+        public void RenderRectangle( Point position, Point size, Color color )
+        {
+            if( !_hasBegun )
+                Begin( PrimitiveType );
+            AddVertex( position.ToVector2( ), color );
+            AddVertex( position.ToVector2( ) + Vector2.UnitX * size.X, color );
+            AddVertex( position.ToVector2( ) + Vector2.UnitY * size.Y, color );
+            AddVertex( position.ToVector2( ) + Vector2.UnitX * size.X, color );
+            AddVertex( position.ToVector2( ) + size.ToVector2( ), color );
+            AddVertex( position.ToVector2( ) + Vector2.UnitY * size.Y, color );
+            if( _hasBegun )
+                End( );
+        }
+
+        /// <summary>
         /// 结束顶点的添加, 并进行基本体的绘制.
         /// </summary>
         public void End( )

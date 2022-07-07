@@ -28,11 +28,6 @@ namespace Colin.Common.Code.Scenes
         /// </summary>
         public bool RenderEnable { get; set; } = true;
 
-        /// <summary>
-        /// 该场景所有实体.
-        /// </summary>
-        public ObjectPool<Entity> Entities { get; protected set; } = new ObjectPool<Entity>(1024);
-
         public virtual void DoInitialize( )
         {
 

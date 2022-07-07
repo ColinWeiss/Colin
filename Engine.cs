@@ -39,11 +39,11 @@ namespace Colin
             {
                 PreferHalfPixelOffset = true,
                 HardwareModeSwitch = false,
+                SynchronizeWithVerticalRetrace = false,
                 PreferMultiSampling = true
             };
             Window.AllowUserResizing = true;
             IsFixedTimeStep = true;
-            EngineInfo.Graphics.SynchronizeWithVerticalRetrace = false;
             TargetElapsedTime = new TimeSpan(0,0,0,0,(int)Math.Round(1000f / TargetFrame));
             Content.RootDirectory = "Contents";
         }
