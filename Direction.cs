@@ -3,6 +3,10 @@
     public enum Direction
     {
         /// <summary>
+        /// 没有方向.
+        /// </summary>
+        None,
+        /// <summary>
         /// 纵向.
         /// </summary>
         Portrait,

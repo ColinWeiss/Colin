@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class PixelRenderer : DivisionRenderer
+    public class DivPixelRenderer : DivisionRenderer
     {
         private Sprite _pixel;
         public override void RendererInit( )
@@ -29,17 +29,17 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
                   SpriteEffects.None,
                   _pixel.Depth );
         }
-        public PixelRenderer SetDesignColor( Color color )
+        public DivPixelRenderer SetDesignColor( Color color )
         {
             Division.Design.Color = color;
             return this;
         }
-        public PixelRenderer SetDesignColor( Color color, int a = 255 )
+        public DivPixelRenderer SetDesignColor( Color color, int a = 255 )
         {
             Division.Design.Color = new Color( color, a );
             return this;
         }
-        public PixelRenderer SetDesignColor( int r, int g, int b, int a = 255 )
+        public DivPixelRenderer SetDesignColor( int r, int g, int b, int a = 255 )
         {
             SetDesignColor( new Color( r, g, b, a ) );
             return this;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class FontRenderer : DivisionRenderer
+    public class DivFontRenderer : DivisionRenderer
     {
         public DynamicSpriteFont Font;
 

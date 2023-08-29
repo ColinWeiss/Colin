@@ -34,7 +34,7 @@ namespace Colin.Core.Graphics
         /// <summary>
         /// 选取帧格.
         /// </summary>
-        public SpriteFrame spriteFrame;
+        public SpriteRenderInfo spriteFrame;
 
         /// <summary>
         /// 纹理批绘制参数.

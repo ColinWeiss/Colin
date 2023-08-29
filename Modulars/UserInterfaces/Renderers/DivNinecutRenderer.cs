@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class NinecutRenderer : DivisionRenderer
+    public class DivNinecutRenderer : DivisionRenderer
     {
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
@@ -24,12 +24,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
                 Cut,
                 _sprite.Depth );
         }
-        public NinecutRenderer Bind( Sprite sprite )
+        public DivNinecutRenderer Bind( Sprite sprite )
         {
             _sprite = sprite;
             return this;
         }
-        public NinecutRenderer Bind( Texture2D texture )
+        public DivNinecutRenderer Bind( Texture2D texture )
         {
             _sprite = new Sprite( texture );
             return this;

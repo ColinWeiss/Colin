@@ -3,11 +3,11 @@
 namespace Colin.Core.Graphics
 {
     /// <summary>
-    /// Sprite等大帧格.
-    /// <br>[!] 即 每帧大小相同的帧格格式.</br>
+    /// Sprite渲染信息.
+    /// <br>[!] 该信息使用每帧大小相同的帧格格式.</br>
     /// </summary>
     [Serializable]
-    public struct SpriteFrame
+    public struct SpriteRenderInfo
     {
         /// <summary>
         /// 横向选取帧格; 值为帧数.
@@ -47,37 +47,37 @@ namespace Colin.Core.Graphics
         /// 起始帧.
         /// </summary>
         [DataMember]
-        public int FrameCountStart;
+        public int Start;
 
         /// <summary>
         /// 当前帧.
         /// </summary>
         [DataMember]
-        public int FrameCount;
+        public int Current;
 
         /// <summary>
         /// 帧上限.
         /// </summary>
         [DataMember]
-        public int FrameCountMax;
+        public int FrameMax;
 
         /// <summary>
         /// 帧切换时间.
         /// </summary>
         [DataMember]
-        public int IntervalTime;
+        public float Interval;
 
         /// <summary>
         /// 帧计时器.
         /// </summary>
         [DataMember]
-        public int FrameTimer;
+        public float Timer;
 
         /// <summary>
         /// 指示该帧格读取的方向.
         /// </summary>
         [DataMember]
-        public Direction FrameDirection;
+        public Direction Direction;
 
         /// <summary>
         /// 为帧格选取提供逻辑刷新.
@@ -86,32 +86,28 @@ namespace Colin.Core.Graphics
         {
             if( !IsPlay )
                 return;
-            FrameTimer++;
-            if( FrameTimer % IntervalTime == 0 && FrameTimer != 0 )
+            Timer += Time.DeltaTime;
+            if( Timer > Interval )
             {
-                FrameTimer = 0;
-                FrameCount++;
-                if( FrameCount > FrameCountMax )
-                    FrameCount = FrameCountStart;
+                Timer = 0;
+                Current++;
+                if( Current > FrameMax + Start)
+                    Current = Start;
             }
         }
-
         public Rectangle Frame
         {
             get
             {
-                switch( FrameDirection )
+                switch( Direction )
                 {
                     case Direction.Portrait:
-                        return new Rectangle( X * Width, Y * Height * FrameCount, Width, Height );
+                        return new Rectangle( X * Width, Y * Height * Current, Width, Height );
                     case Direction.Transverse:
-                        return new Rectangle( X * Width * FrameCount, Y * Height, Width, Height );
+                        return new Rectangle( X * Width * Current, Y * Height, Width, Height );
                 };
                 return Rectangle.Empty;
             }
         }
-
-
-
     }
 }

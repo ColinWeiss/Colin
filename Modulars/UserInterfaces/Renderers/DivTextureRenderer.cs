@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class SpriteRenderer : DivisionRenderer
+    public class DivTextureRenderer : DivisionRenderer
     {
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
@@ -24,12 +24,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
                 SpriteEffects.None, 
                 _sprite.Depth );
         }
-        public SpriteRenderer Bind( Sprite sprite )
+        public DivTextureRenderer Bind( Sprite sprite )
         {
             _sprite = sprite;
             return this;
         }
-        public SpriteRenderer Bind( Texture2D texture )
+        public DivTextureRenderer Bind( Texture2D texture )
         {
             _sprite = new Sprite( texture );
             return this;

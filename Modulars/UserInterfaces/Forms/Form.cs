@@ -39,7 +39,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             {
                 _isTransparent = value;
                 if( !_isTransparent )
-                    Block.BindRenderer<PixelRenderer>( );
+                    Block.BindRenderer<DivPixelRenderer>( );
                 else
                     Block.ClearRenderer( );
             }
@@ -70,14 +70,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Substrate.Layout.Top = -4;
             Substrate.Layout.Width = Layout.Width + 8;
             Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
-            NinecutRenderer _substrateRenderer = Substrate.BindRenderer<NinecutRenderer>( );
+            DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>( );
             _substrateRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Substrate0" ) );
             _substrateRenderer.Cut = 4;
             base.Register( Substrate );
 
             Block = new Division( "Block" );
             if( !IsTransparent )
-                Block.BindRenderer<PixelRenderer>( );
+                Block.BindRenderer<DivPixelRenderer>( );
             Block.Design.Color = new Color( 17, 18, 20 );
             Block.Layout.Top = _titleHeight;
             Block.Layout.Width = Layout.Width;
@@ -85,14 +85,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             base.Register( Block );
 
             TitleColumn = new Division( "TitleColumn" );
-            TitleColumn.BindRenderer<PixelRenderer>( );
+            TitleColumn.BindRenderer<DivPixelRenderer>( );
             TitleColumn.Interact.IsInteractive = false;
             TitleColumn.Design.Color = new Color( 20, 22, 25 );
             TitleColumn.Layout.Width = Layout.Width;
             TitleColumn.Layout.Height = _titleHeight;
             {
                 _titleColumnDec = new Division( "TitleColumn.Decoration" );
-                NinecutRenderer _decRenderer = _titleColumnDec.BindRenderer<NinecutRenderer>( );
+                DivNinecutRenderer _decRenderer = _titleColumnDec.BindRenderer<DivNinecutRenderer>( );
                 _decRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Decoration" ) );
                 _decRenderer.Cut = 8;
                 _titleColumnDec.Interact.IsInteractive = false;
@@ -101,7 +101,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 TitleColumn.Register( _titleColumnDec );
 
                 Icon = new Division( "Icon" );
-                SpriteRenderer _iconRenderer = Icon.BindRenderer<SpriteRenderer>( );
+                DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>( );
                 _iconRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Icon0" ) );
                 Icon.Interact.IsInteractive = false;
                 Icon.Layout.Left = 8;
@@ -118,7 +118,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 TitleColumn.Register( TitleLabel );
 
                 CloseButton = new Division( "CloseButton" );
-                SpriteRenderer _closeRenderer = CloseButton.BindRenderer<SpriteRenderer>( );
+                DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>( );
                 _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
                 CloseButton.Interact.IsInteractive = true;
                 CloseButton.Layout.Left = TitleColumn.Layout.Width - 32;
