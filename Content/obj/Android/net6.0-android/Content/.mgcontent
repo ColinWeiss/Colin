@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>Android</Platform>
+  <Config />
+  <SourceFiles>
+    <File>D:/Codes/Colin.Core/Content/Effects/LeftRightLoopMapping.fx</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/Pixel.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Button.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Close0_Off.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Close0.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Close1_Off.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Close1.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Decoration.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Default/Block.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Default/BlockBorder.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Default/Close_Using.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Default/Close.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Default/Icon.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Default/Substrate.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Icon0.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Icon1.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Substrate0.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/Substrate1.png</File>
+    <File>D:/Codes/Colin.Core/Content/Textures/UserInterfaces/Forms/TitleColumn1.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>

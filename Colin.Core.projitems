@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>6efba8a9-a407-4029-bdd0-651d22a87386</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Colin.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)app.manifest" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Gaussian.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Effects\LeftRightLoopMapping.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Macros.fxh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Button.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0_Off.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close1.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close1_Off.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Decoration.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Block.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\BlockBorder.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Close.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Close_Using.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Icon.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Substrate.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Icon0.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Icon1.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Substrate0.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Substrate1.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\TitleColumn1.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\ControllerCursor.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\Pixel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\LiteList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Component.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ComponentList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableSceneComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IUpdateableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\RenderableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneComponentList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneComponentListEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\BasicEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\InputEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEventManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\WeakReferenceDelegate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EventExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\FontExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\IOExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\LineExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\MathExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\RandomExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\RectangleExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\RenderTargetExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SpriteBatchExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TextureExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\VectorExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Developments\DirectoryChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FillPattern.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\ColorGradienter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpriteFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\VectorGradienter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\VertexRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\ControllerResponder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\MouseResponder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\BasicsDirectory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\Explorer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FileDropProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\GameData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\GameDataFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\IFileDropBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Developments\IProgramChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ITraceable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Line.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Meteors\Meteor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Meteors\MeteorCreator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackageTransfer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\INetworkMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\NetModeState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\NetType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\Network.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Skys\Sky.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Skys\SkyStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Tile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileAroundState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBehaviorCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileCollision.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfoCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Container.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\LinearMenuController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DesignStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Division.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionEventResponder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Form.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\PopupInputTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\InteractStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\LayoutStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Button.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Canvas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\InputTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Label.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\ProgressBar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\FontRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\NinecutRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\PixelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\SpriteRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UserInterface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseCreator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Developments\ProgramChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\FontResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\AssetLoader.cs" />
+    <Compile Include="..\Colin.Core\Assets\SoundAssets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\TextureAssets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Structures\QuadTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Developments\" />
+  </ItemGroup>
+</Project>
