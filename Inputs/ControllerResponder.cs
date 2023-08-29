@@ -73,7 +73,7 @@ namespace Colin.Core.Inputs
                     cursorPosition.Y-=3;
                 if( state.ThumbSticks.Right.Y < 0 )
                     cursorPosition.Y+=3;
-                //          Console.WriteLine( State.ThumbSticks.Right );
+                //          Console.WriteLine( SectionState.ThumbSticks.Right );
             }
             else
                 EngineInfo.Engine.IsMouseVisible = true;

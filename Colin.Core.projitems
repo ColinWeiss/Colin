@@ -48,13 +48,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\LiteList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\Component.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ComponentList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableSceneComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\IUpdateableComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\RenderableComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneComponentList.cs" />

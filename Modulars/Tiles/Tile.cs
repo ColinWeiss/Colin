@@ -15,6 +15,8 @@ namespace Colin.Core.Modulars.Tiles
         private int _height = 0;
         public int Height => _height;
 
+        public Point Half => new Point( _width / 2 , _height / 2 );
+
         private Scene _scene;
         public Scene Scene
         {

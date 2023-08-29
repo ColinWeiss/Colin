@@ -75,16 +75,5 @@ namespace Colin.Core.Extensions
             float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
             return new Vector2( depthX, depthY );
         }
-
-        /// <summary>
-        /// 判断交互点是否与指定的 <seealso cref="Rectangle"/> 重合.
-        /// </summary>
-        /// <param name="rectangle">指定的 <seealso cref="Rectangle"/>.</param>
-        /// <returns>如若是, 返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
-        public static bool IntersectInteractive( this RectangleF rectangle )
-        {
-            return rectangle.Intersects( new RectangleF( Input.InteractionPoint.ToPoint(), Point.Zero ) );
-        }
-
     }
 }

@@ -87,7 +87,7 @@ namespace Colin.Core
             Height = height;
         }
 
-        public RectangleF( Point location, Point size )
+        public RectangleF( Vector2 location, Vector2 size )
         {
             X = location.X;
             Y = location.Y;
