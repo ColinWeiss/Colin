@@ -2,7 +2,7 @@
 
 namespace Colin.Core
 {
-    /// <summary>
+  /*  /// <summary>
     /// 定义具有三个组件的三角形.
     /// </summary>
     public struct Triangle
@@ -134,6 +134,6 @@ namespace Colin.Core
             VertexB = Vector2.Normalize( bDirection ) * bDirection.Length( ) * scale + centroid;
             VertexC = Vector2.Normalize( cDirection ) * cDirection.Length( ) * scale + centroid;
         }
-
-    }
+  */
+    
 }

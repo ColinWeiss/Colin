@@ -24,7 +24,7 @@ namespace Colin.Core.Structures
         /// <param name="splitCount">How many leaves a branch can hold before it splits into sub-branches.</param>
 		/// <param name="depthLimit">Maximum distance a node can be from the tree root.</param>
         /// <param name="region">The region that your quadtree occupies, all inserted quads should fit into this.</param>
-        public QuadTree( int splitCount, int depthLimit, ref RectangleF region )
+        public QuadTree( int splitCount, int depthLimit, ref Rectangle region )
         {
             this.splitCount = splitCount;
             this.depthLimit = depthLimit;
@@ -36,7 +36,7 @@ namespace Colin.Core.Structures
         /// <param name="splitCount">How many leaves a branch can hold before it splits into sub-branches.</param>
 		/// <param name="depthLimit">Maximum distance a node can be from the tree root.</param>
         /// <param name="region">The region that your quadtree occupies, all inserted quads should fit into this.</param>
-		public QuadTree( int splitCount, int depthLimit, RectangleF region )
+		public QuadTree( int splitCount, int depthLimit, Rectangle region )
             : this( splitCount, depthLimit, ref region )
         {
 
@@ -50,8 +50,8 @@ namespace Colin.Core.Structures
         /// <param name="y">Y position of the region.</param>
         /// <param name="width">Width of the region.</param>
         /// <param name="height">Height of the region.</param>
-        public QuadTree( int splitCount, int depthLimit, float x, float y, float width, float height )
-            : this( splitCount, depthLimit, new RectangleF( x, y, x + width, y + height ) )
+        public QuadTree( int splitCount, int depthLimit, int x, int y, int width, int height )
+            : this( splitCount, depthLimit, new Rectangle( x, y, x + width, y + height ) )
         {
 
         }
@@ -82,7 +82,7 @@ namespace Colin.Core.Structures
         /// </summary>
         /// <param name="value">The leaf value.</param>
         /// <param name="quad">The leaf size.</param>
-        public void Insert( T value, ref RectangleF quad )
+        public void Insert( T value, ref Rectangle quad )
         {
             Leaf leaf;
             if( !leafLookup.TryGetValue( value, out leaf ) )
@@ -97,7 +97,7 @@ namespace Colin.Core.Structures
         /// </summary>
         /// <param name="value">The leaf value.</param>
         /// <param name="quad">The leaf quad.</param>
-        public void Insert( T value, RectangleF quad )
+        public void Insert( T value, Rectangle quad )
         {
             Insert( value, ref quad );
         }
@@ -109,9 +109,9 @@ namespace Colin.Core.Structures
         /// <param name="y">Y position of the leaf.</param>
         /// <param name="width">Width of the leaf.</param>
         /// <param name="height">Height of the leaf.</param>
-        public void Insert( T value, float x, float y, float width, float height )
+        public void Insert( T value, int x, int y, int width, int height )
         {
-            var quad = new RectangleF( x, y, x + width, y + height );
+            var quad = new Rectangle( x, y, x + width, y + height );
             Insert( value, ref quad );
         }
 
@@ -121,7 +121,7 @@ namespace Colin.Core.Structures
         /// <returns>True if any values were found.</returns>
         /// <param name="quad">The area to search.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchArea( ref RectangleF quad, ref List<T> values )
+        public bool SearchArea( ref Rectangle quad, ref List<T> values )
         {
             if( values != null )
                 values.Clear( );
@@ -136,7 +136,7 @@ namespace Colin.Core.Structures
         /// <returns>True if any values were found.</returns>
         /// <param name="quad">The area to search.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchArea( RectangleF quad, ref List<T> values )
+        public bool SearchArea( Rectangle quad, ref List<T> values )
         {
             return SearchArea( ref quad, ref values );
         }
@@ -149,9 +149,9 @@ namespace Colin.Core.Structures
         /// <param name="width">Width of the search area.</param>
         /// <param name="height">Height of the search area.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchArea( float x, float y, float width, float height, ref List<T> values )
+        public bool SearchArea( int x, int y, int width, int height, ref List<T> values )
         {
-            var quad = new RectangleF( x, y, x + width, y + height );
+            var quad = new Rectangle( x, y, x + width, y + height );
             return SearchArea( ref quad, ref values );
         }
 
@@ -234,23 +234,23 @@ namespace Colin.Core.Structures
                         CountBranches( branch.Branches[i], ref count );
         }
 
-        static Branch CreateBranch( QuadTree<T> tree, Branch parent, int branchDepth, ref RectangleF quad )
+        static Branch CreateBranch( QuadTree<T> tree, Branch parent, int branchDepth, ref Rectangle quad )
         {
             var branch = branchPool.Count > 0 ? branchPool.Pop( ) : new Branch( );
             branch.Tree = tree;
             branch.Parent = parent;
             branch.Split = false;
             branch.Depth = branchDepth;
-            float midX = quad.X + (quad.Width - quad.X) * 0.5f;
-            float midY = quad.Y + (quad.Height - quad.Y) * 0.5f;
-            branch.Quads[0] = new RectangleF( quad.X, quad.Y, midX, midY );
-            branch.Quads[1] = new RectangleF( midX, quad.Y, quad.Width, midY );
-            branch.Quads[2] = new RectangleF( midX, midY, quad.Width, quad.Height );
-            branch.Quads[3] = new RectangleF( quad.X, midY, midX, quad.Height );
+            int midX = (int)(quad.X + (quad.Width - quad.X) * 0.5f);
+            int midY = (int)(quad.Y + (quad.Height - quad.Y) * 0.5f);
+            branch.Quads[0] = new Rectangle( quad.X, quad.Y, midX, midY );
+            branch.Quads[1] = new Rectangle( midX, quad.Y, quad.Width, midY );
+            branch.Quads[2] = new Rectangle( midX, midY, quad.Width, quad.Height );
+            branch.Quads[3] = new Rectangle( quad.X, midY, midX, quad.Height );
             return branch;
         }
 
-        static Leaf CreateLeaf( T value, ref RectangleF quad )
+        static Leaf CreateLeaf( T value, ref Rectangle quad )
         {
             var leaf = leafPool.Count > 0 ? leafPool.Pop( ) : new Leaf( );
             leaf.Value = value;
@@ -262,7 +262,7 @@ namespace Colin.Core.Structures
         {
             internal QuadTree<T> Tree;
             internal Branch Parent;
-            internal RectangleF[ ] Quads = new RectangleF[4];
+            internal Rectangle[ ] Quads = new Rectangle[4];
             internal Branch[ ] Branches = new Branch[4];
             internal List<Leaf> Leaves = new List<Leaf>( );
             internal bool Split;
@@ -327,7 +327,7 @@ namespace Colin.Core.Structures
                 }
             }
 
-            internal void SearchQuad( ref RectangleF quad, List<T> values )
+            internal void SearchQuad( ref Rectangle quad, List<T> values )
             {
                 if( Leaves.Count > 0 )
                     for( int i = 0 ; i < Leaves.Count ; ++i )
@@ -354,7 +354,7 @@ namespace Colin.Core.Structures
         {
             internal Branch Branch;
             internal T Value;
-            internal RectangleF Quad;
+            internal Rectangle Quad;
         }
     }
 }

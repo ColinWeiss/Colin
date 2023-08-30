@@ -81,6 +81,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\VectorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Developments\DirectoryChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FillPattern.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalUsing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\ColorGradienter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivFontRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
     <Compile Include="..\..\Colin.Core\Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="..\..\Colin.Core\Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
@@ -159,7 +161,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Developments\ProgramChecker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\FontResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameResource.cs" />

@@ -1,18 +1,15 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core
 {
-    [DataContract]
-    [DebuggerDisplay( "{DebugDisplayString,nq}" )]
-    public struct RectangleF : IEquatable<RectangleF>
+    public struct RectangleF
     {
-        private static RectangleF emptyRectangle;
+        private static RectangleF emptyRectangleF;
 
         [DataMember]
         public float X;
@@ -26,7 +23,7 @@ namespace Colin.Core
         [DataMember]
         public float Height;
 
-        public static RectangleF Empty => emptyRectangle;
+        public static RectangleF Empty => emptyRectangleF;
 
         public float Left => X;
 
@@ -40,7 +37,7 @@ namespace Colin.Core
         {
             get
             {
-                if( Width == 0 && Height == 0 && X == 0 )
+                if(Width == 0 && Height == 0 && X == 0)
                 {
                     return Y == 0;
                 }
@@ -77,6 +74,8 @@ namespace Colin.Core
 
         public Vector2 Center => new Vector2( X + Width / 2, Y + Height / 2 );
 
+        public Vector2 Half => new Vector2( Width / 2, Height / 2 );
+
         internal string DebugDisplayString => X + "  " + Y + "  " + Width + "  " + Height;
 
         public RectangleF( float x, float y, float width, float height )
@@ -95,33 +94,9 @@ namespace Colin.Core
             Height = size.Y;
         }
 
-        public static bool operator ==( RectangleF a, RectangleF b )
+        public bool Contains( float x, float y )
         {
-            if( a.X == b.X && a.Y == b.Y && a.Width == b.Width )
-            {
-                return a.Height == b.Height;
-            }
-
-            return false;
-        }
-
-        public static bool operator !=( RectangleF a, RectangleF b )
-        {
-            return !(a == b);
-        }
-
-        public static implicit operator RectangleF( Rectangle a )
-        {
-            return new RectangleF( a.X, a.Y, a.Width, a.Height );
-        }
-        public static implicit operator Rectangle( RectangleF a )
-        {
-            return new RectangleF( a.X, a.Y, a.Width, a.Height );
-        }
-
-        public bool Contains( int x, int y )
-        {
-            if( X <= x && x < X + Width && Y <= y )
+            if(X <= x && x < X + Width && Y <= y)
             {
                 return y < Y + Height;
             }
@@ -129,19 +104,9 @@ namespace Colin.Core
             return false;
         }
 
-        public bool Contains( float x, float y )
+        public bool Contains( Vector2 value )
         {
-            if( (float)X <= x && x < (float)(X + Width) && (float)Y <= y )
-            {
-                return y < (float)(Y + Height);
-            }
-
-            return false;
-        }
-
-        public bool Contains( Point value )
-        {
-            if( X <= value.X && value.X < X + Width && Y <= value.Y )
+            if(X <= value.X && value.X < X + Width && Y <= value.Y)
             {
                 return value.Y < Y + Height;
             }
@@ -149,29 +114,14 @@ namespace Colin.Core
             return false;
         }
 
-        public void Contains( ref Point value, out bool result )
+        public void Contains( ref Vector2 value, out bool result )
         {
             result = X <= value.X && value.X < X + Width && Y <= value.Y && value.Y < Y + Height;
         }
 
-        public bool Contains( Vector2 value )
+        public bool Contains( RectangleF value )
         {
-            if( (float)X <= value.X && value.X < (float)(X + Width) && (float)Y <= value.Y )
-            {
-                return value.Y < (float)(Y + Height);
-            }
-
-            return false;
-        }
-
-        public void Contains( ref Vector2 value, out bool result )
-        {
-            result = (float)X <= value.X && value.X < (float)(X + Width) && (float)Y <= value.Y && value.Y < (float)(Y + Height);
-        }
-
-        public bool Contains( Rectangle value )
-        {
-            if( X <= value.X && value.X + value.Width <= X + Width && Y <= value.Y )
+            if(X <= value.X && value.X + value.Width <= X + Width && Y <= value.Y)
             {
                 return value.Y + value.Height <= Y + Height;
             }
@@ -184,27 +134,7 @@ namespace Colin.Core
             result = X <= value.X && value.X + value.Width <= X + Width && Y <= value.Y && value.Y + value.Height <= Y + Height;
         }
 
-        public override bool Equals( object obj )
-        {
-            if( obj is RectangleF )
-            {
-                return this == (RectangleF)obj;
-            }
-
-            return false;
-        }
-
-        public bool Equals( RectangleF other )
-        {
-            return this == other;
-        }
-
-        public override int GetHashCode( )
-        {
-            return (((17 * 23 + X.GetHashCode( )) * 23 + Y.GetHashCode( )) * 23 + Width.GetHashCode( )) * 23 + Height.GetHashCode( );
-        }
-
-        public void Inflate( int horizontalAmount, int verticalAmount )
+        public void Inflate( float horizontalAmount, float verticalAmount )
         {
             X -= horizontalAmount;
             Y -= verticalAmount;
@@ -212,17 +142,9 @@ namespace Colin.Core
             Height += verticalAmount * 2;
         }
 
-        public void Inflate( float horizontalAmount, float verticalAmount )
-        {
-            X -= (int)horizontalAmount;
-            Y -= (int)verticalAmount;
-            Width += (int)horizontalAmount * 2;
-            Height += (int)verticalAmount * 2;
-        }
-
         public bool Intersects( RectangleF value )
         {
-            if( value.Left < Right && Left < value.Right && value.Top < Bottom )
+            if(value.Left < Right && Left < value.Right && value.Top < Bottom)
             {
                 return Top < value.Bottom;
             }
@@ -243,7 +165,7 @@ namespace Colin.Core
 
         public static void Intersect( ref RectangleF value1, ref RectangleF value2, out RectangleF result )
         {
-            if( value1.Intersects( value2 ) )
+            if(value1.Intersects( value2 ))
             {
                 float num = Math.Min( value1.X + value1.Width, value2.X + value2.Width );
                 float num2 = Math.Max( value1.X, value2.X );
@@ -257,28 +179,16 @@ namespace Colin.Core
             }
         }
 
-        public void Offset( int offsetX, int offsetY )
+        public void Offset( float offsetX, float offsetY )
         {
             X += offsetX;
             Y += offsetY;
         }
 
-        public void Offset( float offsetX, float offsetY )
-        {
-            X += (int)offsetX;
-            Y += (int)offsetY;
-        }
-
-        public void Offset( Point amount )
+        public void Offset( Vector2 amount )
         {
             X += amount.X;
             Y += amount.Y;
-        }
-
-        public void Offset( Vector2 amount )
-        {
-            X += (int)amount.X;
-            Y += (int)amount.Y;
         }
 
         public override string ToString( )

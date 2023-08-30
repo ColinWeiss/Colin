@@ -15,10 +15,10 @@ namespace Colin.Core.Assets
         public void Load( )
         {
             Unifont = new FontSystem( );
-            Unifont.AddFont( DeltaMachine.Assets.Assets.Unifont );
+            Unifont.AddFont( Colin.Assets.Assets.Unifont );
 
             GlowSans = new FontSystem( );
-            GlowSans.AddFont( DeltaMachine.Assets.Assets.GlowSans );
+            GlowSans.AddFont( Colin.Assets.Assets.GlowSans );
         }
     }
 }

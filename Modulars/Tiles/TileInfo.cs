@@ -50,7 +50,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public TileCollision Collision;
 
-        public Rectangle HitBox => new Rectangle( (CoordinateF * TileOption.TileSizeF + TileOption.TileSizeF / 2).ToPoint( ), TileOption.TileSize );
+        public RectangleF HitBox => new RectangleF( CoordinateF * TileOption.TileSizeF , TileOption.TileSizeF );
 
         public TileInfo()
         {

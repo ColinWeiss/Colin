@@ -58,5 +58,10 @@ namespace Colin.Core.Modulars.Tiles
             infos.CreateTileDefaultInfo(coorinateX, coorinateY);
             behaviors.SetBehavior<T>(coorinateX, coorinateY);
         }
+        public void Smash( int coorinateX, int coorinateY )
+        {
+            infos.DeleteTileInfo( coorinateX, coorinateY );
+            behaviors.ClearBehavior( coorinateX, coorinateY );
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Colin.Core.Extensions
     /// </summary>
     public static class SpriteBatchExt
     {
-        /*
+        
         /// <summary>
         /// 矩形绘制.
         /// </summary>
@@ -63,14 +63,20 @@ namespace Colin.Core.Extensions
         /// <summary>
         /// 矩形绘制.
         /// </summary>
-        /// <param name="batch"></param>
-        /// <param name="rect"></param>
-        /// <param name="color"></param>
+        public static void DrawRectangle( this SpriteBatch batch, RectangleF rect, Color color )
+        {
+            batch.DrawRectangle( new Rectangle( (int)Math.Round(rect.X), (int)Math.Round( rect.Y ) , (int)rect.Width , (int)rect.Height ) , color );
+        }
+
+        /// <summary>
+        /// 矩形绘制.
+        /// </summary>
         public static void DrawRectangle( this SpriteBatch batch , Rectangle rect , Color color )
         {
-            batch.Draw( PreLoadResource.Pixel.Source , rect , color );
+            batch.Draw( TextureAssets.Get( "Pixel" ) , rect , color );
         }
-        */
+
+
 
         /// <summary>
         /// 九宫绘制.
