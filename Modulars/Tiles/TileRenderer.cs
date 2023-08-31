@@ -58,8 +58,8 @@ namespace Colin.Core.Modulars.Tiles
             Point loop = start + view;
             start.X = Math.Clamp( start.X, 0, Tile.Width - 1 );
             start.Y = Math.Clamp( start.Y, 0, Tile.Height - 1 );
-            loop.X = Math.Clamp( loop.X, 0, Tile.Width - 1 );
-            loop.Y = Math.Clamp( loop.X, 0, Tile.Height - 1 );
+            loop.X = Math.Clamp( loop.X + 1, EngineInfo.ViewWidth / 16, Tile.Width - 1 );
+            loop.Y = Math.Clamp( loop.Y + 1, EngineInfo.ViewHeight / 16, Tile.Height - 1 );
             for( int countX = start.X ; countX < loop.X ; countX++ )
                 for( int countY = start.Y ; countY < loop.Y ; countY++ )
                     Tile.behaviors[countX, countY].RenderTexture( countX , countY );

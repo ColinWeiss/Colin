@@ -74,7 +74,6 @@ namespace Colin.Core
 #endif
         }
 
-
         public void SetTargetFrame( int frame )
         {
             _targetFrame = frame;
@@ -133,7 +132,7 @@ namespace Colin.Core
         private bool Started = false;
         protected override sealed void Update( GameTime gameTime )
         {
-            if(!Enable)
+            if (!Enable)
                 return;
             Time.Update( (float)gameTime.ElapsedGameTime.TotalSeconds );
             if(!Started)
