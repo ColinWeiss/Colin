@@ -74,6 +74,11 @@ namespace Colin.Core.Graphics
         public float Timer;
 
         /// <summary>
+        /// 指示播放是否为循环模式.
+        /// </summary>
+        public bool IsLoop;
+
+        /// <summary>
         /// 指示该帧格读取的方向.
         /// </summary>
         [DataMember]
@@ -90,8 +95,9 @@ namespace Colin.Core.Graphics
             if( Timer > Interval )
             {
                 Timer = 0;
-                Current++;
-                if( Current > FrameMax + Start)
+                if( Current < FrameMax + Start )
+                    Current++;
+                else if( IsLoop && IsLoop )
                     Current = Start;
             }
         }
