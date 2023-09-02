@@ -16,7 +16,7 @@ namespace Colin.Core.Assets
                 return;
             SoundEffect _sound;
             string _fileName;
-            string[ ] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ), "*.*", SearchOption.AllDirectories );
+            string[ ] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ), "*.xnb*", SearchOption.AllDirectories );
             for( int count = 0; count < TextureFileNames.Length; count++ )
             {
                 Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;

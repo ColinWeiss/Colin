@@ -26,7 +26,7 @@ namespace Colin.Core.Audios
         /// 播放指定音效.
         /// </summary>
         /// <param name="soundEffect">音效.</param>
-        public static void Play( SoundEffect soundEffect )
+        public void Play( SoundEffect soundEffect )
         {
             if( EngineInfo.Config.SoundEffect )
             {
