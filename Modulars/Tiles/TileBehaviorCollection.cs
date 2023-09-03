@@ -39,17 +39,19 @@ namespace Colin.Core.Modulars.Tiles
         public void SetBehavior<T>( int x, int y ) where T : TileBehavior, new()
         {
             _behaviors[x + y * Width] = new T( );
+            _behaviors[x + y * Width]._tile = tile;
             T _behavior = _behaviors[x + y * Width] as T;
-            _behavior.tile = tile;
+            _behavior._tile = tile;
             _behavior.coordinateX = x;
             _behavior.coordinateY = y;
             _behavior.id = x + y * Width;
             _behavior.SetDefaults( );
-            _behavior.OnRefresh( );
+            _behavior.DoRefresh( 1 );
         }
 
         public void ClearBehavior( int x, int y )
         {
+            _behaviors[x + y * Width].DoRefresh( 1 );
             _behaviors[x + y * Width] = new TileBehavior( );
         }
     }

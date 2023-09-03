@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Colin.Core.Common;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -55,8 +56,11 @@ namespace Colin.Core.Modulars.Tiles
 
         public void Place<T>(int coorinateX, int coorinateY) where T : TileBehavior, new()
         {
-            infos.CreateTileDefaultInfo(coorinateX, coorinateY);
-            behaviors.SetBehavior<T>(coorinateX, coorinateY);
+            if(infos[coorinateX,coorinateY].Empty)
+            {
+                infos.CreateTileDefaultInfo( coorinateX, coorinateY );
+                behaviors.SetBehavior<T>( coorinateX, coorinateY );
+            }
         }
         public void Smash( int coorinateX, int coorinateY )
         {

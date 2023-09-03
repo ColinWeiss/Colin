@@ -63,6 +63,11 @@ namespace Colin.Core.Modulars.Tiles
             for( int countX = start.X ; countX < loop.X ; countX++ )
                 for( int countY = start.Y ; countY < loop.Y ; countY++ )
                     Tile.behaviors[countX, countY].RenderTexture( countX , countY );
+
+            for(int countY = start.Y ; countY < loop.Y ; countY++)
+                for(int countX = start.X ; countX < loop.X ; countX++)
+                    Tile.behaviors[countX, countY].RenderBorder( countX, countY );
+
             batch.End( );
         }
         public void DoRender( SpriteBatch batch )

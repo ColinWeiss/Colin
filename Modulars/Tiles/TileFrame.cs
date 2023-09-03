@@ -16,6 +16,10 @@ namespace Colin.Core.Modulars.Tiles
 
         public int Y;
 
+        public Point Location => new Point( X , Y );
+
+        public Vector2 LocationF => new Vector2( X, Y );
+
         public int Width;
 
         public int Height;

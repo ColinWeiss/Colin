@@ -28,12 +28,19 @@ namespace Colin.Core.Common
             }
             return scene;
         }
-        public void SetScene<T>( ) where T : Scene, new()
+        public T SetScene<T>( ) where T : Scene, new()
         {
-            if( Scenes.TryGetValue( typeof( T ), out Scene gotScene ) )
+            if(Scenes.TryGetValue( typeof( T ), out Scene gotScene ))
+            {
                 EngineInfo.Engine.SetScene( gotScene );
+                return (T)gotScene;
+            }
             else
-                EngineInfo.Engine.SetScene( CreateScene<T>( ) );
+            {
+                T t = CreateScene<T>( );
+                EngineInfo.Engine.SetScene( t );
+                return t;
+            }
         }
     }
 }

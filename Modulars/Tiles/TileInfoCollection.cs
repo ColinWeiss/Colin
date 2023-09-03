@@ -18,36 +18,36 @@ namespace Colin.Core.Modulars.Tiles
 
         public int Length => Tiles.Length;
 
-        public TileInfo[] Tiles;
+        public TileInfo[ ] Tiles;
 
         public ref TileInfo this[int index] => ref Tiles[index];
         public ref TileInfo this[int x, int y] => ref Tiles[x + y * Width];
 
-        public TileInfoCollection(int width, int height)
+        public TileInfoCollection( int width, int height )
         {
             Width = width;
             Height = height;
             Tiles = new TileInfo[Width * Height];
-            TileInfo _emptyTile = new TileInfo();
+            TileInfo _emptyTile = new TileInfo( );
             _emptyTile.Empty = true;
             Span<TileInfo> _map = Tiles;
-            _map.Fill(_emptyTile);
+            _map.Fill( _emptyTile );
         }
-        public TileInfoCollection(Point size)
+        public TileInfoCollection( Point size )
         {
             Width = size.X;
             Height = size.Y;
             Tiles = new TileInfo[Width * Height];
-            TileInfo _emptyTile = new TileInfo();
+            TileInfo _emptyTile = new TileInfo( );
             _emptyTile.Empty = true;
             Span<TileInfo> _map = Tiles;
-            _map.Fill(_emptyTile);
+            _map.Fill( _emptyTile );
         }
 
-        internal void CreateTileDefaultInfo(int coordinateX, int coordinateY)
+        internal void CreateTileDefaultInfo( int coordinateX, int coordinateY )
         {
             int id = coordinateX + coordinateY * Width;
-            if (Tiles[id].Empty)
+            if(Tiles[id].Empty)
             {
                 Tiles[id].CoordinateX = coordinateX;
                 Tiles[id].CoordinateY = coordinateY;
@@ -56,15 +56,12 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        internal void DeleteTileInfo(int coordinateX, int coordinateY)
+        internal void DeleteTileInfo( int coordinateX, int coordinateY )
         {
             int id = coordinateX + coordinateY * Width;
-            if (!Tiles[id].Empty)
-            {
-                Tiles[id].ID = 0;
-                Tiles[id].Collision = TileCollision.Passable;
-                Tiles[id].Empty = true;
-            }
+            Tiles[id].ID = 0;
+            Tiles[id].Collision = TileCollision.Passable;
+            Tiles[id].Empty = true;
         }
     }
 }
