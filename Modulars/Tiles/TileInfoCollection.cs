@@ -18,7 +18,7 @@ namespace Colin.Core.Modulars.Tiles
 
         public int Length => Tiles.Length;
 
-        public TileInfo[ ] Tiles;
+        public TileInfo[] Tiles;
 
         public ref TileInfo this[int index] => ref Tiles[index];
         public ref TileInfo this[int x, int y] => ref Tiles[x + y * Width];
@@ -51,6 +51,18 @@ namespace Colin.Core.Modulars.Tiles
             {
                 Tiles[id].CoordinateX = coordinateX;
                 Tiles[id].CoordinateY = coordinateY;
+                Tiles[id].ID = id;
+                Tiles[id].Empty = false;
+            }
+        }
+
+        internal void CreateTileDefaultInfo( int index  )
+        {
+            int id = index;
+            if(Tiles[id].Empty)
+            {
+                Tiles[id].CoordinateX = index % Height;
+                Tiles[id].CoordinateY = index / Width;
                 Tiles[id].ID = id;
                 Tiles[id].Empty = false;
             }

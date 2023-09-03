@@ -8,6 +8,8 @@ namespace Colin.Core.Modulars.Tiles
 {
     public class TileBehavior
     {
+        public string Name => GetType( ).Name;
+
         internal Tile _tile;
         public Tile Tile => _tile;
 

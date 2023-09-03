@@ -12,6 +12,7 @@ namespace Colin.Core.Modulars.Tiles
         public Tile Tile => tile;
         public int Width { get; }
         public int Height { get; }
+        public int Count => _behaviors.Length;
         private TileBehavior[ ] _behaviors;
         public TileBehavior this[int index] => _behaviors[index];
         public TileBehavior this[int x, int y] => _behaviors[x + y * Width];
@@ -47,6 +48,28 @@ namespace Colin.Core.Modulars.Tiles
             _behavior.id = x + y * Width;
             _behavior.SetDefaults( );
             _behavior.DoRefresh( 1 );
+        }
+
+        public void SetBehavior( TileBehavior behavior , int x, int y )
+        {
+            _behaviors[x + y * Width] = behavior;
+            _behaviors[x + y * Width]._tile = tile;
+            _behaviors[x + y * Width].coordinateX = x;
+            _behaviors[x + y * Width].coordinateY = y;
+            _behaviors[x + y * Width].id = x + y * Width;
+            _behaviors[x + y * Width].SetDefaults( );
+            _behaviors[x + y * Width].DoRefresh( 1 );
+        }
+
+        public void SetBehavior( TileBehavior behavior, int index )
+        {
+            _behaviors[index] = behavior;
+            _behaviors[index]._tile = tile;
+            _behaviors[index].coordinateX = index % Height;
+            _behaviors[index].coordinateY = index / Width;
+            _behaviors[index].id = index;
+            _behaviors[index].SetDefaults( );
+            _behaviors[index].DoRefresh( 1 );
         }
 
         public void ClearBehavior( int x, int y )

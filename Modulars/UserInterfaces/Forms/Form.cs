@@ -103,7 +103,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 Icon = new Division( "Icon" );
                 DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>( );
                 _iconRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Icon0" ) );
-                Icon.Interact.IsInteractive = false;
+                Icon.Interact.IsInteractive = true;
                 Icon.Layout.Left = 8;
                 Icon.Layout.Top = 6;
                 Icon.Layout.Width = 24;

@@ -43,6 +43,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\Pixel.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\GameAssets\TileAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
@@ -153,14 +154,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Canvas.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\InputTextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Label.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Panel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\ProgressBar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivFontRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
-    <Compile Include="..\..\Colin.Core\Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
-    <Compile Include="..\..\Colin.Core\Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UserInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />

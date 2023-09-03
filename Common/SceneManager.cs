@@ -42,5 +42,15 @@ namespace Colin.Core.Common
                 return t;
             }
         }
+        public void SetScene( Scene scene )
+        {
+            if(Scenes.TryGetValue( scene.GetType( ), out Scene gotScene ))
+                EngineInfo.Engine.SetScene( gotScene );
+            else
+            {
+                Scenes.Add( scene.GetType() , scene );
+                EngineInfo.Engine.SetScene( scene );
+            }
+        }
     }
 }

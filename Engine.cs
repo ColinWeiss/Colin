@@ -23,7 +23,7 @@ namespace Colin.Core
             _form = Control.FromHandle( Window.Handle ) as Form;
             _form.MinimizeBox = false;
             _form.MaximizeBox = false;
-            _form.MinimumSize = new System.Drawing.Size( 1280, 720 );
+     //       _form.MinimumSize = new System.Drawing.Size( 1280, 720 );
         }
     }
 #endif

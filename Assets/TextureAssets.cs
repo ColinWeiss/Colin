@@ -11,7 +11,8 @@ namespace Colin.Core.Assets
 
         public float Progress { get; set; }
 
-        public static Dictionary<string, Texture2D> Textures { get; set; } = new Dictionary<string, Texture2D>( );
+        private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>( );
+        public static Dictionary<string, Texture2D> Textures => _textures;
 
         public void Load( )
         {
@@ -25,7 +26,7 @@ namespace Colin.Core.Assets
                 Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;
                 _fileName = IGameResource.ArrangementPath( TextureFileNames[count] );
                 _texture = EngineInfo.Engine.Content.Load<Texture2D>( _fileName );
-                Textures.Add( _fileName, _texture );
+                _textures.Add( _fileName, _texture );
             }
         }
 
@@ -39,12 +40,12 @@ namespace Colin.Core.Assets
         public static Texture2D Get( string path )
         {
             Texture2D _texture;
-            if( Textures.TryGetValue( string.Concat( "Textures\\", path ), out _texture ) )
+            if(_textures.TryGetValue( string.Concat( "Textures\\", path ), out _texture ) )
                 return _texture;
             else
             {
                 _texture = EngineInfo.Engine.Content.Load<Texture2D>( string.Concat( "Textures\\", path ) );
-                Textures.Add( string.Concat( "Textures\\", path ), _texture );
+                _textures.Add( string.Concat( "Textures\\", path ), _texture );
                 return _texture;
             }
         }
