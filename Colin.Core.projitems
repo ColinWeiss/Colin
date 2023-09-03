@@ -157,10 +157,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivFontRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
     <Compile Include="..\..\Colin.Core\Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="..\..\Colin.Core\Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UserInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
