@@ -22,15 +22,13 @@ namespace Colin.Core.Assets.GameAssets
             Type[ ] _types = Assembly.GetExecutingAssembly( ).GetTypes( );
             Type _type;
             TileBehavior _behavior;
-            string _resourceName;
             for(int count = 0 ; count < _types.Length ; count++)
             {
                 _type = _types[count];
                 if(!_type.IsAbstract && _type.IsSubclassOf( typeof( TileBehavior ) ))
                 {
                     _behavior = (TileBehavior)Activator.CreateInstance( _type );
-                    _resourceName = string.Concat( ModContent.GetModDomain( EngineInfo.Engine ), _behavior.Name );
-                    _behaviors.Add( _resourceName, _behavior );
+                    _behaviors.Add( _behavior.Name, _behavior );
                 }
             }
         }
@@ -40,15 +38,13 @@ namespace Colin.Core.Assets.GameAssets
             Type[ ] _types = ModContent.GetCode( mod.GetType( ).Name ).GetTypes( );
             Type _type;
             TileBehavior _behavior;
-            string _resourceName;
             for(int count = 0 ; count < _types.Length ; count++)
             {
                 _type = _types[count];
                 if(!_type.IsAbstract && _type.IsSubclassOf( typeof( TileBehavior ) ))
                 {
                     _behavior = (TileBehavior)Activator.CreateInstance( _type );
-                    _resourceName = string.Concat( ModContent.GetModDomain( mod ), _behavior.Name );
-                    _behaviors.Add( _resourceName, _behavior );
+                    _behaviors.Add( _behavior.Name, _behavior );
                 }
             }
         }
@@ -56,14 +52,6 @@ namespace Colin.Core.Assets.GameAssets
         public static TileBehavior Get( string name )
         {
             if(_behaviors.TryGetValue( string.Concat( ModContent.GetModDomain( EngineInfo.Engine ), name ), out TileBehavior behavior ))
-                return behavior;
-            else
-                return null;
-        }
-
-        public static TileBehavior Get( IMod mod, string name )
-        {
-            if(_behaviors.TryGetValue( string.Concat( ModContent.GetModDomain( mod ) , name ), out TileBehavior behavior ))
                 return behavior;
             else
                 return null;

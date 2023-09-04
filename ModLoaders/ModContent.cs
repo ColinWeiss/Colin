@@ -24,7 +24,12 @@ namespace Colin.Core.ModLoaders
                 return null;
         }
 
-        public static string GetModDomain( IMod mod ) => string.Concat( mod.Name, ": " );
+        internal static void DoInitialize( )
+        {
+            Mods.Add( EngineInfo.Engine.Name , EngineInfo.Engine );
+            ModCodes.Add( EngineInfo.Engine , Assembly.GetExecutingAssembly( ) );
+        }
 
+        public static string GetModDomain( IMod mod ) => string.Concat( mod.Name, ": " );
     }
 }

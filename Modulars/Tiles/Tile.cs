@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Colin.Core.Assets.GameAssets;
 using Colin.Core.Common;
+using Colin.Core.IO;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Colin.Core.Modulars.Tiles
@@ -89,37 +91,5 @@ namespace Colin.Core.Modulars.Tiles
             behaviors.ClearBehavior( coorinateX, coorinateY );
         }
 
-        public void LoadDatas( BinaryReader reader )
-        {
-            Create( reader.ReadInt32( ), reader.ReadInt32( ) );
-            TileBehavior _behavior;
-            string _behaviorName;
-            for(int count = 0 ; count < behaviors.Count ; count++)
-            {
-                _behaviorName = reader.ReadString( );
-                if(_behaviorName != null && _behaviorName != "Empty")
-                    _behavior = (TileBehavior)Activator.CreateInstance( TileAssets.Get( _behaviorName ).GetType( ) );
-                else
-                    _behavior = null;
-                if(_behavior != null )
-                    Place( _behavior, count );
-            }
-        }
-
-        public void SaveDatas( BinaryWriter writer )
-        {
-            writer.Write( Width );
-            writer.Write( Height );
-
-            TileBehavior _behavior;
-            for(int count = 0 ; count < behaviors.Count ; count++)
-            {
-                _behavior = behaviors[count];
-                if(!infos[count].Empty)
-                    writer.Write( _behavior.Name );
-                else
-                    writer.Write( "Empty" );
-            }
-        }
     }
 }

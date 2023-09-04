@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Colin.Core.ModLoaders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Colin.Core.Modulars.Tiles
 {
     public class TileBehavior
     {
-        public string Name => GetType( ).Name;
+        public string Name => GetType( ).Namespace;
 
         internal Tile _tile;
         public Tile Tile => _tile;
@@ -28,7 +29,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if( CoordinateY + 1 <= _tile.Height - 1 )
+                if(CoordinateY + 1 <= _tile.Height - 1)
                     return Tile.infos[CoordinateX, CoordinateY + 1];
                 else
                     return null;
@@ -39,7 +40,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(CoordinateY - 1 >= 0 )
+                if(CoordinateY - 1 >= 0)
                     return Tile.infos[CoordinateX, CoordinateY - 1];
                 else
                     return null;
@@ -51,7 +52,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateX - 1 >= 0)
-                    return Tile.infos[CoordinateX - 1, CoordinateY ];
+                    return Tile.infos[CoordinateX - 1, CoordinateY];
                 else
                     return null;
             }
@@ -61,7 +62,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(CoordinateX + 1 <= _tile.Width - 1 )
+                if(CoordinateX + 1 <= _tile.Width - 1)
                     return Tile.infos[CoordinateX + 1, CoordinateY];
                 else
                     return null;
@@ -103,7 +104,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(CoordinateY - 1 >= 0 )
+                if(CoordinateY - 1 >= 0)
                     return Tile.behaviors[CoordinateX, CoordinateY - 1];
                 else
                     return null;
@@ -115,7 +116,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateX - 1 >= 0)
-                    return Tile.behaviors[CoordinateX - 1 , CoordinateY];
+                    return Tile.behaviors[CoordinateX - 1, CoordinateY];
                 else
                     return null;
             }
@@ -125,20 +126,20 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(CoordinateX + 1 <= _tile?.Width - 1 )
+                if(CoordinateX + 1 <= _tile?.Width - 1)
                     return Tile.behaviors[CoordinateX + 1, CoordinateY];
                 else
                     return null;
             }
         }
 
-        public virtual void SetDefaults() { }
-        public virtual void UpdateTile(int coordinateX, int coordinateY) { }
-        public virtual void RenderTexture(int coordinateX, int coordinateY) { }
-        public virtual void RenderBorder(int coordinateX, int coordinateY) { }
+        public virtual void SetDefaults( ) { }
+        public virtual void UpdateTile( int coordinateX, int coordinateY ) { }
+        public virtual void RenderTexture( int coordinateX, int coordinateY ) { }
+        public virtual void RenderBorder( int coordinateX, int coordinateY ) { }
         public void DoRefresh( int conduct )
         {
-            if( conduct > 0 )
+            if(conduct > 0)
             {
                 TopBehavior?.DoRefresh( conduct - 1 );
                 BottomBehavior?.DoRefresh( conduct - 1 );
@@ -150,6 +151,6 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 执行一次物块更新.
         /// </summary>
-        public virtual void OnRefresh() { }
+        public virtual void OnRefresh( ) { }
     }
 }

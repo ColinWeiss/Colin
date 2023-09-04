@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Colin.Core.ModLoaders;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.Utilities;
 using MonoGame.IMEHelper;
 using System.Reflection;
@@ -150,6 +151,7 @@ namespace Colin.Core
         internal static void Init( Engine engine )
         {
             Engine = engine;
+            ModContent.DoInitialize( );
 #if WINDOWS
             IMEHandler = new WinFormsIMEHandler( Engine );
 #elif DESKTOP

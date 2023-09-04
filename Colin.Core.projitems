@@ -115,6 +115,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Localizations\GameLanguages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Localizations\LocalizationText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\IMod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\IModType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\ModContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\ModLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />

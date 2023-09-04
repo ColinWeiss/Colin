@@ -19,6 +19,7 @@ namespace Colin.Core.IO
             set => _datas[index] = value;
         }
 
+        public StoreBox( ) { }
         public StoreBox( SerializationInfo info, StreamingContext context )
         {
             _datas = (Dictionary<string, object>)info.GetValue( "_datas" , typeof( Dictionary<string,object> ));
