@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Assets\GameAssets\TileAssets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\IModResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
@@ -97,13 +98,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MouseResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\BasicsDirectory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\DataProcessingCenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\Explorer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileDropProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\GameData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\GameDataFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFileDropBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Developments\IProgramChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ITraceable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Line.cs" />
@@ -112,6 +114,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Localizations\GameLanguageChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Localizations\GameLanguages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Localizations\LocalizationText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\IMod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\ModContent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\ModLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
@@ -175,8 +180,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Structures\QuadTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Developments\" />
   </ItemGroup>
 </Project>

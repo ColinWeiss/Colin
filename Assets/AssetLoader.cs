@@ -28,7 +28,7 @@ namespace Colin.Core.Assets
                     if( item.GetInterfaces( ).Contains( typeof( IGameResource ) ) && !item.IsAbstract )
                     {
                         asset = (IGameResource)Activator.CreateInstance( item );
-                        asset.Load( );
+                        asset.LoadResource( );
                         EngineConsole.WriteLine( ConsoleTextType.Remind, string.Concat( "正在加载 " , asset.Name ));
                     }
                 }

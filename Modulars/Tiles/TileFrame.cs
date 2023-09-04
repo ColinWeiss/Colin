@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,20 +10,19 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 物块帧格.
     /// </summary>
-    [Serializable]
     public struct TileFrame
     {
         public int X;
 
         public int Y;
 
-        public Point Location => new Point( X , Y );
-
-        public Vector2 LocationF => new Vector2( X, Y );
-
         public int Width;
 
         public int Height;
+
+        public Point Location => new Point( X, Y );
+
+        public Vector2 LocationF => new Vector2( X, Y );
 
         /// <summary>
         /// 指示该帧格是否为有效选帧.
@@ -44,6 +44,22 @@ namespace Colin.Core.Modulars.Tiles
             Y = y;
             Width = width;
             Height = height;
+        }
+
+        internal void LoadStep( BinaryReader reader )
+        {
+            X = reader.ReadInt32( );
+            Y = reader.ReadInt32( );
+            Width = reader.ReadInt32( );
+            Height = reader.ReadInt32( );
+        }
+
+        internal void SaveStep( BinaryWriter writer )
+        {
+            writer.Write( X );
+            writer.Write( Y );
+            writer.Write( Width );
+            writer.Write( Height );
         }
     }
 }

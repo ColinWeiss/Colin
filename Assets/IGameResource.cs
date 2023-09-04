@@ -20,7 +20,7 @@ namespace Colin.Core.Assets
         /// <summary>
         /// 加载资源.
         /// </summary>
-        public void Load( );
+        public void LoadResource( );
 
         /// <summary>
         /// 整理路径.

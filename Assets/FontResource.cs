@@ -12,7 +12,7 @@ namespace Colin.Core.Assets
 
         public float Progress { get; set; }
 
-        public void Load( )
+        public void LoadResource( )
         {
             Unifont = new FontSystem( );
             Unifont.AddFont( Colin.Assets.Assets.Unifont );

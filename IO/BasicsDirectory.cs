@@ -12,5 +12,10 @@
         /// </summary>
         public static string ArchiveDir => string.Concat( ProgramDir, "\\Archive" );
 
+        /// <summary>
+        /// 指示数据文件夹路径.
+        /// </summary>
+        public static string DataDir => string.Concat( ProgramDir, "\\Data" );
+
     }
 }

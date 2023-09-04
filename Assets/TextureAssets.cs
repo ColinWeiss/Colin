@@ -14,7 +14,7 @@ namespace Colin.Core.Assets
         private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>( );
         public static Dictionary<string, Texture2D> Textures => _textures;
 
-        public void Load( )
+        public void LoadResource( )
         {
             if( !Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ) ) )
                 return;

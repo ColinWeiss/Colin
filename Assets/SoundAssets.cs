@@ -10,7 +10,7 @@ namespace Colin.Core.Assets
 
         public static Dictionary<string, SoundEffect> Sounds { get; set; } = new Dictionary<string, SoundEffect>( );
 
-        public void Load( )
+        public void LoadResource( )
         {
             if( !Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ) ) )
                 return;

@@ -4,6 +4,7 @@ using Colin.Core.IO;
 using Colin.Core.Assets;
 using MonoGame.Framework.Utilities;
 using Colin.Developments;
+using Colin.Core.ModLoaders;
 #if WINDOWS
 using System.Windows.Forms;
 #endif
@@ -27,8 +28,10 @@ namespace Colin.Core
         }
     }
 #endif
-    public partial class Engine : Game
+    public partial class Engine : Game , IMod
     {
+        public string Name => "Colin.Core.Engine";
+
         public EngineInfo Info;
 
         public bool Enable { get; set; } = true;

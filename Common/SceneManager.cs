@@ -12,6 +12,8 @@ namespace Colin.Core.Common
     /// </summary>
     public sealed class SceneManager : ISingleton
     {
+        public static SceneManager Instance => Singleton<SceneManager>.Instance;
+
         public SceneManager( ) { }
 
         public Dictionary<Type, Scene> Scenes = new Dictionary<Type, Scene>( );

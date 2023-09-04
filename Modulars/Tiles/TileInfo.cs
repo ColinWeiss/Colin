@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 
 namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 物块基本信息.
     /// </summary>
-    [Serializable]
     public struct TileInfo
     {
         /// <summary>
@@ -33,6 +28,7 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordinateY;
 
         public Point Coordinate => new Point( CoordinateX , CoordinateY );
+
         public Vector2 CoordinateF => new Vector2( CoordinateX, CoordinateY );
 
         /// <summary>
@@ -52,7 +48,7 @@ namespace Colin.Core.Modulars.Tiles
 
         public RectangleF HitBox => new RectangleF( CoordinateF * TileOption.TileSizeF , TileOption.TileSizeF );
 
-        public TileInfo()
+        public TileInfo( )
         {
             ID = 0;
             Empty = true;
@@ -61,6 +57,28 @@ namespace Colin.Core.Modulars.Tiles
             Texture = new TileFrame(-1, -1);
             Border = new TileFrame(-1, -1);
             Collision = TileCollision.Impassable;
+        }
+
+        internal void LoadStep( BinaryReader reader )
+        {
+            ID = reader.ReadInt32( );
+            Empty = reader.ReadBoolean( );
+            CoordinateX = reader.ReadInt32( );
+            CoordinateY = reader.ReadInt32( );
+            Texture.LoadStep( reader );
+            Border.LoadStep( reader );
+            Collision = (TileCollision)reader.ReadInt32( );
+        }
+
+        internal void SaveStep( BinaryWriter writer )
+        {
+            writer.Write( ID );
+            writer.Write( Empty );
+            writer.Write( CoordinateX );
+            writer.Write( CoordinateY );
+            Texture.SaveStep( writer );
+            Border.SaveStep( writer );
+            writer.Write( (int)Collision );
         }
     }
 }

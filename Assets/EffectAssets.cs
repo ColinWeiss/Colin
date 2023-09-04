@@ -8,7 +8,7 @@
 
         public static Dictionary<string, Effect> Effects { get; set; } = new Dictionary<string, Effect>( );
 
-        public void Load( )
+        public void LoadResource( )
         {
             if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Effects" ) ))
                 return;
