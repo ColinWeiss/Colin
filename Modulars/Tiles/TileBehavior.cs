@@ -23,14 +23,14 @@ namespace Colin.Core.Modulars.Tiles
         internal int coordinateY;
         public int CoordinateY => coordinateY;
 
-        public TileInfo? Info => Tile?.infos[ID];
+        public TileInfo? Info => Tile?.Infos[ID];
 
         public TileInfo? Bottom
         {
             get
             {
                 if(CoordinateY + 1 <= _tile.Height - 1)
-                    return Tile.infos[CoordinateX, CoordinateY + 1];
+                    return Tile.Infos[CoordinateX, CoordinateY + 1];
                 else
                     return null;
             }
@@ -41,7 +41,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateY - 1 >= 0)
-                    return Tile.infos[CoordinateX, CoordinateY - 1];
+                    return Tile.Infos[CoordinateX, CoordinateY - 1];
                 else
                     return null;
             }
@@ -52,7 +52,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateX - 1 >= 0)
-                    return Tile.infos[CoordinateX - 1, CoordinateY];
+                    return Tile.Infos[CoordinateX - 1, CoordinateY];
                 else
                     return null;
             }
@@ -63,7 +63,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateX + 1 <= _tile.Width - 1)
-                    return Tile.infos[CoordinateX + 1, CoordinateY];
+                    return Tile.Infos[CoordinateX + 1, CoordinateY];
                 else
                     return null;
             }
@@ -94,7 +94,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateY + 1 <= _tile?.Height - 1)
-                    return Tile.behaviors[CoordinateX, CoordinateY + 1];
+                    return Tile.Behaviors[CoordinateX, CoordinateY + 1];
                 else
                     return null;
             }
@@ -105,7 +105,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateY - 1 >= 0)
-                    return Tile.behaviors[CoordinateX, CoordinateY - 1];
+                    return Tile.Behaviors[CoordinateX, CoordinateY - 1];
                 else
                     return null;
             }
@@ -116,7 +116,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateX - 1 >= 0)
-                    return Tile.behaviors[CoordinateX - 1, CoordinateY];
+                    return Tile.Behaviors[CoordinateX - 1, CoordinateY];
                 else
                     return null;
             }
@@ -127,7 +127,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 if(CoordinateX + 1 <= _tile?.Width - 1)
-                    return Tile.behaviors[CoordinateX + 1, CoordinateY];
+                    return Tile.Behaviors[CoordinateX + 1, CoordinateY];
                 else
                     return null;
             }

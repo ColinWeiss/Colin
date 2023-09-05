@@ -35,17 +35,17 @@ namespace Colin.Core.Modulars.Tiles
             set => _enable = value;
         }
 
-        public TileInfoCollection infos;
+        public TileInfoCollection Infos;
 
-        public TileBehaviorCollection behaviors;
+        public TileBehaviorCollection Behaviors;
 
         public void Create( int width, int height )
         {
             _width = width;
             _height = height;
-            infos = new TileInfoCollection( width, height );
-            behaviors = new TileBehaviorCollection( width, height );
-            behaviors.tile = this;
+            Infos = new TileInfoCollection( width, height );
+            Behaviors = new TileBehaviorCollection( width, height );
+            Behaviors.tile = this;
         }
 
         public void DoInitialize( )
@@ -60,35 +60,35 @@ namespace Colin.Core.Modulars.Tiles
 
         public void Place<T>( int coorinateX, int coorinateY ) where T : TileBehavior, new()
         {
-            if(infos[coorinateX, coorinateY].Empty)
+            if(Infos[coorinateX, coorinateY].Empty)
             {
-                infos.CreateTileDefaultInfo( coorinateX, coorinateY );
-                behaviors.SetBehavior<T>( coorinateX, coorinateY );
+                Infos.CreateTileDefaultInfo( coorinateX, coorinateY );
+                Behaviors.SetBehavior<T>( coorinateX, coorinateY );
             }
         }
 
         public void Place( TileBehavior behavior, int coorinateX, int coorinateY )
         {
-            if(infos[coorinateX, coorinateY].Empty)
+            if(Infos[coorinateX, coorinateY].Empty)
             {
-                infos.CreateTileDefaultInfo( coorinateX, coorinateY );
-                behaviors.SetBehavior( behavior, coorinateX, coorinateY );
+                Infos.CreateTileDefaultInfo( coorinateX, coorinateY );
+                Behaviors.SetBehavior( behavior, coorinateX, coorinateY );
             }
         }
 
         public void Place( TileBehavior behavior, int index )
         {
-            if(infos[index].Empty)
+            if(Infos[index].Empty)
             {
-                infos.CreateTileDefaultInfo( index );
-                behaviors.SetBehavior( behavior, index );
+                Infos.CreateTileDefaultInfo( index );
+                Behaviors.SetBehavior( behavior, index );
             }
         }
 
         public void Smash( int coorinateX, int coorinateY )
         {
-            infos.DeleteTileInfo( coorinateX, coorinateY );
-            behaviors.ClearBehavior( coorinateX, coorinateY );
+            Infos.DeleteTileInfo( coorinateX, coorinateY );
+            Behaviors.ClearBehavior( coorinateX, coorinateY );
         }
 
     }

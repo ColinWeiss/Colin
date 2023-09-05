@@ -62,11 +62,11 @@ namespace Colin.Core.Modulars.Tiles
             loop.Y = Math.Clamp( loop.Y + 1, EngineInfo.ViewHeight / 16, Tile.Height - 1 );
             for( int countX = start.X ; countX < loop.X ; countX++ )
                 for( int countY = start.Y ; countY < loop.Y ; countY++ )
-                    Tile.behaviors[countX, countY].RenderTexture( countX , countY );
+                    Tile.Behaviors[countX, countY].RenderTexture( countX , countY );
 
             for(int countY = start.Y ; countY < loop.Y ; countY++)
                 for(int countX = start.X ; countX < loop.X ; countX++)
-                    Tile.behaviors[countX, countY].RenderBorder( countX, countY );
+                    Tile.Behaviors[countX, countY].RenderBorder( countX, countY );
 
             batch.End( );
         }
