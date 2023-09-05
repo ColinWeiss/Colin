@@ -58,25 +58,19 @@ namespace Colin.Core.Modulars.Tiles
         internal void CreateTileDefaultInfo( int coordinateX, int coordinateY )
         {
             int id = coordinateX + coordinateY * Width;
-            if(Tiles[id].Empty)
-            {
-                Tiles[id].CoordinateX = coordinateX;
-                Tiles[id].CoordinateY = coordinateY;
-                Tiles[id].ID = id;
-                Tiles[id].Empty = false;
-            }
+            Tiles[id].CoordinateX = coordinateX;
+            Tiles[id].CoordinateY = coordinateY;
+            Tiles[id].ID = id;
+            Tiles[id].Empty = false;
         }
 
         internal void CreateTileDefaultInfo( int index )
         {
             int id = index;
-            if(Tiles[id].Empty)
-            {
-                Tiles[id].Empty = false;
-                Tiles[id].ID = id;
-                Tiles[id].CoordinateX = index % Height;
-                Tiles[id].CoordinateY = index / Width;
-            }
+            Tiles[id].Empty = false;
+            Tiles[id].ID = id;
+            Tiles[id].CoordinateX = index % Height;
+            Tiles[id].CoordinateY = index / Width;
         }
 
         internal void DeleteTileInfo( int coordinateX, int coordinateY )

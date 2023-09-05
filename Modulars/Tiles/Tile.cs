@@ -67,6 +67,15 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        public void Place<T>( int index ) where T : TileBehavior, new()
+        {
+            if(Infos[index].Empty)
+            {
+                Infos.CreateTileDefaultInfo( index );
+                Behaviors.SetBehavior<T>( index );
+            }
+        }
+
         public void Place( TileBehavior behavior, int coorinateX, int coorinateY )
         {
             if(Infos[coorinateX, coorinateY].Empty)

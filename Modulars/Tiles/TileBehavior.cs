@@ -135,7 +135,7 @@ namespace Colin.Core.Modulars.Tiles
 
         public virtual void SetDefaults( ) { }
         public virtual void UpdateTile( int coordinateX, int coordinateY ) { }
-        public virtual void RenderTexture( int coordinateX, int coordinateY ) { }
+        public virtual void RenderTexture( ) { }
         public virtual void RenderBorder( int coordinateX, int coordinateY ) { }
         public void DoRefresh( int conduct )
         {

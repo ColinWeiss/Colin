@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Assets
+﻿using Colin.Core.IO;
+
+namespace Colin.Core.Assets
 {
     public class EffectAssets : IGameResource
     {
@@ -33,12 +35,12 @@
         public static Effect Get( string path )
         {
             Effect _texture;
-            if(Effects.TryGetValue( string.Concat( "Effects/", path ), out _texture ))
+            if(Effects.TryGetValue( Explorer.ConvertPath( "Effects" , path ), out _texture ))
                 return _texture;
             else
             {
-                Effects.Add( string.Concat( "Effects/", path ), _texture );
-                _texture = EngineInfo.Engine.Content.Load<Effect>( string.Concat( "Effects/", path ) );
+                Effects.Add( Explorer.ConvertPath( "Effects", path ), _texture );
+                _texture = EngineInfo.Engine.Content.Load<Effect>( Explorer.ConvertPath( "Effects", path ) );
                 return _texture;
             }
         }

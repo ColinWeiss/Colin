@@ -30,7 +30,6 @@ namespace Colin.Core.Assets
         public static string ArrangementPath( string path )
         {
             string _result = path;
-       //     _result = GameDataFile.ArrangementPath( path );
             _result = _result.Replace( ".xnb", "" );
             _result = _result.Replace( ".ttf", "" );
             _result = _result.Replace( ".otf", "" );
