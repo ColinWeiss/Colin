@@ -22,6 +22,12 @@
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSans.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\Unifont.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Button.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0_Off.png" />
