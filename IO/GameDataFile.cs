@@ -72,7 +72,7 @@ namespace Colin.Core.IO
         /// <param name="fileBytes">文件字节.</param>
         public void AddFile( string filePath, byte[ ] fileBytes )
         {
-            filePath = ArrangementPath( filePath );
+       //     filePath = ArrangementPath( filePath );
             lock( GameDatas )
                 GameDatas[filePath] = new GameData( filePath, fileBytes.Length );
         }
@@ -110,11 +110,5 @@ namespace Colin.Core.IO
         {
             this.path = path;
         }
-
-        /// <summary>
-        /// 对文件路径进行整理; 将"\\"替换为"/".
-        /// </summary>
-        public static string ArrangementPath( string path ) => path.Replace( '\\', '/' );
-
     }
 }

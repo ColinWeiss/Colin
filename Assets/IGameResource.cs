@@ -29,9 +29,11 @@ namespace Colin.Core.Assets
         /// <returns>整理后的路径, 得到不含扩展名和 "Content/" 的资产路径.</returns>
         public static string ArrangementPath( string path )
         {
-            string _result;
-            _result = GameDataFile.ArrangementPath( path );
+            string _result = path;
+       //     _result = GameDataFile.ArrangementPath( path );
             _result = _result.Replace( ".xnb", "" );
+            _result = _result.Replace( ".ttf", "" );
+            _result = _result.Replace( ".otf", "" );
             _result = _result.Replace( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/" ), "" );
             _result = _result.Replace( string.Concat( EngineInfo.Engine.Content.RootDirectory, "\\" ), "" );
             return _result;
