@@ -8,14 +8,14 @@ namespace Colin.Core.Modulars.Tiles
     public struct TileInfo
     {
         /// <summary>
-        /// 指示物块在区块内的索引.
-        /// </summary>
-        public int ID;
-
-        /// <summary>
         /// 指示物块非空状态.
         /// </summary>
         public bool Empty;
+
+        /// <summary>
+        /// 指示物块在区块内的索引.
+        /// </summary>
+        public int ID;
 
         /// <summary>
         /// 指示物块的横坐标.
@@ -61,24 +61,24 @@ namespace Colin.Core.Modulars.Tiles
 
         internal void LoadStep( BinaryReader reader )
         {
-            ID = reader.ReadInt32( );
             Empty = reader.ReadBoolean( );
-            CoordinateX = reader.ReadInt32( );
-            CoordinateY = reader.ReadInt32( );
-            Texture.LoadStep( reader );
-            Border.LoadStep( reader );
-            Collision = (TileCollision)reader.ReadInt32( );
+            if( !Empty )
+            {
+                Texture.LoadStep( reader );
+                Border.LoadStep( reader );
+                Collision = (TileCollision)reader.ReadInt32( );
+            }
         }
 
         internal void SaveStep( BinaryWriter writer )
         {
-            writer.Write( ID );
             writer.Write( Empty );
-            writer.Write( CoordinateX );
-            writer.Write( CoordinateY );
-            Texture.SaveStep( writer );
-            Border.SaveStep( writer );
-            writer.Write( (int)Collision );
+            if( !Empty )
+            {
+                Texture.SaveStep( writer );
+                Border.SaveStep( writer );
+                writer.Write( (int)Collision );
+            }
         }
     }
 }

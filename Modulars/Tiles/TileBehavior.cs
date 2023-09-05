@@ -9,7 +9,7 @@ namespace Colin.Core.Modulars.Tiles
 {
     public class TileBehavior
     {
-        public string Name => GetType( ).Namespace;
+        public string Name => GetType( ).Namespace + "." + GetType().Name;
 
         internal Tile _tile;
         public Tile Tile => _tile;

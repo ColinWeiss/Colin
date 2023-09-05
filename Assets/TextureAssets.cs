@@ -1,4 +1,6 @@
 ﻿
+using Colin.Core.IO;
+
 namespace Colin.Core.Assets
 {
     /// <summary>
@@ -40,12 +42,12 @@ namespace Colin.Core.Assets
         public static Texture2D Get( string path )
         {
             Texture2D _texture;
-            if(_textures.TryGetValue( string.Concat( "Textures\\", path ), out _texture ) )
+            if(_textures.TryGetValue( Explorer.ConvertPath( "Textures" , path ) , out _texture ) )
                 return _texture;
             else
             {
-                _texture = EngineInfo.Engine.Content.Load<Texture2D>( string.Concat( "Textures\\", path ) );
-                _textures.Add( string.Concat( "Textures\\", path ), _texture );
+                _texture = EngineInfo.Engine.Content.Load<Texture2D>( Explorer.ConvertPath( "Textures", path ) );
+                _textures.Add( Explorer.ConvertPath( "Textures", path ), _texture );
                 return _texture;
             }
         }

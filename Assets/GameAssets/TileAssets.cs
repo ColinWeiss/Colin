@@ -51,7 +51,7 @@ namespace Colin.Core.Assets.GameAssets
 
         public static TileBehavior Get( string name )
         {
-            if(_behaviors.TryGetValue( string.Concat( ModContent.GetModDomain( EngineInfo.Engine ), name ), out TileBehavior behavior ))
+            if(_behaviors.TryGetValue( name, out TileBehavior behavior ))
                 return behavior;
             else
                 return null;

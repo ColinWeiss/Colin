@@ -9,7 +9,7 @@ namespace Colin.Core.IO
     public static class Explorer
     {
         public static string ConvertPath( params string[] paths ) 
-            => string.Join( Path.PathSeparator, paths.ToArray( ) );
+            => string.Join( Path.DirectorySeparatorChar, paths.ToArray( ) );
 
         public static DirectoryInfo[ ] GetDirectoryInfos( string directory )
             => new DirectoryInfo( directory ).GetDirectories( );

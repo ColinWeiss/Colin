@@ -72,10 +72,10 @@ namespace Colin.Core.Modulars.Tiles
             int id = index;
             if(Tiles[id].Empty)
             {
+                Tiles[id].Empty = false;
+                Tiles[id].ID = id;
                 Tiles[id].CoordinateX = index % Height;
                 Tiles[id].CoordinateY = index / Width;
-                Tiles[id].ID = id;
-                Tiles[id].Empty = false;
             }
         }
 
@@ -96,6 +96,8 @@ namespace Colin.Core.Modulars.Tiles
             {
                 Tiles[count] = new TileInfo( );
                 Tiles[count].LoadStep( reader );
+                if(!Tiles[count].Empty)
+                    CreateTileDefaultInfo( count );
             }
         }
 
