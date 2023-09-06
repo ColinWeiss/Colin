@@ -7,12 +7,13 @@
     {
         private static SpritePool _instance = new SpritePool( );
         public static SpritePool Instance => _instance;
+        public static float DepthSteps = 1000000f;
 
         public new void Add( string key, Sprite value )
         {
             if( !ContainsKey( key ) )
             {
-                value.Depth = Count / 1000000;
+                value.Depth = Count / DepthSteps;
                 base.Add( key, value );
             }
         }

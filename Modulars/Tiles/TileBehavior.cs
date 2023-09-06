@@ -11,6 +11,8 @@ namespace Colin.Core.Modulars.Tiles
     {
         public string Name => GetType( ).Namespace + "." + GetType( ).Name;
 
+        public virtual string SpriteSheetCategory => "NormalBlock";
+
         internal Tile _tile;
         public Tile Tile => _tile;
 
@@ -24,6 +26,16 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordinateY => coordinateY;
 
         public TileInfo? Info => Tile?.Infos[ID];
+
+        public bool ConnectNeighbor(int dx, int dy)
+        {
+            if (CoordinateY + dy < 0 || CoordinateY + dy >= _tile.Height ||
+                CoordinateX + dx < 0 || CoordinateX + dx >= _tile.Width)
+            {
+                return false;
+            }
+            return Tile.Behaviors[CoordinateX + dx, CoordinateY + dy].Name == this.Name;
+        }
 
         public TileInfo? Bottom
         {
@@ -180,7 +192,7 @@ namespace Colin.Core.Modulars.Tiles
         public virtual void SetDefaults( ) { }
         public virtual void UpdateTile( int coordinateX, int coordinateY ) { }
         public virtual void RenderTexture( ) { }
-        public virtual void RenderBorder( int coordinateX, int coordinateY ) { }
+        public virtual void RenderBorder() { }
         public void DoRefresh( int conduct )
         {
             if(conduct > 0)
