@@ -148,6 +148,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\LinearMenuController.cs" />
