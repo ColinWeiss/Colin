@@ -37,11 +37,6 @@ namespace Colin.Core.Modulars.Tiles
         public TileFrame Texture;
 
         /// <summary>
-        /// 指示物块边框帧格.
-        /// </summary>
-        public TileFrame Border;
-
-        /// <summary>
         /// 指示物块的碰撞信息.
         /// </summary>
         public TileCollision Collision;
@@ -55,7 +50,6 @@ namespace Colin.Core.Modulars.Tiles
             CoordinateX = 0;
             CoordinateY = 0;
             Texture = new TileFrame(-1, -1);
-            Border = new TileFrame(-1, -1);
             Collision = TileCollision.Impassable;
         }
 
@@ -65,7 +59,6 @@ namespace Colin.Core.Modulars.Tiles
             if( !Empty )
             {
                 Texture.LoadStep( reader );
-                Border.LoadStep( reader );
                 Collision = (TileCollision)reader.ReadInt32( );
             }
         }
@@ -76,7 +69,6 @@ namespace Colin.Core.Modulars.Tiles
             if( !Empty )
             {
                 Texture.SaveStep( writer );
-                Border.SaveStep( writer );
                 writer.Write( (int)Collision );
             }
         }

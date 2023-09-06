@@ -11,7 +11,9 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public class TileOption
     {
-        public static Point TileSize => new Point( 16, 16 );
-        public static Vector2 TileSizeF => new Vector2( TileSize.X, TileSize.Y );
+        public static readonly int TileW = 16;
+        public static readonly int TileH = 16;
+        public static Point TileSize => new Point( TileW, TileH );
+        public static Vector2 TileSizeF => new Vector2( TileW, TileH );
     }
 }

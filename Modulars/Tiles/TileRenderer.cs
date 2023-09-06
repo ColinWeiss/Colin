@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DeltaMachine.Core.GameContents.Tiles;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -60,13 +61,30 @@ namespace Colin.Core.Modulars.Tiles
             start.Y = Math.Clamp( start.Y, 0, Tile.Height - 1 );
             loop.X = Math.Clamp( loop.X + 1, EngineInfo.ViewWidth / 16, Tile.Width - 1 );
             loop.Y = Math.Clamp( loop.Y + 1, EngineInfo.ViewHeight / 16, Tile.Height - 1 );
+
+            // tuple元素为 深度，是边框还是填充，物块
+            var tileList = new List< Tuple<float, bool, TileBehavior> >();
             for( int countX = start.X ; countX < loop.X ; countX++ )
                 for( int countY = start.Y ; countY < loop.Y ; countY++ )
-                    Tile.Behaviors[countX, countY].RenderTexture( );
+                {
+                    var behavior = Tile.Behaviors[countX, countY];
+                    float depth = 0;
+                    if (behavior is MonoBlock block)
+                        depth = block.Sprite.Depth;
+                    // 保证顺序，同类物块先边框后填充
+                    tileList.Add(new Tuple<float, bool, TileBehavior>(depth + 0.5f / SpritePool.DepthSteps, true, behavior));
+                    tileList.Add(new Tuple<float, bool, TileBehavior>(depth, false, behavior));
+                }
 
-            for(int countY = start.Y ; countY < loop.Y ; countY++)
-                for(int countX = start.X ; countX < loop.X ; countX++)
-                    Tile.Behaviors[countX, countY].RenderBorder( countX, countY );
+            tileList.Sort((x, y) => x.Item1 < y.Item1 ? 1 : x.Item1 > y.Item1 ? -1 : 0);
+            foreach (var tuple in tileList)
+            {
+                var behavior = tuple.Item3;
+                if (tuple.Item2)
+                    behavior.RenderBorder();
+                else
+                    behavior.RenderTexture();
+            }
 
             batch.End( );
         }
