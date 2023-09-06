@@ -64,7 +64,7 @@ namespace Colin.Core.Inputs
             state = GamePad.GetState( PlayerIndex.One );
             if( state.IsConnected )
             {
-                EngineInfo.Engine.IsMouseVisible = false;
+         //       EngineInfo.Engine.IsMouseVisible = false;
                 if( state.ThumbSticks.Right.X > 0 )
                     cursorPosition.X+=3;
                 if( state.ThumbSticks.Right.X < 0 )
@@ -75,8 +75,8 @@ namespace Colin.Core.Inputs
                     cursorPosition.Y+=3;
                 //          Console.WriteLine( SectionInfo.ThumbSticks.Right );
             }
-            else
-                EngineInfo.Engine.IsMouseVisible = true;
+      //      else
+       //         EngineInfo.Engine.IsMouseVisible = true;
 
             base.Update( gameTime );
         }

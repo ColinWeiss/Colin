@@ -78,15 +78,17 @@ namespace Colin.Core
 
         public void Load( )
         {
-            if( !File.Exists( ConfigPath ) )
-                Save( );
-            Config result = JsonSerializer.Deserialize<Config>( File.ReadAllText( ConfigPath ) );
-            IsFullScreen = result.IsFullScreen;
-            SoundEffect = result.SoundEffect;
-            SoundEffectVolume = result.SoundEffectVolume;
-            PictureQuality = result.PictureQuality;
-            IsMouseVisiable = result.IsMouseVisiable;
-            TargetFrame = result.TargetFrame;
+            if( File.Exists( ConfigPath ) )
+            {
+                Config result = JsonSerializer.Deserialize<Config>( File.ReadAllText( ConfigPath ) );
+                IsFullScreen = result.IsFullScreen;
+                SoundEffect = result.SoundEffect;
+                SoundEffectVolume = result.SoundEffectVolume;
+                PictureQuality = result.PictureQuality;
+                IsMouseVisiable = result.IsMouseVisiable;
+                TargetFrame = result.TargetFrame;
+            }
+         //   Save( );
         }
         public void Save( )
         {
