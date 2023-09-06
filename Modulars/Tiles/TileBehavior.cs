@@ -9,7 +9,7 @@ namespace Colin.Core.Modulars.Tiles
 {
     public class TileBehavior
     {
-        public string Name => GetType( ).Namespace + "." + GetType().Name;
+        public string Name => GetType( ).Namespace + "." + GetType( ).Name;
 
         internal Tile _tile;
         public Tile Tile => _tile;
@@ -36,12 +36,34 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        public TileInfo? BottomRight
+        {
+            get
+            {
+                if(CoordinateY + 1 <= _tile.Height - 1 && CoordinateX + 1 <= _tile.Width - 1)
+                    return Tile.Infos[CoordinateX + 1, CoordinateY + 1];
+                else
+                    return null;
+            }
+        }
+
         public TileInfo? Top
         {
             get
             {
                 if(CoordinateY - 1 >= 0)
                     return Tile.Infos[CoordinateX, CoordinateY - 1];
+                else
+                    return null;
+            }
+        }
+
+        public TileInfo? TopLeft
+        {
+            get
+            {
+                if(CoordinateY - 1 >= 0 && CoordinateX - 1 >= 0)
+                    return Tile.Infos[CoordinateX - 1, CoordinateY - 1];
                 else
                     return null;
             }
@@ -58,12 +80,34 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        public TileInfo? LeftBottom
+        {
+            get
+            {
+                if(CoordinateX - 1 >= 0 && CoordinateY + 1 <= _tile.Height - 1)
+                    return Tile.Infos[CoordinateX - 1, CoordinateY + 1];
+                else
+                    return null;
+            }
+        }
+
         public TileInfo? Right
         {
             get
             {
                 if(CoordinateX + 1 <= _tile.Width - 1)
                     return Tile.Infos[CoordinateX + 1, CoordinateY];
+                else
+                    return null;
+            }
+        }
+
+        public TileInfo? RightTop
+        {
+            get
+            {
+                if(CoordinateY - 1 >= 0 && CoordinateX + 1 <= _tile.Width - 1)
+                    return Tile.Infos[CoordinateX + 1, CoordinateY - 1];
                 else
                     return null;
             }
@@ -77,9 +121,9 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 bool down = Bottom.HasValue ? !Bottom.Value.Empty : false;
-                bool left = Left.HasValue ? !Left.Value.Empty : false;
                 bool right = Right.HasValue ? !Right.Value.Empty : false;
                 bool up = Top.HasValue ? !Top.Value.Empty : false;
+                bool left = Left.HasValue ? !Left.Value.Empty : false;
                 int result = 0;
                 result += down ? 1 : 0;
                 result += right ? 2 : 0;
