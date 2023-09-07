@@ -5,8 +5,7 @@ namespace Colin.Core.Extensions
     public static class RandomExt
     {
         private static int _seed = Environment.TickCount;
-        public static System.Random RNG = new System.Random( _seed );
-
+        public static System.Random Rand = new System.Random( _seed );
 
         /// <summary>
         /// returns current seed value
@@ -25,7 +24,7 @@ namespace Colin.Core.Extensions
         public static void SetSeed( int seed )
         {
             _seed = seed;
-            RNG = new System.Random( _seed );
+            Rand = new System.Random( _seed );
         }
 
 
@@ -35,7 +34,7 @@ namespace Colin.Core.Extensions
         /// <returns>The float.</returns>
         public static float NextFloat( )
         {
-            return (float)RNG.NextDouble( );
+            return (float)Rand.NextDouble( );
         }
 
 
@@ -46,7 +45,7 @@ namespace Colin.Core.Extensions
         /// <param name="max">Max.</param>
         public static float NextFloat( float max )
         {
-            return (float)RNG.NextDouble( ) * max;
+            return (float)Rand.NextDouble( ) * max;
         }
 
 
@@ -57,7 +56,7 @@ namespace Colin.Core.Extensions
         /// <param name="max">Max.</param>
         public static int NextInt( int max )
         {
-            return RNG.Next( max );
+            return Rand.Next( max );
         }
 
 
@@ -67,7 +66,7 @@ namespace Colin.Core.Extensions
         /// <returns>The angle.</returns>
         public static float NextAngle( )
         {
-            return (float)RNG.NextDouble( ) * MathHelper.TwoPi;
+            return (float)Rand.NextDouble( ) * MathHelper.TwoPi;
         }
 
 
@@ -100,7 +99,7 @@ namespace Colin.Core.Extensions
         /// <returns></returns>
         public static int Range( int min, int max )
         {
-            return RNG.Next( min, max );
+            return Rand.Next( min, max );
         }
 
 
@@ -241,6 +240,8 @@ namespace Colin.Core.Extensions
             first = second;
             second = temp;
         }
+
+        public static T GetRandom<T>( this T[ ] array ) => array[Rand.Next( 0, array.Length )];
 
         public static bool NextBool( this Random rand )
         {
