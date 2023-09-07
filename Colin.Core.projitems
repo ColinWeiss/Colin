@@ -81,6 +81,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IOExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\LineExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\MathExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\RandomExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\RectangleExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\RenderTargetExt.cs" />
