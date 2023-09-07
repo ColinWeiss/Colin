@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.Tiles
 {
+    /// <summary>
+    /// 物块行为.
+    /// </summary>
     public class TileBehavior
     {
+        /// <summary>
+        /// 获取物块包含类名的完整命名空间.
+        /// </summary>
         public string Name => GetType( ).Namespace + "." + GetType( ).Name;
 
+        /// <summary>
+        /// 指示物块纹理表类型.
+        /// </summary>
         public virtual string SpriteSheetCategory => "NormalBlock";
 
         internal Tile _tile;
@@ -26,124 +35,6 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordinateY => coordinateY;
 
         public TileInfo? Info => Tile?.Infos[ID];
-
-        public bool ConnectNeighbor(int dx, int dy)
-        {
-            if (CoordinateY + dy < 0 || CoordinateY + dy >= _tile.Height ||
-                CoordinateX + dx < 0 || CoordinateX + dx >= _tile.Width)
-            {
-                return false;
-            }
-            return Tile.Behaviors[CoordinateX + dx, CoordinateY + dy].Name == this.Name;
-        }
-
-        public TileInfo? Bottom
-        {
-            get
-            {
-                if(CoordinateY + 1 <= _tile.Height - 1)
-                    return Tile.Infos[CoordinateX, CoordinateY + 1];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? BottomRight
-        {
-            get
-            {
-                if(CoordinateY + 1 <= _tile.Height - 1 && CoordinateX + 1 <= _tile.Width - 1)
-                    return Tile.Infos[CoordinateX + 1, CoordinateY + 1];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? Top
-        {
-            get
-            {
-                if(CoordinateY - 1 >= 0)
-                    return Tile.Infos[CoordinateX, CoordinateY - 1];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? TopLeft
-        {
-            get
-            {
-                if(CoordinateY - 1 >= 0 && CoordinateX - 1 >= 0)
-                    return Tile.Infos[CoordinateX - 1, CoordinateY - 1];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? Left
-        {
-            get
-            {
-                if(CoordinateX - 1 >= 0)
-                    return Tile.Infos[CoordinateX - 1, CoordinateY];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? LeftBottom
-        {
-            get
-            {
-                if(CoordinateX - 1 >= 0 && CoordinateY + 1 <= _tile.Height - 1)
-                    return Tile.Infos[CoordinateX - 1, CoordinateY + 1];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? Right
-        {
-            get
-            {
-                if(CoordinateX + 1 <= _tile.Width - 1)
-                    return Tile.Infos[CoordinateX + 1, CoordinateY];
-                else
-                    return null;
-            }
-        }
-
-        public TileInfo? RightTop
-        {
-            get
-            {
-                if(CoordinateY - 1 >= 0 && CoordinateX + 1 <= _tile.Width - 1)
-                    return Tile.Infos[CoordinateX + 1, CoordinateY - 1];
-                else
-                    return null;
-            }
-        }
-
-        /// <summary>
-        /// 获取周围物块的状态.
-        /// </summary>
-        public TileAroundState AroundState
-        {
-            get
-            {
-                bool down = Bottom.HasValue ? !Bottom.Value.Empty : false;
-                bool right = Right.HasValue ? !Right.Value.Empty : false;
-                bool up = Top.HasValue ? !Top.Value.Empty : false;
-                bool left = Left.HasValue ? !Left.Value.Empty : false;
-                int result = 0;
-                result += down ? 1 : 0;
-                result += right ? 2 : 0;
-                result += up ? 4 : 0;
-                result += left ? 8 : 0;
-                return (TileAroundState)result;
-            }
-        }
 
         public TileBehavior BottomBehavior
         {
@@ -190,9 +81,13 @@ namespace Colin.Core.Modulars.Tiles
         }
 
         public virtual void SetDefaults( ) { }
+
         public virtual void UpdateTile( int coordinateX, int coordinateY ) { }
+
         public virtual void RenderTexture( ) { }
+
         public virtual void RenderBorder() { }
+
         public void DoRefresh( int conduct )
         {
             if(conduct > 0)
@@ -204,9 +99,26 @@ namespace Colin.Core.Modulars.Tiles
             }
             OnRefresh( );
         }
+
         /// <summary>
         /// 执行一次物块更新.
         /// </summary>
         public virtual void OnRefresh( ) { }
+
+        /// <summary>
+        /// 判断指定相对于该物块坐标具有指定偏移位置处的物块是否相同.
+        /// </summary>
+        /// <param name="dx">偏移的X坐标.</param>
+        /// <param name="dy">偏移的Y坐标.</param>
+        /// <returns></returns>
+        public bool IsSame( int dx, int dy )
+        {
+            if(CoordinateY + dy < 0 || CoordinateY + dy >= _tile.Height ||
+                CoordinateX + dx < 0 || CoordinateX + dx >= _tile.Width)
+            {
+                return false;
+            }
+            return Tile.Behaviors[CoordinateX + dx, CoordinateY + dy].Name == Name;
+        }
     }
 }
