@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Graphics
+﻿namespace Colin.Core.Graphics
 {
     public class SpriteRenderer
     {
@@ -41,9 +37,9 @@ namespace Colin.Core.Graphics
             batch.Draw( Sprite.Source, Position + Anchor, Frame.Frame, Color.White, Rotation, Anchor, Scale, SpriteEffects.None, Sprite.Depth );
         }
 
-        public virtual SpriteRenderer Clone( )
+        public virtual SpriteRenderer Clone()
         {
-            SpriteRenderer result = new SpriteRenderer( );
+            SpriteRenderer result = new SpriteRenderer();
             result.Position = Position;
             result.Frame = Frame;
             result.Rotation = Rotation;

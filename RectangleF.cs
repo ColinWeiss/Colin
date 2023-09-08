@@ -1,9 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Runtime.Serialization;
 
 namespace Colin.Core
 {
@@ -191,7 +186,7 @@ namespace Colin.Core
             Y += amount.Y;
         }
 
-        public override string ToString( )
+        public override string ToString()
         {
             return "{X:" + X + " Y:" + Y + " Width:" + Width + " Height:" + Height + "}";
         }

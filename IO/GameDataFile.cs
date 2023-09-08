@@ -18,14 +18,14 @@ namespace Colin.Core.IO
         /// <summary>
         /// 游戏数据缓冲区.
         /// </summary>
-        public GameData[ ] buffer;
+        public GameData[] buffer;
 
         /// <summary>
         /// 游戏数据列表.
         /// <br>键: 具有完整相对资源路径的、含扩展名的文件名称.</br>
         /// <br>值: 游戏数据.</br>
         /// </summary>
-        public Dictionary<string, GameData> GameDatas { get; private set; } = new Dictionary<string, GameData>( );
+        public Dictionary<string, GameData> GameDatas { get; private set; } = new Dictionary<string, GameData>();
 
         /// <summary>
         /// 指示该数据文件包的文件流.
@@ -37,22 +37,22 @@ namespace Colin.Core.IO
         /// </summary>
         public bool Loaded { get; private set; } = false;
 
-        public void Load( )
+        public void Load()
         {
-            GameDatas.Clear( );
+            GameDatas.Clear();
             buffer = null;
-            using( FileStream = File.OpenRead( path ) )
+            using(FileStream = File.OpenRead( path ))
             {
-                using( BinaryReader reader = new BinaryReader( FileStream ) )
+                using(BinaryReader reader = new BinaryReader( FileStream ))
                 {
-                    if( Encoding.ASCII.GetString( reader.ReadBytes( FileHeader.Length ) ) != FileHeader )
+                    if(Encoding.ASCII.GetString( reader.ReadBytes( FileHeader.Length ) ) != FileHeader)
                         throw new Exception( "Type error." );
-                    buffer = new GameData[reader.ReadInt32( )]; //读文件个数, 创建缓冲区.
-                    for( int i = 0; i < buffer.Length; i++ )
+                    buffer = new GameData[reader.ReadInt32()]; //读文件个数, 创建缓冲区.
+                    for(int i = 0; i < buffer.Length; i++)
                     {
-                        string fileName = reader.ReadString( ); //读名字
-                        int length = reader.ReadInt32( ); //读大小
-                        byte[ ] bytes = reader.ReadBytes( length ); //读数据
+                        string fileName = reader.ReadString(); //读名字
+                        int length = reader.ReadInt32(); //读大小
+                        byte[] bytes = reader.ReadBytes( length ); //读数据
                         LoadDatas( reader );
                         GameData file = new GameData( fileName, length );
                         buffer[i] = file;
@@ -70,30 +70,30 @@ namespace Colin.Core.IO
         /// </summary>
         /// <param name="filePath">包含文件名在内的路径.</param>
         /// <param name="fileBytes">文件字节.</param>
-        public void AddFile( string filePath, byte[ ] fileBytes )
+        public void AddFile( string filePath, byte[] fileBytes )
         {
-       //     filePath = ArrangementPath( filePath );
-            lock( GameDatas )
+            //     filePath = ArrangementPath( filePath );
+            lock(GameDatas)
                 GameDatas[filePath] = new GameData( filePath, fileBytes.Length );
         }
 
-        public void Save( )
+        public void Save()
         {
-            if( FileStream != null )
+            if(FileStream != null)
             {
                 throw new IOException( path );
             }
-            using( FileStream = File.Create( path ) )
+            using(FileStream = File.Create( path ))
             {
                 using BinaryWriter writer = new BinaryWriter( FileStream );
                 {
                     writer.Write( Encoding.ASCII.GetBytes( FileHeader ) ); //存文件头.
 
-                    buffer = GameDatas.Values.ToArray( );
+                    buffer = GameDatas.Values.ToArray();
                     writer.Write( buffer.Length ); //存文件个数.
 
-                    GameData[ ] array = buffer;
-                    foreach( GameData f in array )
+                    GameData[] array = buffer;
+                    foreach(GameData f in array)
                     {
                         writer.Write( f.path );
                         writer.Write( f.length );

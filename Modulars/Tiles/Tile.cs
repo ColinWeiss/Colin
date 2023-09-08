@@ -1,4 +1,6 @@
-﻿using System;
+﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
+在此之前:
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,18 @@ using Colin.Core.Assets.GameAssets;
 using Colin.Core.Common;
 using Colin.Core.IO;
 using Microsoft.Xna.Framework.Audio;
+在此之后:
+using Colin.Core.Assets.GameAssets;
+using Colin.Core.Common;
+using Colin.Core.IO;
+using Microsoft.Xna.Framework.Audio;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Common;
+using System.Text.Json;
+using System.Threading.Tasks;
+*/
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -48,7 +62,7 @@ namespace Colin.Core.Modulars.Tiles
             Behaviors.tile = this;
         }
 
-        public void DoInitialize( )
+        public void DoInitialize()
         {
 
         }

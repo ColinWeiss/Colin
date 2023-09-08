@@ -1,11 +1,4 @@
-﻿using Colin.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Common
+﻿namespace Colin.Core.Common
 {
     /// <summary>
     /// 场景管理器.
@@ -14,14 +7,14 @@ namespace Colin.Core.Common
     {
         public static SceneManager Instance => Singleton<SceneManager>.Instance;
 
-        public SceneManager( ) { }
+        public SceneManager() { }
 
-        public Dictionary<Type, Scene> Scenes = new Dictionary<Type, Scene>( );
+        public Dictionary<Type, Scene> Scenes = new Dictionary<Type, Scene>();
 
-        public T CreateScene<T>( ) where T : Scene, new()
+        public T CreateScene<T>() where T : Scene, new()
         {
-            T scene = new T( );
-            if( !Scenes.ContainsKey( typeof( T ) ) )
+            T scene = new T();
+            if(!Scenes.ContainsKey( typeof( T ) ))
                 Scenes.Add( typeof( T ), scene );
             else
             {
@@ -30,7 +23,7 @@ namespace Colin.Core.Common
             }
             return scene;
         }
-        public T SetScene<T>( ) where T : Scene, new()
+        public T SetScene<T>() where T : Scene, new()
         {
             if(Scenes.TryGetValue( typeof( T ), out Scene gotScene ))
             {
@@ -39,18 +32,18 @@ namespace Colin.Core.Common
             }
             else
             {
-                T t = CreateScene<T>( );
+                T t = CreateScene<T>();
                 EngineInfo.Engine.SetScene( t );
                 return t;
             }
         }
         public void SetScene( Scene scene )
         {
-            if(Scenes.TryGetValue( scene.GetType( ), out Scene gotScene ))
+            if(Scenes.TryGetValue( scene.GetType(), out Scene gotScene ))
                 EngineInfo.Engine.SetScene( gotScene );
             else
             {
-                Scenes.Add( scene.GetType() , scene );
+                Scenes.Add( scene.GetType(), scene );
                 EngineInfo.Engine.SetScene( scene );
             }
         }

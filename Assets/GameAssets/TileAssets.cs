@@ -1,10 +1,6 @@
-﻿using Colin.Core.IO;
-using Colin.Core.ModLoaders;
+﻿using Colin.Core.ModLoaders;
 using Colin.Core.Modulars.Tiles;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Colin.Core.Assets.GameAssets
 {
@@ -14,15 +10,15 @@ namespace Colin.Core.Assets.GameAssets
 
         public float Progress { get; set; }
 
-        private static Dictionary<string, TileBehavior> _behaviors = new Dictionary<string, TileBehavior>( );
+        private static Dictionary<string, TileBehavior> _behaviors = new Dictionary<string, TileBehavior>();
         public static Dictionary<string, TileBehavior> Behaviors => _behaviors;
 
-        public void LoadResource( )
+        public void LoadResource()
         {
-            Type[ ] _types = Assembly.GetExecutingAssembly( ).GetTypes( );
+            Type[] _types = Assembly.GetExecutingAssembly().GetTypes();
             Type _type;
             TileBehavior _behavior;
-            for(int count = 0 ; count < _types.Length ; count++)
+            for(int count = 0; count < _types.Length; count++)
             {
                 _type = _types[count];
                 if(!_type.IsAbstract && _type.IsSubclassOf( typeof( TileBehavior ) ))
@@ -35,10 +31,10 @@ namespace Colin.Core.Assets.GameAssets
 
         public void LoadModResources( IMod mod )
         {
-            Type[ ] _types = ModContent.GetCode( mod.GetType( ).Name ).GetTypes( );
+            Type[] _types = ModContent.GetCode( mod.GetType().Name ).GetTypes();
             Type _type;
             TileBehavior _behavior;
-            for(int count = 0 ; count < _types.Length ; count++)
+            for(int count = 0; count < _types.Length; count++)
             {
                 _type = _types[count];
                 if(!_type.IsAbstract && _type.IsSubclassOf( typeof( TileBehavior ) ))

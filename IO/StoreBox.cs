@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+﻿using System.Runtime.Serialization;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Colin.Core.IO
 {
     public class StoreBox : ISerializable
     {
-        private Dictionary<string, object> _datas = new Dictionary<string, object>( );
+        private Dictionary<string, object> _datas = new Dictionary<string, object>();
         public Dictionary<string, object> Datas => _datas;
 
         public object this[string index]
@@ -19,15 +14,15 @@ namespace Colin.Core.IO
             set => _datas[index] = value;
         }
 
-        public StoreBox( ) { }
+        public StoreBox() { }
         public StoreBox( SerializationInfo info, StreamingContext context )
         {
-            _datas = (Dictionary<string, object>)info.GetValue( "_datas" , typeof( Dictionary<string,object> ));
+            _datas = (Dictionary<string, object>)info.GetValue( "_datas", typeof( Dictionary<string, object> ) );
         }
 
         public void GetObjectData( SerializationInfo info, StreamingContext context )
         {
-            info.AddValue( "Datas" , _datas );
+            info.AddValue( "Datas", _datas );
         }
 
         /// <summary>
@@ -36,8 +31,8 @@ namespace Colin.Core.IO
         /// </summary>
         public void Save( string fileName )
         {
-            string _fullPath = Explorer.ConvertPath( BasicsDirectory.DataDir , fileName );
-            using( FileStream fileStream = new FileStream( _fullPath , FileMode.OpenOrCreate ) )
+            string _fullPath = Explorer.ConvertPath( BasicsDirectory.DataDir, fileName );
+            using(FileStream fileStream = new FileStream( _fullPath, FileMode.OpenOrCreate ))
             {
                 JsonSerializer.Serialize( fileStream, _datas );
             }

@@ -1,11 +1,4 @@
-﻿using Colin.Core.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Common
+﻿namespace Colin.Core.Common
 {
     public class Camera
     {
@@ -45,8 +38,8 @@ namespace Colin.Core.Common
         private int _height;
         public int Height => _height;
 
-        public Point Size => new Point( Width , Height);
-        public Vector2 SizeF => new Vector2( Width , Height );
+        public Point Size => new Point( Width, Height );
+        public Vector2 SizeF => new Vector2( Width, Height );
 
         public void DoInitialize( int width, int height )
         {
@@ -57,19 +50,19 @@ namespace Colin.Core.Common
             Translate = EngineInfo.ViewCenter;
             Zoom = Vector2.One;
             TargetZoom = Vector2.One;
-            ResetCamera( );
+            ResetCamera();
         }
 
         public void DoUpdate( GameTime time )
         {
-            if ( Trace )
+            if(Trace)
             {
                 Velocity = (TargetPosition - Position) * 0.1f;
                 ZoomVelocity = (TargetZoom - Zoom) * 0.1f;
                 RotationVelocity = (TargetRotation - Rotation) * 0.1f;
-                if( Vector2.Distance( TargetPosition, Position ) < 0.1f )
+                if(Vector2.Distance( TargetPosition, Position ) < 0.1f)
                     Position = TargetPosition;
-                if( Math.Abs( Rotation - RotationVelocity ) < 0.017f )
+                if(Math.Abs( Rotation - RotationVelocity ) < 0.017f)
                     Rotation = RotationVelocity;
             }
             Zoom += ZoomVelocity;
@@ -77,7 +70,7 @@ namespace Colin.Core.Common
             PositionLast = Position;
             Position += Velocity + Amount;
             Amount = Vector2.Zero;
-            SetView( );
+            SetView();
         }
         public void MoveCamera( Vector2 amount )
         {
@@ -90,17 +83,17 @@ namespace Colin.Core.Common
             Rotation += amount;
         }
 
-        public void ResetCamera( )
+        public void ResetCamera()
         {
             Rotation = 0f;
-           // Zoom = Vector2.One;
-            SetView( );
+            // Zoom = Vector2.One;
+            SetView();
         }
 
-        private void SetView( )
+        private void SetView()
         {
             Matrix matRotation = Matrix.CreateRotationZ( Rotation );
-            Matrix matZoom = Matrix.CreateScale( Zoom.X, Zoom.Y , 1f );
+            Matrix matZoom = Matrix.CreateScale( Zoom.X, Zoom.Y, 1f );
             Vector3 trCenter = new Vector3( Translate, 0f );
             Vector3 translateBody = new Vector3( -Position, 0f );
             View =

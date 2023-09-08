@@ -1,11 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Color = Microsoft.Xna.Framework.Color;
+﻿using Color = Microsoft.Xna.Framework.Color;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -22,7 +15,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Vector2 Anchor;
 
-        public DesignStyle( )
+        public DesignStyle()
         {
             Color = Color.White;
             Scale = Vector2.One;

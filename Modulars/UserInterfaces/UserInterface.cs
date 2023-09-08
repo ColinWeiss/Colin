@@ -1,9 +1,4 @@
 ﻿using Colin.Core.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -25,19 +20,19 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Scene Scene { get; set; }
 
-        public void DoInitialize( ) => _contianer.DoInitialize( );
+        public void DoInitialize() => _contianer.DoInitialize();
 
         public void DoUpdate( GameTime time )
         {
             Container?.DoUpdate( time );
-            Container.Seek( )?.Events.Execute( );
+            Container.Seek()?.Events.Execute();
         }
 
         public void DoRender( SpriteBatch batch )
         {
-            batch.Begin( );
+            batch.Begin();
             Container?.DoRender( batch );
-            batch.End( );
+            batch.End();
         }
 
         public void Register( Container container ) => Container?.Register( container );

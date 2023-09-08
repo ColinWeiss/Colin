@@ -29,7 +29,7 @@
         /// <summary>
         /// 将该线转化为平面向量.
         /// </summary>
-        public Vector2 ToVector2( )
+        public Vector2 ToVector2()
         {
             return End - Start;
         }

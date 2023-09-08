@@ -7,7 +7,7 @@ namespace Colin.Core.Inputs
     /// </summary>
     public sealed class KeyboardResponder : GameComponent, ISingleton
     {
-        public KeyboardResponder( ) : base( EngineInfo.Engine ) { }
+        public KeyboardResponder() : base( EngineInfo.Engine ) { }
 
         /// <summary>
         /// 事件: 发生于键盘上任何键单击按下时.
@@ -19,9 +19,9 @@ namespace Colin.Core.Inputs
         /// </summary>
         public static EventHandler<KeyboardEventArgs> KeyClickAfter;
 
-        public static KeyboardState State = new KeyboardState( );
+        public static KeyboardState State = new KeyboardState();
 
-        public static KeyboardState StateLast = new KeyboardState( );
+        public static KeyboardState StateLast = new KeyboardState();
 
         /// <summary>
         /// 当前键盘事件.
@@ -31,21 +31,21 @@ namespace Colin.Core.Inputs
         public override void Update( GameTime gameTime )
         {
             StateLast = State;
-            State = Keyboard.GetState( );
+            State = Keyboard.GetState();
             KeyboardEvent = new KeyboardEventArgs( State );
-            Keys[ ] pressedKeysLast = StateLast.GetPressedKeys( );
-            foreach( Keys key in State.GetPressedKeys( ) )
+            Keys[] pressedKeysLast = StateLast.GetPressedKeys();
+            foreach(Keys key in State.GetPressedKeys())
             {
-                if( !pressedKeysLast.Contains( key ) )
+                if(!pressedKeysLast.Contains( key ))
                 {
                     KeyboardEvent.name = "Event.Keyboard.KeyClickBefore";
                     KeyboardEvent.Keys = key;
                     KeyClickBefore?.Invoke( this, KeyboardEvent );
                 }
             }
-            foreach( Keys keyLast in StateLast.GetPressedKeys( ) )
+            foreach(Keys keyLast in StateLast.GetPressedKeys())
             {
-                if( State.IsKeyUp( keyLast ) && StateLast.IsKeyDown( keyLast ) )
+                if(State.IsKeyUp( keyLast ) && StateLast.IsKeyDown( keyLast ))
                 {
                     KeyboardEvent.name = "Event.Keyboard.KeyClickAfter";
                     KeyboardEvent.Keys = keyLast;

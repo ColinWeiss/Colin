@@ -29,7 +29,7 @@
         /// </summary>
         public int Limit = 255;
 
-        public BerlinNoiseInfo( ) { }
+        public BerlinNoiseInfo() { }
 
     }
 }

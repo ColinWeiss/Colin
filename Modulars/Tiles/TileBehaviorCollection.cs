@@ -1,11 +1,5 @@
 ﻿using Colin.Core.Assets.GameAssets;
-using Colin.Core.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -16,7 +10,7 @@ namespace Colin.Core.Modulars.Tiles
         public int Width { get; }
         public int Height { get; }
         public int Length => _behaviors.Length;
-        private TileBehavior[ ] _behaviors;
+        private TileBehavior[] _behaviors;
         public TileBehavior this[int index] => _behaviors[index];
         public TileBehavior this[int x, int y] => _behaviors[x + y * Width];
         public TileBehaviorCollection( int width, int height )
@@ -24,36 +18,36 @@ namespace Colin.Core.Modulars.Tiles
             Width = width;
             Height = height;
             _behaviors = new TileBehavior[width * height];
-            for(int count = 0 ; count < _behaviors.Length - 1 ; count++)
-                _behaviors[count] = new TileBehavior( );
+            for(int count = 0; count < _behaviors.Length - 1; count++)
+                _behaviors[count] = new TileBehavior();
         }
         public TileBehaviorCollection( Point size )
         {
             Width = size.X;
             Height = size.Y;
             _behaviors = new TileBehavior[size.X * size.Y];
-            for(int count = 0 ; count < _behaviors.Length ; count++)
+            for(int count = 0; count < _behaviors.Length; count++)
             {
-                _behaviors[count] = new TileBehavior( );
+                _behaviors[count] = new TileBehavior();
             }
         }
 
         public void SetBehavior<T>( int x, int y ) where T : TileBehavior, new()
         {
-            _behaviors[x + y * Width] = new T( );
+            _behaviors[x + y * Width] = new T();
             _behaviors[x + y * Width]._tile = tile;
             T _behavior = _behaviors[x + y * Width] as T;
             _behavior._tile = tile;
             _behavior.coordinateX = x;
             _behavior.coordinateY = y;
             _behavior.id = x + y * Width;
-            _behavior.SetDefaults( );
+            _behavior.SetDefaults();
             _behavior.DoRefresh( 1 );
         }
 
         public void SetBehavior<T>( int index ) where T : TileBehavior, new()
         {
-            SetBehavior<T>( index % Height , index / Width  );
+            SetBehavior<T>( index % Height, index / Width );
         }
 
         public void SetBehavior( TileBehavior behavior, int x, int y )
@@ -63,7 +57,7 @@ namespace Colin.Core.Modulars.Tiles
             _behaviors[x + y * Width].coordinateX = x;
             _behaviors[x + y * Width].coordinateY = y;
             _behaviors[x + y * Width].id = x + y * Width;
-            _behaviors[x + y * Width].SetDefaults( );
+            _behaviors[x + y * Width].SetDefaults();
             _behaviors[x + y * Width].DoRefresh( 1 );
         }
 
@@ -74,47 +68,47 @@ namespace Colin.Core.Modulars.Tiles
             _behaviors[index].coordinateX = index % Height;
             _behaviors[index].coordinateY = index / Width;
             _behaviors[index].id = index;
-            _behaviors[index].SetDefaults( );
+            _behaviors[index].SetDefaults();
             _behaviors[index].DoRefresh( 1 );
         }
 
         public void ClearBehavior( int x, int y )
         {
             _behaviors[x + y * Width].DoRefresh( 1 );
-            _behaviors[x + y * Width] = new TileBehavior( );
+            _behaviors[x + y * Width] = new TileBehavior();
         }
 
         public void LoadStep( string tablePath, BinaryReader reader )
         {
-            Dictionary<string, int> _cache = new Dictionary<string, int>( );
+            Dictionary<string, int> _cache = new Dictionary<string, int>();
             using(FileStream fileStream = new FileStream( tablePath, FileMode.Open ))
             {
                 _cache = (Dictionary<string, int>)JsonSerializer.Deserialize( fileStream, typeof( Dictionary<string, int> ) );
             }
-            List<string> _indexMap = _cache.Keys.ToList( );
+            List<string> _indexMap = _cache.Keys.ToList();
             int _index = 0;
             Type _behaviorType;
-            for(int count = 0 ; count < Length -  1 ; count++)
+            for(int count = 0; count < Length - 1; count++)
             {
-                _index = reader.ReadInt32( );
-                if( _index != -1 )
+                _index = reader.ReadInt32();
+                if(_index != -1)
                 {
-                    _behaviorType = TileAssets.Get( _indexMap[_index] ).GetType( );
+                    _behaviorType = TileAssets.Get( _indexMap[_index] ).GetType();
                     SetBehavior( (TileBehavior)Activator.CreateInstance( _behaviorType ), count );
                 }
             }
         }
 
-        public void SaveStep( string tablePath , BinaryWriter writer )
+        public void SaveStep( string tablePath, BinaryWriter writer )
         {
-            Dictionary<string, int> _cache = new Dictionary<string, int>( );
+            Dictionary<string, int> _cache = new Dictionary<string, int>();
             int index = 0;
-            TileAssets.Behaviors.Keys.ToList( ).ForEach( v => { _cache.Add( v, index++ ); } );
+            TileAssets.Behaviors.Keys.ToList().ForEach( v => { _cache.Add( v, index++ ); } );
             using(FileStream fileStream = new FileStream( tablePath, FileMode.OpenOrCreate ))
             {
                 JsonSerializer.Serialize( fileStream, _cache );
             }
-            for(int count = 0 ; count < Length - 1; count++)
+            for(int count = 0; count < Length - 1; count++)
             {
                 if(_cache.TryGetValue( _behaviors[count].Name, out int value ))
                     writer.Write( value );

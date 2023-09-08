@@ -8,16 +8,16 @@ namespace Colin.Core.Assets
 
         public float Progress { get; set; }
 
-        public static Dictionary<string, Effect> Effects { get; set; } = new Dictionary<string, Effect>( );
+        public static Dictionary<string, Effect> Effects { get; set; } = new Dictionary<string, Effect>();
 
-        public void LoadResource( )
+        public void LoadResource()
         {
             if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Effects" ) ))
                 return;
             Effect _effect;
             string _fileName;
-            string[ ] _xnbFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Effects" ), "*.xnb*", SearchOption.AllDirectories );
-            for(int count = 0 ; count < _xnbFileNames.Length ; count++)
+            string[] _xnbFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Effects" ), "*.xnb*", SearchOption.AllDirectories );
+            for(int count = 0; count < _xnbFileNames.Length; count++)
             {
                 Progress = count / _xnbFileNames.Length + 1 / _xnbFileNames.Length;
                 _fileName = IGameResource.ArrangementPath( _xnbFileNames[count] );
@@ -35,7 +35,7 @@ namespace Colin.Core.Assets
         public static Effect Get( string path )
         {
             Effect _texture;
-            if(Effects.TryGetValue( Explorer.ConvertPath( "Effects" , path ), out _texture ))
+            if(Effects.TryGetValue( Explorer.ConvertPath( "Effects", path ), out _texture ))
                 return _texture;
             else
             {

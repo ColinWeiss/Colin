@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 物块纹理版式.
@@ -14,7 +7,7 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public class TileSpriteSheet
     {
-        protected static Dictionary<string, TileSpriteSheet> TileSpriteRepository = new Dictionary<string, TileSpriteSheet>( );
+        protected static Dictionary<string, TileSpriteSheet> TileSpriteRepository = new Dictionary<string, TileSpriteSheet>();
         private static bool inited = false;
 
         public Point CornerTextureOffset;
@@ -28,11 +21,11 @@ namespace Colin.Core.Modulars.Tiles
         public static TileSpriteSheet Query( string key )
         {
             if(!inited)
-                LoadTileSpriteSheets( );
+                LoadTileSpriteSheets();
             return TileSpriteRepository.GetValueOrDefault( key, null );
         }
 
-        public static void LoadTileSpriteSheets( )
+        public static void LoadTileSpriteSheets()
         {
             // TODO: 通过加载配置文件初始化排版方式，目前这里硬编码几个用于测试
             RegisterTileSpriteSheet( "Test", new Point( 112, 16 ), new Point( 64, 16 ), new Point( 16, 16 ), 48 );

@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using System.Runtime.Serialization;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 划分元素事件.
@@ -12,7 +9,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Division Division;
 
-        public DivisionEvent(Division container)
+        public DivisionEvent( Division container )
         {
             Division = container;
         }

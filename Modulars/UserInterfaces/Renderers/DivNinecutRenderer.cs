@@ -1,10 +1,4 @@
 ﻿using Colin.Core.Extensions;
-using Colin.Core.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
@@ -13,7 +7,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
         public int Cut;
-        public override void RendererInit( ) { }
+        public override void RendererInit() { }
         public override void DoRender( SpriteBatch batch )
         {
             batch.DrawNineCut(

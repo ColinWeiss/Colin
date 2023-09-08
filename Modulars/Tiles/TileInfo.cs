@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 物块基本信息.
@@ -27,7 +25,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public int CoordinateY;
 
-        public Point Coordinate => new Point( CoordinateX , CoordinateY );
+        public Point Coordinate => new Point( CoordinateX, CoordinateY );
 
         public Vector2 CoordinateF => new Vector2( CoordinateX, CoordinateY );
 
@@ -41,32 +39,32 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public TileCollision Collision;
 
-        public RectangleF HitBox => new RectangleF( CoordinateF * TileOption.TileSizeF , TileOption.TileSizeF );
+        public RectangleF HitBox => new RectangleF( CoordinateF * TileOption.TileSizeF, TileOption.TileSizeF );
 
-        public TileInfo( )
+        public TileInfo()
         {
             ID = 0;
             Empty = true;
             CoordinateX = 0;
             CoordinateY = 0;
-            Texture = new TileFrame(-1, -1);
+            Texture = new TileFrame( -1, -1 );
             Collision = TileCollision.Impassable;
         }
 
         internal void LoadStep( BinaryReader reader )
         {
-            Empty = reader.ReadBoolean( );
-            if( !Empty )
+            Empty = reader.ReadBoolean();
+            if(!Empty)
             {
                 Texture.LoadStep( reader );
-                Collision = (TileCollision)reader.ReadInt32( );
+                Collision = (TileCollision)reader.ReadInt32();
             }
         }
 
         internal void SaveStep( BinaryWriter writer )
         {
             writer.Write( Empty );
-            if( !Empty )
+            if(!Empty)
             {
                 Texture.SaveStep( writer );
                 writer.Write( (int)Collision );

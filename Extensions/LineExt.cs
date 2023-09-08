@@ -23,10 +23,10 @@
             float l2x2 = targetLine.End.X;
             float l2y1 = targetLine.Start.Y;
             float l2y2 = targetLine.End.Y;
-            if( ((l1x1 - l2x1) * (l2y2 - l2y1) - (l1y1 - l2y1) * (l2x2 - l2x1)) *
+            if(((l1x1 - l2x1) * (l2y2 - l2y1) - (l1y1 - l2y1) * (l2x2 - l2x1)) *
                  ((l1x2 - l2x1) * (l2y2 - l2y1) - (l1y2 - l2y1) * (l2x2 - l2x1)) > 0 ||
                  ((l2x1 - l1x1) * (l1y2 - l1y1) - (l2y1 - l1y1) * (l1x2 - l1x1)) *
-                 ((l2x2 - l1x1) * (l1y2 - l1y1) - (l2y2 - l1y1) * (l1x2 - l1x1)) > 0 )
+                 ((l2x2 - l1x1) * (l1y2 - l1y1) - (l2y2 - l1y1) * (l1x2 - l1x1)) > 0)
             {
                 return false;
             }
@@ -46,7 +46,7 @@
             float l2yMax = MathF.Max( targetLine.Start.Y, targetLine.End.Y );
             float l2xMin = MathF.Min( targetLine.Start.X, targetLine.End.X );
             float l2yMin = MathF.Min( targetLine.Start.Y, targetLine.End.Y );
-            if( l1xMax < l2xMin || l1yMax < l2yMin || l2xMax < l1xMin || l2yMax < l1yMin )
+            if(l1xMax < l2xMin || l1yMax < l2yMin || l2xMax < l1xMin || l2yMax < l1yMin)
                 return false;
             return true;
         }

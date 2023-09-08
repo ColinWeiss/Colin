@@ -1,11 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 划分元素渲染器.
@@ -14,7 +7,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
         internal Division _division;
         public Division Division => _division;
-        public abstract void RendererInit( );
+        public abstract void RendererInit();
         public abstract void DoRender( SpriteBatch batch );
     }
 }

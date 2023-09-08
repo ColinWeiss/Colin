@@ -94,10 +94,10 @@ namespace Colin.Core.Extensions
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static float Clamp01( float value )
         {
-            if( value < 0f )
+            if(value < 0f)
                 return 0f;
 
-            if( value > 1f )
+            if(value > 1f)
                 return 1f;
 
             return value;
@@ -106,10 +106,10 @@ namespace Colin.Core.Extensions
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static float Clamp( float value, float min, float max )
         {
-            if( value < min )
+            if(value < min)
                 return min;
 
-            if( value > max )
+            if(value > max)
                 return max;
 
             return value;
@@ -152,18 +152,18 @@ namespace Colin.Core.Extensions
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static float InverseLerp( float from, float to, float t )
         {
-            if( from < to )
+            if(from < to)
             {
-                if( t < from )
+                if(t < from)
                     return 0.0f;
-                else if( t > to )
+                else if(t > to)
                     return 1.0f;
             }
             else
             {
-                if( t < to )
+                if(t < to)
                     return 1.0f;
-                else if( t > from )
+                else if(t > from)
                     return 0.0f;
             }
 
@@ -187,7 +187,7 @@ namespace Colin.Core.Extensions
         public static float LerpAngle( float a, float b, float t )
         {
             float num = Repeat( b - a, 360f );
-            if( num > 180f )
+            if(num > 180f)
                 num -= 360f;
 
             return a + num * Clamp01( t );
@@ -204,7 +204,7 @@ namespace Colin.Core.Extensions
         public static float LerpAngleRadians( float a, float b, float t )
         {
             float num = Repeat( b - a, MathHelper.TwoPi );
-            if( num > MathHelper.Pi )
+            if(num > MathHelper.Pi)
                 num -= MathHelper.TwoPi;
 
             return a + num * Clamp01( t );
@@ -231,7 +231,7 @@ namespace Colin.Core.Extensions
         public static int IncrementWithWrap( int t, int length )
         {
             t++;
-            if( t == length )
+            if(t == length)
                 return 0;
 
             return t;
@@ -248,7 +248,7 @@ namespace Colin.Core.Extensions
         public static int DecrementWithWrap( int t, int length )
         {
             t--;
-            if( t < 0 )
+            if(t < 0)
                 return length - 1;
 
             return t;
@@ -278,7 +278,7 @@ namespace Colin.Core.Extensions
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static float SignThreshold( float value, float threshold )
         {
-            if( Math.Abs( value ) >= threshold )
+            if(Math.Abs( value ) >= threshold)
                 return Math.Sign( value );
             else
                 return 0;
@@ -295,7 +295,7 @@ namespace Colin.Core.Extensions
         public static float DeltaAngle( float current, float target )
         {
             var num = Repeat( target - current, 360f );
-            if( num > 180f )
+            if(num > 180f)
                 num -= 360f;
 
             return num;
@@ -312,7 +312,7 @@ namespace Colin.Core.Extensions
         public static float DeltaAngleRadians( float current, float target )
         {
             var num = Repeat( target - current, 2 * MathHelper.Pi );
-            if( num > MathHelper.Pi )
+            if(num > MathHelper.Pi)
                 num -= 2 * MathHelper.Pi;
 
             return num;
@@ -329,7 +329,7 @@ namespace Colin.Core.Extensions
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static float Approach( float start, float end, float shift )
         {
-            if( start < end )
+            if(start < end)
                 return Math.Min( start + shift, end );
 
             return Math.Max( start - shift, end );
@@ -347,7 +347,7 @@ namespace Colin.Core.Extensions
         public static float ApproachAngle( float start, float end, float shift )
         {
             float deltaAngle = DeltaAngle( start, end );
-            if( -shift < deltaAngle && deltaAngle < shift )
+            if(-shift < deltaAngle && deltaAngle < shift)
                 return end;
 
             return Repeat( Approach( start, start + deltaAngle, shift ), 360f );
@@ -364,7 +364,7 @@ namespace Colin.Core.Extensions
         public static float ApproachAngleRadians( float start, float end, float shift )
         {
             float deltaAngleRadians = DeltaAngleRadians( start, end );
-            if( -shift < deltaAngleRadians && deltaAngleRadians < shift )
+            if(-shift < deltaAngleRadians && deltaAngleRadians < shift)
                 return end;
 
             return Repeat( Approach( start, start + deltaAngleRadians, shift ), MathHelper.TwoPi );

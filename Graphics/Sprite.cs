@@ -1,6 +1,4 @@
-﻿using Colin.Core.Assets;
-
-namespace Colin.Core.Graphics
+﻿namespace Colin.Core.Graphics
 {
     /// <summary>
     /// 标识一张Sprite.
@@ -43,9 +41,9 @@ namespace Colin.Core.Graphics
 
         public string Name => Source.Name;
 
-        private void AddThisToGraphicCoreSpritePool( )
+        private void AddThisToGraphicCoreSpritePool()
         {
-            if( SpritePool.Instance.ContainsKey( Source.Name ))
+            if(SpritePool.Instance.ContainsKey( Source.Name ))
             {
                 Sprite _sprite;
                 SpritePool.Instance.TryGetValue( Source.Name, out _sprite );
@@ -58,12 +56,12 @@ namespace Colin.Core.Graphics
         public Sprite( Texture2D texture )
         {
             Source = texture;
-            AddThisToGraphicCoreSpritePool( );
+            AddThisToGraphicCoreSpritePool();
         }
 
         public static Sprite Get( Texture2D texture )
         {
-            if( SpritePool.Instance.TryGetValue( texture.Name, out Sprite sprite ) )
+            if(SpritePool.Instance.TryGetValue( texture.Name, out Sprite sprite ))
                 return sprite;
             else
                 return new Sprite( texture );
@@ -71,7 +69,7 @@ namespace Colin.Core.Graphics
 
         public static Sprite Get( string path )
         {
-            if ( SpritePool.Instance.TryGetValue( string.Concat( "Textures\\", path ), out Sprite sprite ) )
+            if(SpritePool.Instance.TryGetValue( string.Concat( "Textures\\", path ), out Sprite sprite ))
                 return sprite;
             else
                 return new Sprite( TextureAssets.Get( path ) );

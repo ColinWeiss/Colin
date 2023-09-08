@@ -8,16 +8,16 @@ namespace Colin.Core.Assets
 
         public float Progress { get; set; }
 
-        public static Dictionary<string, SoundEffect> Sounds { get; set; } = new Dictionary<string, SoundEffect>( );
+        public static Dictionary<string, SoundEffect> Sounds { get; set; } = new Dictionary<string, SoundEffect>();
 
-        public void LoadResource( )
+        public void LoadResource()
         {
-            if( !Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ) ) )
+            if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ) ))
                 return;
             SoundEffect _sound;
             string _fileName;
-            string[ ] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ), "*.xnb*", SearchOption.AllDirectories );
-            for( int count = 0; count < TextureFileNames.Length; count++ )
+            string[] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ), "*.xnb*", SearchOption.AllDirectories );
+            for(int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;
                 _fileName = IGameResource.ArrangementPath( TextureFileNames[count] );
@@ -35,7 +35,7 @@ namespace Colin.Core.Assets
         public static SoundEffect Get( string path )
         {
             SoundEffect _sound;
-            if( Sounds.TryGetValue( string.Concat( "Sounds\\", path ), out _sound ) )
+            if(Sounds.TryGetValue( string.Concat( "Sounds\\", path ), out _sound ))
                 return _sound;
             else
             {

@@ -39,7 +39,7 @@
         /// <param name="output">输出内容.</param>  
         public static void WriteLine( ConsoleTextType informationType, object output )
         {
-            WriteLine( informationType, output.ToString( ) );
+            WriteLine( informationType, output.ToString() );
         }
 
         /// <summary>  
@@ -64,7 +64,7 @@
         /// <returns></returns>  
         private static ConsoleColor GetConsoleColor( ConsoleTextType informationType )
         {
-            switch( informationType )
+            switch(informationType)
             {
                 case ConsoleTextType.Normal:
                     return ConsoleColor.DarkGray;

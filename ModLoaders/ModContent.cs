@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 
 namespace Colin.Core.ModLoaders
 {
     public class ModContent
     {
-        public static Dictionary<string, IMod> Mods = new Dictionary<string, IMod>( );
+        public static Dictionary<string, IMod> Mods = new Dictionary<string, IMod>();
 
-        public static Dictionary<IMod, Assembly> ModCodes = new Dictionary<IMod, Assembly>( );
+        public static Dictionary<IMod, Assembly> ModCodes = new Dictionary<IMod, Assembly>();
 
         public static Assembly GetCode( string modName )
         {
@@ -24,10 +21,10 @@ namespace Colin.Core.ModLoaders
                 return null;
         }
 
-        internal static void DoInitialize( )
+        internal static void DoInitialize()
         {
-            Mods.Add( EngineInfo.Engine.Name , EngineInfo.Engine );
-            ModCodes.Add( EngineInfo.Engine , Assembly.GetExecutingAssembly( ) );
+            Mods.Add( EngineInfo.Engine.Name, EngineInfo.Engine );
+            ModCodes.Add( EngineInfo.Engine, Assembly.GetExecutingAssembly() );
         }
 
         public static string GetModDomain( IMod mod ) => string.Concat( mod.Name, ": " );

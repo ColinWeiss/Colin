@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Extensions;
-using Colin.Core.Graphics;
 
 namespace Colin.Core.Common
 {
@@ -25,14 +24,14 @@ namespace Colin.Core.Common
 
         public void DoRender( SpriteBatch batch );
 
-        public void InitRenderTarget( )
+        public void InitRenderTarget()
         {
-            SceneRt?.Dispose( );
-            SceneRt = RenderTargetExt.CreateDefault( );
+            SceneRt?.Dispose();
+            SceneRt = RenderTargetExt.CreateDefault();
         }
         public void OnClientSizeChanged( object o, EventArgs e )
         {
-            InitRenderTarget( );
+            InitRenderTarget();
         }
     }
 }

@@ -1,17 +1,4 @@
-﻿using Colin.Core.Extensions;
-using Colin.Core.Inputs;
-using Microsoft.VisualBasic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 指代用户交互界面中的一个划分元素.
@@ -36,8 +23,19 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <summary>
         /// 划分元素的交互样式.
         /// </summary>
+
+        /* 项目“DeltaMachine.Desktop”的未合并的更改
+        在此之前:
+                public InteractStyle Interact;
+
+                /// <summary>
+        在此之后:
+                public InteractStyle Interact;
+
+                /// <summary>
+        */
         public InteractStyle Interact;
-        
+
         /// <summary>
         /// 划分元素的设计样式.
         /// </summary>
@@ -53,21 +51,21 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// 划分元素的渲染器.
         /// </summary>
         public DivisionRenderer Renderer => _renderer;
-        public T BindRenderer<T>( ) where T : DivisionRenderer, new()
+        public T BindRenderer<T>() where T : DivisionRenderer, new()
         {
-            _renderer = new T( );
+            _renderer = new T();
             _renderer._division = this;
-            _renderer.RendererInit( );
+            _renderer.RendererInit();
             return _renderer as T;
         }
-        public T GetRenderer<T>( ) where T : DivisionRenderer
+        public T GetRenderer<T>() where T : DivisionRenderer
         {
-            if( _renderer is T )
+            if(_renderer is T)
                 return _renderer as T;
             else
                 return null;
         }
-        public void ClearRenderer( ) => _renderer = null;
+        public void ClearRenderer() => _renderer = null;
 
         /// <summary>
         /// 划分元素控制器.
@@ -117,33 +115,33 @@ namespace Colin.Core.Modulars.UserInterfaces
             Design.Color = Color.White;
             Design.Scale = Vector2.One;
             IsVisible = true;
-            Children = new List<Division>( );
+            Children = new List<Division>();
             Controller = new DivisionController( this );
         }
 
         /// <summary>
         /// 执行划分元素的初始化内容.
         /// </summary>
-        public void DoInitialize( )
+        public void DoInitialize()
         {
-            if( InitializationCompleted )
+            if(InitializationCompleted)
                 return;
-            OnInit( );
-            Controller?.OnInit( );
-            _renderer?.RendererInit( );
-            if( Parent != null )
+            OnInit();
+            Controller?.OnInit();
+            _renderer?.RendererInit();
+            if(Parent != null)
                 Layout.Calculation( Parent.Layout ); //刷新一下.
-            ForEach( child => child.DoInitialize( ) );
+            ForEach( child => child.DoInitialize() );
             InitializationCompleted = true;
         }
         /// <summary>
         /// 发生于划分元素执行 <see cref="DoInitialize"/> 时, 可于此自定义初始化操作.
         /// </summary>
-        public virtual void OnInit( ) { }
+        public virtual void OnInit() { }
         private Point _cachePos = new Point( -1, -1 );
         private void Container_DragStart( object o, DivisionEvent e )
         {
-            if( Parent != null )
+            if(Parent != null)
             {
                 Point mouseForParentLocation = MouseResponder.State.Position - Parent.Layout.Location;
                 _cachePos = mouseForParentLocation - Layout.Location;
@@ -155,7 +153,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         }
         private void Container_DragDragging( object o, DivisionEvent e )
         {
-            if( Parent != null )
+            if(Parent != null)
             {
                 Point _resultLocation = MouseResponder.State.Position - Parent.Layout.Location - _cachePos;
                 Layout.Left = _resultLocation.X;
@@ -167,9 +165,9 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Layout.Left = _resultLocation.X;
                 Layout.Top = _resultLocation.Y;
             }
-            if( Interact.IsDraggable && Interact.DragLimit != Rectangle.Empty )
+            if(Interact.IsDraggable && Interact.DragLimit != Rectangle.Empty)
             {
-                Layout.Left = Math.Clamp( Layout.Left , 0 , Interact.DragLimit.Width - Layout.Width );
+                Layout.Left = Math.Clamp( Layout.Left, 0, Interact.DragLimit.Width - Layout.Width );
                 Layout.Top = Math.Clamp( Layout.Top, 0, Interact.DragLimit.Height - Layout.Height );
             }
         }
@@ -186,16 +184,16 @@ namespace Colin.Core.Modulars.UserInterfaces
         public virtual void DoUpdate( GameTime time )
         {
             PreUpdate( time );
-            if( !IsVisible )
+            if(!IsVisible)
                 return;
-            if( !_started )
+            if(!_started)
             {
                 Start( time );
                 _started = true;
             }
-            Events.Independent( );
+            Events.Independent();
             Controller?.Layout( ref Layout );
-            if( Parent != null )
+            if(Parent != null)
                 Layout.Calculation( Parent.Layout );
             Controller?.Interact( ref Interact );
             Controller?.Design( ref Design );
@@ -226,7 +224,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             Children.ForEach( child =>
             {
-                if( Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ) )
+                if(Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ))
                     child?.DoUpdate( time );
                 else
                     child?.DoUpdate( time );
@@ -239,11 +237,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <param name="time">游戏计时状态快照.</param>
         public void DoRender( SpriteBatch batch )
         {
-            if( !IsVisible && !Layout.IsHidden )
+            if(!IsVisible && !Layout.IsHidden)
                 return;
-            if( IsCanvas )
+            if(IsCanvas)
             {
-                batch.End( );
+                batch.End();
                 EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Canvas );
                 batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Layout.CanvasTransform );
                 EngineInfo.Graphics.GraphicsDevice.Clear( Color.Transparent );
@@ -253,13 +251,13 @@ namespace Colin.Core.Modulars.UserInterfaces
                 CullMode = CullMode.None,
                 ScissorTestEnable = true
             };
-            if( Layout.ScissorEnable )
+            if(Layout.ScissorEnable)
             {
-                batch.End( );
+                batch.End();
                 EngineInfo.Graphics.GraphicsDevice.ScissorRectangle = Layout.Scissor;
-                if( IsCanvas )
+                if(IsCanvas)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: Layout.CanvasTransform );
-                else if( ParentCanvas == null )
+                else if(ParentCanvas == null)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState );
                 else
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
@@ -268,23 +266,23 @@ namespace Colin.Core.Modulars.UserInterfaces
             RenderChildren( batch );
             if(Layout.ScissorEnable)
             {
-                batch.End( );
+                batch.End();
                 batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
             }
-            if( IsCanvas )
+            if(IsCanvas)
             {
-                batch.End( );
-                if( Parent.IsCanvas )
+                batch.End();
+                if(Parent.IsCanvas)
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Parent.Canvas );
-                if( ParentCanvas != null )
+                if(ParentCanvas != null)
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( ParentCanvas.Canvas );
                 else
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Interface.SceneRt );
 
                 //     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
-                if( Parent.IsCanvas )
+                if(Parent.IsCanvas)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform );
-                else if( ParentCanvas != null )
+                else if(ParentCanvas != null)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas.Layout.CanvasTransform );
                 else
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
@@ -314,17 +312,17 @@ namespace Colin.Core.Modulars.UserInterfaces
 		/// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
 		public virtual bool Register( Division division, bool doInit = false )
         {
-            if( division == null || Children.Contains( division ) || division.Parent != null )
+            if(division == null || Children.Contains( division ) || division.Parent != null)
                 return false;
             division.Parent = this;
-            if( doInit )
+            if(doInit)
             {
-                division.DoInitialize( );
+                division.DoInitialize();
                 division.Layout.Calculation( Layout );
             }
             Children.Add( division );
             division.ParentCanvas = ParentCanvas;
-            if( IsCanvas )
+            if(IsCanvas)
                 division.ParentCanvas = this;
             division._interface = _interface;
             division._container = _container;
@@ -338,7 +336,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 		/// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
 		public virtual bool Remove( Division division )
         {
-            if( division == null || !Children.Contains( division ) || division.Parent == null )
+            if(division == null || !Children.Contains( division ) || division.Parent == null)
                 return false;
             division.Parent = null;
             division.ParentCanvas = null;
@@ -350,10 +348,10 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <summary>
         /// 移除所有子元素.
         /// </summary>
-        public virtual void RemoveAll( )
+        public virtual void RemoveAll()
         {
             Children.ForEach( child => child.Parent = null );
-            Children.Clear( );
+            Children.Clear();
         }
 
         /// <summary>
@@ -378,22 +376,22 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// 返回该划分元素下最先可进行交互的元素.
         /// </summary>
         /// <returns>如果寻找到非该划分元素之外的元素, 则返回寻找到的元素; 否则返回自己.</returns>
-        public virtual Division Seek( )
+        public virtual Division Seek()
         {
             Division target = null;
             Division child;
-            for( int sub = Children.Count - 1; sub >= 0; sub-- )
+            for(int sub = Children.Count - 1; sub >= 0; sub--)
             {
                 child = Children[sub];
-                if( child.Seek( ) == null )
+                if(child.Seek() == null)
                     target = null;
-                else if( child.Seek( ) != null && child.IsVisible )
+                else if(child.Seek() != null && child.IsVisible)
                 {
-                    target = child.Seek( );
+                    target = child.Seek();
                     return target;
                 }
             }
-            if( Interact.IsInteractive && IsVisible && Interact.Interaction )
+            if(Interact.IsInteractive && IsVisible && Interact.Interaction)
                 return this;
             return target;
         }

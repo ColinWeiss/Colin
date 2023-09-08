@@ -1,13 +1,10 @@
-﻿using Colin.Developments;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Colin.Core.Developments;
 
 namespace Colin.Core.Localizations
 {
     public class GameLanguageChecker : IProgramChecker
     {
-        public void Check( )
+        public void Check()
         {
 
         }

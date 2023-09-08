@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 物块帧格.
@@ -36,9 +29,9 @@ namespace Colin.Core.Modulars.Tiles
                 X * TileOption.TileSize.X,
                 Y * TileOption.TileSize.Y,
                 Width * TileOption.TileSize.X,
-                Height * TileOption.TileSize.X);
+                Height * TileOption.TileSize.X );
 
-        public TileFrame(int x, int y, int width = 1, int height = 1)
+        public TileFrame( int x, int y, int width = 1, int height = 1 )
         {
             X = x;
             Y = y;
@@ -48,10 +41,10 @@ namespace Colin.Core.Modulars.Tiles
 
         internal void LoadStep( BinaryReader reader )
         {
-            X = reader.ReadInt32( );
-            Y = reader.ReadInt32( );
-            Width = reader.ReadInt32( );
-            Height = reader.ReadInt32( );
+            X = reader.ReadInt32();
+            Y = reader.ReadInt32();
+            Width = reader.ReadInt32();
+            Height = reader.ReadInt32();
         }
 
         internal void SaveStep( BinaryWriter writer )

@@ -6,7 +6,7 @@ namespace Colin.Core.Common
     [DataContract( IsReference = true )]
     public class Transform2D
     {
-        public Transform2D( )
+        public Transform2D()
         {
             Position = Vector2.Zero;
             Rotation = 0f;
@@ -29,7 +29,7 @@ namespace Colin.Core.Common
                     {
                         parent.children.Add( this );
                     }
-                    SetNeedsAbsoluteUpdate( );
+                    SetNeedsAbsoluteUpdate();
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace Colin.Core.Common
                 if(localRotation != value)
                 {
                     localRotation = value;
-                    SetNeedsLocalUpdate( );
+                    SetNeedsLocalUpdate();
                 }
             }
         }
@@ -63,7 +63,7 @@ namespace Colin.Core.Common
                 if(localPosition != value)
                 {
                     localPosition = value;
-                    SetNeedsLocalUpdate( );
+                    SetNeedsLocalUpdate();
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace Colin.Core.Common
                 if(localScale != value)
                 {
                     localScale = value;
-                    SetNeedsLocalUpdate( );
+                    SetNeedsLocalUpdate();
                 }
             }
         }
@@ -113,22 +113,22 @@ namespace Colin.Core.Common
 
         public void Register( Transform2D transform ) => transform.Parent = this;
 
-        private void SetNeedsLocalUpdate( )
+        private void SetNeedsLocalUpdate()
         {
             needsLocalUpdate = true;
-            SetNeedsAbsoluteUpdate( );
+            SetNeedsAbsoluteUpdate();
         }
 
-        private void SetNeedsAbsoluteUpdate( )
+        private void SetNeedsAbsoluteUpdate()
         {
             needsAbsoluteUpdate = true;
             foreach(Transform2D transform in children)
             {
-                transform.SetNeedsAbsoluteUpdate( );
+                transform.SetNeedsAbsoluteUpdate();
             }
         }
 
-        private void UpdateLocal( )
+        private void UpdateLocal()
         {
             Matrix matrix = Matrix.CreateScale( Scale.X, Scale.Y, 1f );
             matrix *= Matrix.CreateRotationZ( Rotation );
@@ -137,7 +137,7 @@ namespace Colin.Core.Common
             needsLocalUpdate = false;
         }
 
-        private void UpdateAbsolute( )
+        private void UpdateAbsolute()
         {
             if(Parent == null)
             {
@@ -162,22 +162,22 @@ namespace Colin.Core.Common
         private T UpdateLocalAndGet<T>( ref T field )
         {
             if(needsLocalUpdate)
-                UpdateLocal( );
+                UpdateLocal();
             return field;
         }
 
         private T UpdateAbsoluteAndGet<T>( ref T field )
         {
             if(needsLocalUpdate)
-                UpdateLocal( );
+                UpdateLocal();
             if(needsAbsoluteUpdate)
-                UpdateAbsolute( );
+                UpdateAbsolute();
             return field;
         }
 
         private Transform2D parent;
 
-        private List<Transform2D> children = new List<Transform2D>( );
+        private List<Transform2D> children = new List<Transform2D>();
 
         private Matrix absolute;
 

@@ -2,7 +2,7 @@
 {
     public static class RenderTargetExt
     {
-        public static RenderTarget2D CreateDefault( )
+        public static RenderTarget2D CreateDefault()
         {
             RenderTarget2D renderTarget = new RenderTarget2D(
             EngineInfo.Graphics.GraphicsDevice,

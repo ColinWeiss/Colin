@@ -1,13 +1,4 @@
-﻿using Colin.Core.Extensions;
-using Colin.Core.Modulars.UserInterfaces;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces.Controllers
+﻿namespace Colin.Core.Modulars.UserInterfaces.Controllers
 {
     public class DivGradientController : DivisionController
     {
@@ -24,66 +15,66 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
 
         public event Action OnClosed;
 
-        public override void OnInit( )
+        public override void OnInit()
         {
-            OpenColor = new ColorGradienter( );
+            OpenColor = new ColorGradienter();
             OpenColor.Set( Color.Transparent );
             OpenColor.Target = Color.White;
             OpenColor.Time = 0.08f;
 
-            CloseColor = new ColorGradienter( );
+            CloseColor = new ColorGradienter();
             CloseColor.Set( Color.White );
             CloseColor.Target = Color.Transparent;
             CloseColor.Time = 0.12f;
 
-            OpenScale = new VectorGradienter( );
+            OpenScale = new VectorGradienter();
             OpenScale.GradientStyle = GradientStyle.EaseOutExpo;
             OpenScale.Set( Vector2.One * 0.7f );
             OpenScale.Target = Vector2.One;
             OpenScale.Time = 0.4f;
 
-            CloseScale = new VectorGradienter( );
+            CloseScale = new VectorGradienter();
             CloseScale.GradientStyle = GradientStyle.EaseOutExpo;
             CloseScale.Set( Vector2.One );
             CloseScale.Target = Vector2.One * 0.7f;
             CloseScale.Time = 2f;
 
-            base.OnInit( );
+            base.OnInit();
         }
         public override void Design( ref DesignStyle design )
         {
-            if( _openState )
+            if(_openState)
             {
-                design.Color = OpenColor.Update( );
-                design.Scale = OpenScale.Update( );
+                design.Color = OpenColor.Update();
+                design.Scale = OpenScale.Update();
             }
-            if( _closeState )
+            if(_closeState)
             {
-                design.Color = CloseColor.Update( );
-                design.Scale = CloseScale.Update( );
-                if( design.Color.A <= 0 )
+                design.Color = CloseColor.Update();
+                design.Scale = CloseScale.Update();
+                if(design.Color.A <= 0)
                 {
                     Division.IsVisible = false;
-                    OnClosed?.Invoke( );
+                    OnClosed?.Invoke();
                 }
             }
             base.Design( ref design );
         }
-        public void Open( )
+        public void Open()
         {
-            if( !Division.IsVisible )
+            if(!Division.IsVisible)
             {
-                OpenColor.Start( );
-                OpenScale.Start( );
+                OpenColor.Start();
+                OpenScale.Start();
                 _openState = true;
                 _closeState = false;
                 Division.IsVisible = true;
             }
         }
-        public void Close( )
+        public void Close()
         {
-            CloseColor.Start( );
-            CloseScale.Start( );
+            CloseColor.Start();
+            CloseScale.Start();
             _closeState = true;
             _openState = false;
         }

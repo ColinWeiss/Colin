@@ -1,7 +1,4 @@
-﻿using Colin.Core.Inputs;
-using Microsoft.Xna.Framework.Input;
-
-namespace Colin.Core.Extensions
+﻿namespace Colin.Core.Extensions
 {
     public static class RectangleExt
     {

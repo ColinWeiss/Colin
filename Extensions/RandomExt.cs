@@ -11,7 +11,7 @@ namespace Colin.Core.Extensions
         /// returns current seed value
         /// </summary>
         /// <returns>Seed.</returns>
-        public static int GetSeed( )
+        public static int GetSeed()
         {
             return _seed;
         }
@@ -32,9 +32,9 @@ namespace Colin.Core.Extensions
         /// returns a random float between 0 (inclusive) and 1 (exclusive)
         /// </summary>
         /// <returns>The float.</returns>
-        public static float NextFloat( )
+        public static float NextFloat()
         {
-            return (float)Rand.NextDouble( );
+            return (float)Rand.NextDouble();
         }
 
 
@@ -45,7 +45,7 @@ namespace Colin.Core.Extensions
         /// <param name="max">Max.</param>
         public static float NextFloat( float max )
         {
-            return (float)Rand.NextDouble( ) * max;
+            return (float)Rand.NextDouble() * max;
         }
 
 
@@ -64,9 +64,9 @@ namespace Colin.Core.Extensions
         /// returns a random float between 0 and 2 * PI
         /// </summary>
         /// <returns>The angle.</returns>
-        public static float NextAngle( )
+        public static float NextAngle()
         {
-            return (float)Rand.NextDouble( ) * MathHelper.TwoPi;
+            return (float)Rand.NextDouble() * MathHelper.TwoPi;
         }
 
 
@@ -74,9 +74,9 @@ namespace Colin.Core.Extensions
         /// Returns a random unit vector with direction between 0 and 2 * PI
         /// </summary>
         /// <returns></returns>
-        public static Vector2 NextUnitVector( )
+        public static Vector2 NextUnitVector()
         {
-            float angle = NextAngle( );
+            float angle = NextAngle();
             return new Vector2( MathF.Cos( angle ), MathF.Sin( angle ) );
         }
 
@@ -85,9 +85,9 @@ namespace Colin.Core.Extensions
         /// returns a random color
         /// </summary>
         /// <returns>The color.</returns>
-        public static Color NextColor( )
+        public static Color NextColor()
         {
-            return new Color( NextFloat( ), NextFloat( ), NextFloat( ) );
+            return new Color( NextFloat(), NextFloat(), NextFloat() );
         }
 
 
@@ -131,7 +131,7 @@ namespace Colin.Core.Extensions
         /// returns a random float between -1 and 1
         /// </summary>
         /// <returns>The one to one.</returns>
-        public static float MinusOneToOne( )
+        public static float MinusOneToOne()
         {
             return NextFloat( 2f ) - 1f;
         }
@@ -143,7 +143,7 @@ namespace Colin.Core.Extensions
         /// <param name="percent">Percent.</param>
         public static bool Chance( float percent )
         {
-            return NextFloat( ) < percent;
+            return NextFloat() < percent;
         }
 
 
@@ -165,7 +165,7 @@ namespace Colin.Core.Extensions
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T Choose<T>( T first, T second )
         {
-            if( NextInt( 2 ) == 0 )
+            if(NextInt( 2 ) == 0)
                 return first;
 
             return second;
@@ -181,7 +181,7 @@ namespace Colin.Core.Extensions
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T Choose<T>( T first, T second, T third )
         {
-            switch( NextInt( 3 ) )
+            switch(NextInt( 3 ))
             {
                 case 0:
                     return first;
@@ -203,7 +203,7 @@ namespace Colin.Core.Extensions
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T Choose<T>( T first, T second, T third, T fourth )
         {
-            switch( NextInt( 4 ) )
+            switch(NextInt( 4 ))
             {
                 case 0:
                     return first;
@@ -218,14 +218,14 @@ namespace Colin.Core.Extensions
 
         public static string RandomString( int size = 38 )
         {
-            var builder = new StringBuilder( );
+            var builder = new StringBuilder();
             char ch;
-            for( int i = 0; i < size; i++ )
+            for(int i = 0; i < size; i++)
             {
-                ch = Convert.ToChar( Convert.ToInt32( Math.Floor( 26 * NextFloat( ) + 65 ) ) );
+                ch = Convert.ToChar( Convert.ToInt32( Math.Floor( 26 * NextFloat() + 65 ) ) );
                 builder.Append( ch );
             }
-            return builder.ToString( );
+            return builder.ToString();
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Colin.Core.Extensions
             second = temp;
         }
 
-        public static T GetRandom<T>( this T[ ] array ) => array[Rand.Next( 0, array.Length )];
+        public static T GetRandom<T>( this T[] array ) => array[Rand.Next( 0, array.Length )];
 
         public static bool NextBool( this Random rand )
         {
@@ -249,14 +249,14 @@ namespace Colin.Core.Extensions
         }
         public static Vector2 NextVectorUnit( this Random rand )
         {
-            float x = (float)(rand.NextBool( ) ? rand.NextDouble( ) : -rand.NextDouble( ));
-            float y = (float)(rand.NextBool( ) ? rand.NextDouble( ) : -rand.NextDouble( ));
+            float x = (float)(rand.NextBool() ? rand.NextDouble() : -rand.NextDouble());
+            float y = (float)(rand.NextBool() ? rand.NextDouble() : -rand.NextDouble());
             return new Vector2( x, y );
         }
         public static Vector2 NextVectorRec( this Random rand, Point size )
         {
-            float x = (float)rand.NextDouble( ) * size.X;
-            float y = (float)rand.NextDouble( ) * size.Y;
+            float x = (float)rand.NextDouble() * size.X;
+            float y = (float)rand.NextDouble() * size.Y;
             return new Vector2( x, y );
         }
     }

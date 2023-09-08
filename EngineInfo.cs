@@ -1,6 +1,5 @@
 ﻿using Colin.Core.ModLoaders;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Framework.Utilities;
 using MonoGame.IMEHelper;
 using System.Reflection;
 
@@ -11,9 +10,9 @@ namespace Colin.Core
     /// </summary>
     public class EngineInfo
     {
-        public static Random Random => new Random( );
+        public static Random Random => new Random();
 
-        public static string[ ] StartupParameter;
+        public static string[] StartupParameter;
 
         /// <summary>
         ///用于初始化和控制图形设备的显示.
@@ -48,9 +47,9 @@ namespace Colin.Core
         {
             get
             {
-                if( _engineName == string.Empty )
+                if(_engineName == string.Empty)
                 {
-                    _engineName = Assembly.GetExecutingAssembly( ).FullName.Split( ',' ).First( );
+                    _engineName = Assembly.GetExecutingAssembly().FullName.Split( ',' ).First();
                     return _engineName;
                 }
                 else
@@ -70,7 +69,7 @@ namespace Colin.Core
             set
             {
                 Graphics.PreferredBackBufferWidth = value;
-                Graphics.ApplyChanges( );
+                Graphics.ApplyChanges();
             }
         }
 
@@ -86,7 +85,7 @@ namespace Colin.Core
             set
             {
                 Graphics.PreferredBackBufferHeight = value;
-                Graphics.ApplyChanges( );
+                Graphics.ApplyChanges();
             }
         }
 
@@ -137,21 +136,21 @@ namespace Colin.Core
         /// <summary>
         /// 当前鼠标信息.
         /// </summary>
-        public static MouseState MouseState { get; private set; } = new MouseState( );
+        public static MouseState MouseState { get; private set; } = new MouseState();
 
         /// <summary>
         /// 上一帧鼠标信息.
         /// </summary>
-        public static MouseState MouseStateLast { get; private set; } = new MouseState( );
+        public static MouseState MouseStateLast { get; private set; } = new MouseState();
 
-        public static Vector2 MousePositionF => MouseState.Position.ToVector2( );
+        public static Vector2 MousePositionF => MouseState.Position.ToVector2();
 
         public static IMEHandler IMEHandler;
 
         internal static void Init( Engine engine )
         {
             Engine = engine;
-            ModContent.DoInitialize( );
+            ModContent.DoInitialize();
 #if WINDOWS
             IMEHandler = new WinFormsIMEHandler( Engine );
 #elif DESKTOP
@@ -167,7 +166,7 @@ namespace Colin.Core
         {
             GameTimeCache = gameTime;
             MouseStateLast = MouseState;
-            MouseState = Mouse.GetState( );
+            MouseState = Mouse.GetState();
         }
     }
 }

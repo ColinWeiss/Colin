@@ -1,6 +1,11 @@
-﻿using Colin.Core.Common;
+﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
+在此之前:
 using Colin.Core.Graphics;
 using Colin.Core.Assets;
+在此之后:
+using Colin.Core.Common;
+using Colin.Core.Graphics;
+*/
 
 namespace Colin.Core.Modulars.Backgrounds
 {
@@ -48,7 +53,7 @@ namespace Colin.Core.Modulars.Backgrounds
                 CurrentStyle = style;
         }
 
-        public void DoInitialize( )
+        public void DoInitialize()
         {
             _screenMap = TextureAssets.Get( "Pixel" );
             LeftRightLoopEffect = EffectAssets.Get( "LeftRightLoopMapping" );
@@ -56,7 +61,7 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public void DoUpdate( GameTime time )
         {
-            CurrentStyle?.UpdateStyle( );
+            CurrentStyle?.UpdateStyle();
         }
 
         public void DoRender( SpriteBatch batch )
@@ -64,7 +69,7 @@ namespace Colin.Core.Modulars.Backgrounds
             if(CurrentStyle != null)
             {
                 BackgroundLayer layer;
-                for(int count = 0 ; count < CurrentStyle.Layers.Count ; count++)
+                for(int count = 0; count < CurrentStyle.Layers.Count; count++)
                 {
                     layer = CurrentStyle.Layers[count];
                     if(layer.IsFix)
@@ -89,7 +94,7 @@ namespace Colin.Core.Modulars.Backgrounds
                 SpriteEffects.None,
                 layer.Sprite.Depth
                 );
-            EngineInfo.SpriteBatch.End( );
+            EngineInfo.SpriteBatch.End();
         }
 
         public void RenderLeftRightLoopBackground( BackgroundLayer layer )
@@ -107,7 +112,7 @@ namespace Colin.Core.Modulars.Backgrounds
             LeftRightLoopEffect.Parameters["Offset"].SetValue( offset );
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, LeftRightLoopEffect );
             EngineInfo.SpriteBatch.Draw( _screenMap, new Rectangle( 0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight ), Color.White );
-            EngineInfo.SpriteBatch.End( );
+            EngineInfo.SpriteBatch.End();
         }
     }
 }

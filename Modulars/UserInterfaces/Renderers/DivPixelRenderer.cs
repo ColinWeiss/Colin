@@ -1,17 +1,18 @@
-﻿using Colin.Core.Graphics;
+﻿
+/* 项目“DeltaMachine.Desktop”的未合并的更改
+在此之前:
+using Colin.Core.Graphics;
 using Colin.Core.Assets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+在此之后:
+using Colin.Core.Assets;
+using Colin.Core.Graphics;
+*/
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
     public class DivPixelRenderer : DivisionRenderer
     {
         private Sprite _pixel;
-        public override void RendererInit( )
+        public override void RendererInit()
         {
             _pixel = Sprite.Get( "Pixel" );
         }

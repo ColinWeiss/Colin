@@ -62,27 +62,27 @@ namespace Colin.Core.Modulars.Networks
         /// </summary>
         /// <param name="port">端口.</param>
         /// <param name="maxConnect">最大连接数.</param>
-        public void StartServer(int port, int maxConnect)
+        public void StartServer( int port, int maxConnect )
         {
             NetType = NetType.NetHost;
-            NetworkModes.Add(DataPackageTransfer);
+            NetworkModes.Add( DataPackageTransfer );
             Clients = new Dictionary<string, Socket>();
             ClientStreams = new Dictionary<Socket, NetworkStream>();
-            Server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
-            Server.Bind(endPoint);
-            Server.Listen(maxConnect);
-            Thread listenClient = new Thread(() =>
+            Server = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+            IPEndPoint endPoint = new IPEndPoint( IPAddress.Any, port );
+            Server.Bind( endPoint );
+            Server.Listen( maxConnect );
+            Thread listenClient = new Thread( () =>
                 {
-                    while (true)
+                    while(true)
                     {
                         Socket _connect = Server.Accept();
                         string _connectIP = _connect.RemoteEndPoint.ToString();
-                        Clients.Add(_connectIP, _connect);
-                        NetworkStream _networkStream = new NetworkStream(_connect, true);
-                        ClientStreams.Add(_connect, _networkStream);
+                        Clients.Add( _connectIP, _connect );
+                        NetworkStream _networkStream = new NetworkStream( _connect, true );
+                        ClientStreams.Add( _connect, _networkStream );
                     }
-                });
+                } );
             listenClient.IsBackground = true;
             listenClient.Start();
         }
@@ -92,70 +92,70 @@ namespace Colin.Core.Modulars.Networks
         /// </summary>
         /// <param name="ip">IP.</param>
         /// <param name="port">端口.</param>
-        public void Connect(string ip, int port)
+        public void Connect( string ip, int port )
         {
             NetType = NetType.NetClient;
-            NetworkModes.Add(DataPackageTransfer);
-            Client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            Client.Connect(endPoint);
+            NetworkModes.Add( DataPackageTransfer );
+            Client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+            IPEndPoint endPoint = new IPEndPoint( IPAddress.Parse( ip ), port );
+            Client.Connect( endPoint );
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update( GameTime gameTime )
         {
-            if (NetType == NetType.NetClient)
+            if(NetType == NetType.NetClient)
             {
                 INetworkMode _networkMode;
-                NetworkStream = new NetworkStream(Client, true);
-                if (NetworkStream.DataAvailable)
+                NetworkStream = new NetworkStream( Client, true );
+                if(NetworkStream.DataAvailable)
                 {
-                    BinaryReader = new BinaryReader(NetworkStream, Encoding.UTF8);
-                    for (int count = 0; count < NetworkModes.Count; count++)
+                    BinaryReader = new BinaryReader( NetworkStream, Encoding.UTF8 );
+                    for(int count = 0; count < NetworkModes.Count; count++)
                     {
                         _networkMode = NetworkModes[count];
-                        _networkMode.ReceiveDatas(BinaryReader, NetModeState.Over);
+                        _networkMode.ReceiveDatas( BinaryReader, NetModeState.Over );
                     }
                 }
-                BinaryWriter = new BinaryWriter(NetworkStream);
-                for (int count = 0; count < NetworkModes.Count; count++)
+                BinaryWriter = new BinaryWriter( NetworkStream );
+                for(int count = 0; count < NetworkModes.Count; count++)
                 {
                     _networkMode = NetworkModes[count];
-                    _networkMode.SendDatas(BinaryWriter, NetModeState.Over);
+                    _networkMode.SendDatas( BinaryWriter, NetModeState.Over );
                 }
                 BinaryWriter.Flush();
             }
-            else if (NetType == NetType.NetHost)
+            else if(NetType == NetType.NetHost)
             {
                 INetworkMode _networkMode;
                 NetworkStream networkStream;
-                for (int count = 0; count < ClientStreams.Count; count++)
+                for(int count = 0; count < ClientStreams.Count; count++)
                 {
                     NetModeState _netModeState = NetModeState.Conduct;
-                    networkStream = ClientStreams.Values.ElementAt(count);
-                    BinaryReader = new BinaryReader(networkStream, Encoding.UTF8);
-                    if (count == ClientStreams.Count - 1)
+                    networkStream = ClientStreams.Values.ElementAt( count );
+                    BinaryReader = new BinaryReader( networkStream, Encoding.UTF8 );
+                    if(count == ClientStreams.Count - 1)
                         _netModeState = NetModeState.Over;
-                    if (networkStream.DataAvailable)
+                    if(networkStream.DataAvailable)
                     {
-                        for (int count2 = 0; count2 < NetworkModes.Count; count2++)
+                        for(int count2 = 0; count2 < NetworkModes.Count; count2++)
                         {
                             _networkMode = NetworkModes[count2];
-                            _networkMode.ReceiveDatas(BinaryReader, _netModeState);
+                            _networkMode.ReceiveDatas( BinaryReader, _netModeState );
                         }
                     }
-                    BinaryWriter = new BinaryWriter(networkStream);
-                    for (int count3 = 0; count3 < NetworkModes.Count; count3++)
+                    BinaryWriter = new BinaryWriter( networkStream );
+                    for(int count3 = 0; count3 < NetworkModes.Count; count3++)
                     {
                         _networkMode = NetworkModes[count3];
-                        _networkMode.SendDatas(BinaryWriter, _netModeState);
+                        _networkMode.SendDatas( BinaryWriter, _netModeState );
                     }
                     BinaryWriter.Flush();
                 }
             }
-            base.Update(gameTime);
+            base.Update( gameTime );
         }
 
-        public Network(Game game) : base(game) { }
+        public Network( Game game ) : base( game ) { }
 
     }
 }

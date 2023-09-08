@@ -1,10 +1,18 @@
-﻿using Colin.Core.Common;
+﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
+在此之前:
 using Colin.Core.Inputs;
 using Colin.Core.IO;
 using Colin.Core.Assets;
 using MonoGame.Framework.Utilities;
-using Colin.Developments;
+在此之后:
+using Colin.Core.Common;
+using Colin.Core.Inputs;
+using Colin.Core.IO;
 using Colin.Core.ModLoaders;
+*/
+using Colin.Core.IO;
+using Colin.Core.ModLoaders;
+using Colin.Core.Developments;
 #if WINDOWS
 using System.Windows.Forms;
 #endif
@@ -19,16 +27,16 @@ namespace Colin.Core
         /// 获取本程序在 Windows 平台下的窗体对象.
         /// </summary>
         public Form Form => _form;
-        public void FormInitialize( )
+        public void FormInitialize()
         {
             _form = Control.FromHandle( Window.Handle ) as Form;
             _form.MinimizeBox = false;
             _form.MaximizeBox = false;
-     //       _form.MinimumSize = new System.Drawing.Size( 1280, 720 );
+            //       _form.MinimumSize = new System.Drawing.Size( 1280, 720 );
         }
     }
 #endif
-    public partial class Engine : Game , IMod
+    public partial class Engine : Game, IMod
     {
         public string Name => "Colin.Core.Engine";
 
@@ -55,9 +63,9 @@ namespace Colin.Core
             set => SetTargetFrame( value );
         }
 
-        public Engine( )
+        public Engine()
         {
-            ProgramChecker.DoCheck( );
+            ProgramChecker.DoCheck();
             EngineInfo.Init( this );
             if(EngineInfo.Graphics == null)
             {
@@ -73,7 +81,7 @@ namespace Colin.Core
             IsMouseVisible = false;
             IsFixedTimeStep = true;
 #if WINDOWS
-            FormInitialize( );
+            FormInitialize();
 #endif
         }
 
@@ -96,41 +104,41 @@ namespace Colin.Core
                     Window.ClientSizeChanged -= CurrentScene.InitRenderTarget;
                     Window.OrientationChanged -= CurrentScene.InitRenderTarget;
                 }
-                CurrentScene.UnLoad( );
+                CurrentScene.UnLoad();
                 Components.Remove( CurrentScene );
             }
-            Components.Clear( );
+            Components.Clear();
             Components.Add( Singleton<ControllerResponder>.Instance );
             Components.Add( Singleton<MouseResponder>.Instance );
             Components.Add( Singleton<KeyboardResponder>.Instance );
             Components.Add( Singleton<Input>.Instance );
             Components.Add( scene );
             CurrentScene = scene;
-            GC.Collect( );
+            GC.Collect();
         }
 
-        protected override sealed void Initialize( )
+        protected override sealed void Initialize()
         {
             EngineInfo.SpriteBatch = new SpriteBatch( EngineInfo.Graphics.GraphicsDevice );
-            EngineInfo.Config = new Config( );
-            EngineInfo.Config.Load( );
+            EngineInfo.Config = new Config();
+            EngineInfo.Config.Load();
             TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / TargetFrame ) );
             Components.Add( FileDropProcessor.Instance );
-            DoInitialize( );
-            base.Initialize( );
+            DoInitialize();
+            base.Initialize();
         }
 
-        public virtual void DoInitialize( ) { }
+        public virtual void DoInitialize() { }
 
-        protected override sealed void LoadContent( )
+        protected override sealed void LoadContent()
         {
-            base.LoadContent( );
+            base.LoadContent();
         }
 
         /// <summary>
         /// 在程序开始运行时执行.
         /// </summary>
-        public virtual void Start( ) { }
+        public virtual void Start() { }
 
         private bool Started = false;
         protected override sealed void Update( GameTime gameTime )
@@ -147,16 +155,16 @@ namespace Colin.Core
                         Screen.PrimaryScreen.Bounds.Height / 2 - Form.Height / 2
                         );
 #endif
-                ResourceLoader = new AssetLoader( );
-                ResourceLoader.OnLoadComplete += ( s, e ) => Start( );
+                ResourceLoader = new AssetLoader();
+                ResourceLoader.OnLoadComplete += ( s, e ) => Start();
                 SetScene( ResourceLoader );
                 Started = true;
             }
             EngineInfo.GetInformationFromDevice( gameTime );
-            DoUpdate( );
+            DoUpdate();
             base.Update( gameTime );
         }
-        public virtual void DoUpdate( ) { }
+        public virtual void DoUpdate() { }
 
         protected override sealed void Draw( GameTime gameTime )
         {
@@ -164,14 +172,14 @@ namespace Colin.Core
                 return;
             GraphicsDevice.Clear( Color.Black );
             base.Draw( gameTime );
-            DoRender( );
+            DoRender();
         }
-        public virtual void DoRender( ) { }
+        public virtual void DoRender() { }
 
         protected override void OnExiting( object sender, EventArgs args )
         {
-            CurrentScene?.SaveDatas( );
-            EngineInfo.Config.Save( );
+            CurrentScene?.SaveDatas();
+            EngineInfo.Config.Save();
             base.OnExiting( sender, args );
         }
 

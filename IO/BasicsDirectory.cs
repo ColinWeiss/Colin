@@ -5,10 +5,10 @@
         /// <summary>
         /// 使用 <see cref="Colin"/> 进行开发的程序的目录.
         /// </summary>
-        public static string ProgramDir => 
-            Explorer.ConvertPath( 
-                Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 
-                "My Games", 
+        public static string ProgramDir =>
+            Explorer.ConvertPath(
+                Environment.GetFolderPath( Environment.SpecialFolder.Personal ),
+                "My Games",
                 EngineInfo.EngineName );
 
         /// <summary>

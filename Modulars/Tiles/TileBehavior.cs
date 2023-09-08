@@ -1,11 +1,4 @@
-﻿using Colin.Core.ModLoaders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 物块行为.
@@ -15,7 +8,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 获取物块包含类名的完整命名空间.
         /// </summary>
-        public string Name => GetType( ).Namespace + "." + GetType( ).Name;
+        public string Name => GetType().Namespace + "." + GetType().Name;
 
         /// <summary>
         /// 指示物块纹理表类型.
@@ -80,11 +73,11 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        public virtual void SetDefaults( ) { }
+        public virtual void SetDefaults() { }
 
         public virtual void UpdateTile( int coordinateX, int coordinateY ) { }
 
-        public virtual void RenderTexture( ) { }
+        public virtual void RenderTexture() { }
 
         public virtual void RenderBorder() { }
 
@@ -97,13 +90,13 @@ namespace Colin.Core.Modulars.Tiles
                 LeftBehavior?.DoRefresh( conduct - 1 );
                 RightBehavior?.DoRefresh( conduct - 1 );
             }
-            OnRefresh( );
+            OnRefresh();
         }
 
         /// <summary>
         /// 执行一次物块更新.
         /// </summary>
-        public virtual void OnRefresh( ) { }
+        public virtual void OnRefresh() { }
 
         /// <summary>
         /// 判断指定相对于该物块坐标具有指定偏移位置处的物块是否相同.

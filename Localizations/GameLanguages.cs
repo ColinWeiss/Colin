@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Localizations
+﻿namespace Colin.Core.Localizations
 {
     public class GameLanguages
     {
-        public static Dictionary<string, GameLanguagePackage> Languages = new Dictionary<string, GameLanguagePackage>( );
+        public static Dictionary<string, GameLanguagePackage> Languages = new Dictionary<string, GameLanguagePackage>();
 
         private static GameLanguagePackage _current;
         public static GameLanguagePackage Current => _current;
@@ -21,7 +17,7 @@ namespace Colin.Core.Localizations
             if(Languages.TryGetValue( language, out GameLanguagePackage package ))
             {
                 _current = package;
-                OnLanguageChanged?.Invoke( );
+                OnLanguageChanged?.Invoke();
             }
         }
     }

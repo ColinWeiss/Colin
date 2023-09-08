@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
     /// <summary>
     /// 弱引用事件管理器.
@@ -12,9 +6,9 @@ namespace Colin.Core.Events
     public class WeakEventManager
     {
         private readonly List<WeakReferenceDelegate<Delegate>> _delegateList;
-        public WeakEventManager( )
+        public WeakEventManager()
         {
-            _delegateList = new List<WeakReferenceDelegate<Delegate>>( );
+            _delegateList = new List<WeakReferenceDelegate<Delegate>>();
         }
 
         /// <summary>
@@ -22,7 +16,7 @@ namespace Colin.Core.Events
         /// </summary>
         public void AddHandler( Delegate handler )
         {
-            if( handler != null )
+            if(handler != null)
                 _delegateList.Add( new WeakReferenceDelegate<Delegate>( handler ) );
         }
 
@@ -31,10 +25,10 @@ namespace Colin.Core.Events
         /// </summary>
         public void RemoveHandler( Delegate handler )
         {
-            if( handler == null ) return;
+            if(handler == null) return;
             //由于我实现了IEquatable<Delegate>，这里能够很方便的比较
             var sameHandler = _delegateList.FirstOrDefault( e => e.Equals( handler ) );
-            if( sameHandler != null )
+            if(sameHandler != null)
                 _delegateList.Remove( sameHandler );
         }
 
@@ -43,9 +37,9 @@ namespace Colin.Core.Events
         /// </summary>
         public void Raise( object sender, EventArgs e )
         {
-            foreach( var d in _delegateList.ToList( ) )
+            foreach(var d in _delegateList.ToList())
             {
-                if( d.Active )
+                if(d.Active)
                     d.Target.DynamicInvoke( sender, e );
                 else
                     _delegateList.Remove( d );

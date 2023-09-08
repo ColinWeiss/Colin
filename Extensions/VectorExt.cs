@@ -7,7 +7,7 @@
     {
         public static Vector2 GetAbs( this Vector2 vector2 )
         {
-            return new Vector2( Math.Abs( vector2.X ) , Math.Abs( vector2.Y ) );
+            return new Vector2( Math.Abs( vector2.X ), Math.Abs( vector2.Y ) );
         }
 
         /// <summary>

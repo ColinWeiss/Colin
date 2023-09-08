@@ -1,6 +1,5 @@
 ﻿using Colin.Core.IO;
 using System.Text.Json;
-using System.Threading;
 
 namespace Colin.Core
 {
@@ -27,7 +26,7 @@ namespace Colin.Core
             set
             {
                 EngineInfo.Graphics.IsFullScreen = value;
-                EngineInfo.Graphics.ApplyChanges( );
+                EngineInfo.Graphics.ApplyChanges();
             }
         }
 
@@ -76,9 +75,9 @@ namespace Colin.Core
             }
         }
 
-        public void Load( )
+        public void Load()
         {
-            if( File.Exists( ConfigPath ) )
+            if(File.Exists( ConfigPath ))
             {
                 Config result = JsonSerializer.Deserialize<Config>( File.ReadAllText( ConfigPath ) );
                 IsFullScreen = result.IsFullScreen;
@@ -88,11 +87,11 @@ namespace Colin.Core
                 IsMouseVisiable = result.IsMouseVisiable;
                 TargetFrame = result.TargetFrame;
             }
-         //   Save( );
+            //   Save( );
         }
-        public void Save( )
+        public void Save()
         {
-            JsonSerializerOptions serializerOptions = new JsonSerializerOptions( );
+            JsonSerializerOptions serializerOptions = new JsonSerializerOptions();
             serializerOptions.WriteIndented = true;
             string config = JsonSerializer.Serialize( this, serializerOptions );
             File.WriteAllText( ConfigPath, config );

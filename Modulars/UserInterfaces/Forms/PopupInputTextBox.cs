@@ -1,9 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Prefabs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
@@ -13,7 +8,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 
         public InputTextBox InputTextBox;
 
-        public override void PopupInit( )
+        public override void PopupInit()
         {
             InputTextBox = new InputTextBox( "InputBox", 12 );
             InputTextBox.Layout.Left = 4;
@@ -22,7 +17,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             InputTextBox.Layout.Height = Layout.Height - 8;
             InputTextBox.Label.Design.Color = new Color( 255, 223, 135 );
             Register( InputTextBox );
-            base.PopupInit( );
+            base.PopupInit();
         }
         public override void OnUpdate( GameTime time )
         {

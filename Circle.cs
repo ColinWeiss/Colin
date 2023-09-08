@@ -43,7 +43,7 @@ namespace Colin.Core
                 MathHelper.Clamp( Center.X, rectangle.Left, rectangle.Right ),
                 MathHelper.Clamp( Center.Y, rectangle.Top, rectangle.Bottom ) );
             Vector2 direction = Center - v;
-            float distanceSquared = direction.LengthSquared( );
+            float distanceSquared = direction.LengthSquared();
             return distanceSquared > 0 && distanceSquared < Radius * Radius;
         }
 

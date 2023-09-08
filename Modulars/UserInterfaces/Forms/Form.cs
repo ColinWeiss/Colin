@@ -1,12 +1,6 @@
-﻿using Colin.Core.Modulars.UserInterfaces;
-using Colin.Core.Modulars.UserInterfaces.Controllers;
+﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
@@ -38,10 +32,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             set
             {
                 _isTransparent = value;
-                if( !_isTransparent )
-                    Block.BindRenderer<DivPixelRenderer>( );
+                if(!_isTransparent)
+                    Block.BindRenderer<DivPixelRenderer>();
                 else
-                    Block.ClearRenderer( );
+                    Block.ClearRenderer();
             }
         }
 
@@ -51,7 +45,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Height = height;
             _titleHeight = titleHeight;
         }
-        public override sealed void OnInit( )
+        public override sealed void OnInit()
         {
             Design.Scale = Vector2.Zero;
             Design.Color = Color.Transparent;
@@ -70,14 +64,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Substrate.Layout.Top = -4;
             Substrate.Layout.Width = Layout.Width + 8;
             Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
-            DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>( );
+            DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
             _substrateRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Substrate0" ) );
             _substrateRenderer.Cut = 4;
             base.Register( Substrate );
 
             Block = new Division( "Block" );
-            if( !IsTransparent )
-                Block.BindRenderer<DivPixelRenderer>( );
+            if(!IsTransparent)
+                Block.BindRenderer<DivPixelRenderer>();
             Block.Design.Color = new Color( 17, 18, 20 );
             Block.Layout.Top = _titleHeight;
             Block.Layout.Width = Layout.Width;
@@ -85,14 +79,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             base.Register( Block );
 
             TitleColumn = new Division( "TitleColumn" );
-            TitleColumn.BindRenderer<DivPixelRenderer>( );
+            TitleColumn.BindRenderer<DivPixelRenderer>();
             TitleColumn.Interact.IsInteractive = false;
             TitleColumn.Design.Color = new Color( 20, 22, 25 );
             TitleColumn.Layout.Width = Layout.Width;
             TitleColumn.Layout.Height = _titleHeight;
             {
                 _titleColumnDec = new Division( "TitleColumn.Decoration" );
-                DivNinecutRenderer _decRenderer = _titleColumnDec.BindRenderer<DivNinecutRenderer>( );
+                DivNinecutRenderer _decRenderer = _titleColumnDec.BindRenderer<DivNinecutRenderer>();
                 _decRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Decoration" ) );
                 _decRenderer.Cut = 8;
                 _titleColumnDec.Interact.IsInteractive = false;
@@ -101,7 +95,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 TitleColumn.Register( _titleColumnDec );
 
                 Icon = new Division( "Icon" );
-                DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>( );
+                DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>();
                 _iconRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Icon0" ) );
                 Icon.Interact.IsInteractive = true;
                 Icon.Layout.Left = 8;
@@ -114,11 +108,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 TitleLabel.SetText( "标题" );
                 TitleLabel.Layout.Left = Icon.Layout.Left + Icon.Layout.Width + 8;
                 TitleLabel.FontRenderer.Font = FontResource.Get( "GlowSans" ).GetFont( 32 );
-                TitleLabel.Design.Color = new Color( 255 , 223 , 135 );
+                TitleLabel.Design.Color = new Color( 255, 223, 135 );
                 TitleColumn.Register( TitleLabel );
 
                 CloseButton = new Division( "CloseButton" );
-                DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>( );
+                DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>();
                 _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
                 CloseButton.Interact.IsInteractive = true;
                 CloseButton.Layout.Left = TitleColumn.Layout.Width - 32;
@@ -132,7 +126,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Events.MouseLeftClickAfter += ( s, e ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
-                    Close( );
+                    Close();
                 };
                 CloseButton.Events.ActivationEnd += ( s, e ) =>
                 {
@@ -142,15 +136,15 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             }
             base.Register( TitleColumn );
 
-            FormInit( );
+            FormInit();
 
             Layout.Width += 8;
             Layout.Height += _titleHeight + 8;
 
             Events.MouseLeftClickBefore += ( s, e ) => Interface.Container.SetTop( this );
-            base.OnInit( );
+            base.OnInit();
         }
-        public virtual void FormInit( ) { }
+        public virtual void FormInit() { }
         public override bool Register( Division division, bool doInit = false ) => Block.Register( division, doInit );
 
         public event Action OnOpen;
@@ -159,20 +153,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         public event Action OnClose;
 
         private bool _firstShow = false;
-        public void Show( )
+        public void Show()
         {
-            OnOpen?.Invoke( );
-            if( !_firstShow )
+            OnOpen?.Invoke();
+            if(!_firstShow)
             {
-                OnFirstShow?.Invoke( );
+                OnFirstShow?.Invoke();
                 _firstShow = true;
             }
-            (Controller as DivGradientController).Open( );
+            (Controller as DivGradientController).Open();
         }
-        public void Close( )
+        public void Close()
         {
-            OnClose?.Invoke( );
-            (Controller as DivGradientController).Close( );
+            OnClose?.Invoke();
+            (Controller as DivGradientController).Close();
         }
     }
 }

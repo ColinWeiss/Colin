@@ -1,13 +1,4 @@
-﻿using Colin.Core.Inputs;
-using Colin.Core.Modulars.UserInterfaces.Renderers;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces.Prefabs
+﻿namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
     public class InputTextBox : Division
     {
@@ -36,7 +27,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
         public bool AllowBreaks = false;
 
-        public Keys[ ] FunctionKeys = new Keys[ ]
+        public Keys[] FunctionKeys = new Keys[]
         {
             Keys.Back,
             Keys.LeftShift,
@@ -45,50 +36,50 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             Keys.RightAlt
         };
 
-        public override void OnInit( )
+        public override void OnInit()
         {
             Text = "";
             Layout.ScissorEnable = true;
             Label.Interact.IsInteractive = false;
             Register( Label );
 
-            Events.ObtainingFocus += ( s, e ) => 
+            Events.ObtainingFocus += ( s, e ) =>
             {
-                EngineInfo.IMEHandler.StartTextComposition( );
+                EngineInfo.IMEHandler.StartTextComposition();
                 EngineInfo.IMEHandler.SetTextInputRect( ref InputRect );
             };
-            Events.LosesFocus += ( s, e ) => 
+            Events.LosesFocus += ( s, e ) =>
             {
-                EngineInfo.IMEHandler.StopTextComposition( );
+                EngineInfo.IMEHandler.StopTextComposition();
                 Label.SetText( Text );
             };
             EngineInfo.IMEHandler.TextInput += IMEHandler_TextInput;
-            base.OnInit( );
+            base.OnInit();
         }
 
         private void IMEHandler_TextInput( object sender, MonoGame.IMEHelper.TextInputEventArgs e )
         {
-            if( Editing )
+            if(Editing)
             {
-                if( e.Key == Keys.Back && Text.Length > 0 )
+                if(e.Key == Keys.Back && Text.Length > 0)
                 {
-                    Text = Text.Remove( CursorPosition - 1 , 1 );
+                    Text = Text.Remove( CursorPosition - 1, 1 );
                     CursorPosition--;
                 }
-                else if( e.Key == Keys.Enter && AllowBreaks )
+                else if(e.Key == Keys.Enter && AllowBreaks)
                 {
                     Text += "\n";
                     CursorPosition++;
                 }
-                else if( CursorPosition == Text.Length && !FunctionKeys.Contains( e.Key ))
+                else if(CursorPosition == Text.Length && !FunctionKeys.Contains( e.Key ))
                 {
                     Text += e.Character;
                     CursorPosition++;
                 }
-                else if( !FunctionKeys.Contains( e.Key ) )
+                else if(!FunctionKeys.Contains( e.Key ))
                 {
-                    Text = Text.Insert( CursorPosition , e.Character.ToString( ) );
-                    CursorPosition += e.Character.ToString( ).Length;
+                    Text = Text.Insert( CursorPosition, e.Character.ToString() );
+                    CursorPosition += e.Character.ToString().Length;
                 }
             }
         }
@@ -99,20 +90,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             InputRect = Layout.TotalHitBox;
             InputRect.Y += 16;
             InputRect.X += 16;
-            if( Text != string.Empty )
+            if(Text != string.Empty)
             {
-                if( KeyboardResponder.IsKeyClickAfter( Keys.Left ) )
+                if(KeyboardResponder.IsKeyClickAfter( Keys.Left ))
                     CursorPosition--;
-                if( KeyboardResponder.IsKeyClickAfter( Keys.Right ) )
+                if(KeyboardResponder.IsKeyClickAfter( Keys.Right ))
                     CursorPosition++;
-                if( KeyboardResponder.IsKeyClickAfter( Keys.Up ) )
+                if(KeyboardResponder.IsKeyClickAfter( Keys.Up ))
                     CursorPosition = Math.Clamp( CursorPosition, 0, Text.Length );
             }
             else
                 CursorPosition = 0;
 
             DisplayText = Text.Insert( CursorPosition, "|" );
-            if( Editing )
+            if(Editing)
                 Label.SetText( DisplayText );
             else
                 Label.SetText( Text );

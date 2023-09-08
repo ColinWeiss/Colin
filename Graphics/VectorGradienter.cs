@@ -1,9 +1,4 @@
 ﻿using Colin.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Graphics
 {
@@ -23,14 +18,14 @@ namespace Colin.Core.Graphics
         private bool _start;
         private float _currentValue;
         public GradientStyle GradientStyle = GradientStyle.Linear;
-        public Vector2 Update( )
+        public Vector2 Update()
         {
-            if( _start )
+            if(_start)
             {
                 Timer += Colin.Core.Time.UnscaledDeltaTime;
-                if( Timer <= Time )
+                if(Timer <= Time)
                 {
-                    switch( GradientStyle )
+                    switch(GradientStyle)
                     {
                         case GradientStyle.Linear:
                             _currentValue = Timer / Time;
@@ -42,7 +37,7 @@ namespace Colin.Core.Graphics
                     Current.Closer( Target, _currentValue, 1f );
                 }
             }
-            if( Timer > Time )
+            if(Timer > Time)
             {
                 Current = Target;
                 _start = false;
@@ -50,13 +45,13 @@ namespace Colin.Core.Graphics
             }
             return Current;
         }
-        public void Start( )
+        public void Start()
         {
             Current = Default;
             Timer = 0;
             _start = true;
         }
-        public void Stop( )
+        public void Stop()
         {
             _start = false;
             Timer = 0;

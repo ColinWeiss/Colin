@@ -1,5 +1,4 @@
-﻿using Colin.Core.Assets;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 
 namespace Colin.Core.Graphics
 {
@@ -32,8 +31,8 @@ namespace Colin.Core.Graphics
         VertexBuffer geometryBuffer;
         IndexBuffer indexBuffer;
 
-        VertexBufferBinding[ ] bindings;
-        InstanceInfo[ ] instances;
+        VertexBufferBinding[] bindings;
+        InstanceInfo[] instances;
 
         struct InstanceInfo
         {
@@ -44,7 +43,7 @@ namespace Colin.Core.Graphics
 
         public void Initialize( GraphicsDevice device )
         {
-            GenerateInstanceVertexDeclaration( );
+            GenerateInstanceVertexDeclaration();
             GenerateGeometry( device );
             GenerateInstanceInformation( device, instanceCount );
 
@@ -59,9 +58,9 @@ namespace Colin.Core.Graphics
             texture = TextureAssets.Get( "UI/Default" );
         }
 
-        private void GenerateInstanceVertexDeclaration( )
+        private void GenerateInstanceVertexDeclaration()
         {
-            VertexElement[ ] instanceStreamElements = new VertexElement[2];
+            VertexElement[] instanceStreamElements = new VertexElement[2];
 
             instanceStreamElements[0] =
                     new VertexElement( 0, VertexElementFormat.Vector4,
@@ -76,7 +75,7 @@ namespace Colin.Core.Graphics
 
         public void GenerateGeometry( GraphicsDevice device )
         {
-            VertexPositionTexture[ ] vertices = new VertexPositionTexture[4];
+            VertexPositionTexture[] vertices = new VertexPositionTexture[4];
 
             vertices[0].Position = new Vector3( 0, 0, 0 );
             vertices[0].TextureCoordinate = new Vector2( 0, 0 );
@@ -93,7 +92,7 @@ namespace Colin.Core.Graphics
             geometryBuffer = new VertexBuffer( device, VertexPositionTexture.VertexDeclaration, 4, BufferUsage.WriteOnly );
             geometryBuffer.SetData( vertices );
 
-            int[ ] indices = new int[6]
+            int[] indices = new int[6]
             {
                 1 , 0 , 2 , 1 , 2 , 3
             };
@@ -105,9 +104,9 @@ namespace Colin.Core.Graphics
         private void GenerateInstanceInformation( GraphicsDevice device, int count )
         {
             instances = new InstanceInfo[count];
-            Random rnd = new Random( );
+            Random rnd = new Random();
 
-            for( int i = 0; i < count; i++ )
+            for(int i = 0; i < count; i++)
             {
                 instances[i].Position = new Vector4( -rnd.Next( 1600 ), -rnd.Next( 1600 ), 0, 0 );
             }
@@ -126,7 +125,7 @@ namespace Colin.Core.Graphics
 
             device.Indices = indexBuffer;
 
-            effect.CurrentTechnique.Passes[0].Apply( );
+            effect.CurrentTechnique.Passes[0].Apply();
 
             device.SetVertexBuffers( bindings );
             device.DrawInstancedPrimitives( PrimitiveType.TriangleList, 0, 0, 4, 0, 2, instanceCount );

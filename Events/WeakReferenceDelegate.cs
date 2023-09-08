@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace Colin.Core.Events
 {
@@ -14,11 +9,11 @@ namespace Colin.Core.Events
     public class WeakReferenceDelegate<TDelegate> : IEquatable<Delegate>
     {
         private GCHandle _handle;
-        public WeakReferenceDelegate(Delegate obj)
+        public WeakReferenceDelegate( Delegate obj )
         {
-            if (obj == null)
+            if(obj == null)
                 return;
-            _handle = GCHandle.Alloc(obj, GCHandleType.Weak);
+            _handle = GCHandle.Alloc( obj, GCHandleType.Weak );
         }
 
         /// <summary>
@@ -33,7 +28,7 @@ namespace Colin.Core.Events
         {
             get
             {
-                if (_handle == default)
+                if(_handle == default)
                     return default;
                 return (TDelegate)_handle.Target;
             }
@@ -44,10 +39,10 @@ namespace Colin.Core.Events
         /// </summary>
         /// <param name="other">与此实例进行比较的对象, 或为 <see langword="null"/>.</param>
         /// <returns></returns>
-        public bool Equals(Delegate other)
+        public bool Equals( Delegate other )
         {
             return _handle != default && other != null &&
-                ((Delegate)_handle.Target).Method.Equals(other.Method);
+                ((Delegate)_handle.Target).Method.Equals( other.Method );
         }
 
         /// <summary>

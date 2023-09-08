@@ -1,12 +1,4 @@
-﻿using MonoGame.Framework.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 指代用户交互界面中的容器.
@@ -14,15 +6,15 @@ namespace Colin.Core.Modulars.UserInterfaces
     public class Container : Division
     {
         public Container( string name ) : base( name ) => _container = this;
-        public override sealed void OnInit( )
+        public override sealed void OnInit()
         {
             Interact.IsInteractive = true;
             Interact.IsSelectable = false;
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;
             EngineInfo.Engine.Window.ClientSizeChanged += Window_ClientSizeChanged;
-            ContainerInitialize( );
-            base.OnInit( );
+            ContainerInitialize();
+            base.OnInit();
         }
         private void Window_ClientSizeChanged( object sender, EventArgs e )
         {
@@ -32,10 +24,10 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <summary>
         /// 在此处进行容器初始化操作.
         /// </summary>
-        public virtual void ContainerInitialize( ) { }
+        public virtual void ContainerInitialize() { }
         public void SetTop( Division division )
         {
-            if( Children.Contains( division ) )
+            if(Children.Contains( division ))
             {
                 Children.Remove( division );
                 Children.Add( division );
@@ -43,7 +35,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         }
         public override bool Register( Division division, bool doInit = false )
         {
-            if( base.Register( division, doInit ) )
+            if(base.Register( division, doInit ))
             {
                 division._container = this;
                 return true;

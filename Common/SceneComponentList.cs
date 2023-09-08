@@ -22,9 +22,9 @@ namespace Colin.Core.Common
         /// </summary>
         public event EventHandler<SceneComponentListEventArgs> OnRemove;
 
-        public LiteList<ISceneComponent> Components = new LiteList<ISceneComponent>( );
+        public LiteList<ISceneComponent> Components = new LiteList<ISceneComponent>();
 
-        public LiteList<IRenderableSceneComponent> RenderableComponents = new LiteList<IRenderableSceneComponent>( );
+        public LiteList<IRenderableSceneComponent> RenderableComponents = new LiteList<IRenderableSceneComponent>();
 
         public string Name => nameof( SceneComponentList );
 
@@ -33,10 +33,10 @@ namespace Colin.Core.Common
         public void DoUpdate( GameTime gameTime )
         {
             ISceneComponent _com;
-            for( int count = 0; count < Components.length; count++ )
+            for(int count = 0; count < Components.length; count++)
             {
                 _com = Components.buffer[count];
-                if( _com.Enable )
+                if(_com.Enable)
                     _com.DoUpdate( gameTime );
             }
         }
@@ -45,12 +45,12 @@ namespace Colin.Core.Common
         {
             sceneMode.Scene = Scene;
             sceneMode.Enable = true;
-            sceneMode.DoInitialize( );
-            if( sceneMode is IRenderableSceneComponent dwMode )
+            sceneMode.DoInitialize();
+            if(sceneMode is IRenderableSceneComponent dwMode)
             {
                 dwMode.Visible = true;
                 RenderableComponents.Add( dwMode );
-                dwMode.InitRenderTarget( );
+                dwMode.InitRenderTarget();
                 Scene.Game.Window.ClientSizeChanged += dwMode.OnClientSizeChanged;
             }
             OnComponentAdded( new SceneComponentListEventArgs( sceneMode ) );
@@ -59,7 +59,7 @@ namespace Colin.Core.Common
 
         public void Remove( ISceneComponent sceneMode )
         {
-            if( sceneMode is IRenderableSceneComponent dwMode )
+            if(sceneMode is IRenderableSceneComponent dwMode)
             {
                 RenderableComponents.Remove( dwMode );
                 Scene.Game.Window.ClientSizeChanged -= dwMode.OnClientSizeChanged;
@@ -68,10 +68,10 @@ namespace Colin.Core.Common
             Components.Remove( sceneMode );
         }
 
-        public void Clear( )
+        public void Clear()
         {
-            Components.Clear( );
-            RenderableComponents.Clear( );
+            Components.Clear();
+            RenderableComponents.Clear();
         }
 
         private void OnComponentAdded( SceneComponentListEventArgs eventArgs ) => this.EventRaise( OnAdd, eventArgs );

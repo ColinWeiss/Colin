@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces.Controllers
+﻿namespace Colin.Core.Modulars.UserInterfaces.Controllers
 {
     public class LinearMenuController : DivisionController
     {
@@ -31,9 +25,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
         {
             TotalSize = Point.Zero;
             Division.ForEach( CalculateLayout );
-            if( Direction == Direction.Portrait )
+            if(Direction == Direction.Portrait)
                 Division.ForEach( Portrait );
-            else if( Direction == Direction.Transverse )
+            else if(Direction == Direction.Transverse)
                 Division.ForEach( Transverse );
             lastDiv = null;
             base.Layout( ref layout );
@@ -41,15 +35,15 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
         private Division lastDiv;
         private void CalculateLayout( Division division )
         {
-            switch( Direction )
+            switch(Direction)
             {
                 case Direction.Portrait:
-                    if( TotalSize.X < division.Layout.Width )
+                    if(TotalSize.X < division.Layout.Width)
                         TotalSize.X = division.Layout.Width;
                     TotalSize.Y += division.Layout.Height + DivInterval;
                     break;
                 case Direction.Transverse:
-                    if( TotalSize.Y < division.Layout.Height )
+                    if(TotalSize.Y < division.Layout.Height)
                         TotalSize.Y = division.Layout.Height;
                     TotalSize.X += division.Layout.Width + DivInterval;
                     break;
@@ -57,9 +51,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
         }
         private void Portrait( Division division )
         {
-            if( lastDiv != null )
+            if(lastDiv != null)
             {
-                switch( Toward )
+                switch(Toward)
                 {
                     case Direction.Down:
                         division.Layout.Top = lastDiv.Layout.Top + lastDiv.Layout.Height + DivInterval;
@@ -69,9 +63,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
                         break;
                 }
             }
-            else if( Toward == Direction.Up )
+            else if(Toward == Direction.Up)
                 division.Layout.Top = TotalSize.Y - division.Layout.Height;
-            switch( Alignment )
+            switch(Alignment)
             {
                 case Direction.Left:
                     division.Layout.Left = (int)Scroll.X;
@@ -87,9 +81,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
         }
         private void Transverse( Division division )
         {
-            if( lastDiv != null )
+            if(lastDiv != null)
             {
-                switch( Toward )
+                switch(Toward)
                 {
                     case Direction.Right:
                         division.Layout.Left = lastDiv.Layout.Left + lastDiv.Layout.Width + DivInterval;
@@ -99,9 +93,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
                         break;
                 }
             }
-            else if( Toward == Direction.Left )
+            else if(Toward == Direction.Left)
                 division.Layout.Left = Division.Layout.Width - division.Layout.Width;
-            switch( Alignment )
+            switch(Alignment)
             {
                 case Direction.Up:
                     division.Layout.Top = (int)Scroll.Y;

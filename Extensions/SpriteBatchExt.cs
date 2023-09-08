@@ -1,13 +1,11 @@
-﻿using Colin.Core.Assets;
-
-namespace Colin.Core.Extensions
+﻿namespace Colin.Core.Extensions
 {
     /// <summary>
     /// 与 <see cref="SpriteBatch"/> 相关的扩展方法.
     /// </summary>
     public static class SpriteBatchExt
     {
-        
+
         /// <summary>
         /// 矩形绘制.
         /// </summary>
@@ -17,7 +15,7 @@ namespace Colin.Core.Extensions
         /// <param name="color"></param>
         public static void DrawRectangle( this SpriteBatch batch, Vector2 start, Vector2 size, Color color )
         {
-            batch.DrawRectangle( new Rectangle( start.ToPoint( ), size.ToPoint( ) ), color );
+            batch.DrawRectangle( new Rectangle( start.ToPoint(), size.ToPoint() ), color );
         }
 
         /// <summary>
@@ -27,7 +25,7 @@ namespace Colin.Core.Extensions
         /// <param name="start"></param>
         /// <param name="size"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle( this SpriteBatch batch , Point start , Point size , Color color )
+        public static void DrawRectangle( this SpriteBatch batch, Point start, Point size, Color color )
         {
             batch.DrawRectangle( new Rectangle( start, size ), color );
         }
@@ -55,9 +53,9 @@ namespace Colin.Core.Extensions
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle( this SpriteBatch batch , int x , int y , int width , int height , Color color )
+        public static void DrawRectangle( this SpriteBatch batch, int x, int y, int width, int height, Color color )
         {
-            batch.DrawRectangle( new Rectangle( x , y , width , height ) , color );
+            batch.DrawRectangle( new Rectangle( x, y, width, height ), color );
         }
 
         /// <summary>
@@ -65,15 +63,15 @@ namespace Colin.Core.Extensions
         /// </summary>
         public static void DrawRectangle( this SpriteBatch batch, RectangleF rect, Color color )
         {
-            batch.DrawRectangle( new Rectangle( (int)Math.Round(rect.X), (int)Math.Round( rect.Y ) , (int)rect.Width , (int)rect.Height ) , color );
+            batch.DrawRectangle( new Rectangle( (int)Math.Round( rect.X ), (int)Math.Round( rect.Y ), (int)rect.Width, (int)rect.Height ), color );
         }
 
         /// <summary>
         /// 矩形绘制.
         /// </summary>
-        public static void DrawRectangle( this SpriteBatch batch , Rectangle rect , Color color )
+        public static void DrawRectangle( this SpriteBatch batch, Rectangle rect, Color color )
         {
-            batch.Draw( TextureAssets.Get( "Pixel" ) , rect , color );
+            batch.Draw( TextureAssets.Get( "Pixel" ), rect, color );
         }
 
 

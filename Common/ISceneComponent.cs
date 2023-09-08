@@ -23,7 +23,7 @@
         /// <summary>
         /// 在加入 <see cref="SceneComponentList"/> 时执行初始化内容.
         /// </summary>
-        public void DoInitialize( );
+        public void DoInitialize();
 
         /// <summary>
         /// 进行逻辑计算.

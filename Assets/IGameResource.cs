@@ -1,6 +1,4 @@
-﻿using Colin.Core.IO;
-
-namespace Colin.Core.Assets
+﻿namespace Colin.Core.Assets
 {
     /// <summary>
     /// 标识游戏资源.
@@ -20,7 +18,7 @@ namespace Colin.Core.Assets
         /// <summary>
         /// 加载资源.
         /// </summary>
-        public void LoadResource( );
+        public void LoadResource();
 
         /// <summary>
         /// 整理路径.

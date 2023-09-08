@@ -1,11 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 为划分元素指定布局样式.
@@ -98,7 +91,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Point Size
         {
-            get => new Point( Width , Height );
+            get => new Point( Width, Height );
             set
             {
                 Width = value.X;
@@ -144,7 +137,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             get
             {
-                if( _scissor == Rectangle.Empty )
+                if(_scissor == Rectangle.Empty)
                     scissorDefault = true;
                 return _scissor;
             }
@@ -165,25 +158,25 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             TotalLeft = parent.TotalLeft + Left + parent.PaddingLeft;
             TotalTop = parent.TotalTop + Top + parent.PaddingTop;
-            if( _needRefreshSizeRelative )
+            if(_needRefreshSizeRelative)
             {
                 Width = (int)(parent.Width * RelativeWidth);
                 Height = (int)(parent.Height * RelativeHeight);
                 _needRefreshSizeRelative = false;
             }
-            if( _needRefreshLocationRelative )
+            if(_needRefreshLocationRelative)
             {
                 Left = (int)(parent.Left * RelativeLeft);
                 Top = (int)(parent.Top * RelativeTop);
                 _needRefreshLocationRelative = false;
             }
-            if( ScissorEnable && scissorDefault )
+            if(ScissorEnable && scissorDefault)
             {
                 _scissor = TotalHitBox;
-                if( parent.IsCanvas )
+                if(parent.IsCanvas)
                     _scissor = HitBox;
             }
-            if( IsCanvas )
+            if(IsCanvas)
             {
                 _scissor.X = 0;
                 _scissor.Y = 0;

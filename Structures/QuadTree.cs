@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Colin.Core.Structures
+﻿namespace Colin.Core.Structures
 {
     /// <summary>
     /// 一种四叉树，其中叶节点包含一个四叉树和一个T的唯一实例。
@@ -10,13 +7,13 @@ namespace Colin.Core.Structures
     /// </summary>
     public class QuadTree<T>
     {
-        internal static Stack<Branch> branchPool = new Stack<Branch>( );
-        internal static Stack<Leaf> leafPool = new Stack<Leaf>( );
+        internal static Stack<Branch> branchPool = new Stack<Branch>();
+        internal static Stack<Leaf> leafPool = new Stack<Leaf>();
 
         Branch root;
         internal int splitCount;
         internal int depthLimit;
-        internal Dictionary<T, Leaf> leafLookup = new Dictionary<T, Leaf>( );
+        internal Dictionary<T, Leaf> leafLookup = new Dictionary<T, Leaf>();
 
         /// <summary>
         /// 创建一个新的QuadTree.
@@ -60,21 +57,21 @@ namespace Colin.Core.Structures
         /// 清除四叉树。这将移除所有树叶和树枝。如果你有很多移动的对象，
         /// 你可能想在每一帧调用Clear（），然后重新插入每个对象。树枝和树叶汇集在一起。
         /// </summary>
-        public void Clear( )
+        public void Clear()
         {
-            root.Clear( );
+            root.Clear();
             root.Tree = this;
-            leafLookup.Clear( );
+            leafLookup.Clear();
         }
 
         /// <summary>
         /// QuadTree内部保存着大量的枝繁叶茂。如果你想清除这些以清理内存，
         /// 你可以调用这个函数。不过，大多数时候你会想把这件事抛在一边。
         /// </summary>
-        public static void ClearPools( )
+        public static void ClearPools()
         {
-            branchPool = new Stack<Branch>( );
-            leafPool = new Stack<Leaf>( );
+            branchPool = new Stack<Branch>();
+            leafPool = new Stack<Leaf>();
         }
 
         /// <summary>
@@ -85,7 +82,7 @@ namespace Colin.Core.Structures
         public void Insert( T value, ref Rectangle quad )
         {
             Leaf leaf;
-            if( !leafLookup.TryGetValue( value, out leaf ) )
+            if(!leafLookup.TryGetValue( value, out leaf ))
             {
                 leaf = CreateLeaf( value, ref quad );
                 leafLookup.Add( value, leaf );
@@ -123,10 +120,10 @@ namespace Colin.Core.Structures
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
         public bool SearchArea( ref Rectangle quad, ref List<T> values )
         {
-            if( values != null )
-                values.Clear( );
+            if(values != null)
+                values.Clear();
             else
-                values = new List<T>( );
+                values = new List<T>();
             root.SearchQuad( ref quad, values );
             return values.Count > 0;
         }
@@ -164,10 +161,10 @@ namespace Colin.Core.Structures
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
         public bool SearchPoint( float x, float y, ref List<T> values )
         {
-            if( values != null )
-                values.Clear( );
+            if(values != null)
+                values.Clear();
             else
-                values = new List<T>( );
+                values = new List<T>();
             root.SearchPoint( x, y, values );
             return values.Count > 0;
         }
@@ -180,35 +177,35 @@ namespace Colin.Core.Structures
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
         public bool FindCollisions( T value, ref List<T> values )
         {
-            if( values != null )
-                values.Clear( );
+            if(values != null)
+                values.Clear();
             else
                 values = new List<T>( leafLookup.Count );
 
             Leaf leaf;
-            if( leafLookup.TryGetValue( value, out leaf ) )
+            if(leafLookup.TryGetValue( value, out leaf ))
             {
                 var branch = leaf.Branch;
 
                 //Add the leaf's siblings (prevent it from colliding with itself)
-                if( branch.Leaves.Count > 0 )
-                    for( int i = 0 ; i < branch.Leaves.Count ; ++i )
-                        if( leaf != branch.Leaves[i] && leaf.Quad.Intersects( branch.Leaves[i].Quad ) )
+                if(branch.Leaves.Count > 0)
+                    for(int i = 0; i < branch.Leaves.Count; ++i)
+                        if(leaf != branch.Leaves[i] && leaf.Quad.Intersects( branch.Leaves[i].Quad ))
                             values.Add( branch.Leaves[i].Value );
 
                 //Add the branch's children
-                if( branch.Split )
-                    for( int i = 0 ; i < 4 ; ++i )
-                        if( branch.Branches[i] != null )
+                if(branch.Split)
+                    for(int i = 0; i < 4; ++i)
+                        if(branch.Branches[i] != null)
                             branch.Branches[i].SearchQuad( ref leaf.Quad, values );
 
                 //Add all leaves back to the root
                 branch = branch.Parent;
-                while( branch != null )
+                while(branch != null)
                 {
-                    if( branch.Leaves.Count > 0 )
-                        for( int i = 0 ; i < branch.Leaves.Count ; ++i )
-                            if( leaf.Quad.Intersects( branch.Leaves[i].Quad ) )
+                    if(branch.Leaves.Count > 0)
+                        for(int i = 0; i < branch.Leaves.Count; ++i)
+                            if(leaf.Quad.Intersects( branch.Leaves[i].Quad ))
                                 values.Add( branch.Leaves[i].Value );
                     branch = branch.Parent;
                 }
@@ -219,7 +216,7 @@ namespace Colin.Core.Structures
         /// <summary>
         /// 计算QuadTree中有多少分支。
         /// </summary>
-        public int CountBranches( )
+        public int CountBranches()
         {
             int count = 0;
             CountBranches( root, ref count );
@@ -228,15 +225,15 @@ namespace Colin.Core.Structures
         void CountBranches( Branch branch, ref int count )
         {
             ++count;
-            if( branch.Split )
-                for( int i = 0 ; i < 4 ; ++i )
-                    if( branch.Branches[i] != null )
+            if(branch.Split)
+                for(int i = 0; i < 4; ++i)
+                    if(branch.Branches[i] != null)
                         CountBranches( branch.Branches[i], ref count );
         }
 
         static Branch CreateBranch( QuadTree<T> tree, Branch parent, int branchDepth, ref Rectangle quad )
         {
-            var branch = branchPool.Count > 0 ? branchPool.Pop( ) : new Branch( );
+            var branch = branchPool.Count > 0 ? branchPool.Pop() : new Branch();
             branch.Tree = tree;
             branch.Parent = parent;
             branch.Split = false;
@@ -252,7 +249,7 @@ namespace Colin.Core.Structures
 
         static Leaf CreateLeaf( T value, ref Rectangle quad )
         {
-            var leaf = leafPool.Count > 0 ? leafPool.Pop( ) : new Leaf( );
+            var leaf = leafPool.Count > 0 ? leafPool.Pop() : new Leaf();
             leaf.Value = value;
             leaf.Quad = quad;
             return leaf;
@@ -262,48 +259,48 @@ namespace Colin.Core.Structures
         {
             internal QuadTree<T> Tree;
             internal Branch Parent;
-            internal Rectangle[ ] Quads = new Rectangle[4];
-            internal Branch[ ] Branches = new Branch[4];
-            internal List<Leaf> Leaves = new List<Leaf>( );
+            internal Rectangle[] Quads = new Rectangle[4];
+            internal Branch[] Branches = new Branch[4];
+            internal List<Leaf> Leaves = new List<Leaf>();
             internal bool Split;
             internal int Depth;
 
-            internal void Clear( )
+            internal void Clear()
             {
                 Tree = null;
                 Parent = null;
                 Split = false;
 
-                for( int i = 0 ; i < 4 ; ++i )
+                for(int i = 0; i < 4; ++i)
                 {
-                    if( Branches[i] != null )
+                    if(Branches[i] != null)
                     {
                         branchPool.Push( Branches[i] );
-                        Branches[i].Clear( );
+                        Branches[i].Clear();
                         Branches[i] = null;
                     }
                 }
 
-                for( int i = 0 ; i < Leaves.Count ; ++i )
+                for(int i = 0; i < Leaves.Count; ++i)
                 {
                     leafPool.Push( Leaves[i] );
                     Leaves[i].Branch = null;
                     Leaves[i].Value = default;
                 }
 
-                Leaves.Clear( );
+                Leaves.Clear();
             }
 
             internal void Insert( Leaf leaf )
             {
                 //If this branch is already split
-                if( Split )
+                if(Split)
                 {
-                    for( int i = 0 ; i < 4 ; ++i )
+                    for(int i = 0; i < 4; ++i)
                     {
-                        if( Quads[i].Contains( leaf.Quad ) )
+                        if(Quads[i].Contains( leaf.Quad ))
                         {
-                            if( Branches[i] == null )
+                            if(Branches[i] == null)
                                 Branches[i] = CreateBranch( Tree, this, Depth + 1, ref Quads[i] );
                             Branches[i].Insert( leaf );
                             return;
@@ -320,7 +317,7 @@ namespace Colin.Core.Structures
                     leaf.Branch = this;
 
                     //Once I have reached capacity, split the node
-                    if( Leaves.Count >= Tree.splitCount && Depth < Tree.depthLimit )
+                    if(Leaves.Count >= Tree.splitCount && Depth < Tree.depthLimit)
                     {
                         Split = true;
                     }
@@ -329,23 +326,23 @@ namespace Colin.Core.Structures
 
             internal void SearchQuad( ref Rectangle quad, List<T> values )
             {
-                if( Leaves.Count > 0 )
-                    for( int i = 0 ; i < Leaves.Count ; ++i )
-                        if( quad.Intersects( Leaves[i].Quad ) )
+                if(Leaves.Count > 0)
+                    for(int i = 0; i < Leaves.Count; ++i)
+                        if(quad.Intersects( Leaves[i].Quad ))
                             values.Add( Leaves[i].Value );
-                for( int i = 0 ; i < 4 ; ++i )
-                    if( Branches[i] != null )
+                for(int i = 0; i < 4; ++i)
+                    if(Branches[i] != null)
                         Branches[i].SearchQuad( ref quad, values );
             }
 
             internal void SearchPoint( float x, float y, List<T> values )
             {
-                if( Leaves.Count > 0 )
-                    for( int i = 0 ; i < Leaves.Count ; ++i )
-                        if( Leaves[i].Quad.Contains( x, y ) )
+                if(Leaves.Count > 0)
+                    for(int i = 0; i < Leaves.Count; ++i)
+                        if(Leaves[i].Quad.Contains( x, y ))
                             values.Add( Leaves[i].Value );
-                for( int i = 0 ; i < 4 ; ++i )
-                    if( Branches[i] != null )
+                for(int i = 0; i < 4; ++i)
+                    if(Branches[i] != null)
                         Branches[i].SearchPoint( x, y, values );
             }
         }

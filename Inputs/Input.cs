@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Inputs
 {
@@ -40,13 +35,13 @@ namespace Colin.Core.Inputs
         {
             get
             {
-                if( MouseResponder.State.ScrollWheelValue < MouseResponder.StateLast.ScrollWheelValue )
+                if(MouseResponder.State.ScrollWheelValue < MouseResponder.StateLast.ScrollWheelValue)
                     return 1;
-                else if( MouseResponder.State.ScrollWheelValue > MouseResponder.StateLast.ScrollWheelValue )
+                else if(MouseResponder.State.ScrollWheelValue > MouseResponder.StateLast.ScrollWheelValue)
                     return -1;
                 else
                 {
-                    return ( ControllerResponder.state.Triggers.Right - ControllerResponder.state.Triggers.Left ) * 2;
+                    return (ControllerResponder.state.Triggers.Right - ControllerResponder.state.Triggers.Left) * 2;
                 }
             }
         }
@@ -66,12 +61,12 @@ namespace Colin.Core.Inputs
         public override void Update( GameTime gameTime )
         {
             _interactionPointLast = _interactionPoint;
-            if( MouseResponder.State.Position != MouseResponder.StateLast.Position )
+            if(MouseResponder.State.Position != MouseResponder.StateLast.Position)
             {
-                _interactionPoint = MouseResponder.State.Position.ToVector2( );
-                ControllerResponder.cursorPosition = MouseResponder.State.Position.ToVector2( );
+                _interactionPoint = MouseResponder.State.Position.ToVector2();
+                ControllerResponder.cursorPosition = MouseResponder.State.Position.ToVector2();
             }
-            else if( ControllerResponder.state.ThumbSticks.Right != Vector2.Zero )
+            else if(ControllerResponder.state.ThumbSticks.Right != Vector2.Zero)
             {
                 _interactionPoint = ControllerResponder.cursorPosition;
                 Mouse.SetPosition( (int)_interactionPoint.X, (int)_interactionPoint.Y );
@@ -81,11 +76,11 @@ namespace Colin.Core.Inputs
 
         public static void SetInteractionPoint( Point point )
         {
-            ControllerResponder.cursorPosition = point.ToVector2( );
-            Mouse.SetPosition( point.X , point.Y );
-            _interactionPoint = point.ToVector2( );
+            ControllerResponder.cursorPosition = point.ToVector2();
+            Mouse.SetPosition( point.X, point.Y );
+            _interactionPoint = point.ToVector2();
         }
-        public Input( ) : base( EngineInfo.Engine ) { }
+        public Input() : base( EngineInfo.Engine ) { }
 
     }
 }

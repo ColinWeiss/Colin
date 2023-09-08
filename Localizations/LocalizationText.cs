@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Localizations
+﻿namespace Colin.Core.Localizations
 {
     public class LocalizationText
     {
@@ -12,7 +8,7 @@ namespace Colin.Core.Localizations
         public LocalizationText( string name )
         {
             Name = name;
-            GameLanguages.OnLanguageChanged += ( ) =>
+            GameLanguages.OnLanguageChanged += () =>
             {
                 if(GameLanguages.Current.Common.TryGetValue( Name, out string value ))
                     _value = value;

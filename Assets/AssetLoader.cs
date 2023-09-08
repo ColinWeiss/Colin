@@ -12,37 +12,37 @@ namespace Colin.Core.Assets
     {
         public EventHandler<BasicEvent> OnLoadComplete = ( s, e ) => { };
 
-        public override void SceneInit( )
+        public override void SceneInit()
         {
-            LoadGameAssets( );
-            base.SceneInit( );
+            LoadGameAssets();
+            base.SceneInit();
         }
 
-        private async void LoadGameAssets( )
+        private async void LoadGameAssets()
         {
-            await Task.Run( ( ) =>
+            await Task.Run( () =>
             {
                 IGameResource asset;
-                foreach( Type item in Assembly.GetExecutingAssembly( ).GetTypes( ) )
+                foreach(Type item in Assembly.GetExecutingAssembly().GetTypes())
                 {
-                    if( item.GetInterfaces( ).Contains( typeof( IGameResource ) ) && !item.IsAbstract )
+                    if(item.GetInterfaces().Contains( typeof( IGameResource ) ) && !item.IsAbstract)
                     {
                         asset = (IGameResource)Activator.CreateInstance( item );
-                        asset.LoadResource( );
-                        EngineConsole.WriteLine( ConsoleTextType.Remind, string.Concat( "正在加载 " , asset.Name ));
+                        asset.LoadResource();
+                        EngineConsole.WriteLine( ConsoleTextType.Remind, string.Concat( "正在加载 ", asset.Name ) );
                     }
                 }
                 EngineConsole.WriteLine( ConsoleTextType.Remind, "资源加载完成." );
-                BasicEvent onResourceLoadComplete = new BasicEvent( );
+                BasicEvent onResourceLoadComplete = new BasicEvent();
                 onResourceLoadComplete.name = "Event_GameResources_LoadComplete";
                 OnLoadComplete?.Invoke( this, onResourceLoadComplete );
             } );
         }
 
-        public override void SceneRender( )
+        public override void SceneRender()
         {
             EngineInfo.Graphics.GraphicsDevice.Clear( Color.Gray );
-            base.SceneRender( );
+            base.SceneRender();
         }
     }
 }

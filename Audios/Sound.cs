@@ -12,7 +12,7 @@ namespace Colin.Core.Audios
 
         public Scene Scene { get; set; }
 
-        public void DoInitialize( )
+        public void DoInitialize()
         {
 
         }
@@ -28,13 +28,13 @@ namespace Colin.Core.Audios
         /// <param name="soundEffect">音效.</param>
         public void Play( SoundEffect soundEffect )
         {
-            if( EngineInfo.Config.SoundEffect )
+            if(EngineInfo.Config.SoundEffect)
             {
-                SoundEffectInstance _instance = soundEffect?.CreateInstance( );
-                if( _instance != null )
+                SoundEffectInstance _instance = soundEffect?.CreateInstance();
+                if(_instance != null)
                 {
                     _instance.Volume = EngineInfo.Config.SoundEffectVolume;
-                    _instance.Play( );
+                    _instance.Play();
                 }
             }
         }

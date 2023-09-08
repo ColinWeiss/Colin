@@ -87,17 +87,17 @@ namespace Colin.Core.Graphics
         /// <summary>
         /// 为帧格选取提供逻辑刷新.
         /// </summary>
-        public void UpdateFrame( )
+        public void UpdateFrame()
         {
-            if( !IsPlay )
+            if(!IsPlay)
                 return;
             Timer += Time.DeltaTime;
-            if( Timer > Interval )
+            if(Timer > Interval)
             {
                 Timer = 0;
-                if( Current < FrameMax + Start )
+                if(Current < FrameMax + Start)
                     Current++;
-                else if( IsLoop && IsLoop )
+                else if(IsLoop && IsLoop)
                     Current = Start;
             }
         }
@@ -105,7 +105,7 @@ namespace Colin.Core.Graphics
         {
             get
             {
-                switch( Direction )
+                switch(Direction)
                 {
                     case Direction.Portrait:
                         return new Rectangle( X * Width, Y * Height * Current, Width, Height );

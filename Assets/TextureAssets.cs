@@ -13,17 +13,17 @@ namespace Colin.Core.Assets
 
         public float Progress { get; set; }
 
-        private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>( );
+        private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
         public static Dictionary<string, Texture2D> Textures => _textures;
 
-        public void LoadResource( )
+        public void LoadResource()
         {
-            if( !Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ) ) )
+            if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ) ))
                 return;
             Texture2D _texture;
             string _fileName;
-            string[ ] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ), "*.xnb*", SearchOption.AllDirectories );
-            for( int count = 0; count < TextureFileNames.Length; count++ )
+            string[] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ), "*.xnb*", SearchOption.AllDirectories );
+            for(int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;
                 _fileName = IGameResource.ArrangementPath( TextureFileNames[count] );
@@ -42,7 +42,7 @@ namespace Colin.Core.Assets
         public static Texture2D Get( string path )
         {
             Texture2D _texture;
-            if(_textures.TryGetValue( Explorer.ConvertPath( "Textures" , path ) , out _texture ) )
+            if(_textures.TryGetValue( Explorer.ConvertPath( "Textures", path ), out _texture ))
                 return _texture;
             else
             {

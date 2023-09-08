@@ -1,18 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Inputs
 {
     /// <summary>
     /// [!] 已继承 <see cref="ISingleton"/>.
     /// </summary>
-    public class ControllerResponder : GameComponent , ISingleton
+    public class ControllerResponder : GameComponent, ISingleton
     {
-        public ControllerResponder( ) : base( EngineInfo.Engine ) { }
+        public ControllerResponder() : base( EngineInfo.Engine ) { }
 
         public static GamePadState state;
 
@@ -62,21 +57,21 @@ namespace Colin.Core.Inputs
         {
             stateLast = state;
             state = GamePad.GetState( PlayerIndex.One );
-            if( state.IsConnected )
+            if(state.IsConnected)
             {
-         //       EngineInfo.Engine.IsMouseVisible = false;
-                if( state.ThumbSticks.Right.X > 0 )
-                    cursorPosition.X+=3;
-                if( state.ThumbSticks.Right.X < 0 )
-                    cursorPosition.X-=3;
-                if( state.ThumbSticks.Right.Y > 0 )
-                    cursorPosition.Y-=3;
-                if( state.ThumbSticks.Right.Y < 0 )
-                    cursorPosition.Y+=3;
+                //       EngineInfo.Engine.IsMouseVisible = false;
+                if(state.ThumbSticks.Right.X > 0)
+                    cursorPosition.X += 3;
+                if(state.ThumbSticks.Right.X < 0)
+                    cursorPosition.X -= 3;
+                if(state.ThumbSticks.Right.Y > 0)
+                    cursorPosition.Y -= 3;
+                if(state.ThumbSticks.Right.Y < 0)
+                    cursorPosition.Y += 3;
                 //          Console.WriteLine( SectionInfo.ThumbSticks.Right );
             }
-      //      else
-       //         EngineInfo.Engine.IsMouseVisible = true;
+            //      else
+            //         EngineInfo.Engine.IsMouseVisible = true;
 
             base.Update( gameTime );
         }
