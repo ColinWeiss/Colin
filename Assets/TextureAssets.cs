@@ -25,10 +25,11 @@ namespace Colin.Core.Assets
             string[] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ), "*.xnb*", SearchOption.AllDirectories );
             for(int count = 0; count < TextureFileNames.Length; count++)
             {
-                Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;
+                Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;
                 _fileName = IGameResource.ArrangementPath( TextureFileNames[count] );
                 _texture = EngineInfo.Engine.Content.Load<Texture2D>( _fileName );
                 _textures.Add( _fileName, _texture );
+          //      EngineConsole.WriteLine( ConsoleTextType.Remind, "纹理资源: " + (int)(Progress * 100) + "%" );
             }
         }
 

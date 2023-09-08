@@ -312,8 +312,6 @@
 		/// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
 		public virtual bool Register( Division division, bool doInit = false )
         {
-            if(division == null || Children.Contains( division ) || division.Parent != null)
-                return false;
             division.Parent = this;
             if(doInit)
             {
@@ -336,8 +334,6 @@
 		/// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
 		public virtual bool Remove( Division division )
         {
-            if(division == null || !Children.Contains( division ) || division.Parent == null)
-                return false;
             division.Parent = null;
             division.ParentCanvas = null;
             division._container = null;
@@ -348,10 +344,14 @@
         /// <summary>
         /// 移除所有子元素.
         /// </summary>
-        public virtual void RemoveAll()
+        public virtual void Clear()
         {
-            Children.ForEach( child => child.Parent = null );
-            Children.Clear();
+            Division _div;
+            for(int count = 0; count < Children.Count; count++)
+            {
+                _div = Children[count];
+                Remove( _div );
+            }
         }
 
         /// <summary>

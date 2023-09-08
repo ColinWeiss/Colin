@@ -29,6 +29,7 @@
                 Division.ForEach( Portrait );
             else if(Direction == Direction.Transverse)
                 Division.ForEach( Transverse );
+            layout.Size = TotalSize;
             lastDiv = null;
             base.Layout( ref layout );
         }
@@ -65,6 +66,8 @@
             }
             else if(Toward == Direction.Up)
                 division.Layout.Top = TotalSize.Y - division.Layout.Height;
+            else if(Toward == Direction.Down)
+                division.Layout.Top = 0;
             switch(Alignment)
             {
                 case Direction.Left:

@@ -53,7 +53,7 @@
             Console.ForegroundColor = GetConsoleColor( informationType );
 #endif
             string NowTime = string.Concat( "[", DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss" ), "]" );
-            string outPutText = string.Concat( NowTime, "\n =>", "[", EngineInfo.EngineName, "] ", output, "\n" );
+            string outPutText = string.Concat( NowTime, "\n =>", "[", EngineInfo.EngineName, "] ", output );
             Console.WriteLine( outPutText );
         }
 
