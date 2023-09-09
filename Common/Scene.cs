@@ -38,6 +38,8 @@ namespace Colin.Core.Common
 
         public SceneShaderManager SceneShaders = new SceneShaderManager();
 
+        public Scene() : base( EngineInfo.Engine ) { }
+
         public override sealed void Initialize()
         {
             Started = false;
@@ -135,6 +137,5 @@ namespace Colin.Core.Common
         /// </summary>
         public virtual void UnLoad() { }
 
-        public Scene() : base( EngineInfo.Engine ) { }
     }
 }

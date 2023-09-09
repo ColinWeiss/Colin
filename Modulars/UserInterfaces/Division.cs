@@ -352,6 +352,7 @@
                 _div = Children[count];
                 Remove( _div );
             }
+            Children.Clear( );
         }
 
         /// <summary>
@@ -360,7 +361,12 @@
 		/// <param name="action">要执行的方法.</param>
 		public void ForEach( Action<Division> action )
         {
-            Children.ForEach( child => action( child ) );
+            Division _div;
+            for(int count = 0; count < Children.Count; count++)
+            {
+                _div = Children[count];
+                action.Invoke( _div );
+            }
         }
 
         public void Do( Action<Division> action ) => action( this );
