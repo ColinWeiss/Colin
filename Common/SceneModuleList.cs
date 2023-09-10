@@ -51,6 +51,13 @@ namespace Colin.Core.Common
         public T GetModule<T>() where T : ISceneModule => (T)Components.GetValueOrDefault( typeof( T ), null );
 
         /// <summary>
+        /// 根据指定类型获取场景渲染组件.
+        /// </summary>
+        /// <typeparam name="T">指定的 <see cref="IRenderableISceneModule"/> 类型.</typeparam>
+        /// <returns>如果成功获取, 那么返回指定对象, 否则返回 <see langword="null"/>.</returns>
+        public T GetRenderModule<T>() where T : IRenderableISceneModule => (T)RenderableComponents.GetValueOrDefault( typeof( T ), null );
+
+        /// <summary>
         /// 根据指定类型删除场景模块.
         /// </summary>
         /// <typeparam name="T"></typeparam>

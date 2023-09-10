@@ -20,6 +20,8 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public bool Visible { get; set; }
 
+        public bool FinalPresentation { get; set; }
+
         private SceneCamera _camera;
         public SceneCamera Camera => _camera;
 

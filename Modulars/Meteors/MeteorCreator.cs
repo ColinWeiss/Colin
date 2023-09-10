@@ -32,6 +32,7 @@ namespace Colin.Core.Modulars.Meteors
         public bool Enable { get; set; }
 
         public bool Visible { get; set; }
+        public bool FinalPresentation { get; set; }
 
         public RenderTarget2D SceneRt { get; set; }
 

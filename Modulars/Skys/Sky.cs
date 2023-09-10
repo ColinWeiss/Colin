@@ -11,6 +11,7 @@ namespace Colin.Core.Modulars.Skys
         public RenderTarget2D SceneRt { get; set; }
 
         public bool Visible { get; set; }
+        public bool FinalPresentation { get; set; }
 
         public SpriteSortMode SpriteSortMode { get; }
 

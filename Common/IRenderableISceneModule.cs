@@ -22,6 +22,12 @@ namespace Colin.Core.Common
         /// </summary>
         public bool Visible { get; set; }
 
+        /// <summary>
+        /// 指示对象是否最终呈现.
+        /// <br> <see cref="Visible"/> 指示其是否于 Rt 上绘制, 但它决定最终是否被绘制在 <see cref="Scene.SceneRenderTarget"/> 上.</br>
+        /// </summary>
+        public bool FinalPresentation { get; set; }
+
         public void DoRender( SpriteBatch batch );
 
         public void InitRenderTarget()

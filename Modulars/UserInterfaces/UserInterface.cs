@@ -18,6 +18,8 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public bool Visible { get; set; }
 
+        public bool FinalPresentation { get; set; }
+
         public Scene Scene { get; set; }
 
         public void DoInitialize() => _contianer.DoInitialize();
