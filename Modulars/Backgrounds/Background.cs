@@ -12,7 +12,7 @@ namespace Colin.Core.Modulars.Backgrounds
     /// <summary>
     /// 场景背景.
     /// </summary>
-    public sealed class Background : ISceneComponent, IRenderableSceneComponent
+    public sealed class Background : ISceneModule, IRenderableISceneModule
     {
         public Scene Scene { get; set; }
 
@@ -57,6 +57,10 @@ namespace Colin.Core.Modulars.Backgrounds
         {
             _screenMap = TextureAssets.Get( "Pixel" );
             LeftRightLoopEffect = EffectAssets.Get( "LeftRightLoopMapping" );
+        }
+        public void Start()
+        {
+
         }
 
         public void DoUpdate( GameTime time )

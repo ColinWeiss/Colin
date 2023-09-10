@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.Tiles
 {
-    public class Tile : ISceneComponent
+    public class Tile : ISceneModule
     {
         private int _width = 0;
         public int Width => _width;
@@ -66,7 +66,10 @@ namespace Colin.Core.Modulars.Tiles
         {
 
         }
+        public void Start()
+        {
 
+        }
         public void DoUpdate( GameTime time )
         {
 

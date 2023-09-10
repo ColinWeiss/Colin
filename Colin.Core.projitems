@@ -57,12 +57,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Collections\LiteList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableSceneComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneComponentList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneComponentListEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />

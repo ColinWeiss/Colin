@@ -20,11 +20,11 @@ namespace Colin.Core.Common
     {
         public SceneCamera SceneCamera;
 
-        private SceneComponentList _components;
+        private SceneModuleList _components;
         /// <summary>
-        /// 获取场景组件列表.
+        /// 获取场景模块列表.
         /// </summary>
-        public SceneComponentList ComponentList => _components;
+        public SceneModuleList Modules => _components;
 
         /// <summary>
         /// 指示场景在切换时是否执行初始化的值.
@@ -48,7 +48,7 @@ namespace Colin.Core.Common
                 InitRenderTarget( this, new EventArgs() );
                 Game.Window.OrientationChanged += InitRenderTarget;
                 Game.Window.ClientSizeChanged += InitRenderTarget;
-                _components = new SceneComponentList( this );
+                _components = new SceneModuleList( this );
                 _components.Add( SceneCamera = new SceneCamera() );
                 SceneInit();
             }
@@ -72,25 +72,25 @@ namespace Colin.Core.Common
             if(!Started)
             {
                 Start();
+                Modules.DoStart();
                 Started = true;
             }
-            ComponentList.DoUpdate( gameTime );
+            Modules.DoUpdate( gameTime );
             SceneUpdate();
             base.Update( gameTime );
         }
         public virtual void Start() { }
-
         public virtual void SceneUpdate() { }
 
         public override sealed void Draw( GameTime gameTime )
         {
-            IRenderableSceneComponent renderMode;
+            IRenderableISceneModule renderMode;
             RenderTarget2D frameRenderLayer;
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
             EngineInfo.Graphics.GraphicsDevice.Clear( Color.Black );
-            for(int count = 0; count < ComponentList.RenderableComponents.length; count++)
+            for(int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
             {
-                renderMode = ComponentList.RenderableComponents[count];
+                renderMode = Modules.RenderableComponents.Values.ElementAt( count );
                 if(renderMode.Visible)
                 {
                     frameRenderLayer = renderMode.SceneRt;
@@ -100,9 +100,9 @@ namespace Colin.Core.Common
                 }
             }
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
-            for(int count = 0; count < ComponentList.RenderableComponents.length; count++)
+            for(int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
             {
-                renderMode = ComponentList.RenderableComponents[count];
+                renderMode = Modules.RenderableComponents.Values.ElementAt( count );
                 if(renderMode.Visible)
                 {
                     frameRenderLayer = renderMode.SceneRt;
@@ -122,8 +122,27 @@ namespace Colin.Core.Common
             EngineInfo.SpriteBatch.End();
             base.Draw( gameTime );
         }
-
         public virtual void SceneRender() { }
+
+        /// <summary>
+        /// 根据指定类型获取场景模块.
+        /// </summary>
+        /// <typeparam name="T">指定的 <see cref="ISceneModule"/> 类型.</typeparam>
+        /// <returns>如果成功获取, 那么返回指定对象, 否则返回 <see langword="null"/>.</returns>
+        public T GetModule<T>() where T : ISceneModule => Modules.GetModule<T>();
+
+        /// <summary>
+        /// 根据指定类型删除场景模块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
+        public bool RemoveModule<T>() where T : ISceneModule => Modules.RemoveModule<T>();
+
+        /// <summary>
+        /// 根据指定对象删除场景模块.
+        /// </summary>
+        /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
+        public bool RemoveModule( ISceneModule module ) => Modules.Remove( module );
 
         /// <summary>
         /// 我不在乎你加不加载, 但我希望玩家的电脑犯病的时候我们能把重要数据保存下来.

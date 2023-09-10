@@ -19,7 +19,7 @@ DeltaMachine.Core.GameContents.Tiles;
 
 namespace Colin.Core.Modulars.Tiles
 {
-    public class TileRenderer : ISceneComponent, IRenderableSceneComponent
+    public class TileRenderer : ISceneModule, IRenderableISceneModule
     {
         public RenderTarget2D cacheRt;
 
@@ -29,7 +29,7 @@ namespace Colin.Core.Modulars.Tiles
         public Camera Camera => _camera;
         public void BindCamera( Camera camera ) => _camera = camera;
 
-        public Tile Tile { get; }
+        public Tile Tile => Scene.GetModule<Tile>();
 
         public Scene Scene { get; set; }
 
@@ -52,11 +52,18 @@ namespace Colin.Core.Modulars.Tiles
             cacheRtSwap?.Dispose();
             cacheRtSwap = RenderTargetExt.CreateDefault();
         }
+        public void Start()
+        {
+            _camera = Scene.SceneCamera;
+        }
         public void DoUpdate( GameTime time )
         {
-
+            if(Tile is null)
+            {
+                EngineConsole.WriteLine( ConsoleTextType.Error , "因缺少 Tile 模块, TileRenderer 无法运行, 现已自动弹出." );
+                Scene.RemoveModule( this );
+            }
         }
-
         public void First( SpriteBatch batch )
         {
             batch.Begin( samplerState: SamplerState.PointClamp, transformMatrix: Camera.View );
@@ -68,7 +75,6 @@ namespace Colin.Core.Modulars.Tiles
             start.Y = Math.Clamp( start.Y, 0, Tile.Height - 1 );
             loop.X = Math.Clamp( loop.X + 1, EngineInfo.ViewWidth / 16, Tile.Width - 1 );
             loop.Y = Math.Clamp( loop.Y + 1, EngineInfo.ViewHeight / 16, Tile.Height - 1 );
-
             // tuple元素为 深度，是边框还是填充，物块
             var tileList = new List<Tuple<float, bool, TileBehavior>>();
             for(int countX = start.X; countX < loop.X; countX++)
@@ -82,7 +88,6 @@ namespace Colin.Core.Modulars.Tiles
                     tileList.Add( new Tuple<float, bool, TileBehavior>( depth + 0.5f / SpritePool.DepthSteps, true, behavior ) );
                     tileList.Add( new Tuple<float, bool, TileBehavior>( depth, false, behavior ) );
                 }
-
             tileList.Sort( ( x, y ) => x.Item1 < y.Item1 ? 1 : x.Item1 > y.Item1 ? -1 : 0 );
             foreach(var tuple in tileList)
             {
@@ -92,17 +97,11 @@ namespace Colin.Core.Modulars.Tiles
                 else
                     behavior.RenderTexture();
             }
-
             batch.End();
         }
         public void DoRender( SpriteBatch batch )
         {
             First( batch );
-        }
-        public TileRenderer( Tile tile, SceneCamera camera )
-        {
-            Tile = tile;
-            _camera = camera;
         }
     }
 }

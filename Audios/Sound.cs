@@ -6,13 +6,17 @@ namespace Colin.Core.Audios
     /// <summary>
     /// 声音模块.
     /// </summary>
-    public class Sound : ISceneComponent
+    public class Sound : ISceneModule
     {
         public bool Enable { get; set; } = true;
 
         public Scene Scene { get; set; }
 
         public void DoInitialize()
+        {
+
+        }
+        public void Start()
         {
 
         }

@@ -3,7 +3,7 @@
     /// <summary>
     /// 场景摄像机.
     /// </summary>
-    public class SceneCamera : Camera, ISceneComponent
+    public class SceneCamera : Camera, ISceneModule
     {
         public void DoInitialize()
         {
@@ -15,6 +15,10 @@
                 View = Matrix.Identity;
                 ResetCamera();
             };
+        }
+        public void Start()
+        {
+
         }
     }
 }

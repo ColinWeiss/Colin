@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Modulars.Skys
 {
-    public class Sky : ISceneComponent, IRenderableSceneComponent
+    public class Sky : ISceneModule, IRenderableISceneModule
     {
         public Scene Scene { get; set; }
 
@@ -21,6 +21,10 @@ namespace Colin.Core.Modulars.Skys
         public SkyStyle NextStyle { get; private set; }
 
         public void DoInitialize()
+        {
+
+        }
+        public void Start()
         {
 
         }

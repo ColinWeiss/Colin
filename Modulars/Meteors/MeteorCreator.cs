@@ -9,7 +9,7 @@ using Colin.Core.Graphics;
 
 namespace Colin.Core.Modulars.Meteors
 {
-    public class MeteorCreator : ISceneComponent, IRenderableSceneComponent
+    public class MeteorCreator : ISceneModule, IRenderableISceneModule
     {
         public Meteor[] Pool { get; set; } = new Meteor[256];
 
@@ -44,7 +44,10 @@ namespace Colin.Core.Modulars.Meteors
             pool.Fill( new Meteor() );
             ActiveList = new List<Meteor>();
         }
+        public void Start()
+        {
 
+        }
         public void DoUpdate( GameTime time )
         {
             if((int)EngineInfo.Config.PictureQuality <= 0)

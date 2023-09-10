@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
-    public class UserInterface : ISceneComponent, IRenderableSceneComponent
+    public class UserInterface : ISceneModule, IRenderableISceneModule
     {
         /// <summary>
         /// 指示当前焦点元素.
@@ -22,12 +22,15 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void DoInitialize() => _contianer.DoInitialize();
 
+        public void Start()
+        {
+
+        }
         public void DoUpdate( GameTime time )
         {
             Container?.DoUpdate( time );
             Container.Seek()?.Events.Execute();
         }
-
         public void DoRender( SpriteBatch batch )
         {
             batch.Begin();

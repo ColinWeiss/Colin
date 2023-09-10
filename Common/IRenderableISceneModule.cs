@@ -6,9 +6,9 @@ namespace Colin.Core.Common
     /// 为应在 <see cref="Scene.Draw"/> 中渲染的场景模块定义的接口.
     /// <br>标识一个可随场景渲染进行渲染的对象.</br>
     /// <para>[!] 不需要在类内对 <see cref="SceneRt"/> 实例化, 
-    /// <br>这一操作在 <see cref="SceneComponentList"/> 加入该模块时自动实现.</br></para>
+    /// <br>这一操作在 <see cref="SceneModuleList"/> 加入该模块时自动实现.</br></para>
     /// </summary>
-    public interface IRenderableSceneComponent
+    public interface IRenderableISceneModule
     {
         /// <summary>
         /// 场景渲染目标.

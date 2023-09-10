@@ -4,10 +4,10 @@
     /// 标识一个可用于场景的模块.
     /// <para>
     /// 不需要在类内对 <see cref="Scene"/> 赋值,
-    /// <br>这一操作在 <see cref="SceneComponentList"/> 加入该模块时自动实现.</br>
+    /// <br>这一操作在 <see cref="SceneModuleList"/> 加入该模块时自动实现.</br>
     /// </para>
     /// </summary>
-    public interface ISceneComponent
+    public interface ISceneModule
     {
         /// <summary>
         /// 指示该模块所属的场景.
@@ -21,15 +21,18 @@
         public bool Enable { get; set; }
 
         /// <summary>
-        /// 在加入 <see cref="SceneComponentList"/> 时执行初始化内容.
+        /// 在加入 <see cref="SceneModuleList"/> 时执行初始化内容.
         /// </summary>
         public void DoInitialize();
+
+        /// <summary>
+        /// 在执行第一帧逻辑刷新时调用.
+        /// </summary>
+        public void Start();
 
         /// <summary>
         /// 进行逻辑计算.
         /// </summary>
         public void DoUpdate( GameTime time );
-
-
     }
 }
