@@ -23,17 +23,6 @@
         /// <summary>
         /// 划分元素的交互样式.
         /// </summary>
-
-        /* 项目“DeltaMachine.Desktop”的未合并的更改
-        在此之前:
-                public InteractStyle Interact;
-
-                /// <summary>
-        在此之后:
-                public InteractStyle Interact;
-
-                /// <summary>
-        */
         public InteractStyle Interact;
 
         /// <summary>

@@ -127,7 +127,6 @@ namespace Colin.Core
             DoInitialize();
             base.Initialize();
         }
-
         public virtual void DoInitialize() { }
 
         protected override sealed void LoadContent()
