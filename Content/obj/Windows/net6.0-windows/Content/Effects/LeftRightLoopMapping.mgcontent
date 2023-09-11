@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/Codes/Colin.Core/Content/Effects/LeftRightLoopMapping.fx</SourceFile>
-  <SourceTime>2023-08-28T12:07:11.7146666+08:00</SourceTime>
-  <DestFile>D:/Codes/Colin.Core/Content/bin/Windows/Content/Effects/LeftRightLoopMapping.xnb</DestFile>
-  <DestTime>2023-08-29T10:18:15.1859713+08:00</DestTime>
+  <SourceFile>D:/Codes/DeltaMachine/Colin/Content/Effects/LeftRightLoopMapping.fx</SourceFile>
+  <SourceTime>2023-09-08T17:24:03.7573449+08:00</SourceTime>
+  <DestFile>D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Effects/LeftRightLoopMapping.xnb</DestFile>
+  <DestTime>2023-09-12T00:20:13.0748121+08:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2022-07-26T19:44:56+08:00</ImporterTime>
   <Processor>EffectProcessor</Processor>
@@ -13,7 +13,7 @@
     <Value>Auto</Value>
   </Parameters>
   <Dependencies>
-    <string>D:\Codes\Colin.Core\Content\Effects\Macros.fxh</string>
+    <string>D:\Codes\DeltaMachine\Colin\Content\Effects\Macros.fxh</string>
   </Dependencies>
   <BuildAsset />
   <BuildOutput />
