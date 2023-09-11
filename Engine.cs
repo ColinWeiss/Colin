@@ -75,6 +75,7 @@ namespace Colin.Core
                     HardwareModeSwitch = false,
                     SynchronizeWithVerticalRetrace = true,
                     PreferMultiSampling = true,
+                    GraphicsProfile = GraphicsProfile.HiDef
                 };
             }
             Content.RootDirectory = "Content";

@@ -12,11 +12,11 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Effects" ) ))
+            if(!Directory.Exists( Explorer.ConvertPath( EngineInfo.Engine.Content.RootDirectory, "Effects" )))
                 return;
             Effect _effect;
             string _fileName;
-            string[] _xnbFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Effects" ), "*.xnb*", SearchOption.AllDirectories );
+            string[] _xnbFileNames = Directory.GetFiles( Explorer.ConvertPath( EngineInfo.Engine.Content.RootDirectory, "Effects" ), "*.xnb*", SearchOption.AllDirectories );
             for(int count = 0; count < _xnbFileNames.Length; count++)
             {
                 Progress = count / _xnbFileNames.Length + 1 / _xnbFileNames.Length;
