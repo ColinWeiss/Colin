@@ -7,7 +7,7 @@ namespace Colin.Core.Assets
     /// 包含游戏已加载的纹理资产类.
     /// <br>加载模组后即可从此类获取模组内纹理资产.</br>
     /// </summary>
-    public class TextureAssets : IGameResource
+    public class TextureAssets : IGameAsset
     {
         public string Name => "纹理资源";
 
@@ -26,7 +26,7 @@ namespace Colin.Core.Assets
             for(int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;
-                _fileName = IGameResource.ArrangementPath( TextureFileNames[count] );
+                _fileName = IGameAsset.ArrangementPath( TextureFileNames[count] );
                 _texture = EngineInfo.Engine.Content.Load<Texture2D>( _fileName );
                 _textures.Add( _fileName, _texture );
           //      EngineConsole.WriteLine( ConsoleTextType.Remind, "纹理资源: " + (int)(Progress * 100) + "%" );

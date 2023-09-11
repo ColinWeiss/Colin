@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Colin.Core.Assets
 {
-    public class SoundAssets : IGameResource
+    public class SoundAssets : IGameAsset
     {
         public string Name => "声音资源";
 
@@ -21,7 +21,7 @@ namespace Colin.Core.Assets
             for(int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;
-                _fileName = IGameResource.ArrangementPath( TextureFileNames[count] );
+                _fileName = IGameAsset.ArrangementPath( TextureFileNames[count] );
                 _sound = EngineInfo.Engine.Content.Load<SoundEffect>( _fileName );
                 Sounds.Add( _fileName, _sound );
             }

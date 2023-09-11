@@ -22,12 +22,12 @@ namespace Colin.Core.Assets
         {
             await Task.Run( () =>
             {
-                IGameResource asset;
+                IGameAsset asset;
                 foreach(Type item in Assembly.GetExecutingAssembly().GetTypes())
                 {
-                    if(item.GetInterfaces().Contains( typeof( IGameResource ) ) && !item.IsAbstract)
+                    if(item.GetInterfaces().Contains( typeof( IGameAsset ) ) && !item.IsAbstract)
                     {
-                        asset = (IGameResource)Activator.CreateInstance( item );
+                        asset = (IGameAsset)Activator.CreateInstance( item );
                         asset.LoadResource();
                         EngineConsole.WriteLine( ConsoleTextType.Remind, string.Concat( "正在加载 ", asset.Name ) );
                     }

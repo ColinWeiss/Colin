@@ -1,4 +1,5 @@
 ﻿global using Colin.Core;
+global using Colin.Core.Extensions;
 global using Colin.Core.Common;
 global using Colin.Core.Assets;
 global using Colin.Core.Graphics;

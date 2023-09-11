@@ -3,7 +3,7 @@ using FontStashSharp;
 
 namespace Colin.Core.Assets
 {
-    public class FontResource : IGameResource
+    public class FontResource : IGameAsset
     {
         public string Name => "字体资源";
 
@@ -24,7 +24,7 @@ namespace Colin.Core.Assets
                 Progress = count / _fontFileNames.Length + 1 / _fontFileNames.Length;
                 _font = new FontSystem();
                 _font.AddFont( File.ReadAllBytes( _fontFileNames[count] ) );
-                _fileName = IGameResource.ArrangementPath( _fontFileNames[count] );
+                _fileName = IGameAsset.ArrangementPath( _fontFileNames[count] );
                 _fonts.Add( _fileName, _font );
             }
         }

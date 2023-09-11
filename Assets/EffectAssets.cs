@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Assets
 {
-    public class EffectAssets : IGameResource
+    public class EffectAssets : IGameAsset
     {
         public string Name => "着色器";
 
@@ -20,7 +20,7 @@ namespace Colin.Core.Assets
             for(int count = 0; count < _xnbFileNames.Length; count++)
             {
                 Progress = count / _xnbFileNames.Length + 1 / _xnbFileNames.Length;
-                _fileName = IGameResource.ArrangementPath( _xnbFileNames[count] );
+                _fileName = IGameAsset.ArrangementPath( _xnbFileNames[count] );
                 _effect = EngineInfo.Engine.Content.Load<Effect>( _fileName );
                 Effects.Add( _fileName, _effect );
             }

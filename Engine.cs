@@ -51,7 +51,7 @@ namespace Colin.Core
         /// </summary>
         public Scene CurrentScene { get; internal set; }
 
-        public AssetLoader ResourceLoader { get; private set; }
+        public AssetLoader AssetLoader { get; private set; }
 
         private int _targetFrame = 60;
         /// <summary>
@@ -154,9 +154,9 @@ namespace Colin.Core
                         Screen.PrimaryScreen.Bounds.Height / 2 - Form.Height / 2
                         );
 #endif
-                ResourceLoader = new AssetLoader();
-                ResourceLoader.OnLoadComplete += ( s, e ) => Start();
-                SetScene( ResourceLoader );
+                AssetLoader = new AssetLoader();
+                AssetLoader.OnLoadComplete += ( s, e ) => Start();
+                SetScene( AssetLoader );
                 Started = true;
             }
             EngineInfo.GetInformationFromDevice( gameTime );

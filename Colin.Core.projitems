@@ -181,7 +181,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Developments\ProgramChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\FontResource.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameResource.cs" />
+    <Compile Include="..\Colin\Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\AssetLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\TextureAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />

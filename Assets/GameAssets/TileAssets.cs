@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Colin.Core.Assets.GameAssets
 {
-    public class TileAssets : IGameResource, IModResource
+    public class TileAssets : IGameAsset, IModResource
     {
         public string Name => "物块资源";
 
