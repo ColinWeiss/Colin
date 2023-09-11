@@ -22,12 +22,10 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Scene Scene { get; set; }
 
-        public void DoInitialize() => _contianer.DoInitialize();
+        public void DoInitialize() => _contianer.DoInitialize( );
 
-        public void Start()
-        {
+        public void Start() { }
 
-        }
         public void DoUpdate( GameTime time )
         {
             Container?.DoUpdate( time );
@@ -46,8 +44,8 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void SetContainer( Container container )
         {
+            container._interface = this;
             _contianer = container;
-            _contianer._interface = this;
         }
     }
 }

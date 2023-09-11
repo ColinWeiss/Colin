@@ -37,6 +37,7 @@
         {
             if(base.Register( division, doInit ))
             {
+                division._interface = _interface;
                 division._container = this;
                 return true;
             }

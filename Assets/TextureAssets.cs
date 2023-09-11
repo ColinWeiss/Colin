@@ -18,11 +18,11 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ) ))
+            if(!Directory.Exists( Explorer.ConvertPath( EngineInfo.Engine.Content.RootDirectory, "Textures" ) ))
                 return;
             Texture2D _texture;
             string _fileName;
-            string[] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Textures" ), "*.xnb*", SearchOption.AllDirectories );
+            string[] TextureFileNames = Directory.GetFiles( Explorer.ConvertPath( EngineInfo.Engine.Content.RootDirectory, "Textures" ), "*.xnb*", SearchOption.AllDirectories );
             for(int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;

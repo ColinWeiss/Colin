@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Audio;
+﻿using Colin.Core.IO;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Colin.Core.Assets
 {
@@ -35,12 +36,12 @@ namespace Colin.Core.Assets
         public static SoundEffect Get( string path )
         {
             SoundEffect _sound;
-            if(Sounds.TryGetValue( string.Concat( "Sounds\\", path ), out _sound ))
+            if(Sounds.TryGetValue( Explorer.ConvertPath( "Sounds", path ), out _sound ))
                 return _sound;
             else
             {
-                _sound = EngineInfo.Engine.Content.Load<SoundEffect>( string.Concat( "Sounds\\", path ) );
-                Sounds.Add( string.Concat( "Sounds\\", path ), _sound );
+                _sound = EngineInfo.Engine.Content.Load<SoundEffect>( Explorer.ConvertPath( "Sounds", path ) );
+                Sounds.Add( Explorer.ConvertPath( "Sounds", path ), _sound );
                 return _sound;
             }
         }
