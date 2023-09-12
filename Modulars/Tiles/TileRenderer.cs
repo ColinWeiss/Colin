@@ -84,7 +84,7 @@ namespace Colin.Core.Modulars.Tiles
                     var behavior = Tile.Behaviors[countX, countY];
                     float depth = 0;
                     if(behavior is MonoBlock block)
-                        depth = block.Sprite.Depth;
+                        depth = block.RenderRule.Sprite.Depth;
                     // 保证顺序，同类物块先边框后填充
                     tileList.Add( new Tuple<float, bool, TileBehavior>( depth + 0.5f / SpritePool.DepthSteps, true, behavior ) );
                     tileList.Add( new Tuple<float, bool, TileBehavior>( depth, false, behavior ) );
