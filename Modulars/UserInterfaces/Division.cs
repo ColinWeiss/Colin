@@ -175,6 +175,16 @@
             PreUpdate( time );
             if(!IsVisible)
                 return;
+            if(Parent is Container container)
+            {
+                _interface = container._interface;
+                _container = container;
+            }
+            else if( !(this is Container))
+            {
+                _interface = Parent?._interface;
+                _container = Parent?._container;
+            }
             if(!_started)
             {
                 Start( time );
@@ -302,17 +312,17 @@
 		public virtual bool Register( Division division, bool doInit = false )
         {
             division.Parent = this;
+            division.ParentCanvas = ParentCanvas;
+            if(IsCanvas)
+                division.ParentCanvas = this;
             if(doInit)
             {
                 division.DoInitialize();
                 division.Layout.Calculation( Layout );
             }
-            Children.Add( division );
-            division.ParentCanvas = ParentCanvas;
-            if(IsCanvas)
-                division.ParentCanvas = this;
             division._interface = _interface;
             division._container = _container;
+            Children.Add( division );
             return true;
         }
 
