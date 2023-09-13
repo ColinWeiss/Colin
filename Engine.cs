@@ -117,6 +117,7 @@ namespace Colin.Core
             Components.Add( scene );
             CurrentScene = scene;
             GC.Collect();
+
         }
 
         protected override sealed void Initialize()
@@ -144,7 +145,7 @@ namespace Colin.Core
         private bool Started = false;
         protected override sealed void Update( GameTime gameTime )
         {
-            if( !Enable )
+            if(!Enable)
                 return;
             Time.Update( (float)gameTime.ElapsedGameTime.TotalSeconds );
             if(!Started)
@@ -186,12 +187,12 @@ namespace Colin.Core
 
         protected override void OnActivated( object sender, EventArgs args )
         {
-          //  Enable = true;
+            //  Enable = true;
             base.OnActivated( sender, args );
         }
         protected override void OnDeactivated( object sender, EventArgs args )
         {
-          //  Enable = false;
+            //  Enable = false;
             base.OnDeactivated( sender, args );
         }
     }

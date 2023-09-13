@@ -344,13 +344,15 @@
         /// <summary>
         /// 移除所有子元素.
         /// </summary>
-        public virtual void Clear()
+        public virtual void Clear( bool dispose = false )
         {
             Division _div;
             for(int count = 0; count < Children.Count; count++)
             {
                 _div = Children[count];
                 Remove( _div );
+                if(dispose)
+                    _div.Dispose();
             }
             Children.Clear();
         }
@@ -412,11 +414,13 @@
                     Canvas?.Dispose();
                     for(int count = 0; count < Children.Count; count++)
                         Children[count].Dispose();
+                    OnDispose?.Invoke();
                 }
                 _renderer = null;
                 disposedValue = true;
             }
         }
+        public event Action OnDispose;
         ~Division()
         {
             Dispose( disposing: false );
