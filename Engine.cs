@@ -105,9 +105,10 @@ namespace Colin.Core
                     Window.ClientSizeChanged -= CurrentScene.InitRenderTarget;
                     Window.OrientationChanged -= CurrentScene.InitRenderTarget;
                 }
-                CurrentScene.UnLoad();
                 Components.Remove( CurrentScene );
             }
+            CurrentScene?.SaveDatas();
+            CurrentScene?.Dispose();
             Components.Clear();
             Components.Add( Singleton<ControllerResponder>.Instance );
             Components.Add( Singleton<MouseResponder>.Instance );

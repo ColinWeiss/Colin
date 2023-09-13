@@ -7,7 +7,7 @@
     /// <br>这一操作在 <see cref="SceneModuleList"/> 加入该模块时自动实现.</br>
     /// </para>
     /// </summary>
-    public interface ISceneModule
+    public interface ISceneModule : IDisposable
     {
         /// <summary>
         /// 指示该模块所属的场景.

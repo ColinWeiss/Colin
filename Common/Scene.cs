@@ -10,6 +10,7 @@ using Colin.Core.Collections;
 using Colin.Core.Extensions;
 */
 using Colin.Core.Extensions;
+using System.Runtime.InteropServices;
 
 namespace Colin.Core.Common
 {
@@ -157,10 +158,20 @@ namespace Colin.Core.Common
         /// </summary>
         public virtual void SaveDatas() { }
 
-        /// <summary>
-        ///  卸载场景时执行.
-        /// </summary>
-        public virtual void UnLoad() { }
-
+        protected override void Dispose( bool disposing )
+        {
+            if(disposing)
+            {
+                for(int count = 0; count < Modules.Components.Count; count++)
+                    Modules.Components.Values.ElementAt( count ).Dispose();
+                for(int count = 0; count < Modules.RenderableComponents.Count; count++)
+                {
+                    Modules.RenderableComponents.Values.ElementAt( count ).SceneRt.Dispose();
+                    Modules.RenderableComponents.Values.ElementAt( count ).Dispose();
+                }
+                Modules.Clear();
+            }
+            base.Dispose( disposing );
+        }
     }
 }

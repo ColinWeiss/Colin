@@ -52,6 +52,5 @@ namespace Colin.Core.Events
         {
             _handle.Free();
         }
-
     }
 }

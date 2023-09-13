@@ -227,5 +227,6 @@ namespace Colin.Core.Modulars.UserInterfaces
                 DragEnd?.Invoke( this, divisionEvent );
             }
         }
+
     }
 }

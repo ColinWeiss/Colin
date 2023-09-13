@@ -3,7 +3,7 @@
     /// <summary>
     /// 指代用户交互界面中的一个划分元素.
     /// </summary>
-    public class Division
+    public class Division : IDisposable
     {
         /// <summary>
         /// 划分元素的名称.
@@ -166,6 +166,7 @@
         }
 
         private bool _started = false;
+
         /// <summary>
         /// 执行划分元素的逻辑刷新.
         /// </summary>
@@ -180,7 +181,7 @@
                 _interface = container._interface;
                 _container = container;
             }
-            else if( !(this is Container))
+            else if(!(this is Container))
             {
                 _interface = Parent?._interface;
                 _container = Parent?._container;
@@ -351,7 +352,7 @@
                 _div = Children[count];
                 Remove( _div );
             }
-            Children.Clear( );
+            Children.Clear();
         }
 
         /// <summary>
@@ -399,6 +400,31 @@
             if(Interact.IsInteractive && IsVisible && Interact.Interaction)
                 return this;
             return target;
+        }
+
+        private bool disposedValue;
+        protected virtual void Dispose( bool disposing )
+        {
+            if(!disposedValue)
+            {
+                if(disposing)
+                {
+                    Canvas?.Dispose();
+                    for(int count = 0; count < Children.Count; count++)
+                        Children[count].Dispose();
+                }
+                _renderer = null;
+                disposedValue = true;
+            }
+        }
+        ~Division()
+        {
+            Dispose( disposing: false );
+        }
+        public void Dispose()
+        {
+            Dispose( disposing: true );
+            GC.SuppressFinalize( this );
         }
     }
 }

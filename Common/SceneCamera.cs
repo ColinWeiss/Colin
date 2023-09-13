@@ -5,6 +5,11 @@
     /// </summary>
     public class SceneCamera : Camera, ISceneModule
     {
+        public void Dispose()
+        {
+            Scene = null;
+        }
+
         public void DoInitialize()
         {
             DoInitialize( EngineInfo.Graphics.GraphicsDevice.Viewport.Width, EngineInfo.Graphics.GraphicsDevice.Viewport.Height );

@@ -43,5 +43,11 @@ namespace Colin.Core.Modulars.Skys
         {
             NextStyle = skyStyle;
         }
+
+        public void Dispose()
+        {
+            CurrentSkyStyle = null;
+            NextStyle = null;
+        }
     }
 }

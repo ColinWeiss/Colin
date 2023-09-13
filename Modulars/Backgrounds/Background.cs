@@ -116,7 +116,6 @@ namespace Colin.Core.Modulars.Backgrounds
             offset.X += CurrentStyle.LoopLayerOffset.X / layer.Sprite.Height;
             offset.Y -= CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
 
-
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null );
 
             LeftRightLoopEffect.Parameters["MappingTexture"].SetValue( layer.Sprite.Source );
@@ -124,11 +123,36 @@ namespace Colin.Core.Modulars.Backgrounds
             LeftRightLoopEffect.Parameters["Offset"].SetValue( offset );
             LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
 
-    //        DrawHelper.DrawRectSimply( EngineInfo.Graphics.GraphicsDevice, 0, 0, SceneRt.Width, SceneRt.Height
-  //  , _screenMap, Color.White );
+            //        DrawHelper.DrawRectSimply( EngineInfo.Graphics.GraphicsDevice, 0, 0, SceneRt.Width, SceneRt.Height
+            //  , _screenMap, Color.White );
 
             EngineInfo.SpriteBatch.Draw( _screenMap, new Rectangle( 0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight ), Color.White );
             EngineInfo.SpriteBatch.End();
+        }
+
+        private bool disposedValue;
+        private void Dispose( bool disposing )
+        {
+            if(!disposedValue)
+            {
+                if(disposing)
+                {
+                }
+                Scene = null;
+                _camera = null;
+                disposedValue = true;
+            }
+        }
+
+        ~Background()
+        {
+            Dispose( disposing: false );
+        }
+
+        public void Dispose()
+        {
+            Dispose( disposing: true );
+            GC.SuppressFinalize( this );
         }
     }
 }

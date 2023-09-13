@@ -35,12 +35,12 @@
         /// <summary>
         /// 引发事件.
         /// </summary>
-        public void Raise( object sender, EventArgs e )
+        public void Raise( )
         {
             foreach(var d in _delegateList.ToList())
             {
                 if(d.Active)
-                    d.Target.DynamicInvoke( sender, e );
+                    d.Target.DynamicInvoke(  );
                 else
                     _delegateList.Remove( d );
             }

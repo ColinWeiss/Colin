@@ -42,5 +42,10 @@ namespace Colin.Core.Audios
                 }
             }
         }
+
+        public void Dispose()
+        {
+            Scene = null;
+        }
     }
 }

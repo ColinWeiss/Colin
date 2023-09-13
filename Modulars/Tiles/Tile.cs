@@ -117,5 +117,10 @@ namespace Colin.Core.Modulars.Tiles
             Behaviors.ClearBehavior( coorinateX, coorinateY );
         }
 
+        public void Dispose()
+        {
+            Behaviors = null;
+            Infos = new TileInfoCollection();
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         public static Division Focus;
 
         private Container _contianer = new Container( "NomalContainer" );
+
         public Container Container => _contianer;
 
         public RenderTarget2D SceneRt { get; set; }
@@ -31,6 +32,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             Container?.DoUpdate( time );
             Container.Seek()?.Events.Execute();
         }
+
         public void DoRender( SpriteBatch batch )
         {
             batch.Begin();
@@ -46,6 +48,12 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             container._interface = this;
             _contianer = container;
+        }
+
+        public void Dispose()
+        {
+            Scene = null;
+            Container.Dispose();
         }
     }
 }

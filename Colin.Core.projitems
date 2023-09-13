@@ -61,9 +61,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\WeakRefScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
@@ -71,6 +71,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\BasicEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\InputEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEventManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\WeakReferenceDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
@@ -127,8 +128,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Meteors\Meteor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Meteors\MeteorCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackageTransfer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\INetworkMode.cs" />
