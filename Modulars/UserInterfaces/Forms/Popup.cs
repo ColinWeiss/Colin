@@ -25,7 +25,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 
         public Division Block;
 
-        public override void OnInit()
+        public override sealed void OnInit()
         {
             Design.Scale = Vector2.One;
             Design.Color = Color.White;

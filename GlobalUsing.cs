@@ -13,6 +13,7 @@ global using System.Linq;
 global using Keys = Microsoft.Xna.Framework.Input.Keys;
 global using Point = Microsoft.Xna.Framework.Point;
 global using Vector2 = Microsoft.Xna.Framework.Vector2;
+global using RectangleF = Colin.Core.RectangleF;
 #if WINDOWS
 global using MonoGame.IMEHelper;
 #endif

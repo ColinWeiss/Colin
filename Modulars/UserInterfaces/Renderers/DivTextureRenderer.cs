@@ -7,15 +7,16 @@
         public override void RendererInit() { }
         public override void DoRender( SpriteBatch batch )
         {
-            batch.Draw(
-                _sprite.Source,
-                Division.Layout.TotalLocationF + Division.Design.Anchor,
-                null, Division.Design.Color,
-                Division.Design.Rotation,
-                Division.Design.Anchor,
-                Division.Design.Scale,
-                SpriteEffects.None,
-                _sprite.Depth );
+            if(_sprite is not null)
+                batch.Draw(
+                    _sprite.Source,
+                    Division.Layout.TotalLocationF + Division.Design.Anchor,
+                    null, Division.Design.Color,
+                    Division.Design.Rotation,
+                    Division.Design.Anchor,
+                    Division.Design.Scale,
+                    SpriteEffects.None,
+                    _sprite.Depth );
         }
         public DivTextureRenderer Bind( Sprite sprite )
         {
