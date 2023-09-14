@@ -39,7 +39,26 @@ namespace Colin.Core.Common
 
         public SceneShaderManager SceneShaders = new SceneShaderManager();
 
-        public Scene() : base( EngineInfo.Engine ) { }
+        public class SceneEventResponder
+        {
+            public event EventHandler ClientSizeChanged;
+            public event EventHandler OrientationChanged;
+            public void InvokeSizeChange(object? sender, EventArgs e)
+            {
+                ClientSizeChanged?.Invoke(this, e);
+                OrientationChanged?.Invoke(this, e);
+            }
+        };
+        
+
+        public SceneEventResponder Event;
+
+        public Scene() : base( EngineInfo.Engine )
+        {
+            Event = new();
+            Game.Window.ClientSizeChanged += Event.InvokeSizeChange;
+            Game.Window.OrientationChanged += Event.InvokeSizeChange;
+        }
 
         public override sealed void Initialize()
         {
@@ -47,8 +66,8 @@ namespace Colin.Core.Common
             if(InitializeOnSwitch)
             {
                 InitRenderTarget( this, new EventArgs() );
-                Game.Window.OrientationChanged += InitRenderTarget;
-                Game.Window.ClientSizeChanged += InitRenderTarget;
+                Event.OrientationChanged += InitRenderTarget;
+                Event.ClientSizeChanged += InitRenderTarget;
                 _components = new SceneModuleList( this );
                 _components.Add( SceneCamera = new SceneCamera() );
                 SceneInit();
@@ -171,6 +190,8 @@ namespace Colin.Core.Common
                 }
                 Modules.Clear();
             }
+            Game.Window.ClientSizeChanged -= Event.InvokeSizeChange;
+            Game.Window.OrientationChanged -= Event.InvokeSizeChange;
             base.Dispose( disposing );
         }
     }
