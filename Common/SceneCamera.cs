@@ -8,22 +8,20 @@
         public void Dispose()
         {
             Scene = null;
+            EngineInfo.Engine.Window.ClientSizeChanged -= Window_ClientSizeChanged;
         }
-
         public void DoInitialize()
         {
             DoInitialize( EngineInfo.Graphics.GraphicsDevice.Viewport.Width, EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
-            EngineInfo.Engine.Window.ClientSizeChanged += ( s, e ) =>
-            {
-                Translate = EngineInfo.ViewCenter;
-                Projection = Matrix.CreateOrthographicOffCenter( 0f, EngineInfo.Graphics.GraphicsDevice.Viewport.Width, EngineInfo.Graphics.GraphicsDevice.Viewport.Height, 0f, 0f, 1f );
-                View = Matrix.Identity;
-                ResetCamera();
-            };
+            EngineInfo.Engine.Window.ClientSizeChanged += Window_ClientSizeChanged;
         }
-        public void Start()
+        private void Window_ClientSizeChanged( object sender, EventArgs e )
         {
-
+            Translate = EngineInfo.ViewCenter;
+            Projection = Matrix.CreateOrthographicOffCenter( 0f, EngineInfo.Graphics.GraphicsDevice.Viewport.Width, EngineInfo.Graphics.GraphicsDevice.Viewport.Height, 0f, 0f, 1f );
+            View = Matrix.Identity;
+            ResetCamera();
         }
+        public void Start() { }
     }
 }

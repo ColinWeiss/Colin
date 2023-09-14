@@ -7,7 +7,7 @@ namespace Colin.Core.Common
     /// <summary>
     /// 场景模块集合.
     /// </summary>
-    public class SceneModuleList : ITraceable
+    public class SceneModuleList : IDisposable , ITraceable
     {
         private readonly Scene Scene;
 
@@ -76,6 +76,7 @@ namespace Colin.Core.Common
                 RenderableComponents.Add( dwMode.GetType(), dwMode );
                 dwMode.InitRenderTarget();
                 Scene.Game.Window.ClientSizeChanged += dwMode.OnClientSizeChanged;
+                // 该事件的注销由Scene完成.
             }
             Components.Add( sceneMode.GetType(), sceneMode );
         }
@@ -98,6 +99,11 @@ namespace Colin.Core.Common
         {
             Components.Clear();
             RenderableComponents.Clear();
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }
