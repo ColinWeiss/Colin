@@ -47,7 +47,7 @@ namespace Colin.Core.Modulars.Tiles
 
         public void SetBehavior<T>( int index ) where T : TileBehavior, new()
         {
-            SetBehavior<T>( index % Height, index / Width );
+            SetBehavior<T>( index % Height , index % Width );
         }
 
         public void SetBehavior( TileBehavior behavior, int x, int y )
@@ -66,7 +66,7 @@ namespace Colin.Core.Modulars.Tiles
             _behaviors[index] = behavior;
             _behaviors[index]._tile = tile;
             _behaviors[index].coordinateX = index % Height;
-            _behaviors[index].coordinateY = index / Width;
+            _behaviors[index].coordinateY = index % Width;
             _behaviors[index].id = index;
             _behaviors[index].SetDefaults();
             _behaviors[index].DoRefresh( 1 );
