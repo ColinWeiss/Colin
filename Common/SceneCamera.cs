@@ -9,7 +9,6 @@
         {
             Scene = null;
         }
-
         public void DoInitialize()
         {
             DoInitialize( EngineInfo.Graphics.GraphicsDevice.Viewport.Width, EngineInfo.Graphics.GraphicsDevice.Viewport.Height );
@@ -21,9 +20,6 @@
                 ResetCamera();
             };
         }
-        public void Start()
-        {
-
-        }
+        public void Start() { }
     }
 }
