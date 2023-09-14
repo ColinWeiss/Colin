@@ -123,6 +123,7 @@ namespace Colin.Core
         protected override sealed void Initialize()
         {
             EngineInfo.SpriteBatch = new SpriteBatch( EngineInfo.Graphics.GraphicsDevice );
+            EngineInfo.DrawBatcherAlt = new(EngineInfo.Graphics.GraphicsDevice);
             EngineInfo.Config = new Config();
             EngineInfo.Config.Load();
             TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / TargetFrame ) );

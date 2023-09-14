@@ -23,6 +23,10 @@ namespace Colin.Core
         /// 纹理批管道.
         /// </summary>
         public static SpriteBatch SpriteBatch { get; set; }
+        /// <summary>
+        /// 纹理批管道.
+        /// </summary>
+        public static MinDrawBatcher2D<Vert2> DrawBatcherAlt { get; set; }
 
         /// <summary>
         /// 游戏刻缓存.
