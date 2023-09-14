@@ -12,14 +12,14 @@
             Interact.IsSelectable = false;
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;
-            EngineInfo.Engine.Window.ClientSizeChanged += Window_ClientSizeChanged;
             ContainerInitialize();
             base.OnInit();
         }
-        private void Window_ClientSizeChanged( object sender, EventArgs e )
+        public override void DoUpdate( GameTime time )
         {
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;
+            base.DoUpdate( time );
         }
         /// <summary>
         /// 在此处进行容器初始化操作.
