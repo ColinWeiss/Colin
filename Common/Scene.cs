@@ -191,8 +191,11 @@ namespace Colin.Core.Common
                 }
                 Modules.Clear();
             }
-            Game.Window.ClientSizeChanged -= Event.InvokeSizeChange;
-            Game.Window.OrientationChanged -= Event.InvokeSizeChange;
+            if( Game.Window is not null )
+            {
+                Game.Window.ClientSizeChanged -= Event.InvokeSizeChange;
+                Game.Window.OrientationChanged -= Event.InvokeSizeChange;
+            }
             base.Dispose( disposing );
         }
     }

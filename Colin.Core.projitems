@@ -17,7 +17,6 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Gaussian.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\LeftRightLoopMapping.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Macros.fxh" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\MacrosOld.fxh" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>

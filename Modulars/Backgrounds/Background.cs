@@ -138,8 +138,8 @@ namespace Colin.Core.Modulars.Backgrounds
                 if(disposing)
                 {
                 }
-                Scene = null;
-                _camera = null;
+           //     Scene = null;
+            //    _camera = null;
                 disposedValue = true;
             }
         }
