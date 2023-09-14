@@ -35,5 +35,98 @@
             current = new Vector2( x + tx, y + ty );
             return new Vector2( x + tx, y + ty );
         }
+        public static Vector2 RotateTo(this Vector2 vec, float radian)
+        {
+            float l = vec.Length();
+            return new Vector2((float)Math.Cos(radian) * l, (float)Math.Sin(radian) * l);
+        }
+        public static Vector2 RotateTo(this Vector2 vec, float radian, Vector2 center)
+        {
+            vec -= center;
+            float l = vec.Length();
+            return new Vector2((float)Math.Cos(radian) * l, (float)Math.Sin(radian) * l) + center;
+        }
+        public static Vector2 RotateBy(this Vector2 vec, float radian)
+        {
+            float c = MathF.Cos(radian);
+            float s = MathF.Sin(radian);
+            return new Vector2(c * vec.X - s * vec.Y, s * vec.X + c * vec.Y);
+        }
+        public static Vector2 RotateBy(this Vector2 vec, float radian, Vector2 center = default)
+        {
+            vec -= center;
+            float c = (float)Math.Cos(radian);
+            float s = (float)Math.Sin(radian);
+            return new Vector2(c * vec.X - s * vec.Y, s * vec.X + c * vec.Y) + center;
+        }
+        public static float ToRotation(this Vector2 v) => MathF.Atan2(v.Y, v.X);
+        public static float Slop(this Vector2 vec)
+        {
+            return vec.Y / vec.X;
+        }
+        public static Vector2 LerpTo(this Vector2 a, Vector2 b, float progress, float max)
+        {
+            return progress / max * b + (max - progress) / max * a;
+        }
+        public static Vector2 FlipHorizontally(this Vector2 vec)
+        {
+            vec.X *= -1;
+            return vec;
+        }
+        public static Vector2 FlipVertically(this Vector2 vec)
+        {
+            vec.Y *= -1;
+            return vec;
+        }
+        public static Vector2 Floor(this Vector2 vec)
+        {
+            return new Vector2((float)Math.Floor(vec.X), (float)Math.Floor(vec.Y));
+        }
+        public static Vector2 Ceiling(this Vector2 vec)
+        {
+            return new Vector2((float)Math.Ceiling(vec.X), (float)Math.Ceiling(vec.Y));
+        }
+        public static float AngleBetween(this Vector2 a, Vector2 b)
+        {
+            return Math.Abs(a.ToRotation() - b.ToRotation());
+        }
+        public static Vector2 MutiplyXY(this Vector2 a, Vector2 b)
+        {
+            return new Vector2(a.X * b.X, a.Y * b.Y);
+        }
+        public static Vector2 SwapXY(this Vector2 a)
+        {
+            return new Vector2(a.Y, a.X);
+        }
+        public static Point ToPoint(this Vector2 vec)
+        {
+            return new Point((int)vec.X, (int)vec.Y);
+        }
+        public static Vector2 GetNormalized(this Vector2 vec)
+        {
+            float l = (float)Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y);
+            return vec / l;
+        }
+        public static Vector2 XY(this Vector3 vec)
+        {
+            return new Vector2(vec.X, vec.Y);
+        }
+        public static Vector3 GetNormalized(this Vector3 vec)
+        {
+            float l = (float)Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y + vec.Z * vec.Z);
+            return vec / l;
+        }
+        public static Color ToColor(this Vector3 vec, float a = 1)
+        {
+            return new Color(vec.X, vec.Y, vec.Z, a);
+        }
+        public static float Dot(this Vector3 vec1, Vector3 vec2)
+        {
+            return Vector3.Dot(vec1, vec2);
+        }
+        public static Vector3 XYZ(this Vector4 vec)
+        {
+            return new Vector3(vec.X, vec.Y, vec.Z);
+        }
     }
 }
