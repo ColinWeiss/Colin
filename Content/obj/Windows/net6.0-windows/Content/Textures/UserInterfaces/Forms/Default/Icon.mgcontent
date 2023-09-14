@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/Codes/DeltaMachine/Colin/Content/Textures/UserInterfaces/Forms/Default/Icon.png</SourceFile>
-  <SourceTime>2023-09-08T17:24:03.9073873+08:00</SourceTime>
-  <DestFile>D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Textures/UserInterfaces/Forms/Default/Icon.xnb</DestFile>
-  <DestTime>2023-09-12T00:20:13.2542351+08:00</DestTime>
+  <SourceFile>D:/Source/ColinProj/DeltaMachine/Colin/Content/Textures/UserInterfaces/Forms/Default/Icon.png</SourceFile>
+  <SourceTime>2023-09-14T16:51:25.2536664+08:00</SourceTime>
+  <DestFile>D:/Source/ColinProj/DeltaMachine/Colin/Content/bin/Windows/Content/Textures/UserInterfaces/Forms/Default/Icon.xnb</DestFile>
+  <DestTime>2023-09-14T17:28:23.3547059+08:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T19:44:56+08:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
