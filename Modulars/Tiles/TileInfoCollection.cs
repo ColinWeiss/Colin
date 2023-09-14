@@ -61,8 +61,8 @@
             int id = index;
             Tiles[id].Empty = false;
             Tiles[id].ID = id;
-            Tiles[id].CoordinateX = index % Height;
-            Tiles[id].CoordinateY = index % Width;
+            Tiles[id].CoordinateX = index % Width;
+            Tiles[id].CoordinateY = index / Width;
         }
 
         internal void DeleteTileInfo( int coordinateX, int coordinateY )
