@@ -25,29 +25,64 @@
         }
         public unsafe static void Draw(this IDrawBatcher<Vert2> batcher, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, int sortingKey)
         {
-            float c = 1f;
-            float s = 0f;
+            float dX_Y;
+            float dX;
+            float dY_X;
+            float dY;
+            float w;
+            float h;
+            float sourceOX;
+            float sourceOY;
+            float sourceDX;
+            float sourceDY;
+            if (sourceRectangle is Rectangle r)
+            {
+                w = r.Width * scale;
+                h = r.Height * scale;
+                sourceOX = (float)r.X / texture.Width;
+                sourceOY = (float)r.Y / texture.Height;
+                sourceDX = (float)r.Width / texture.Width;
+                sourceDY = (float)r.Height / texture.Height;
+            }
+            else
+            {
+                w = texture.Width * scale;
+                h = texture.Height * scale;
+                sourceOX = 0;
+                sourceOY = 0;
+                sourceDX = 1;
+                sourceDY = 1;
+            }
             if (rotation != 0f)
             {
-                c = MathF.Cos(rotation);
-                s = MathF.Sin(rotation);
+                var c = MathF.Cos(rotation);
+                var s = MathF.Sin(rotation);
+                dX_Y = s * w;
+                dX = c * w;
+                dY_X = -s * h;
+                dY = c * h;
             }
-            origin *= scale;
-            var sR = sourceRectangle.HasValue ? sourceRectangle.Value : new Rectangle(0, 0, texture.Width, texture.Height);
-            var dX_Y = s * sR.Width * scale;
-            var dX = c * sR.Width * scale;
-            var dY_X = -s * sR.Height * scale;
-            var dY = c * sR.Height * scale;
+            else
+            {
+                dX_Y = 0;
+                dX = w;
+                dY_X = 0;
+                dY = h;
+            }
+            origin.X *= scale;
+            origin.Y *= scale;
             position.X -= origin.X;
             position.Y -= origin.Y;
-            var sourceOX = (float)sR.X / texture.Width;
-            var sourceOY = (float)sR.Y / texture.Height;
-            var sourceDX = (float)sR.Width / texture.Width;
-            var sourceDY = (float)sR.Height / texture.Height;
-            if (effects == SpriteEffects.FlipHorizontally)
+            if (effects == SpriteEffects.None) ;
+            else if (effects == SpriteEffects.FlipHorizontally)
             {
                 sourceDX = -sourceDX;
                 sourceOX -= sourceDX;
+            }
+            else if (effects == SpriteEffects.FlipVertically)
+            {
+                sourceDY = -sourceDY;
+                sourceOY -= sourceDY;
             }
             batcher.DrawQuad(texture
                 , new Vert2(new Vector2(position.X, position.Y), color, new Vector2(sourceOX, sourceOY))

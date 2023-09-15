@@ -60,27 +60,22 @@ namespace Colin.Core.Graphics
         /// <summary>
         /// Apply the provided pass and flush DrawQueues.
         /// </summary>
-        public void Flush(EffectPass? pass)
+        public void Flush(EffectPass? pass, bool clear = true)
         {
             if (_cursor == 0) return;
             pass?.Apply();
-            Flush();
+            Flush(clear);
         }
         /// <summary>
         /// Apply the provided effect and flush DrawQueues.
         /// </summary>
-        public void Flush(Effect effect)
+        public void Flush(Effect effect, bool clear = true)
         {
             if (_cursor == 0) return;
             foreach (var p in effect.CurrentTechnique.Passes) p.Apply();
-            Flush();
+            Flush(clear);
         }
-        public void ClearCache(bool collect)
-        {
-            _cache = Array.Empty<T>();
-            if(collect)GC.Collect();
-        }
-        private void Flush()
+        private void Flush(bool clear)
         {
             if (_cache.Length < _cursor * 6) _cache = new T[_cursor * 6];
             fixed (T* cachePtr = _cache)
@@ -113,7 +108,7 @@ namespace Colin.Core.Graphics
                     _graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _cache, 0, pCount / 3);
                 }
             }
-            _cursor = 0;
+            if (clear) _cursor = 0;
         }
         private void EnsureCapacity(int target)
         {
