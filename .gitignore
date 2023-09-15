@@ -52,3 +52,5 @@
 /Content/obj/Windows/net6.0-windows/Content/Textures/Pixel.mgcontent
 /Content/obj/Windows/net6.0-windows/Content/.mgcontent
 /Content/obj/Windows/net6.0-windows/Content/.mgstats
+/Content/bin/DesktopGL/Content/Effects/Gaussian.xnb
+/Content/bin/DesktopGL/Content/Effects/LeftRightLoopMapping.xnb
