@@ -32,7 +32,7 @@
         /// <summary>
         /// 选取帧格.
         /// </summary>
-        public SpriteRenderInfo spriteFrame;
+        public SpriteRenderInfo SpriteFrame;
 
         /// <summary>
         /// 纹理批绘制参数.

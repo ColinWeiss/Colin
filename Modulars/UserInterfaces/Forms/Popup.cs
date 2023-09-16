@@ -81,8 +81,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Interact.IsInteractive = true;
                 CloseButton.Layout.Left = TitleColumn.Layout.Width - 16;
                 CloseButton.Layout.Top = 2;
-                CloseButton.Layout.Width = 24;
-                CloseButton.Layout.Height = 24;
+                CloseButton.Layout.Width = 14;
+                CloseButton.Layout.Height = 12;
                 CloseButton.Events.MouseLeftClickBefore += ( s, e ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1_Off" ) );

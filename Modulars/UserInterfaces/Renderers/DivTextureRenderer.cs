@@ -10,7 +10,8 @@
             if(_sprite is not null)
                 batch.Draw(
                     _sprite.Source,
-                    Division.Layout.TotalLocationF + Division.Design.Anchor,
+                    Division.Layout.TotalLocationF + Division.Design.Anchor
+                    + Division.Layout.HalfF - _sprite.Half,
                     null, Division.Design.Color,
                     Division.Design.Rotation,
                     Division.Design.Anchor,
