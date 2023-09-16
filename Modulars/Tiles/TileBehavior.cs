@@ -27,47 +27,50 @@
         internal int coordinateY;
         public int CoordinateY => coordinateY;
 
+        internal int coordinateZ;
+        public int CoordinateZ => coordinateZ;
+
         public TileInfo? Info => Tile?.Infos[ID];
 
-        public TileBehavior BottomBehavior
+        public TileBehavior Bottom
         {
             get
             {
                 if(CoordinateY + 1 <= _tile?.Height - 1)
-                    return Tile.Behaviors[CoordinateX, CoordinateY + 1];
+                    return Tile.Behaviors[CoordinateX, CoordinateY + 1, CoordinateZ];
                 else
                     return null;
             }
         }
 
-        public TileBehavior TopBehavior
+        public TileBehavior Top
         {
             get
             {
                 if(CoordinateY - 1 >= 0)
-                    return Tile.Behaviors[CoordinateX, CoordinateY - 1];
+                    return Tile.Behaviors[CoordinateX, CoordinateY - 1, CoordinateZ];
                 else
                     return null;
             }
         }
 
-        public TileBehavior LeftBehavior
+        public TileBehavior Left
         {
             get
             {
                 if(CoordinateX - 1 >= 0)
-                    return Tile.Behaviors[CoordinateX - 1, CoordinateY];
+                    return Tile.Behaviors[CoordinateX - 1, CoordinateY, CoordinateZ];
                 else
                     return null;
             }
         }
 
-        public TileBehavior RightBehavior
+        public TileBehavior Right
         {
             get
             {
                 if(CoordinateX + 1 <= _tile?.Width - 1)
-                    return Tile.Behaviors[CoordinateX + 1, CoordinateY];
+                    return Tile.Behaviors[CoordinateX + 1, CoordinateY, CoordinateZ];
                 else
                     return null;
             }
@@ -83,12 +86,12 @@
 
         public void DoRefresh( int conduct )
         {
-            if(conduct > 0)
+            if (conduct > 0)
             {
-                TopBehavior?.DoRefresh( conduct - 1 );
-                BottomBehavior?.DoRefresh( conduct - 1 );
-                LeftBehavior?.DoRefresh( conduct - 1 );
-                RightBehavior?.DoRefresh( conduct - 1 );
+                Top?.DoRefresh( conduct - 1 );
+                Bottom?.DoRefresh( conduct - 1 );
+                Left?.DoRefresh( conduct - 1 );
+                Right?.DoRefresh( conduct - 1 );
             }
             OnRefresh();
         }
@@ -99,7 +102,7 @@
         public virtual void OnRefresh() { }
 
         /// <summary>
-        /// 判断指定相对于该物块坐标具有指定偏移位置处的物块是否相同.
+        /// 判断同层指定相对于该物块坐标具有指定偏移位置处的物块是否相同.
         /// </summary>
         /// <param name="dx">偏移的X坐标.</param>
         /// <param name="dy">偏移的Y坐标.</param>
@@ -111,7 +114,7 @@
             {
                 return false;
             }
-            return Tile.Behaviors[CoordinateX + dx, CoordinateY + dy].Name == Name;
+            return Tile.Behaviors[CoordinateX + dx, CoordinateY + dy, CoordinateZ].Name == Name;
         }
     }
 }

@@ -11,7 +11,7 @@
         public bool Empty;
 
         /// <summary>
-        /// 指示物块在区块内的索引.
+        /// 指示物块的索引.
         /// </summary>
         public int ID;
 
@@ -25,7 +25,10 @@
         /// </summary>
         public int CoordinateY;
 
-        public Point Coordinate => new Point( CoordinateX, CoordinateY );
+        /// <summary>
+        /// 指示物块所处的深度.
+        /// </summary>
+        public int CoordinateZ;
 
         public Vector2 CoordinateF => new Vector2( CoordinateX, CoordinateY );
 
@@ -47,6 +50,7 @@
             Empty = true;
             CoordinateX = 0;
             CoordinateY = 0;
+            CoordinateZ = 0;
             Texture = new TileFrame( -1, -1 );
             Collision = TileCollision.Impassable;
         }

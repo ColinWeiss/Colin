@@ -1,29 +1,4 @@
-﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
-在此之前:
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Colin.Core.Assets.GameAssets;
-using Colin.Core.Common;
-using Colin.Core.IO;
-using Microsoft.Xna.Framework.Audio;
-在此之后:
-using Colin.Core.Assets.GameAssets;
-using Colin.Core.Common;
-using Colin.Core.IO;
-using Microsoft.Xna.Framework.Audio;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Common;
-using System.Text.Json;
-using System.Threading.Tasks;
-*/
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     public class Tile : ISceneModule
     {
@@ -32,6 +7,9 @@ namespace Colin.Core.Modulars.Tiles
 
         private int _height = 0;
         public int Height => _height;
+
+        private int _depth = 0;
+        public int Depth => _depth;
 
         public Point Half => new Point( _width / 2, _height / 2 );
 
@@ -53,12 +31,13 @@ namespace Colin.Core.Modulars.Tiles
 
         public TileBehaviorCollection Behaviors;
 
-        public void Create( int width, int height )
+        public void Create( int width, int height, int depth )
         {
             _width = width;
             _height = height;
-            Infos = new TileInfoCollection( width, height );
-            Behaviors = new TileBehaviorCollection( width, height );
+            _depth = depth;
+            Infos = new TileInfoCollection( width, height, depth );
+            Behaviors = new TileBehaviorCollection( width, height, depth );
             Behaviors.tile = this;
         }
 
@@ -75,12 +54,12 @@ namespace Colin.Core.Modulars.Tiles
 
         }
 
-        public void Place<T>( int coorinateX, int coorinateY ) where T : TileBehavior, new()
+        public void Place<T>( int coorX, int coordY, int coordZ ) where T : TileBehavior, new()
         {
-            if(Infos[coorinateX, coorinateY].Empty)
+            if(Infos[coorX, coordY, coordZ].Empty)
             {
-                Infos.CreateTileDefaultInfo( coorinateX, coorinateY );
-                Behaviors.SetBehavior<T>( coorinateX, coorinateY );
+                Infos.CreateTileDefaultInfo( coorX, coordY, coordZ );
+                Behaviors.SetBehavior<T>( coorX, coordY, coordZ );
             }
         }
 
@@ -93,15 +72,6 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        public void Place( TileBehavior behavior, int coorinateX, int coorinateY )
-        {
-            if(Infos[coorinateX, coorinateY].Empty)
-            {
-                Infos.CreateTileDefaultInfo( coorinateX, coorinateY );
-                Behaviors.SetBehavior( behavior, coorinateX, coorinateY );
-            }
-        }
-
         public void Place( TileBehavior behavior, int index )
         {
             if(Infos[index].Empty)
@@ -111,10 +81,10 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        public void Smash( int coorinateX, int coorinateY )
+        public void Smash( int coordX, int coordY, int coordZ )
         {
-            Infos.DeleteTileInfo( coorinateX, coorinateY );
-            Behaviors.ClearBehavior( coorinateX, coorinateY );
+            Infos.DeleteTileInfo( coordX, coordY, coordZ );
+            Behaviors.ClearBehavior( coordX, coordY, coordZ );
         }
 
         public void Dispose()

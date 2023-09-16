@@ -11,78 +11,82 @@
         private int _height;
         public int Height => _height;
 
-        public int Length => Tiles.Length;
+        private int _depth;
+        public int Depth => _depth;
 
-        public TileInfo[] Tiles;
+        public int Length => Infos.Length;
 
-        public ref TileInfo this[int index] => ref Tiles[index];
-        public ref TileInfo this[int x, int y] => ref Tiles[x + y * Width];
+        public TileInfo[] Infos;
+
+        public ref TileInfo this[int index] => ref Infos[index];
+        public ref TileInfo this[int x, int y, int z] => ref Infos[z * Width * Height + x + y * Width];
 
         public TileInfoCollection()
         {
             _width = 0;
             _height = 0;
-            Tiles = new TileInfo[1];
+            _depth = 0;
+            Infos = new TileInfo[1];
         }
 
-        public TileInfoCollection( int width, int height )
+        public TileInfoCollection( int width, int height, int depth )
         {
             _width = width;
             _height = height;
-            Tiles = new TileInfo[_width * _height];
-            TileInfo _emptyTile = new TileInfo();
-            _emptyTile.Empty = true;
-            Span<TileInfo> _map = Tiles;
-            _map.Fill( _emptyTile );
+            _depth = depth;
+            Infos = new TileInfo[_width * _height * _depth];
+            TileInfo _cache = new TileInfo();
+            _cache.Empty = true;
+            Span<TileInfo> infos = Infos;
+            infos.Fill( _cache );
         }
 
-        public TileInfoCollection( Point size )
+        internal void CreateTileDefaultInfo( int coordinateX, int coordinateY, int coordinateZ )
         {
-            _width = size.X;
-            _height = size.Y;
-            Tiles = new TileInfo[_width * _height];
-            TileInfo _emptyTile = new TileInfo();
-            _emptyTile.Empty = true;
-            Span<TileInfo> _map = Tiles;
-            _map.Fill( _emptyTile );
-        }
-
-        internal void CreateTileDefaultInfo( int coordinateX, int coordinateY )
-        {
-            int id = coordinateX + coordinateY * Width;
-            Tiles[id].CoordinateX = coordinateX;
-            Tiles[id].CoordinateY = coordinateY;
-            Tiles[id].ID = id;
-            Tiles[id].Empty = false;
+            int id = (coordinateZ * Height * Width) + (coordinateX + coordinateY * Width);
+            Infos[id].CoordinateX = coordinateX;
+            Infos[id].CoordinateY = coordinateY;
+            Infos[id].CoordinateZ = coordinateZ;
+            Infos[id].ID = id;
+            Infos[id].Empty = false;
         }
 
         internal void CreateTileDefaultInfo( int index )
         {
             int id = index;
-            Tiles[id].Empty = false;
-            Tiles[id].ID = id;
-            Tiles[id].CoordinateX = index % Width;
-            Tiles[id].CoordinateY = index / Width;
+            int coord = index % (Width * Height);
+            Infos[id].Empty = false;
+            Infos[id].ID = id;
+            Infos[id].CoordinateX = coord % Width;
+            Infos[id].CoordinateY = coord / Width;
+            Infos[id].CoordinateZ = index / (Width * Height);
         }
 
-        internal void DeleteTileInfo( int coordinateX, int coordinateY )
+        internal void DeleteTileInfo( int coordinateX, int coordinateY, int coordinateZ )
         {
-            int id = coordinateX + coordinateY * Width;
-            Tiles[id].ID = 0;
-            Tiles[id].Collision = TileCollision.Passable;
-            Tiles[id].Empty = true;
+            int id = (coordinateZ * Width * Height) + (coordinateX + coordinateY * Width);
+            Infos[id].Collision = TileCollision.Passable;
+            Infos[id].Empty = true;
+        }
+
+        internal void DeleteTileInfo( int index )
+        {
+            int id = index;
+            Infos[id].Empty = true;
+            Infos[id].Collision = TileCollision.Passable;
         }
 
         internal void LoadStep( BinaryReader reader )
         {
             _width = reader.ReadInt32();
             _height = reader.ReadInt32();
-            Tiles = new TileInfo[_width * _height];
-            for(int count = 0; count < _width * _height; count++)
+            _depth = reader.ReadInt32();
+            Infos = new TileInfo[_width * _height * _depth];
+            for(int count = 0; count < _width * _height * _depth; count++)
             {
-                Tiles[count] = new TileInfo();
-                Tiles[count].LoadStep( reader );
-                if(!Tiles[count].Empty)
+                Infos[count] = new TileInfo();
+                Infos[count].LoadStep( reader );
+                if(!Infos[count].Empty)
                     CreateTileDefaultInfo( count );
             }
         }
@@ -91,7 +95,8 @@
         {
             writer.Write( _width );
             writer.Write( _height );
-            foreach(var info in Tiles)
+            writer.Write( _depth );
+            foreach(var info in Infos)
                 info.SaveStep( writer );
         }
     }
