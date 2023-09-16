@@ -1,4 +1,4 @@
-﻿namespace DeltaMachine.Core.Common.Graphics
+﻿namespace Colin.Core.Graphics
 {
     public static class DrawBatcherExpa
     {

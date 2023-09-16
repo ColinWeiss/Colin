@@ -89,6 +89,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FillPattern.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\ColorGradienter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcherExpa.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\IDrawBatcher.cs" />

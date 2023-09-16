@@ -7,6 +7,7 @@ using Colin.Core.Common;
 using Colin.Core.Graphics;
 */
 
+using DeltaMachine.Core.Common.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Colin.Core.Modulars.Backgrounds
@@ -74,7 +75,9 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public void DoRender( SpriteBatch batch )
         {
-            if(CurrentStyle != null)
+            using var _perfmonCallback = Perfmon.StartScopedWatch("Background.Render");
+
+            if (CurrentStyle != null)
             {
                 BackgroundLayer layer;
                 for(int count = 0; count < CurrentStyle.Layers.Count; count++)
