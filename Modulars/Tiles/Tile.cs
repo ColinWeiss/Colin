@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using System.Text.Json;
+
+namespace Colin.Core.Modulars.Tiles
 {
     public class Tile : ISceneModule
     {
@@ -29,68 +31,24 @@
 
         public TileInfoCollection Infos;
 
-        public TileBehaviorCollection Behaviors;
-
         public void Create( int width, int height, int depth )
         {
             _width = width;
             _height = height;
             _depth = depth;
             Infos = new TileInfoCollection( width, height, depth );
-            Behaviors = new TileBehaviorCollection( width, height, depth );
-            Behaviors.tile = this;
+            Infos.Tile = this;
         }
-
-        public void DoInitialize()
-        {
-
-        }
-        public void Start()
-        {
-
-        }
-        public void DoUpdate( GameTime time )
-        {
-
-        }
-
-        public void Place<T>( int coorX, int coordY, int coordZ ) where T : TileBehavior, new()
-        {
-            if(Infos[coorX, coordY, coordZ].Empty)
-            {
-                Infos.CreateTileDefaultInfo( coorX, coordY, coordZ );
-                Behaviors.SetBehavior<T>( coorX, coordY, coordZ );
-            }
-        }
-
-        public void Place<T>( int index ) where T : TileBehavior, new()
-        {
-            if(Infos[index].Empty)
-            {
-                Infos.CreateTileDefaultInfo( index );
-                Behaviors.SetBehavior<T>( index );
-            }
-        }
-
-        public void Place( TileBehavior behavior, int index )
-        {
-            if(Infos[index].Empty)
-            {
-                Infos.CreateTileDefaultInfo( index );
-                Behaviors.SetBehavior( behavior, index );
-            }
-        }
-
-        public void Smash( int coordX, int coordY, int coordZ )
-        {
-            Infos.DeleteTileInfo( coordX, coordY, coordZ );
-            Behaviors.ClearBehavior( coordX, coordY, coordZ );
-        }
-
+        public void DoInitialize() { }
+        public void Start() { }
+        public void DoUpdate( GameTime time ) { }
         public void Dispose()
         {
-            Behaviors = null;
             Infos = new TileInfoCollection();
         }
+
+        public void Place<T>( int x, int y, int z ) where T : TileBehavior, new() => Infos.Place<T>( x, y, z );
+
+        public void Destruction( int x, int y, int z ) => Infos.Destruction( x, y, z );
     }
 }

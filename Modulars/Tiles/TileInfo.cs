@@ -51,15 +51,50 @@
                 if(CoordY - 1 >= 0)
                     return ref Tile.Infos[CoordX, CoordY - 1, CoordZ];
                 else
-                    return ref Tile.Infos[CoordX, CoordY, CoordZ];
+                    return ref _null;
             }
         }
 
-        public Dictionary<Type, TileScript> Scripts { get; internal set; } = new Dictionary<Type, TileScript>();
+        public ref TileInfo Bottom
+        {
+            get
+            {
+                if(CoordY + 1 < Tile.Height)
+                    return ref Tile.Infos[CoordX, CoordY + 1, CoordZ];
+                else
+                    return ref _null;
+            }
+        }
+
+        public ref TileInfo Left
+        {
+            get
+            {
+                if(CoordX - 1 >= 0)
+                    return ref Tile.Infos[CoordX - 1, CoordY, CoordZ];
+                else
+                    return ref _null;
+            }
+        }
+
+        public ref TileInfo Right
+        {
+            get
+            {
+                if(CoordX + 1 < Tile.Width)
+                    return ref Tile.Infos[CoordX + 1, CoordY, CoordZ];
+                else
+                    return ref _null;
+            }
+        }
+
+        public Dictionary<Type, TileScript> Scripts = new Dictionary<Type, TileScript>();
+
         public T AddScript<T>() where T : TileScript, new()
         {
             T t = new T();
             t.Tile = Tile;
+            t.ID = ID;
             Scripts.Add( t.GetType(), t );
             return t;
         }
@@ -102,6 +137,7 @@
             }
         }
 
-        public static TileInfo Null => new TileInfo();
+        private static TileInfo _null;
+        public static TileInfo Null => _null;
     }
 }

@@ -12,33 +12,48 @@
 
         public Tile Tile { get; internal set; }
 
-        public virtual void DoPlace( TileInfo info )
+        public void DoPlace( ref TileInfo info )
         {
-            OnPlace( info );
+            OnPlace( ref info );
             foreach(var script in info.Scripts.Values)
                 script.OnPlace(); //在放置时执行所有脚本的 OnPlace 方法.
         }
         /// <summary>
         /// 执行于物块放置时.
         /// </summary>
-        public virtual void OnPlace( TileInfo info ) { }
+        public virtual void OnPlace( ref TileInfo info ) { }
 
-        public void DoRefresh( TileInfo info, int conduct = 1 )
+        public void DoRefresh( ref TileInfo info, int conduct = 1 )
         {
             if(conduct > 0)
             {
-           //    Top?.DoRefresh( info, conduct - 1 );
-           //    Bottom?.DoRefresh( info, conduct - 1 );
-           //    Left?.DoRefresh( info, conduct - 1 );
-           //    Right?.DoRefresh( info, conduct - 1 );
+                if(!info.Top.Empty)
+                    Console.WriteLine( info.Coordinate );//  info.Top.Behavior.DoRefresh( ref info.Top );
+                if(!info.Bottom.Empty) 
+                   Console.WriteLine( info.Coordinate );//  info.Bottom.Behavior.DoRefresh( ref info.Bottom );
+                if(!info.Left.Empty) 
+                    Console.WriteLine( info.Coordinate );// info.Left.Behavior.DoRefresh( ref info.Left );
+                if(!info.Right.Empty) 
+                   Console.WriteLine( info.Coordinate );//  info.Right.Behavior.DoRefresh( ref info.Right );
             }
-            OnRefresh( info , conduct );
+            OnRefresh( ref info, conduct );
             foreach(var script in info.Scripts.Values)
                 script.OnRefresh();
         }
         /// <summary>
         /// 执行于物块刷新时.
         /// </summary>
-        public virtual void OnRefresh( TileInfo info, int conduct = 1 ) { }
+        public virtual void OnRefresh( ref TileInfo info, int conduct = 1 ) { }
+
+        public void DoDestruction( ref TileInfo info )
+        {
+            OnDestruction( ref info );
+        }
+        /// <summary>
+        /// 执行于物块被破坏时.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="conduct"></param>
+        public virtual void OnDestruction( ref TileInfo info, int conduct = 1 ) { }
     }
 }

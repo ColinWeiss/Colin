@@ -142,7 +142,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Tile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileAroundState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBehaviorCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileCollision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileFrame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfo.cs" />
