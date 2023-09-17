@@ -138,7 +138,7 @@ namespace Colin.Core.Modulars.Tiles
             }
             for(int count = 0; count < Length - 1; count++)
             {
-                if(_cache.TryGetValue( _behaviors[count].Name, out int value ))
+                if(_cache.TryGetValue( _behaviors[count].Identifier, out int value ))
                     writer.Write( value );
                 else
                     writer.Write( -1 );

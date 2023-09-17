@@ -16,7 +16,7 @@
 
         public int Length => Infos.Length;
 
-        public TileInfo[] Infos;
+        public TileInfo[]? Infos;
 
         public ref TileInfo this[int index] => ref Infos[index];
         public ref TileInfo this[int x, int y, int z] => ref Infos[z * Width * Height + x + y * Width];
@@ -44,9 +44,9 @@
         internal void CreateTileDefaultInfo( int coordinateX, int coordinateY, int coordinateZ )
         {
             int id = (coordinateZ * Height * Width) + (coordinateX + coordinateY * Width);
-            Infos[id].CoordinateX = coordinateX;
-            Infos[id].CoordinateY = coordinateY;
-            Infos[id].CoordinateZ = coordinateZ;
+            Infos[id].CoordX = coordinateX;
+            Infos[id].CoordY = coordinateY;
+            Infos[id].CoordZ = coordinateZ;
             Infos[id].ID = id;
             Infos[id].Empty = false;
         }
@@ -57,9 +57,9 @@
             int coord = index % (Width * Height);
             Infos[id].Empty = false;
             Infos[id].ID = id;
-            Infos[id].CoordinateX = coord % Width;
-            Infos[id].CoordinateY = coord / Width;
-            Infos[id].CoordinateZ = index / (Width * Height);
+            Infos[id].CoordX = coord % Width;
+            Infos[id].CoordY = coord / Width;
+            Infos[id].CoordZ = index / (Width * Height);
         }
 
         internal void DeleteTileInfo( int coordinateX, int coordinateY, int coordinateZ )

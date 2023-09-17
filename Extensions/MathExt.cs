@@ -323,7 +323,7 @@ namespace Colin.Core.Extensions
         /// moves start towards end by shift amount clamping the result. start can be less than or greater than end.
         /// example: start is 2, end is 10, shift is 4 results in 6
         /// </summary>
-        /// <param name="start">Start.</param>
+        /// <param name="start">OnPlace.</param>
         /// <param name="end">End.</param>
         /// <param name="shift">Shift.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -340,7 +340,7 @@ namespace Colin.Core.Extensions
         /// example 1: start is 30, end is 100, shift is 25 results in 55
         /// example 2: start is 340, end is 30, shift is 25 results in 5 (365 is wrapped to 5)
         /// </summary>
-        /// <param name="start">Start.</param>
+        /// <param name="start">OnPlace.</param>
         /// <param name="end">End.</param>
         /// <param name="shift">Shift.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -357,7 +357,7 @@ namespace Colin.Core.Extensions
         /// moves start angle towards end angle by shift amount (all in radians) clamping the result and choosing the shortest path. start can be less than or greater than end.
         /// this method works very similar to approachAngle, the only difference is use of radians instead of degrees and wrapping at 2*Pi instead of 360.
         /// </summary>
-        /// <param name="start">Start.</param>
+        /// <param name="start">OnPlace.</param>
         /// <param name="end">End.</param>
         /// <param name="shift">Shift.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]

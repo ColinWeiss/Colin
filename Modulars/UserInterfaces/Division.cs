@@ -298,7 +298,7 @@
             Children.ForEach( child =>
             {
                 //   if( Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ) )
-                //       child?.DoRender( spriteBatch );
+                //       child?.RenderTexture( spriteBatch );
                 //    else
                 child?.DoRender( spriteBatch );
             } );

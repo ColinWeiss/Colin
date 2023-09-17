@@ -24,7 +24,7 @@ namespace Colin.Core.Assets.GameAssets
                 if(!_type.IsAbstract && _type.IsSubclassOf( typeof( TileBehavior ) ))
                 {
                     _behavior = (TileBehavior)Activator.CreateInstance( _type );
-                    _behaviors.Add( _behavior.Name, _behavior );
+                    _behaviors.Add( _behavior.Identifier, _behavior );
                 }
             }
         }
@@ -40,7 +40,7 @@ namespace Colin.Core.Assets.GameAssets
                 if(!_type.IsAbstract && _type.IsSubclassOf( typeof( TileBehavior ) ))
                 {
                     _behavior = (TileBehavior)Activator.CreateInstance( _type );
-                    _behaviors.Add( _behavior.Name, _behavior );
+                    _behaviors.Add( _behavior.Identifier, _behavior );
                 }
             }
         }

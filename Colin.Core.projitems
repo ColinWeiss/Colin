@@ -148,6 +148,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
@@ -189,5 +190,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Structures\QuadTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Prefabs\" />
   </ItemGroup>
 </Project>

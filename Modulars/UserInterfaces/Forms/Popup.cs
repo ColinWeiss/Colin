@@ -49,7 +49,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             _substrateRenderer.Cut = 6;
             base.Register( Substrate );
 
-            Block = new Division( "Block" );
+            Block = new Division( "Behavior" );
             Block.BindRenderer<DivPixelRenderer>();
             Block.Design.Color = new Color( 17, 18, 20 );
             Block.Layout.Top = _titleHeight;
