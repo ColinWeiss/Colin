@@ -93,7 +93,7 @@
             get
             {
                 if( CoordZ - 1 >= 0 )
-                    return ref Tile.Infos[CoordX + 1, CoordY, CoordZ - 1 ];
+                    return ref Tile.Infos[CoordX, CoordY, CoordZ - 1 ];
                 else
                     return ref _null;
             }
@@ -103,8 +103,8 @@
         {
             get
             {
-                if(CoordZ + 1 < Tile.Depth )
-                    return ref Tile.Infos[CoordX + 1, CoordY, CoordZ + 1];
+                if(CoordZ + 1 < Tile?.Depth )
+                    return ref Tile.Infos[CoordX, CoordY, CoordZ + 1];
                 else
                     return ref _null;
             }
