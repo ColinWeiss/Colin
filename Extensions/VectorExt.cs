@@ -102,6 +102,10 @@
         {
             return new Point((int)vec.X, (int)vec.Y);
         }
+        public static Vector2 SafeNormalized(this Vector2 vec, Vector2 defaultValue = default)
+        {
+            return vec.X == 0 && vec.Y == 0 ? defaultValue : vec / vec.Length();
+        }
         public static Vector2 GetNormalized(this Vector2 vec)
         {
             float l = (float)Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y);
