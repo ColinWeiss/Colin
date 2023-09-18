@@ -21,10 +21,18 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public virtual void OnPlace() { }
         /// <summary>
+        /// 于物块初始化时执行.
+        /// </summary>
+        public virtual void OnInitialize() { }
+        /// <summary>
         /// 于物块刷新时执行.
         /// </summary>
         public virtual void OnRefresh() { }
-        internal void LoadStep( BinaryReader reader ) { }
-        internal void SaveStep( BinaryWriter writer ) { }
+        /// <summary>
+        /// 于物块被破坏时执行.
+        /// </summary>
+        public virtual void OnDestruction() { }
+        public virtual void LoadStep( BinaryReader reader ) { }
+        public virtual void SaveStep( BinaryWriter writer ) { }
     }
 }

@@ -140,7 +140,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Skys\Sky.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Skys\SkyStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Tile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileAroundState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileCollision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileFrame.cs" />
@@ -189,8 +188,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Structures\QuadTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Prefabs\" />
   </ItemGroup>
 </Project>

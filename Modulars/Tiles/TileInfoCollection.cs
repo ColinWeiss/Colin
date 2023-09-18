@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Assets.GameAssets;
+using DeltaMachine.Core.GameContents.GameSystems;
 using System;
 using System.Reflection;
 using System.Text.Json;
@@ -42,10 +43,8 @@ namespace Colin.Core.Modulars.Tiles
             _height = height;
             _depth = depth;
             Infos = new TileInfo[_width * _height * _depth];
-            TileInfo _cache = new TileInfo();
-            _cache.Empty = true;
-            Span<TileInfo> infos = Infos;
-            infos.Fill( _cache );
+            for(int count = 0; count < Infos.Length; count++)
+                Infos[count] = new TileInfo();
         }
 
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
@@ -53,8 +52,7 @@ namespace Colin.Core.Modulars.Tiles
             if(this[x, y, z].Empty)
             {
                 CreateTileDefaultInfo( x, y, z );
-                this[x, y, z].Behavior = TileAssets.Get<T>();
-                this[x, y, z].Behavior.Tile = Tile;
+                Set<T>( x, y, z );
                 this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
                 this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
             }
@@ -63,8 +61,7 @@ namespace Colin.Core.Modulars.Tiles
         public void Place<T>( int index ) where T : TileBehavior, new()
         {
             CreateTileDefaultInfo( index );
-            this[index].Behavior = TileAssets.Get<T>();
-            this[index].Behavior.Tile = Tile;
+            Set<T>( index );
             this[index].Behavior.OnPlace( ref this[index] );
             this[index].Behavior.DoRefresh( ref this[index], 1 );
         }
@@ -72,8 +69,7 @@ namespace Colin.Core.Modulars.Tiles
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
             CreateTileDefaultInfo( x, y, z );
-            this[x, y, z].Behavior = behavior;
-            this[x, y, z].Behavior.Tile = Tile;
+            Set( behavior , x , y , z );
             this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
             this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
         }
@@ -81,38 +77,49 @@ namespace Colin.Core.Modulars.Tiles
         public void Place( TileBehavior behavior, int index )
         {
             CreateTileDefaultInfo( index );
+            Set( behavior, index );
+            this[index].Behavior.Tile = Tile;
+            this[index].Behavior.OnPlace( ref this[index] );
+            this[index].Behavior.DoRefresh( ref this[index], 1 );
+        }
+
+        public void Set<T>( int x, int y, int z ) where T : TileBehavior, new()
+        {
+            this[x, y, z].Behavior = TileAssets.Get<T>();
+            this[x, y, z].Behavior.Tile = Tile;
+            this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
+        }
+
+        public void Set<T>( int index ) where T : TileBehavior, new()
+        {
+            this[index].Behavior = TileAssets.Get<T>();
+            this[index].Behavior.Tile = Tile;
+            this[index].Behavior.OnInitialize( ref this[index] );
+        }
+
+        public void Set( TileBehavior behavior, int x, int y, int z )
+        {
+            this[x, y, z].Behavior = behavior;
+            this[x, y, z].Behavior.Tile = Tile;
+            this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
+        }
+
+        public void Set( TileBehavior behavior, int index )
+        {
             this[index].Behavior = behavior;
             this[index].Behavior.Tile = Tile;
-            this[index].Behavior.OnPlace( ref this[index] );
-            this[index].Behavior.DoRefresh( ref this[index], 1 );
-        }
-
-        public void Place( Type behaviorType, int x, int y, int z )
-        {
-            CreateTileDefaultInfo( x, y, z );
-            this[x, y, z].Behavior = TileAssets.Get( behaviorType );
-            this[x, y, z].Behavior.Tile = Tile;
-            this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
-            this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
-        }
-
-        public void Place( Type behaviorType, int index )
-        {
-            CreateTileDefaultInfo( index );
-            this[index].Behavior = TileAssets.Get( behaviorType );
-            this[index].Behavior.Tile = Tile;
-            this[index].Behavior.OnPlace( ref this[index] );
-            this[index].Behavior.DoRefresh( ref this[index], 1 );
+            this[index].Behavior.OnInitialize( ref this[index] );
         }
 
         public void Destruction( int x, int y, int z )
         {
-            if( !this[x, y, z].Empty )
+            if(!this[x, y, z].Empty)
             {
                 DeleteTileInfo( x, y, z );
                 this[x, y, z].Behavior.DoDestruction( ref this[x, y, z] );
                 this[x, y, z].Behavior.DoRefresh( ref this[x, y, z] );
                 this[x, y, z].Behavior = null;
+                this[x, y, z].Scripts.Clear();
             }
         }
 
@@ -173,16 +180,18 @@ namespace Colin.Core.Modulars.Tiles
             }
             List<string> _indexMap = _cache.Keys.ToList();
             int _index = 0;
-            Type _behaviorType;
+            TileBehavior behavior;
             for(int count = 0; count < Length - 1; count++)
             {
                 _index = reader.ReadInt32();
                 if(_index != -1)
-                {
-                    _behaviorType = TileAssets.Get( _indexMap[_index] ).GetType();
-                    Place( _behaviorType, count );
-                }
+                    Set( TileAssets.Get( _indexMap[_index] ) , count );
             }
+            for(int count = 0; count < Length - 1; count++)
+                Infos[count].Behavior?.DoRefresh( ref Infos[count], 1 );
+            for(int count = 0; count < Length - 1; count++)
+                for(int scriptCount = 0; scriptCount < Infos[count].Scripts.Count; scriptCount++)
+                    Infos[count].Scripts.Values.ElementAt( scriptCount ).LoadStep( reader );
         }
 
         internal void SaveStep( string tablePath, BinaryWriter writer )
@@ -201,11 +210,18 @@ namespace Colin.Core.Modulars.Tiles
             }
             for(int count = 0; count < Length - 1; count++)
             {
-                if(_cache.TryGetValue( this[count].Behavior.Identifier, out int value ))
-                    writer.Write( value );
+                string ident = this[count].Behavior?.Identifier;
+                if(!string.IsNullOrEmpty( ident ))
+                {
+                    if(_cache.TryGetValue( this[count].Behavior.Identifier, out int value ))
+                        writer.Write( value );
+                }
                 else
                     writer.Write( -1 );
             }
+            for(int count = 0; count < Length - 1; count++)
+                for(int scriptCount = 0; scriptCount < Infos[count].Scripts.Count; scriptCount++)
+                    Infos[count].Scripts.Values.ElementAt( scriptCount ).SaveStep( writer );
         }
     }
 }

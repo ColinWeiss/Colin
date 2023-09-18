@@ -59,7 +59,7 @@
         {
             get
             {
-                if(CoordY + 1 < Tile.Height)
+                if(CoordY + 1 < Tile?.Height)
                     return ref Tile.Infos[CoordX, CoordY + 1, CoordZ];
                 else
                     return ref _null;
@@ -81,15 +81,36 @@
         {
             get
             {
-                if(CoordX + 1 < Tile.Width)
+                if(CoordX + 1 < Tile?.Width)
                     return ref Tile.Infos[CoordX + 1, CoordY, CoordZ];
                 else
                     return ref _null;
             }
         }
 
-        public Dictionary<Type, TileScript> Scripts = new Dictionary<Type, TileScript>();
+        public ref TileInfo Front
+        {
+            get
+            {
+                if( CoordZ - 1 >= 0 )
+                    return ref Tile.Infos[CoordX + 1, CoordY, CoordZ - 1 ];
+                else
+                    return ref _null;
+            }
+        }
 
+        public ref TileInfo Behind
+        {
+            get
+            {
+                if(CoordZ + 1 < Tile.Depth )
+                    return ref Tile.Infos[CoordX + 1, CoordY, CoordZ + 1];
+                else
+                    return ref _null;
+            }
+        }
+
+        public Dictionary<Type, TileScript> Scripts = new Dictionary<Type, TileScript>();
         public T AddScript<T>() where T : TileScript, new()
         {
             T t = new T();
@@ -100,7 +121,7 @@
         }
         public T GetScript<T>() where T : TileScript => Scripts.GetValueOrDefault( typeof( T ), null ) as T;
 
-        public TileBehavior Behavior;
+        public TileBehavior Behavior = null;
 
         public RectangleF HitBox => new RectangleF( Coordinate * TileOption.TileSizeF, TileOption.TileSizeF );
 
@@ -112,7 +133,6 @@
             CoordY = 0;
             CoordZ = 0;
             Tile = null;
-            Behavior = null;
             Texture = new TileFrame( -1, -1 );
             Collision = TileCollision.Impassable;
         }
@@ -137,7 +157,7 @@
             }
         }
 
-        private static TileInfo _null;
+        internal static TileInfo _null = new TileInfo();
         public static TileInfo Null => _null;
     }
 }

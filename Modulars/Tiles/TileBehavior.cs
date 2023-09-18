@@ -23,18 +23,30 @@
         /// </summary>
         public virtual void OnPlace( ref TileInfo info ) { }
 
+        public void DoInitialize( ref TileInfo info )
+        {
+            OnInitialize( ref info );
+            foreach(var script in info.Scripts.Values)
+                script.OnInitialize(); //在放置时执行所有脚本的 OnPlace 方法.
+        }
+        /// <summary>
+        /// 执行于物块初始化.
+        /// </summary>
+        /// <param name="info"></param>
+        public virtual void OnInitialize( ref TileInfo info ) { }
+
         public void DoRefresh( ref TileInfo info, int conduct = 1 )
         {
             if(conduct > 0)
             {
                 if(!info.Top.Empty)
-                    Console.WriteLine( info.Coordinate );//  info.Top.Behavior.DoRefresh( ref info.Top );
-                if(!info.Bottom.Empty) 
-                   Console.WriteLine( info.Coordinate );//  info.Bottom.Behavior.DoRefresh( ref info.Bottom );
-                if(!info.Left.Empty) 
-                    Console.WriteLine( info.Coordinate );// info.Left.Behavior.DoRefresh( ref info.Left );
-                if(!info.Right.Empty) 
-                   Console.WriteLine( info.Coordinate );//  info.Right.Behavior.DoRefresh( ref info.Right );
+                    info.Top.Behavior.DoRefresh( ref info.Top , conduct - 1 );
+                if(!info.Bottom.Empty)
+                    info.Bottom.Behavior.DoRefresh( ref info.Bottom, conduct - 1);
+                if(!info.Left.Empty)
+                    info.Left.Behavior.DoRefresh( ref info.Left, conduct - 1 );
+                if(!info.Right.Empty)
+                    info.Right.Behavior.DoRefresh( ref info.Right, conduct - 1 );
             }
             OnRefresh( ref info, conduct );
             foreach(var script in info.Scripts.Values)
@@ -48,6 +60,8 @@
         public void DoDestruction( ref TileInfo info )
         {
             OnDestruction( ref info );
+            foreach(var script in info.Scripts.Values)
+                script.OnDestruction();
         }
         /// <summary>
         /// 执行于物块被破坏时.

@@ -31,6 +31,11 @@ namespace Colin.Core.Modulars.Tiles
 
         public TileInfoCollection Infos;
 
+        public Tile()
+        {
+            TileInfo._null.Tile = this;
+        }
+
         public void Create( int width, int height, int depth )
         {
             _width = width;
