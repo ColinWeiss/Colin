@@ -30,16 +30,34 @@ namespace Colin.Core.Audios
         /// 播放指定音效.
         /// </summary>
         /// <param name="soundEffect">音效.</param>
-        public void Play( SoundEffect soundEffect )
+        public void Play( SoundEffect soundEffect, bool useInstance = true )
         {
             if(EngineInfo.Config.SoundEffect)
             {
-                SoundEffectInstance _instance = soundEffect?.CreateInstance();
-                if(_instance != null)
+                if(useInstance)
                 {
-                    _instance.Volume = EngineInfo.Config.SoundEffectVolume;
-                    _instance.Play();
+                    SoundEffectInstance _instance = soundEffect?.CreateInstance();
+                    if(_instance != null)
+                    {
+                        _instance.Volume = EngineInfo.Config.SoundEffectVolume;
+                        _instance.Play();
+                    }
                 }
+                else
+                    soundEffect?.Play();
+            }
+        }
+
+        /// <summary>
+        /// 播放指定音效.
+        /// </summary>
+        /// <param name="soundEffect">音效.</param>
+        public void PlayInstance( SoundEffectInstance instance )
+        {
+            if(EngineInfo.Config.SoundEffect)
+            {
+                instance.Volume = EngineInfo.Config.SoundEffectVolume;
+                instance.Play();
             }
         }
 

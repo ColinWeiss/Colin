@@ -28,11 +28,11 @@ namespace Colin.Core.Assets
         }
 
         /// <summary>
-        /// 根据路径获取声音贴图.
+        /// 根据路径获取声音.
         /// <br>[!] 起始目录为 <![CDATA["Sounds"]]></br>
         /// </summary>
         /// <param name="path">路径.</param>
-        /// <returns>声音贴图.</returns>
+        /// <returns>声音.</returns>
         public static SoundEffect Get( string path )
         {
             SoundEffect _sound;
