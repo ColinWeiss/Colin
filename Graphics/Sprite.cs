@@ -56,6 +56,9 @@
         public Sprite( Texture2D texture )
         {
             Source = texture;
+            SpriteFrame.Width = texture.Width;
+            SpriteFrame.Height = texture.Height;
+            SpriteFrame.Direction = Direction.Portrait;
             AddThisToGraphicCoreSpritePool();
         }
 

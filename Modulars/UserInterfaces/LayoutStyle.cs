@@ -56,7 +56,15 @@
             }
         }
         public Point TotalLocation => new Point( TotalLeft, TotalTop );
-        public Vector2 LocationF => new Vector2( Left, Top );
+        public Vector2 LocationF
+        {
+            get =>new Vector2( Left, Top );
+            set
+            {
+                Left = (int)value.X;
+                Top = (int)value.Y;
+            }
+        }
         public Vector2 TotalLocationF => new Vector2( TotalLeft, TotalTop );
 
         public int Width;

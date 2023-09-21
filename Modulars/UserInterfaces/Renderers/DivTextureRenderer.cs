@@ -12,7 +12,7 @@
                     _sprite.Source,
                     Division.Layout.TotalLocationF + Division.Design.Anchor
                     + Division.Layout.HalfF - _sprite.Half,
-                    null, Division.Design.Color,
+                    _sprite.SpriteFrame.Frame, Division.Design.Color,
                     Division.Design.Rotation,
                     Division.Design.Anchor,
                     Division.Design.Scale,
