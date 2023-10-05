@@ -54,6 +54,8 @@ namespace Colin.Core.Modulars.Tiles
 
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new() => Infos.Place<T>( x, y, z );
 
+        public void Place( TileBehavior behavior, int x, int y, int z ) => Infos.Place( behavior, x, y, z );
+
         public void Destruction( int x, int y, int z ) => Infos.Destruction( x, y, z );
     }
 }

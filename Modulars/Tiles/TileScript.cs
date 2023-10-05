@@ -16,6 +16,7 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordX => Info.CoordX;
         public int CoordY => Info.CoordY;
         public int CoordZ => Info.CoordZ;
+        public Vector2 Coord => new Vector2( CoordX , CoordY );
         /// <summary>
         /// 在第一次放置时执行.
         /// </summary>
