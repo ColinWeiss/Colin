@@ -41,8 +41,9 @@ namespace Colin.Core.Modulars.Tiles
             _width = width;
             _height = height;
             _depth = depth;
-            Infos = new TileInfoCollection( width, height, depth );
+            Infos = new TileInfoCollection();
             Infos.Tile = this;
+            Infos.Create( width, height, depth );
         }
         public void DoInitialize() { }
         public void Start() { }

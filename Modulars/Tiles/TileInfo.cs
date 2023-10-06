@@ -134,7 +134,7 @@
             CoordZ = 0;
             Tile = null;
             Texture = new TileFrame( -1, -1 );
-            Collision = TileCollision.Impassable;
+            Collision = TileCollision.Passable;
         }
 
         internal void LoadStep( BinaryReader reader )

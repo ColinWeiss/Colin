@@ -37,14 +37,23 @@ namespace Colin.Core.Modulars.Tiles
             Infos = new TileInfo[1];
         }
 
-        public TileInfoCollection( int width, int height, int depth )
+        public void Create( int width, int height, int depth )
         {
             _width = width;
             _height = height;
             _depth = depth;
             Infos = new TileInfo[_width * _height * _depth];
+            int coord;
             for(int count = 0; count < Infos.Length; count++)
+            {
+                coord = count % (Width * Height);
                 Infos[count] = new TileInfo();
+                Infos[count].Tile = Tile;
+                Infos[count].ID = count;
+                Infos[count].CoordX = coord % Width;
+                Infos[count].CoordY = coord / Width;
+                Infos[count].CoordZ = count / (Width * Height);
+            }
         }
 
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
@@ -172,6 +181,16 @@ namespace Colin.Core.Modulars.Tiles
                 Infos[count].LoadStep( reader );
                 if(!Infos[count].Empty)
                     CreateTileDefaultInfo( count );
+                else
+                {
+                    int id = count;
+                    int coord = count % (Width * Height);
+                    Infos[id].Tile = Tile;
+                    Infos[id].ID = id;
+                    Infos[id].CoordX = coord % Width;
+                    Infos[id].CoordY = coord / Width;
+                    Infos[id].CoordZ = count / (Width * Height);
+                }
             }
             Dictionary<string, int> _cache = new Dictionary<string, int>();
             using(FileStream fileStream = new FileStream( tablePath, FileMode.Open ))
