@@ -121,7 +121,7 @@ namespace Colin.Core.Common
                 }
             }
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
-            for(int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
+            for(int count = Modules.RenderableComponents.Values.Count - 1; count >= 0; count--)
             {
                 renderMode = Modules.RenderableComponents.Values.ElementAt( count );
                 if(renderMode.FinalPresentation)
