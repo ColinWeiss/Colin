@@ -68,7 +68,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\BasicEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\InputEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEventManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\WeakReferenceDelegate.cs" />

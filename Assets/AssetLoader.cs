@@ -34,7 +34,7 @@ namespace Colin.Core.Assets
                 }
                 EngineConsole.WriteLine( ConsoleTextType.Remind, "资源加载完成." );
                 BasicEvent onResourceLoadComplete = new BasicEvent();
-                onResourceLoadComplete.name = "Event_GameResources_LoadComplete";
+                onResourceLoadComplete.Name = "Event_GameResources_LoadComplete";
                 OnLoadComplete?.Invoke( this, onResourceLoadComplete );
             } );
         }

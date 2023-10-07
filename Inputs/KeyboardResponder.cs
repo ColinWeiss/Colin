@@ -38,7 +38,7 @@ namespace Colin.Core.Inputs
             {
                 if(!pressedKeysLast.Contains( key ))
                 {
-                    KeyboardEvent.name = "Event.Keyboard.KeyClickBefore";
+                    KeyboardEvent.Name = "Event.Keyboard.KeyClickBefore";
                     KeyboardEvent.Keys = key;
                     KeyClickBefore?.Invoke( this, KeyboardEvent );
                 }
@@ -47,7 +47,7 @@ namespace Colin.Core.Inputs
             {
                 if(State.IsKeyUp( keyLast ) && StateLast.IsKeyDown( keyLast ))
                 {
-                    KeyboardEvent.name = "Event.Keyboard.KeyClickAfter";
+                    KeyboardEvent.Name = "Event.Keyboard.KeyClickAfter";
                     KeyboardEvent.Keys = keyLast;
                     KeyClickAfter?.Invoke( this, KeyboardEvent );
                 }
