@@ -79,7 +79,7 @@ namespace Colin.Core.Common
                 dwMode.FinalPresentation = true;
                 RenderableComponents.Add( dwMode.GetType(), dwMode );
                 dwMode.InitRenderTarget();
-                Scene.Event.ClientSizeChanged += dwMode.OnClientSizeChanged;
+                Scene.Events.ClientSizeChanged += dwMode.OnClientSizeChanged;
             }
             Components.Add( sceneMode.GetType(), sceneMode );
         }
@@ -91,7 +91,7 @@ namespace Colin.Core.Common
                 if(sceneMode is IRenderableISceneModule dwMode)
                 {
                     RenderableComponents.Remove( dwMode.GetType() );
-                    Scene.Event.ClientSizeChanged -= dwMode.OnClientSizeChanged;
+                    Scene.Events.ClientSizeChanged -= dwMode.OnClientSizeChanged;
                 }
                 return true;
             }

@@ -7,37 +7,20 @@ namespace Colin.Core.Events
     public class KeysEventResponder : EventResponder
     {
         public KeysEventResponder( string name ) : base( name ) { }
-        public event EventHandler<KeysEventArgs> ClickBefore;
-        public event EventHandler<KeysEventArgs> Down;
-        public event EventHandler<KeysEventArgs> ClickAfter;
+        public event EventHandler<KeyEventArgs> ClickBefore;
+        public event EventHandler<KeyEventArgs> Down;
+        public event EventHandler<KeyEventArgs> ClickAfter;
 
         public override void Handle( BasicEventArgs theEvent )
         {
-            if(theEvent is KeysEventArgs keysEvent)
+            if(theEvent is KeyEventArgs keysEvent)
             {
-                Keys[] lasts = KeyboardResponder.StateLast.GetPressedKeys();
-                Keys[] current = KeyboardResponder.State.GetPressedKeys();
-                foreach(var key in lasts)
-                {
-                    if(!current.Contains( key ))
-                    {
-                        keysEvent.Key = key;
-                        ClickAfter?.Invoke( this, keysEvent );
-                    }
-                }
-                foreach(var key in current)
-                {
-                    if(!lasts.Contains( key ))
-                    {
-                        keysEvent.Key = key;
-                        ClickBefore?.Invoke( this, keysEvent );
-                    }
-                    if(lasts.Contains( key ))
-                    {
-                        keysEvent.Key = key;
-                        Down?.Invoke( this, keysEvent );
-                    }
-                }
+                if(keysEvent.ClickBefore)
+                    ClickBefore?.Invoke( this, keysEvent );
+                if(keysEvent.Down)
+                    Down?.Invoke( this, keysEvent );
+                if(keysEvent.ClickAfter)
+                    ClickAfter?.Invoke( this, keysEvent );
             }
         }
     }

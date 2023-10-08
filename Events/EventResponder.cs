@@ -12,6 +12,8 @@ namespace Colin.Core.Events
 
         public List<EventResponder> Children;
 
+        public bool Postorder = true;
+
         public EventResponder( string name )
         {
             Name = name;
@@ -23,7 +25,7 @@ namespace Colin.Core.Events
         public void Response( BasicEventArgs theEvent )
         {
             EventResponder child;
-            for(int count = Children.Count - 1; count >= 0; count--)
+            for(int count = Postorder ? Children.Count - 1 : 0; Postorder ? count >= 0 : count < Children.Count; count += Postorder ? -1 : 1)
             {
                 child = Children[count];
                 if(!theEvent.Captured)

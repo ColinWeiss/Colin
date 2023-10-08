@@ -28,8 +28,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         public void DoInitialize()
         {
             Events = new EventResponder( "UserInterface.EventResponder" );
-            Scene.Event.Mouse.Register( Events );
-            Scene.Event.Keyboard.Register( Events );
+            Scene.Events.Mouse.Register( Events );
+            Scene.Events.KeysEvent.Register( Events );
         }
 
         public void Start() { }

@@ -144,7 +144,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Height += _titleHeight + 8;
 
             Events.LeftClickBefore += ( ) => Interface.Container.SetTop( this );
-            Events.KeyClickBefore += ( object s, KeysEventArgs e ) =>
+            Events.KeyClickBefore += ( object s, KeyEventArgs e ) =>
             {
                 if(e.Key == Keys.Escape && IsVisible )
                 {

@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Colin.Core.Events
 {
-    public class KeysEventArgs : BasicEventArgs
+    public class KeyEventArgs : BasicEventArgs
     {
         public Keys Key;
         public bool ClickBefore;
         public bool Down;
         public bool ClickAfter;
-        public KeysEventArgs( string name ) : base( name ) { }
+        public KeyEventArgs( string name ) : base( name ) { }
     }
 }

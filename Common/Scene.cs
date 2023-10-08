@@ -40,14 +40,14 @@ namespace Colin.Core.Common
 
         public SceneShaderManager SceneShaders = new SceneShaderManager();
 
-        public SceneEventResponder Event;
+        public SceneEventResponder Events;
 
         public Scene() : base( EngineInfo.Engine )
         {
-            Event = new SceneEventResponder( );
+            Events = new SceneEventResponder( );
             // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
-            Game.Window.ClientSizeChanged += Event.InvokeSizeChange;
-            Game.Window.OrientationChanged += Event.InvokeSizeChange;
+            Game.Window.ClientSizeChanged += Events.InvokeSizeChange;
+            Game.Window.OrientationChanged += Events.InvokeSizeChange;
         }
 
         public override sealed void Initialize()
@@ -56,10 +56,10 @@ namespace Colin.Core.Common
             if(InitializeOnSwitch)
             {
                 InitRenderTarget( this, new EventArgs() );
-                Event.OrientationChanged += InitRenderTarget;
-                Event.ClientSizeChanged += InitRenderTarget;
+                Events.OrientationChanged += InitRenderTarget;
+                Events.ClientSizeChanged += InitRenderTarget;
                 _components = new SceneModuleList( this );
-                _components.Add( Event );
+                _components.Add( Events );
                 _components.Add( SceneCamera = new SceneCamera() );
                 SceneInit();
             }
@@ -183,8 +183,8 @@ namespace Colin.Core.Common
             }
             if( Game.Window is not null )
             {
-                Game.Window.ClientSizeChanged -= Event.InvokeSizeChange;
-                Game.Window.OrientationChanged -= Event.InvokeSizeChange;
+                Game.Window.ClientSizeChanged -= Events.InvokeSizeChange;
+                Game.Window.OrientationChanged -= Events.InvokeSizeChange;
             }
             base.Dispose( disposing );
         }
