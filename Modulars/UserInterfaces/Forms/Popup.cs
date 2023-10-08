@@ -83,16 +83,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Layout.Top = 2;
                 CloseButton.Layout.Width = 14;
                 CloseButton.Layout.Height = 12;
-                CloseButton.Events.MouseLeftClickBefore += ( s, e ) =>
+                CloseButton.Events.LeftClickBefore += ( ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1_Off" ) );
                 };
-                CloseButton.Events.MouseLeftClickAfter += ( s, e ) =>
+                CloseButton.Events.LeftClickAfter += ( ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
                     Close();
                 };
-                CloseButton.Events.ActivationEnd += ( s, e ) =>
+                CloseButton.Events.HoverOver += ( ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
                 };

@@ -10,7 +10,7 @@ namespace Colin.Core.Assets
     /// </summary>
     public sealed class AssetLoader : Scene
     {
-        public EventHandler<BasicEvent> OnLoadComplete = ( s, e ) => { };
+        public EventHandler<BasicEventArgs> OnLoadComplete = ( s, e ) => { };
 
         public override void SceneInit()
         {
@@ -33,8 +33,7 @@ namespace Colin.Core.Assets
                     }
                 }
                 EngineConsole.WriteLine( ConsoleTextType.Remind, "资源加载完成." );
-                BasicEvent onResourceLoadComplete = new BasicEvent();
-                onResourceLoadComplete.Name = "Event_GameResources_LoadComplete";
+                BasicEventArgs onResourceLoadComplete = new BasicEventArgs( "Event.GameResources.LoadComplete" );
                 OnLoadComplete?.Invoke( this, onResourceLoadComplete );
             } );
         }

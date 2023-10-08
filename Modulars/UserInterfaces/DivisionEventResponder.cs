@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
-
+﻿using Colin.Core.Events;
+using Microsoft.Xna.Framework.Input;
 namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
@@ -7,226 +7,126 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public class DivisionEventResponder
     {
-        public Division Division;
+        public Division Div;
 
-        public DivisionEventResponder( Division division ) => Division = division;
+        public DivisionEventResponder( Division division ) => Div = division;
 
-        /// <summary>
-        /// 事件: 发生于交互点悬停于该划分元素上持续激活交互状态时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> HoverOn;
+        public MouseEventResponder Mouse = new MouseEventResponder( "MouseEvents" );
 
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 左键单击按下时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseLeftClickBefore;
+        public event Action HoverStart;
+        public event Action Hover;
+        public event Action HoverOver;
 
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 左键长按时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseLeftDown;
+        public event Action LeftClickBefore;
+        public event Action LeftDown;
+        public event Action LeftClickAfter;
+        public event Action LeftUp;
 
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 左键单击抬起时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseLeftClickAfter;
+        public event Action RightClickBefore;
+        public event Action RightDown;
+        public event Action RightClickAfter;
+        public event Action RightUp;
 
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 左键松开时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseLeftUp;
+        public event Action DragStart;
+        public event Action Dragging;
+        public event Action DragOver;
 
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 右键单击按下时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseRightClickBefore;
-
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 右键长按时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseRightDown;
-
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 右键单击抬起时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseRightClickAfter;
-
-        /// <summary>
-        /// 事件: 发生于鼠标与之交互, 右键松开时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseRightUp;
-
-        /// <summary>
-        /// 事件: 发生于鼠标双键松开时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MouseRelease;
-
-        /// <summary>
-        /// 事件: 发生于划分元素开始拖拽状态时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> DragStart;
-
-        /// <summary>
-        /// 事件: 发生于划分元素拖拽状态时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> Dragging;
-
-        /// <summary>
-        /// 事件: 发生于划分元素结束拖拽状态时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> DragEnd;
-
-        /// <summary>
-        /// 事件: 发生于鼠标滑轮滑动时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> MousePulleySliding;
-
-        /// <summary>
-        /// 事件: 发生于划分元素启用交互状态时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> ActivationStart;
-
-        /// <summary>
-        /// 事件: 发生于划分元素结束交互状态时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> ActivationEnd;
-
-        /// <summary>
-        /// 事件: 发生于划分元素获得焦点时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> ObtainingFocus;
-
-        /// <summary>
-        /// 事件: 发生于划分元素失去焦点时.
-        /// </summary>
-        public event EventHandler<DivisionEvent> LosesFocus;
+        public event Action GetFocus;
+        public event Action LoseFocus;
 
         /// <summary>
         /// 指示拖拽状态.
         /// </summary>
         public bool DraggingState = false;
 
-        public bool Invariable = false;
-
-        MouseState _mouseState = new MouseState();
-
-        MouseState _mouseStateLast = new MouseState();
-
-        public void Execute()
+        public void DoInitialize()
         {
-            _mouseState = MouseResponder.State;
-            _mouseStateLast = MouseResponder.StateLast;
-            DivisionEvent divEvent = new DivisionEvent( Division );
-            if(Division.Interact.Interaction)
+            Mouse.Hover += ( s, e ) =>
+                {
+                    if(Div.Interact.Interaction && !Div.Interact.InteractionLast)
+                        HoverStart?.Invoke();
+                    Invoke( e, Hover );
+                    if(!Div.Interact.Interaction && Div.Interact.InteractionLast)
+                        HoverOver?.Invoke();
+                };
+            Mouse.LeftClickBefore += ( s, e ) =>
             {
-                if(!Division.Interact.InteractionLast)
+                Invoke( e, LeftClickBefore );
+                Invoke( e, () =>
                 {
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Activation_ActivationStart" );
-                    ActivationStart?.Invoke( this, divEvent );
-                }
-                divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseHoverOn" );
-                HoverOn?.Invoke( this, divEvent );
-                if(MouseResponder.MouseLeftClickBeforeFlag)
-                {
-                    Invariable = true;
-                    UserInterface.Focus = Division;
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseLeftClickBefore" );
-                    MouseLeftClickBefore?.Invoke( this, divEvent );
-                    if(Division.Interact.IsDraggable && Division.Interact.InteractionLast)
+                    Div.Interface.LastFocus = Div.Interface.Focus;
+                    Div.Interface.Focus = Div;
+                    if(!Div.Interact.IsDraggable)
+                        return;
+                    DragStart?.Invoke();
+                    DraggingState = true;
+                    if(Div.Parent != null)
                     {
-                        divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_DragStart" );
-                        DragStart?.Invoke( this, divEvent );
-                        DraggingState = true;
+                        Point mouseForParentLocation = MouseResponder.State.Position - Div.Parent.Layout.Location;
+                        _cachePos = mouseForParentLocation - Div.Layout.Location;
                     }
-                }
-                if(MouseResponder.MouseLeftDownFlag)
-                {
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseLeftDown" );
-                    MouseLeftDown?.Invoke( this, divEvent );
-                }
-                if(MouseResponder.MouseLeftClickAfterFlag && Invariable)
-                {
-                    Invariable = false;
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseLeftClickAfter" );
-                    MouseLeftClickAfter?.Invoke( this, divEvent );
-                }
-                if(MouseResponder.MouseLeftUpFlag)
-                {
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseLeftUp" );
-                    MouseLeftUp?.Invoke( this, divEvent );
-                    DraggingState = false;
-                }
-                if(_mouseState.RightButton == ButtonState.Pressed && _mouseStateLast.RightButton == ButtonState.Released)
-                {
-                    Invariable = true;
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseRightClickBefore" );
-                    MouseRightClickBefore?.Invoke( this, divEvent );
-                }
-                if(_mouseState.RightButton == ButtonState.Pressed && _mouseStateLast.RightButton == ButtonState.Pressed)
-                {
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseRightDown" );
-                    MouseRightDown?.Invoke( this, divEvent );
-                }
-                if(_mouseState.RightButton == ButtonState.Released && _mouseStateLast.RightButton == ButtonState.Pressed && Invariable)
-                {
-                    Invariable = false;
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseRightClickAfter" );
-                    MouseRightClickAfter?.Invoke( this, divEvent );
-                }
-                if(_mouseState.RightButton == ButtonState.Released && _mouseStateLast.RightButton == ButtonState.Released)
-                {
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MouseRightUp" );
-                    MouseRightUp?.Invoke( this, divEvent );
-                }
-                if(_mouseState.ScrollWheelValue != _mouseStateLast.ScrollWheelValue)
-                {
-                    divEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_MousePulleySliding" );
-                    MousePulleySliding?.Invoke( this, divEvent );
-                }
-            }
-        }
-
-        public void Independent()
-        {
-            _mouseStateLast = _mouseState;
-            _mouseState = Mouse.GetState();
-            DivisionEvent divisionEvent = new DivisionEvent( Division );
-            Division.Interact.FocusLast = Division.Interact.Focus;
-            if(UserInterface.Focus == Division)
-                Division.Interact.Focus = true;
-            else
-                Division.Interact.Focus = false;
-
-            if(Division.Interact.Focus && !Division.Interact.FocusLast)
+                    else
+                    {
+                        _cachePos = MouseResponder.State.Position - Div.Layout.Location;
+                    }
+                } );
+            };
+            Mouse.LeftDown += ( s, e ) => Invoke( e, LeftDown );
+            Mouse.LeftClickAfter += ( s, e ) =>
             {
-                divisionEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Activation_ObtainingFocus" );
-                ObtainingFocus?.Invoke( this, divisionEvent );
-            }
-            if(!Division.Interact.Focus && Division.Interact.FocusLast)
-            {
-                divisionEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Activation_LosesFocus" );
-                LosesFocus?.Invoke( this, divisionEvent );
-            }
-            if(Division.Interact.InteractionLast)
-            {
-                if(!Division.Interact.Interaction)
-                {
-                    divisionEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Activation_ActivationEnd" );
-                    ActivationEnd?.Invoke( this, divisionEvent );
-                }
-            }
-            if(DraggingState && Division.Interact.IsDraggable)
-            {
-                divisionEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_Dragging" );
-                Dragging?.Invoke( this, divisionEvent );
-            }
-            if(MouseResponder.MouseLeftUpFlag && Division.Interact.IsDraggable)
-            {
+                DragOver?.Invoke();
+                Invoke( e, LeftClickAfter );
+                if(!Div.Interact.IsDraggable)
+                    return;
                 DraggingState = false;
-                divisionEvent.Name = string.Concat( "Event_Division_", Division.Name, "_Mouse_DragEnd" );
-                DragEnd?.Invoke( this, divisionEvent );
+                _cachePos = new Point( -1, -1 );
+            };
+            Mouse.LeftUp += ( s, e ) => Invoke( e, LeftUp );
+        }
+        private void Invoke( MouseEventArgs e, Action action )
+        {
+            if(Div.IsVisible && Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
+            {
+                e.Captured = true;
+                action?.Invoke();
             }
         }
-
+        private Point _cachePos = new Point( -1, -1 );
+        public void DoUpdate()
+        {
+            Div.Interact.InteractionLast = Div.Interact.Interaction;
+            if(Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
+                Div.Interact.Interaction = true;
+            else
+                Div.Interact.Interaction = false;
+            if(DraggingState && Div.Interact.IsDraggable)
+            {
+                if(!Div.Interact.IsDraggable)
+                    return;
+                DraggingState = true;
+                if(Div.Parent != null)
+                {
+                    Point _resultLocation = MouseResponder.State.Position - Div.Parent.Layout.Location - _cachePos;
+                    Div.Layout.Left = _resultLocation.X;
+                    Div.Layout.Top = _resultLocation.Y;
+                }
+                else
+                {
+                    Point _resultLocation = MouseResponder.State.Position - _cachePos;
+                    Div.Layout.Left = _resultLocation.X;
+                    Div.Layout.Top = _resultLocation.Y;
+                }
+                if(Div.Interact.IsDraggable && Div.Interact.DragLimit != Rectangle.Empty)
+                {
+                    Div.Layout.Left = Math.Clamp( Div.Layout.Left, 0, Div.Interact.DragLimit.Width - Div.Layout.Width );
+                    Div.Layout.Top = Math.Clamp( Div.Layout.Top, 0, Div.Interact.DragLimit.Height - Div.Layout.Height );
+                }
+                Dragging?.Invoke();
+            }
+            if(Div.Interface.Focus == Div && Div.Interface.LastFocus != Div)
+                GetFocus?.Invoke();
+            if(Div.Interface.Focus != Div && Div.Interface.LastFocus == Div)
+                LoseFocus?.Invoke();
+        }
     }
 }

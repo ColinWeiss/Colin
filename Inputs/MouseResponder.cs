@@ -10,42 +10,42 @@ namespace Colin.Core.Inputs
     {
         public MouseResponder() : base( EngineInfo.Engine ) { }
 
-        public static bool MouseLeftClickBeforeFlag =>
+        public static bool LeftClickBefore =>
             State.LeftButton == ButtonState.Pressed &&
             StateLast.LeftButton == ButtonState.Released;
 
-        public static bool MouseLeftDownFlag =>
+        public static bool LeftDown =>
             State.LeftButton == ButtonState.Pressed &&
             StateLast.LeftButton == ButtonState.Pressed;
 
-        public static bool MouseLeftUpFlag =>
+        public static bool LeftUp =>
             State.LeftButton == ButtonState.Released &&
             StateLast.LeftButton == ButtonState.Released;
 
-        public static bool MouseLeftClickAfterFlag =>
+        public static bool LeftClickAfter =>
            State.LeftButton == ButtonState.Released &&
             StateLast.LeftButton == ButtonState.Pressed;
 
-        public static bool MouseRightClickBeforeFlag =>
+        public static bool RightClickBefore =>
             State.RightButton == ButtonState.Pressed &&
             StateLast.RightButton == ButtonState.Released;
 
-        public static bool MouseRightDownFlag =>
+        public static bool RightDown =>
             State.RightButton == ButtonState.Pressed &&
             StateLast.RightButton == ButtonState.Pressed;
 
-        public static bool MouseRightUpFlag =>
+        public static bool RightUp =>
              State.RightButton == ButtonState.Released &&
              StateLast.RightButton == ButtonState.Released;
 
-        public static bool MouseRightClickAfterFlag =>
+        public static bool RightClickAfter =>
             State.RightButton == ButtonState.Released &&
             StateLast.RightButton == ButtonState.Pressed;
 
-        public static bool MouseScrollUp =>
+        public static bool ScrollUp =>
             State.ScrollWheelValue < StateLast.ScrollWheelValue;
 
-        public static bool MouseScrollDown =>
+        public static bool ScrollDown =>
             State.ScrollWheelValue > StateLast.ScrollWheelValue;
 
         public bool Enable { get; set; }

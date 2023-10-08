@@ -1,13 +1,13 @@
 ﻿using Colin.Core.Common;
+using Colin.Core.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
     public class UserInterface : ISceneModule, IRenderableISceneModule
     {
-        /// <summary>
-        /// 指示当前焦点元素.
-        /// </summary>
-        public static Division Focus;
+        public Division Focus;
+
+        public Division LastFocus;
 
         private Container _contianer = new Container( "NomalContainer" );
 
@@ -23,14 +23,19 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Scene Scene { get; set; }
 
-        public void DoInitialize() => _contianer.DoInitialize( );
+        public EventResponder Events;
+
+        public void DoInitialize()
+        {
+            Events = new EventResponder( "UserInterface.EventResponder" );
+            Scene.Event.Register( Events );
+        }
 
         public void Start() { }
 
         public void DoUpdate( GameTime time )
         {
             Container?.DoUpdate( time );
-            Container.Seek()?.Events.Execute();
         }
 
         public void DoRender( SpriteBatch batch )
@@ -48,6 +53,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             container._interface = this;
             _contianer = container;
+            container.DoInitialize();
+            Events.Register( container.Events.Mouse );
         }
 
         public void Dispose()

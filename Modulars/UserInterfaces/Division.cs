@@ -10,10 +10,19 @@
         /// </summary>
         public readonly string Name;
 
+        private bool isVisible = true;
         /// <summary>
         /// 指示划分元素是否可见.
         /// </summary>
-        public bool IsVisible;
+        public bool IsVisible
+        {
+            get => isVisible;
+            set
+            {
+                ForEach( a => a.IsVisible = value );
+                isVisible = value;
+            }
+        }
 
         /// <summary>
         /// 划分元素的布局样式
@@ -97,13 +106,9 @@
         {
             Name = name;
             Events = new DivisionEventResponder( this );
-            Events.DragStart += Container_DragStart;
-            Events.Dragging += Container_DragDragging;
-            Events.DragEnd += Container_DragEnd;
             Interact.IsInteractive = true;
             Design.Color = Color.White;
             Design.Scale = Vector2.One;
-            IsVisible = true;
             Children = new List<Division>();
             Controller = new DivisionController( this );
         }
@@ -121,49 +126,13 @@
             if(Parent != null)
                 Layout.Calculation( Parent.Layout ); //刷新一下.
             ForEach( child => child.DoInitialize() );
+            Events.DoInitialize();
             InitializationCompleted = true;
         }
         /// <summary>
         /// 发生于划分元素执行 <see cref="DoInitialize"/> 时, 可于此自定义初始化操作.
         /// </summary>
         public virtual void OnInit() { }
-        private Point _cachePos = new Point( -1, -1 );
-        private void Container_DragStart( object o, DivisionEvent e )
-        {
-            if(Parent != null)
-            {
-                Point mouseForParentLocation = MouseResponder.State.Position - Parent.Layout.Location;
-                _cachePos = mouseForParentLocation - Layout.Location;
-            }
-            else
-            {
-                _cachePos = MouseResponder.State.Position - Layout.Location;
-            }
-        }
-        private void Container_DragDragging( object o, DivisionEvent e )
-        {
-            if(Parent != null)
-            {
-                Point _resultLocation = MouseResponder.State.Position - Parent.Layout.Location - _cachePos;
-                Layout.Left = _resultLocation.X;
-                Layout.Top = _resultLocation.Y;
-            }
-            else
-            {
-                Point _resultLocation = MouseResponder.State.Position - _cachePos;
-                Layout.Left = _resultLocation.X;
-                Layout.Top = _resultLocation.Y;
-            }
-            if(Interact.IsDraggable && Interact.DragLimit != Rectangle.Empty)
-            {
-                Layout.Left = Math.Clamp( Layout.Left, 0, Interact.DragLimit.Width - Layout.Width );
-                Layout.Top = Math.Clamp( Layout.Top, 0, Interact.DragLimit.Height - Layout.Height );
-            }
-        }
-        private void Container_DragEnd( object o, DivisionEvent e )
-        {
-            _cachePos = new Point( -1, -1 );
-        }
 
         private bool _started = false;
 
@@ -176,12 +145,7 @@
             PreUpdate( time );
             if(!IsVisible)
                 return;
-            if(Parent is Container container)
-            {
-                _interface = container._interface;
-                _container = container;
-            }
-            else if(!(this is Container))
+            if(!(this is Container))
             {
                 _interface = Parent?._interface;
                 _container = Parent?._container;
@@ -191,12 +155,12 @@
                 Start( time );
                 _started = true;
             }
-            Events.Independent();
             Controller?.Layout( ref Layout );
             if(Parent != null)
                 Layout.Calculation( Parent.Layout );
             Controller?.Interact( ref Interact );
             Controller?.Design( ref Design );
+            Events.DoUpdate();
             OnUpdate( time );
             UpdateChildren( time );
         }
@@ -314,6 +278,7 @@
         {
             division.Parent = this;
             division.ParentCanvas = ParentCanvas;
+            Events.Mouse.Register( division.Events.Mouse );
             if(IsCanvas)
                 division.ParentCanvas = this;
             if(doInit)
@@ -379,30 +344,6 @@
 		/// <param name="point">输入的点.</param>
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
 		public virtual bool ContainsPoint( Point point ) => Layout.TotalHitBox.Contains( point );
-
-        /// <summary>
-        /// 返回该划分元素下最先可进行交互的元素.
-        /// </summary>
-        /// <returns>如果寻找到非该划分元素之外的元素, 则返回寻找到的元素; 否则返回自己.</returns>
-        public virtual Division Seek()
-        {
-            Division target = null;
-            Division child;
-            for(int sub = Children.Count - 1; sub >= 0; sub--)
-            {
-                child = Children[sub];
-                if(child.Seek() == null)
-                    target = null;
-                else if(child.Seek() != null && child.IsVisible)
-                {
-                    target = child.Seek();
-                    return target;
-                }
-            }
-            if(Interact.IsInteractive && IsVisible && Interact.Interaction)
-                return this;
-            return target;
-        }
 
         private bool disposedValue;
         protected virtual void Dispose( bool disposing )

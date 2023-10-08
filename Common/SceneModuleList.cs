@@ -21,6 +21,10 @@ namespace Colin.Core.Common
 
         public string DisplayName => Name;
 
+        public int Count => Components.Count;
+
+        public int RenderModuleCount => RenderableComponents.Count;
+
         public void DoStart()
         {
             ISceneModule _com;

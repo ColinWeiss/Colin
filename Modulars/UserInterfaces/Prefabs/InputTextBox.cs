@@ -43,12 +43,12 @@
             Label.Interact.IsInteractive = false;
             Register( Label );
 
-            Events.ObtainingFocus += ( s, e ) =>
+            Events.GetFocus += ( ) =>
             {
                 EngineInfo.IMEHandler.StartTextComposition();
                 EngineInfo.IMEHandler.SetTextInputRect( ref InputRect );
             };
-            Events.LosesFocus += ( s, e ) =>
+            Events.LoseFocus += (  ) =>
             {
                 EngineInfo.IMEHandler.StopTextComposition();
                 Label.SetText( Text );
@@ -86,7 +86,7 @@
 
         public override void OnUpdate( GameTime time )
         {
-            Editing = UserInterface.Focus == this;
+            Editing = Interface.Focus == this;
             InputRect = Layout.TotalHitBox;
             InputRect.Y += 16;
             InputRect.X += 16;

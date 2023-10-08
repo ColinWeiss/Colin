@@ -59,6 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
@@ -67,10 +68,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\BasicEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\WeakEventManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\WeakReferenceDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EventExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\FontExt.cs" />
@@ -101,7 +98,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Vert2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\VertexRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ControllerResponder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MouseResponder.cs" />
@@ -130,6 +126,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\BasicEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\EventResponder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackageTransfer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\INetworkMode.cs" />

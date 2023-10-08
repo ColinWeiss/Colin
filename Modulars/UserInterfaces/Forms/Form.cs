@@ -47,8 +47,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         }
         public override sealed void OnInit()
         {
-            Design.Scale = Vector2.Zero;
-            Design.Color = Color.Transparent;
+            Design.Scale = Vector2.One;
+            Design.Color = Color.White;
 
             Controller = new DivGradientController( this );
             Interact.IsDraggable = true;
@@ -119,16 +119,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Layout.Top = 6;
                 CloseButton.Layout.Width = 24;
                 CloseButton.Layout.Height = 24;
-                CloseButton.Events.MouseLeftClickBefore += ( s, e ) =>
+                CloseButton.Events.LeftClickBefore += ( ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0_Off" ) );
                 };
-                CloseButton.Events.MouseLeftClickAfter += ( s, e ) =>
+                CloseButton.Events.LeftClickAfter += ( ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
                     Close();
                 };
-                CloseButton.Events.ActivationEnd += ( s, e ) =>
+                CloseButton.Events.HoverOver += ( ) =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
                 };
@@ -141,7 +141,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Width += 8;
             Layout.Height += _titleHeight + 8;
 
-            Events.MouseLeftClickBefore += ( s, e ) => Interface.Container.SetTop( this );
+            Events.LeftClickBefore += ( ) => Interface.Container.SetTop( this );
             base.OnInit();
         }
         public virtual void FormInit() { }
