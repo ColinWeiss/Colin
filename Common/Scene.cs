@@ -44,7 +44,7 @@ namespace Colin.Core.Common
 
         public Scene() : base( EngineInfo.Engine )
         {
-            Event = new SceneEventResponder( "Scene.EventResponder" );
+            Event = new SceneEventResponder( );
             // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
             Game.Window.ClientSizeChanged += Event.InvokeSizeChange;
             Game.Window.OrientationChanged += Event.InvokeSizeChange;
@@ -59,7 +59,7 @@ namespace Colin.Core.Common
                 Event.OrientationChanged += InitRenderTarget;
                 Event.ClientSizeChanged += InitRenderTarget;
                 _components = new SceneModuleList( this );
-                _components.Add( Event = new SceneEventResponder( "Scene.EventResponder") );
+                _components.Add( Event );
                 _components.Add( SceneCamera = new SceneCamera() );
                 SceneInit();
             }

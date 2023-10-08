@@ -8,7 +8,6 @@ namespace Colin.Core.Events
     public class MouseEventResponder : EventResponder
     {
         public MouseEventResponder( string name ) : base( name ) { }
-
         public EventHandler<MouseEventArgs> Hover;
         public EventHandler<MouseEventArgs> LeftClickBefore;
         public EventHandler<MouseEventArgs> LeftDown;
@@ -19,7 +18,7 @@ namespace Colin.Core.Events
         {
             if(theEvent is MouseEventArgs mouseEvent)
             {
-                Hover.Invoke( this, mouseEvent );
+                Hover?.Invoke( this, mouseEvent );
                 if(MouseResponder.LeftClickBefore)
                     LeftClickBefore?.Invoke( this, mouseEvent );
                 if(MouseResponder.LeftDown)

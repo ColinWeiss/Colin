@@ -9,49 +9,14 @@ namespace Colin.Core.Inputs
     {
         public KeyboardResponder() : base( EngineInfo.Engine ) { }
 
-        /// <summary>
-        /// 事件: 发生于键盘上任何键单击按下时.
-        /// </summary>
-        public static EventHandler<KeyboardEventArgs> KeyClickBefore;
-
-        /// <summary>
-        /// 事件: 发生于键盘上任何键单击松开时.
-        /// </summary>
-        public static EventHandler<KeyboardEventArgs> KeyClickAfter;
-
         public static KeyboardState State = new KeyboardState();
 
         public static KeyboardState StateLast = new KeyboardState();
-
-        /// <summary>
-        /// 当前键盘事件.
-        /// </summary>
-        public KeyboardEventArgs KeyboardEvent;
 
         public override void Update( GameTime gameTime )
         {
             StateLast = State;
             State = Keyboard.GetState();
-            KeyboardEvent = new KeyboardEventArgs( State );
-            Keys[] pressedKeysLast = StateLast.GetPressedKeys();
-            foreach(Keys key in State.GetPressedKeys())
-            {
-                if(!pressedKeysLast.Contains( key ))
-                {
-               //     KeyboardEvent.Name = "Event.Keyboard.KeyClickBefore";
-                    KeyboardEvent.Keys = key;
-                    KeyClickBefore?.Invoke( this, KeyboardEvent );
-                }
-            }
-            foreach(Keys keyLast in StateLast.GetPressedKeys())
-            {
-                if(State.IsKeyUp( keyLast ) && StateLast.IsKeyDown( keyLast ))
-                {
-            //        KeyboardEvent.Name = "Event.Keyboard.KeyClickAfter";
-                    KeyboardEvent.Keys = keyLast;
-                    KeyClickAfter?.Invoke( this, KeyboardEvent );
-                }
-            }
             base.Update( gameTime );
         }
 

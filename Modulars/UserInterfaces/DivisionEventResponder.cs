@@ -13,6 +13,8 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public MouseEventResponder Mouse = new MouseEventResponder( "MouseEvents" );
 
+        public KeysEventResponder Keys = new KeysEventResponder( "KeysEvents" );
+
         public event Action HoverStart;
         public event Action Hover;
         public event Action HoverOver;
@@ -33,6 +35,12 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public event Action GetFocus;
         public event Action LoseFocus;
+
+        public EventHandler<KeysEventArgs> KeyClickBefore;
+
+        public EventHandler<KeysEventArgs> KeyDown;
+
+        public EventHandler<KeysEventArgs> KeyClickAfter;
 
         /// <summary>
         /// 指示拖拽状态.
@@ -82,6 +90,9 @@ namespace Colin.Core.Modulars.UserInterfaces
                 _cachePos = new Point( -1, -1 );
             };
             Mouse.LeftUp += ( s, e ) => Invoke( e, LeftUp );
+            Keys.ClickBefore += KeyClickBefore;
+            Keys.Down += KeyDown;
+            Keys.ClickAfter += KeyClickAfter;
         }
         private void Invoke( MouseEventArgs e, Action action )
         {

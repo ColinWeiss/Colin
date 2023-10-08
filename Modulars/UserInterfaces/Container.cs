@@ -30,7 +30,7 @@
             if(Children.Contains( division ))
             {
                 Children.Remove( division );
-                Children.Add( division );
+                Register( division );
             }
         }
         public override bool Register( Division division, bool doInit = false )

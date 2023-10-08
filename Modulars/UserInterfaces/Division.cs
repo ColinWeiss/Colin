@@ -279,6 +279,7 @@
             division.Parent = this;
             division.ParentCanvas = ParentCanvas;
             Events.Mouse.Register( division.Events.Mouse );
+            Events.Keys.Register( division.Events.Keys );
             if(IsCanvas)
                 division.ParentCanvas = this;
             if(doInit)

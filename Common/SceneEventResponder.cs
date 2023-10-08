@@ -5,10 +5,8 @@ using System.Text;
 
 namespace Colin.Core.Common
 {
-    public class SceneEventResponder : EventResponder, ISceneModule
+    public class SceneEventResponder : ISceneModule
     {
-        public SceneEventResponder( string name ) : base( name ) { }
-
         public Scene Scene { get; set; }
 
         public bool Enable { get; set; }
@@ -16,14 +14,22 @@ namespace Colin.Core.Common
         public event EventHandler ClientSizeChanged;
         public event EventHandler OrientationChanged;
 
+        public MouseEventResponder Mouse;
+
+        public KeysEventResponder Keyboard; 
+
         public void Start() { }
         public void DoInitialize()
         {
+            Mouse = new MouseEventResponder( "Scene.MouseEventResponder" );
+            Keyboard = new KeysEventResponder( "Scene.KeysEventResponder" );
         }
         public void DoUpdate( GameTime time )
         {
             MouseEventArgs mouseEvent = new MouseEventArgs( "MouseEvent" );
-            Response( mouseEvent );
+            KeysEventArgs keyboardEvent = new KeysEventArgs( "KeysEvent" );
+            Mouse.Response( mouseEvent );
+            Keyboard.Response( keyboardEvent );
         }
         public void InvokeSizeChange( object sender, EventArgs e )
         {

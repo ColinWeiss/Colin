@@ -28,7 +28,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         public void DoInitialize()
         {
             Events = new EventResponder( "UserInterface.EventResponder" );
-            Scene.Event.Register( Events );
+            Scene.Event.Mouse.Register( Events );
+            Scene.Event.Keyboard.Register( Events );
         }
 
         public void Start() { }
@@ -55,6 +56,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             _contianer = container;
             container.DoInitialize();
             Events.Register( container.Events.Mouse );
+            Events.Register( container.Events.Keys );
         }
 
         public void Dispose()

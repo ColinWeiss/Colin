@@ -1,4 +1,5 @@
-﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
+﻿using Colin.Core.Events;
+using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 
@@ -105,6 +106,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Width += 8;
             Layout.Height += _titleHeight + 8;
 
+            Events.KeyClickBefore += ( object s, KeysEventArgs e ) =>
+            {
+                if(e.Key == Keys.Escape && IsVisible)
+                {
+                    e.Captured = true;
+                    Close();
+                }
+            };
             base.OnInit();
         }
         public virtual void PopupInit() { }
