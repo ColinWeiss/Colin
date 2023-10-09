@@ -30,7 +30,18 @@
         /// </summary>
         public int CoordZ;
 
-        public Vector2 Coordinate => new Vector2( CoordX, CoordY );
+        /// <summary>
+        /// 指示物块在所属区块中的坐标.
+        /// </summary>
+        public Vector2 Coord => new Vector2( CoordX, CoordY );
+
+        /// <summary>
+        /// 指示物块在世界内的坐标.
+        /// </summary>
+        public Vector2 WorldCoord => 
+            new Vector2( 
+                Chunk.CoordX * TileOption.ChunkWidth + Coord.X ,
+                Chunk.CoordY * TileOption.ChunkHeight + Coord.Y );
 
         /// <summary>
         /// 指示物块纹理帧格.
@@ -43,6 +54,11 @@
         public TileCollision Collision;
 
         public Tile Tile { get; internal set; }
+
+        /// <summary>
+        /// 指示物块所属区块.
+        /// </summary>
+        public TileChunk Chunk;
 
         public ref TileInfo Top
         {
@@ -123,7 +139,7 @@
 
         public TileBehavior Behavior = null;
 
-        public RectangleF HitBox => new RectangleF( Coordinate * TileOption.TileSizeF, TileOption.TileSizeF );
+        public RectangleF HitBox => new RectangleF( Coord * TileOption.TileSizeF, TileOption.TileSizeF );
 
         public TileInfo()
         {
@@ -133,6 +149,7 @@
             CoordY = 0;
             CoordZ = 0;
             Tile = null;
+            Chunk = null;
             Texture = new TileFrame( -1, -1 );
             Collision = TileCollision.Passable;
         }

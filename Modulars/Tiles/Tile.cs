@@ -31,6 +31,25 @@ namespace Colin.Core.Modulars.Tiles
 
         public TileInfoCollection Infos;
 
+        /// <summary>
+        /// 区块字典.
+        /// <br>用于存储当前已被加载进内存的区块.</br>
+        /// <br>键: 区块坐标.</br>
+        /// <br>值: 区块.</br>
+        /// </summary>
+        public Dictionary<Point, TileChunk> Chunks = new Dictionary<Point, TileChunk>();
+        public TileChunk GetChunk( int x , int y )
+        {
+            if(Chunks.TryGetValue( new Point( x, y ), out TileChunk chunk ))
+                return chunk;
+            else
+                return null;
+        }
+        public TileChunk GetChunk( Point coord )
+        {
+            return GetChunk( coord.X , coord.Y );
+        }
+
         public Tile()
         {
             TileInfo._null.Tile = this;
