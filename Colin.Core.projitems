@@ -145,7 +145,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileCollision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileFrame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfoCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />

@@ -6,46 +6,138 @@ using System.Text.Json;
 
 namespace Colin.Core.Modulars.Tiles
 {
+    /// <summary>
+    /// 物块区块类.
+    /// </summary>
     public class TileChunk
     {
+        /// <summary>
+        /// 获取物块区块所属的世界物块模块.
+        /// </summary>
         public Tile Tile { get; internal set; } = null;
 
-        private int _width;
-        public int Width => _width;
+        /// <summary>
+        /// 获取区块的宽度.
+        /// <br>它与 <see cref="TileOption.ChunkWidth"/> 的值相等.</br>
+        /// </summary>
+        public int Width => TileOption.ChunkWidth;
 
-        private int _height;
-        public int Height => _height;
+        /// <summary>
+        /// 获取区块的宽度.
+        /// <br>它与 <see cref="TileOption.ChunkHeight"/> 的值相等.</br>
+        /// </summary>
+        public int Height => TileOption.ChunkHeight;
 
-        private int _depth;
-        public int Depth => _depth;
+        /// <summary>
+        /// 获取区块的深度.
+        /// <br>它与 <see cref="Tile.Depth"/> 的值相等.</br>
+        /// </summary>
+        public int Depth => Tile.Depth;
 
-        public int Length => Infos.Length;
-
+        /// <summary>
+        /// 指示区块的横坐标.
+        /// </summary>
         public int CoordX;
 
+        /// <summary>
+        /// 指示区块的纵坐标.
+        /// </summary>
         public int CoordY;
 
+        private TileChunk temp;
+        public TileChunk Top
+        {
+            get
+            {
+                temp = GetOffset( 0 , -1 );
+                if(temp is not null)
+                    return temp;
+                else
+                    return null;
+            }
+        }
+        public TileChunk Bottom
+        {
+            get
+            {
+                temp = GetOffset( 0, 1 );
+                if(temp is not null)
+                    return temp;
+                else
+                    return null;
+            }
+        }
+        public TileChunk Left
+        {
+            get
+            {
+                temp = GetOffset( -1, 0 );
+                if(temp is not null)
+                    return temp;
+                else
+                    return null;
+            }
+        }
+
+        public TileChunk Right
+        {
+            get
+            {
+                temp = GetOffset( 1, 0 );
+                if(temp is not null)
+                    return temp;
+                else
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// 根据指定偏移量获取相对于该区块坐标偏移的区块.
+        /// </summary>
+        public TileChunk GetOffset( int offsetX , int offsetY )
+        {
+            return Tile.GetChunk( CoordX + offsetX , CoordY + offsetY );
+        }
+
+        /// <summary>
+        /// 区块内的物块信息.
+        /// </summary>
         public TileInfo[] Infos;
 
+        /// <summary>
+        /// 索引器: 根据索引获取物块信息.
+        /// </summary>
         public ref TileInfo this[int index] => ref Infos[index];
-        public ref TileInfo this[int x, int y, int z] => ref Infos[z * Width * Height + x + y * Width];
+
+        /// <summary>
+        /// 索引器: 根据索引获取物块信息.
+        /// </summary>
+        public ref TileInfo this[int x, int y, int z]
+        {
+            get
+            {
+                if(x < 0)
+                    x = Width + x;
+                if(y < 0)
+                    y = Height + y;
+                return ref Infos[z * Width * Height + x + y * Width];
+            }
+        }
 
         public TileChunk()
         {
-            _width = 0;
-            _height = 0;
-            _depth = 0;
             CoordX = 0;
             CoordY = 0;
             Infos = new TileInfo[1];
         }
 
-        public void Create( int width, int height, int depth )
+        /// <summary>
+        /// 创建一个区块.
+        /// </summary>
+        /// <param name="depth"></param>
+        public void Create( )
         {
-            _width = width;
-            _height = height;
-            _depth = depth;
-            Infos = new TileInfo[_width * _height * _depth];
+            Infos = new TileInfo[ Width * Height * Depth ];
             int coord;
             for(int count = 0; count < Infos.Length; count++)
             {
@@ -59,6 +151,13 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        /// <summary>
+        /// 根据坐标向区块内放置物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
             if(this[x, y, z].Empty)
@@ -70,6 +169,13 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        /// <summary>
+        /// 根据索引向区块内放置物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Place<T>( int index ) where T : TileBehavior, new()
         {
             CreateTileDefaultInfo( index );
@@ -78,6 +184,13 @@ namespace Colin.Core.Modulars.Tiles
             this[index].Behavior.DoRefresh( ref this[index], 1 );
         }
 
+        /// <summary>
+        /// 根据坐标向区块内放置物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
             CreateTileDefaultInfo( x, y, z );
@@ -86,6 +199,13 @@ namespace Colin.Core.Modulars.Tiles
             this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
         }
 
+        /// <summary>
+        /// 根据索引向区块内放置物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Place( TileBehavior behavior, int index )
         {
             CreateTileDefaultInfo( index );
@@ -95,6 +215,13 @@ namespace Colin.Core.Modulars.Tiles
             this[index].Behavior.DoRefresh( ref this[index], 1 );
         }
 
+        /// <summary>
+        /// 根据坐标设置区块内物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Set<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
             this[x, y, z].Behavior = TileAssets.Get<T>();
@@ -102,6 +229,13 @@ namespace Colin.Core.Modulars.Tiles
             this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
         }
 
+        /// <summary>
+        /// 根据索引设置区块内物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Set<T>( int index ) where T : TileBehavior, new()
         {
             this[index].Behavior = TileAssets.Get<T>();
@@ -109,6 +243,13 @@ namespace Colin.Core.Modulars.Tiles
             this[index].Behavior.OnInitialize( ref this[index] );
         }
 
+        /// <summary>
+        /// 根据坐标设置区块内物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Set( TileBehavior behavior, int x, int y, int z )
         {
             this[x, y, z].Behavior = behavior;
@@ -116,6 +257,13 @@ namespace Colin.Core.Modulars.Tiles
             this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
         }
 
+        /// <summary>
+        /// 根据索引设置区块内物块.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Set( TileBehavior behavior, int index )
         {
             this[index].Behavior = behavior;
@@ -123,6 +271,12 @@ namespace Colin.Core.Modulars.Tiles
             this[index].Behavior.OnInitialize( ref this[index] );
         }
 
+        /// <summary>
+        /// 破坏指定坐标处的物块.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Destruction( int x, int y, int z )
         {
             if(!this[x, y, z].Empty)
@@ -135,6 +289,12 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        /// <summary>
+        /// 在指定坐标处创建物块信息.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         internal void CreateTileDefaultInfo( int x, int y, int z )
         {
             int id = (z * Height * Width) + (x + y * Width);
@@ -146,6 +306,12 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].Empty = false;
         }
 
+        /// <summary>
+        /// 在指定索引处创建物块信息.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         internal void CreateTileDefaultInfo( int index )
         {
             int id = index;
@@ -158,6 +324,12 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].CoordZ = index / (Width * Height);
         }
 
+        /// <summary>
+        /// 在指定坐标处删除物块信息.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         internal void DeleteTileInfo( int x, int y, int z )
         {
             int id = (z * Width * Height) + (x + y * Width);
@@ -165,6 +337,12 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].Empty = true;
         }
 
+        /// <summary>
+        /// 在指定索引处删除物块信息.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         internal void DeleteTileInfo( int index )
         {
             int id = index;
@@ -172,79 +350,12 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].Collision = TileCollision.Passable;
         }
 
-        internal void LoadStep( string tablePath, BinaryReader reader )
+        internal void LoadStep( BinaryReader reader )
         {
-            _width = reader.ReadInt32();
-            _height = reader.ReadInt32();
-            _depth = reader.ReadInt32();
-            Infos = new TileInfo[_width * _height * _depth];
-            for(int count = 0; count < _width * _height * _depth; count++)
-            {
-                Infos[count] = new TileInfo();
-                Infos[count].LoadStep( reader );
-                if(!Infos[count].Empty)
-                    CreateTileDefaultInfo( count );
-                else
-                {
-                    int id = count;
-                    int coord = count % (Width * Height);
-                    Infos[id].Tile = Tile;
-                    Infos[id].ID = id;
-                    Infos[id].CoordX = coord % Width;
-                    Infos[id].CoordY = coord / Width;
-                    Infos[id].CoordZ = count / (Width * Height);
-                }
-            }
-            Dictionary<string, int> _cache = new Dictionary<string, int>();
-            using(FileStream fileStream = new FileStream( tablePath, FileMode.Open ))
-            {
-                _cache = (Dictionary<string, int>)JsonSerializer.Deserialize( fileStream, typeof( Dictionary<string, int> ) );
-            }
-            List<string> _indexMap = _cache.Keys.ToList();
-            int _index = 0;
-            TileBehavior behavior;
-            for(int count = 0; count < Length - 1; count++)
-            {
-                _index = reader.ReadInt32();
-                if(_index != -1)
-                    Set( TileAssets.Get( _indexMap[_index] ), count );
-            }
-            for(int count = 0; count < Length - 1; count++)
-                Infos[count].Behavior?.DoRefresh( ref Infos[count], 1 );
-            for(int count = 0; count < Length - 1; count++)
-                for(int scriptCount = 0; scriptCount < Infos[count].Scripts.Count; scriptCount++)
-                    Infos[count].Scripts.Values.ElementAt( scriptCount ).LoadStep( reader );
         }
 
-        internal void SaveStep( string tablePath, BinaryWriter writer )
+        internal void SaveStep( BinaryWriter writer )
         {
-            writer.Write( _width );
-            writer.Write( _height );
-            writer.Write( _depth );
-            foreach(var info in Infos)
-                info.SaveStep( writer );
-            Dictionary<string, int> _cache = new Dictionary<string, int>();
-            int index = 0;
-            TileAssets.IdentDic.Keys.ToList().ForEach( v => { _cache.Add( v, index++ ); } );
-            using(FileStream fileStream = new FileStream( tablePath, FileMode.OpenOrCreate ))
-            {
-                JsonSerializer.Serialize( fileStream, _cache );
-            }
-            for(int count = 0; count < Length - 1; count++)
-            {
-                string ident = this[count].Behavior?.Identifier;
-                if(!string.IsNullOrEmpty( ident ))
-                {
-                    if(_cache.TryGetValue( this[count].Behavior.Identifier, out int value ))
-                        writer.Write( value );
-                }
-                else
-                    writer.Write( -1 );
-            }
-            for(int count = 0; count < Length - 1; count++)
-                for(int scriptCount = 0; scriptCount < Infos[count].Scripts.Count; scriptCount++)
-                    Infos[count].Scripts.Values.ElementAt( scriptCount ).SaveStep( writer );
         }
-
     }
 }
