@@ -69,6 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Point3.cs" />
     <Compile Include="..\Colin\Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />

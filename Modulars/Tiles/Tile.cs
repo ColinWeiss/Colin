@@ -40,6 +40,19 @@ namespace Colin.Core.Modulars.Tiles
             return GetChunk( coord.X , coord.Y );
         }
 
+        /// <summary>
+        /// 在指定坐标新注册一个区块.
+        /// </summary>
+        public void RegisterChunk( int x , int y )
+        {
+            TileChunk chunk = new TileChunk();
+            chunk.CoordX = x;
+            chunk.CoordY = y;
+            chunk.Tile = this;
+            chunk.Create();
+            Chunks.Add( chunk.Coord , chunk );
+        }
+
         public Tile()
         {
             TileInfo._null.Tile = this;
@@ -58,6 +71,39 @@ namespace Colin.Core.Modulars.Tiles
         public void DoUpdate( GameTime time ) { }
         public void Dispose()
         {
+        }
+
+        /// <summary>
+        /// 索引器: 根据世界物块坐标获取指定位置的物块.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public ref TileInfo this[int x , int y , int z]
+        {
+            get
+            {
+                TileChunk targetChunk = GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
+                if(targetChunk is not null)
+                    return ref targetChunk[x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z];
+                else
+                    return ref TileInfo.Null;
+            }
+        }
+        /// <summary>
+        /// 索引器: 根据世界物块坐标获取指定位置的物块.
+        /// </summary>
+        public ref TileInfo this[Point3 coord]
+        {
+            get
+            {
+                TileChunk targetChunk = GetChunk( coord.X / TileOption.ChunkWidth, coord.Y / TileOption.ChunkHeight );
+                if(targetChunk is not null)
+                    return ref targetChunk[coord.X % TileOption.ChunkWidth, coord.Y % TileOption.ChunkHeight, coord.Z];
+                else
+                    return ref TileInfo.Null;
+            }
         }
 
         /// <summary>

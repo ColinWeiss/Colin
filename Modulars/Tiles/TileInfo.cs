@@ -11,9 +11,9 @@
         public bool Empty;
 
         /// <summary>
-        /// 指示物块的索引.
+        /// 指示物块在区块内的索引.
         /// </summary>
-        public int ID;
+        public int Index;
 
         /// <summary>
         /// 指示物块的横坐标.
@@ -33,15 +33,26 @@
         /// <summary>
         /// 指示物块在所属区块中的坐标.
         /// </summary>
-        public Vector2 Coord => new Vector2( CoordX, CoordY );
+        public Point ChunkCoord2 => new Point( CoordX, CoordY );
+
+        public Point3 ChunkCoord3 => new Point3( CoordX, CoordY, CoordZ );
 
         /// <summary>
         /// 指示物块在世界内的坐标.
         /// </summary>
-        public Vector2 WorldCoord => 
-            new Vector2( 
-                Chunk.CoordX * TileOption.ChunkWidth + Coord.X ,
-                Chunk.CoordY * TileOption.ChunkHeight + Coord.Y );
+        public Point WorldCoord2 =>
+            new Point(
+                Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
+                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y );
+
+        /// <summary>
+        /// 指示物块在世界内的坐标.
+        /// </summary>
+        public Point3 WorldCoord3 =>
+            new Point3(
+                Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
+                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y ,
+                CoordZ );
 
         /// <summary>
         /// 指示物块纹理帧格.
@@ -60,78 +71,43 @@
         /// </summary>
         public TileChunk Chunk;
 
-        public ref TileInfo Top
-        {
-            get
-            {
-                if(CoordY - 1 >= 0)
-                    return ref Tile.Infos[CoordX, CoordY - 1, CoordZ];
-                else
-                    return ref _null;
-            }
-        }
+        public ref TileInfo Top => ref Tile[WorldCoord2.X, WorldCoord2.Y - 1, CoordZ];
 
-        public ref TileInfo Bottom
-        {
-            get
-            {
-                if(CoordY + 1 < Tile?.Height)
-                    return ref Tile.Infos[CoordX, CoordY + 1, CoordZ];
-                else
-                    return ref _null;
-            }
-        }
+        public ref TileInfo Bottom => ref Tile[WorldCoord2.X, WorldCoord2.Y + 1, CoordZ];
 
-        public ref TileInfo Left
-        {
-            get
-            {
-                if(CoordX - 1 >= 0)
-                    return ref Tile.Infos[CoordX - 1, CoordY, CoordZ];
-                else
-                    return ref _null;
-            }
-        }
+        public ref TileInfo Left => ref Tile[WorldCoord2.X - 1, WorldCoord2.Y, CoordZ];
 
-        public ref TileInfo Right
-        {
-            get
-            {
-                if(CoordX + 1 < Tile?.Width)
-                    return ref Tile.Infos[CoordX + 1, CoordY, CoordZ];
-                else
-                    return ref _null;
-            }
-        }
+        public ref TileInfo Right => ref Tile[WorldCoord2.X + 1, WorldCoord2.Y, CoordZ];
 
         public ref TileInfo Front
         {
             get
             {
-                if( CoordZ - 1 >= 0 )
-                    return ref Tile.Infos[CoordX, CoordY, CoordZ - 1 ];
+                if(CoordZ - 1 >= 0)
+                    return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ - 1];
                 else
                     return ref _null;
             }
         }
-
         public ref TileInfo Behind
         {
             get
             {
-                if(CoordZ + 1 < Tile?.Depth )
-                    return ref Tile.Infos[CoordX, CoordY, CoordZ + 1];
+                if(CoordZ + 1 < Tile.Depth )
+                    return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ + 1];
                 else
                     return ref _null;
             }
         }
+    
 
         public Dictionary<Type, TileScript> Scripts = new Dictionary<Type, TileScript>();
         public T AddScript<T>() where T : TileScript, new()
         {
             T t = new T();
             t.Tile = Tile;
-            t.ID = ID;
+            t.Chunk = Chunk;
+            t.Index = Index;
             Scripts.Add( t.GetType(), t );
             return t;
         }
@@ -139,16 +115,17 @@
 
         public TileBehavior Behavior = null;
 
-        public RectangleF HitBox => new RectangleF( Coord * TileOption.TileSizeF, TileOption.TileSizeF );
+        public RectangleF HitBox => new RectangleF( WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF );
 
         public TileInfo()
         {
-            ID = 0;
+            Index = 0;
             Empty = true;
             CoordX = 0;
             CoordY = 0;
             CoordZ = 0;
             Tile = null;
+            Temp = null;
             Chunk = null;
             Texture = new TileFrame( -1, -1 );
             Collision = TileCollision.Passable;
@@ -175,6 +152,6 @@
         }
 
         internal static TileInfo _null = new TileInfo();
-        public static TileInfo Null => _null;
+        public static ref TileInfo Null => ref _null;
     }
 }

@@ -80,7 +80,6 @@ namespace Colin.Core
             Width = width;
             Height = height;
         }
-
         public RectangleF( Vector2 location, Vector2 size )
         {
             X = location.X;

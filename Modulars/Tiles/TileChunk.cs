@@ -44,6 +44,8 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public int CoordY;
 
+        public Point Coord => new Point( CoordX, CoordY );
+
         private TileChunk temp;
         public TileChunk Top
         {
@@ -78,7 +80,6 @@ namespace Colin.Core.Modulars.Tiles
                     return null;
             }
         }
-
         public TileChunk Right
         {
             get
@@ -144,7 +145,8 @@ namespace Colin.Core.Modulars.Tiles
                 coord = count % (Width * Height);
                 Infos[count] = new TileInfo();
                 Infos[count].Tile = Tile;
-                Infos[count].ID = count;
+                Infos[count].Chunk = this;
+                Infos[count].Index = count;
                 Infos[count].CoordX = coord % Width;
                 Infos[count].CoordY = coord / Width;
                 Infos[count].CoordZ = count / (Width * Height);
@@ -178,10 +180,13 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="z"></param>
         public void Place<T>( int index ) where T : TileBehavior, new()
         {
-            CreateTileDefaultInfo( index );
-            Set<T>( index );
-            this[index].Behavior.OnPlace( ref this[index] );
-            this[index].Behavior.DoRefresh( ref this[index], 1 );
+            if(this[index].Empty)
+            {
+                CreateTileDefaultInfo( index );
+                Set<T>( index );
+                this[index].Behavior.OnPlace( ref this[index] );
+                this[index].Behavior.DoRefresh( ref this[index], 1 );
+            }
         }
 
         /// <summary>
@@ -193,10 +198,13 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="z"></param>
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
-            CreateTileDefaultInfo( x, y, z );
-            Set( behavior, x, y, z );
-            this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
-            this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
+            if(this[x, y, z].Empty)
+            {
+                CreateTileDefaultInfo( x, y, z );
+                Set( behavior, x, y, z );
+                this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
+                this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
+            }
         }
 
         /// <summary>
@@ -299,10 +307,11 @@ namespace Colin.Core.Modulars.Tiles
         {
             int id = (z * Height * Width) + (x + y * Width);
             Infos[id].Tile = Tile;
+            Infos[id].Chunk = this;
             Infos[id].CoordX = x;
             Infos[id].CoordY = y;
             Infos[id].CoordZ = z;
-            Infos[id].ID = id;
+            Infos[id].Index = id;
             Infos[id].Empty = false;
         }
 
@@ -317,8 +326,9 @@ namespace Colin.Core.Modulars.Tiles
             int id = index;
             int coord = index % (Width * Height);
             Infos[id].Tile = Tile;
+            Infos[id].Chunk = this;
             Infos[id].Empty = false;
-            Infos[id].ID = id;
+            Infos[id].Index = id;
             Infos[id].CoordX = coord % Width;
             Infos[id].CoordY = coord / Width;
             Infos[id].CoordZ = index / (Width * Height);

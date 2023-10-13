@@ -11,12 +11,14 @@ namespace Colin.Core.Modulars.Tiles
     public abstract class TileScript
     {
         public Tile Tile { get; internal set; }
-        public int ID { get; internal set; }
-        public ref TileInfo Info => ref Tile.Infos[ID];
+        public TileChunk Chunk { get; internal set; }
+        public int Index { get; internal set; }
+        public ref TileInfo Info => ref Chunk[Index];
         public int CoordX => Info.CoordX;
         public int CoordY => Info.CoordY;
         public int CoordZ => Info.CoordZ;
         public Vector2 Coord => new Vector2( CoordX , CoordY );
+        public Point WorldCoord => Info.WorldCoord2;
         /// <summary>
         /// 在第一次放置时执行.
         /// </summary>
