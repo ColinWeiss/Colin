@@ -51,7 +51,7 @@
         public Point3 WorldCoord3 =>
             new Point3(
                 Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
-                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y ,
+                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y,
                 CoordZ );
 
         /// <summary>
@@ -71,35 +71,75 @@
         /// </summary>
         public TileChunk Chunk;
 
-        public ref TileInfo Top => ref Tile[WorldCoord2.X, WorldCoord2.Y - 1, CoordZ];
+        public ref TileInfo Top
+        {
+            get
+            {
+                if(Chunk is null)
+                    return ref _null;
+                else
+                    return ref Tile[WorldCoord2.X, WorldCoord2.Y - 1, CoordZ];
+            }
+        }
 
-        public ref TileInfo Bottom => ref Tile[WorldCoord2.X, WorldCoord2.Y + 1, CoordZ];
+        public ref TileInfo Bottom
+        {
+            get
+            {
+                if(Chunk is null)
+                    return ref _null;
+                else
+                    return ref Tile[WorldCoord2.X, WorldCoord2.Y + 1, CoordZ];
+            }
+        }
 
-        public ref TileInfo Left => ref Tile[WorldCoord2.X - 1, WorldCoord2.Y, CoordZ];
+        public ref TileInfo Left
+        {
+            get
+            {
+                if(Chunk is null)
+                    return ref _null;
+                else
+                    return ref Tile[WorldCoord2.X - 1, WorldCoord2.Y, CoordZ];
+            }
+        }
 
-        public ref TileInfo Right => ref Tile[WorldCoord2.X + 1, WorldCoord2.Y, CoordZ];
+        public ref TileInfo Right
+        {
+            get
+            {
+                if(Chunk is null)
+                    return ref _null;
+                else
+                    return ref Tile[WorldCoord2.X + 1, WorldCoord2.Y, CoordZ];
+            }
+        }
 
         public ref TileInfo Front
         {
             get
             {
-                if(CoordZ - 1 >= 0)
+                if(Chunk is null)
+                    return ref _null;
+                else if(CoordZ - 1 >= 0)
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ - 1];
                 else
                     return ref _null;
             }
         }
+
         public ref TileInfo Behind
         {
             get
             {
-                if(CoordZ + 1 < Tile.Depth )
+                if(Chunk is null)
+                    return ref _null;
+                else if(CoordZ + 1 < Tile.Depth)
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ + 1];
                 else
                     return ref _null;
             }
         }
-    
 
         public Dictionary<Type, TileScript> Scripts = new Dictionary<Type, TileScript>();
         public T AddScript<T>() where T : TileScript, new()
@@ -125,7 +165,6 @@
             CoordY = 0;
             CoordZ = 0;
             Tile = null;
-            Temp = null;
             Chunk = null;
             Texture = new TileFrame( -1, -1 );
             Collision = TileCollision.Passable;

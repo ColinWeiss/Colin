@@ -44,6 +44,23 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public int CoordY;
 
+        /// <summary>
+        /// 指示该区块是否为需要一直留在管理器内进行维护的区块.
+        /// </summary>
+        public bool Importance = false;
+
+        /// <summary>
+        /// 区块当前活跃时间.
+        /// <br>[!] 归零后将区块加入卸载队列.</br>
+        /// </summary>
+        public float ActiveTimer;
+
+        /// <summary>
+        /// 区块最大活跃时间.
+        /// <br>单位: 秒.</br>
+        /// </summary>
+        public float ActiveTime = 15;
+
         public Point Coord => new Point( CoordX, CoordY );
 
         private TileChunk temp;
@@ -133,9 +150,8 @@ namespace Colin.Core.Modulars.Tiles
         }
 
         /// <summary>
-        /// 创建一个区块.
+        /// 创建一个空区块.
         /// </summary>
-        /// <param name="depth"></param>
         public void Create( )
         {
             Infos = new TileInfo[ Width * Height * Depth ];
@@ -362,10 +378,12 @@ namespace Colin.Core.Modulars.Tiles
 
         internal void LoadStep( BinaryReader reader )
         {
+
         }
 
         internal void SaveStep( BinaryWriter writer )
         {
+
         }
     }
 }
