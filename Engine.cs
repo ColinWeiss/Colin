@@ -65,7 +65,7 @@ namespace Colin.Core
 
         public Engine()
         {
-            ProgramChecker.DoCheck();
+            Preparator.DoCheck();
             EngineInfo.Init( this );
             if(EngineInfo.Graphics == null)
             {

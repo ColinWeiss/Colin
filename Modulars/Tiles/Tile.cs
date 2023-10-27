@@ -21,41 +21,13 @@ namespace Colin.Core.Modulars.Tiles
             set => _enable = value;
         }
 
-        /// <summary>
-        /// 区块字典.
-        /// <br>用于存储当前已被加载进内存的区块.</br>
-        /// <br>键: 区块坐标.</br>
-        /// <br>值: 区块.</br>
-        /// </summary>
-        public Dictionary<Point, TileChunk> Chunks = new Dictionary<Point, TileChunk>();
-        public TileChunk GetChunk( int x , int y )
-        {
-            if(Chunks.TryGetValue( new Point( x, y ), out TileChunk chunk ))
-                return chunk;
-            else
-                return null;
-        }
-        public TileChunk GetChunk( Point coord )
-        {
-            return GetChunk( coord.X , coord.Y );
-        }
-
-        /// <summary>
-        /// 在指定坐标新注册一个区块.
-        /// </summary>
-        public void RegisterChunk( int x , int y )
-        {
-            TileChunk chunk = new TileChunk();
-            chunk.CoordX = x;
-            chunk.CoordY = y;
-            chunk.Tile = this;
-            chunk.Create();
-            Chunks.Add( chunk.Coord , chunk );
-        }
+        public TileChunkManager Manager { get; }
 
         public Tile()
         {
             TileInfo._null.Tile = this;
+            Manager = new TileChunkManager();
+            Manager.Tile = this;
         }
 
         /// <summary>
@@ -84,7 +56,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                TileChunk targetChunk = GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
+                TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
                 if(targetChunk is not null)
                     return ref targetChunk[x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z];
                 else
@@ -98,7 +70,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                TileChunk targetChunk = GetChunk( coord.X / TileOption.ChunkWidth, coord.Y / TileOption.ChunkHeight );
+                TileChunk targetChunk = Manager.GetChunk( coord.X / TileOption.ChunkWidth, coord.Y / TileOption.ChunkHeight );
                 if(targetChunk is not null)
                     return ref targetChunk[coord.X % TileOption.ChunkWidth, coord.Y % TileOption.ChunkHeight, coord.Z];
                 else
@@ -106,12 +78,15 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        public void RegisterChunk( int x, int y ) => Manager.RegisterChunk( x , y );
+        public TileChunk GetChunk( int x, int y ) => Manager.GetChunk( x , y );
+
         /// <summary>
         /// 使用世界物块坐标在指定位置放置物块.
         /// </summary>
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
-            TileChunk targetChunk = GetChunk( x / TileOption.ChunkWidth , y / TileOption.ChunkHeight );
+            TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth , y / TileOption.ChunkHeight );
             if( targetChunk is not null )
                 targetChunk.Place<T>( x % TileOption.ChunkWidth , y % TileOption.ChunkHeight , z );
         }
@@ -121,7 +96,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
-            TileChunk targetChunk = GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
+            TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
             if(targetChunk is not null)
                 targetChunk.Place( behavior , x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z );
         }
@@ -131,7 +106,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public void Destruction( int x, int y, int z )
         {
-            TileChunk targetChunk = GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
+            TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
             if(targetChunk is not null)
                 targetChunk.Destruction( x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z );
         }

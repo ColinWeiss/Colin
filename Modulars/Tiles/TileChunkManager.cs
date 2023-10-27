@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Colin.Core.IO;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -38,10 +39,14 @@ namespace Colin.Core.Modulars.Tiles
             for(int count = 0; count < Chunks.Count; count++)
             {
                 current = Chunks.ElementAt( count ).Value;
+
+                if(current.Importance)
+                    continue;
                 current.ActiveTimer -= Time.UnscaledDeltaTime;
                 if(current.ActiveTimer <= 0)
                 {
                     Chunks.Remove( current.Coord );
+                    count--;
                 }
             }
         }
@@ -55,6 +60,7 @@ namespace Colin.Core.Modulars.Tiles
             chunk.CoordY = y;
             chunk.Tile = Tile;
             chunk.Create();
+            chunk.Manager = this;
             Chunks.Add( chunk.Coord, chunk );
         }
         public void LoadChunk( )

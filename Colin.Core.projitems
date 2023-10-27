@@ -64,6 +64,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Developments\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
@@ -179,7 +180,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Developments\ProgramChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\FontResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\UnsafeObject.cs" />

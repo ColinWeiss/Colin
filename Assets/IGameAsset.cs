@@ -6,7 +6,7 @@
     public interface IGameAsset
     {
         /// <summary>
-        /// 指示该游戏资产类对象的名称.
+        /// 指示该游戏资源对象类型的名称.
         /// </summary>
         public string Name { get; }
 

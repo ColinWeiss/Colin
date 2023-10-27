@@ -45,7 +45,7 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordY;
 
         /// <summary>
-        /// 指示该区块是否为需要一直留在管理器内进行维护的区块.
+        /// 指示该区块是否属于需要一直进行维护的区块.
         /// </summary>
         public bool Importance = false;
 
@@ -109,12 +109,14 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
+        public TileChunkManager Manager { get; internal set; }
+
         /// <summary>
         /// 根据指定偏移量获取相对于该区块坐标偏移的区块.
         /// </summary>
         public TileChunk GetOffset( int offsetX , int offsetY )
         {
-            return Tile.GetChunk( CoordX + offsetX , CoordY + offsetY );
+            return Manager.GetChunk( CoordX + offsetX , CoordY + offsetY );
         }
 
         /// <summary>
