@@ -1,13 +1,12 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using Colin.Core.Resources;
+
+namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 物块行为.
     /// </summary>
-    public class TileBehavior
+    public class TileBehavior : ICodeResource
     {
-        /// <summary>
-        /// 获取物块行为包含类名的完整命名空间.
-        /// </summary>
         public string Identifier => (GetType().Namespace + "." + GetType().Name);
 
         public Tile Tile { get; internal set; }

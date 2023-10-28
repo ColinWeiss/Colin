@@ -14,5 +14,6 @@
         public static readonly int ChunkHeight = 100;
         public static Point ChunkSize => new Point( ChunkWidth, ChunkHeight );
         public static Vector2 ChunkSizeF => new Vector2( ChunkWidth, ChunkHeight );
+
     }
 }

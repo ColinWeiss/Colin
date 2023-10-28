@@ -51,7 +51,7 @@ namespace Colin.Core.Modulars.Tiles
 
         /// <summary>
         /// 区块当前活跃时间.
-        /// <br>[!] 归零后将区块加入卸载队列.</br>
+        /// <br>[!] 归零后区块将自动保存并卸载.</br>
         /// </summary>
         public float ActiveTimer;
 
@@ -59,7 +59,7 @@ namespace Colin.Core.Modulars.Tiles
         /// 区块最大活跃时间.
         /// <br>单位: 秒.</br>
         /// </summary>
-        public float ActiveTime = 15;
+        public float ActiveTime = 30;
 
         public Point Coord => new Point( CoordX, CoordY );
 
@@ -378,12 +378,12 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].Collision = TileCollision.Passable;
         }
 
-        internal void LoadStep( BinaryReader reader )
+        internal void LoadChunk( BinaryReader reader )
         {
 
         }
 
-        internal void SaveStep( BinaryWriter writer )
+        internal void SaveChunk( BinaryWriter writer )
         {
 
         }

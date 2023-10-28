@@ -51,7 +51,7 @@ namespace Colin.Core
         /// </summary>
         public Scene CurrentScene { get; internal set; }
 
-        public AssetLoader AssetLoader { get; private set; }
+        public Preparator Preparator { get; private set; }
 
         private int _targetFrame = 60;
         /// <summary>
@@ -134,8 +134,12 @@ namespace Colin.Core
 
         protected override sealed void LoadContent()
         {
+            Preparator = new Preparator();
+            Load();
+            Preparator.OnLoadComplete += Start;
             base.LoadContent();
         }
+        public virtual void Load( ) { }
 
         /// <summary>
         /// 在程序开始运行时执行.
@@ -157,9 +161,7 @@ namespace Colin.Core
                         Screen.PrimaryScreen.Bounds.Height / 2 - Form.Height / 2
                         );
 #endif
-                AssetLoader = new AssetLoader();
-                AssetLoader.OnLoadComplete += ( s, e ) => Start();
-                SetScene( AssetLoader );
+                SetScene( Preparator );
                 Started = true;
             }
             EngineInfo.GetInformationFromDevice( gameTime );
