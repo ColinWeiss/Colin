@@ -148,7 +148,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             CoordX = 0;
             CoordY = 0;
-            ActiveTimer = ActiveTime;
+            ActiveTimer = 2;
             Infos = new TileInfo[1];
         }
 

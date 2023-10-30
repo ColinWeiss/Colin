@@ -39,13 +39,12 @@ namespace Colin.Core.Modulars.Tiles
             for(int count = 0; count < Chunks.Count; count++)
             {
                 current = Chunks.ElementAt( count ).Value;
-                if(current.Importance)
+                if( current.Importance )
                     continue;
                 current.ActiveTimer -= Time.UnscaledDeltaTime;
                 if(current.ActiveTimer <= 0)
                 {
                     UnLoadQueue.Enqueue( current );
-                    count--;
                 }
             }
         }
