@@ -1,5 +1,5 @@
 ﻿using Colin.Core.Modulars.Tiles;
-using DeltaMachine.Core.GameContents.Scenes.Worlds;
+using DeltaMachine.Core.Scenes.Worlds;
 
 namespace Colin.Core.Modulars.Tiles
 {

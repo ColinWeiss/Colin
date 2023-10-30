@@ -40,7 +40,10 @@ namespace Colin.Core.Modulars.Tiles
         }
         public void DoInitialize() { }
         public void Start() { }
-        public void DoUpdate( GameTime time ) { }
+        public void DoUpdate( GameTime time )
+        {
+            Manager.DoUpdate( );
+        }
         public void Dispose()
         {
         }
@@ -78,7 +81,7 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        public void RegisterChunk( int x, int y ) => Manager.RegisterChunk( x , y );
+        public void RegisterChunk( int x, int y ) => Manager.CreateChunk( x , y );
         public TileChunk GetChunk( int x, int y ) => Manager.GetChunk( x , y );
 
         /// <summary>

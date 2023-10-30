@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public class TileBehavior : ICodeResource
     {
-        public string Identifier => (GetType().Namespace + "." + GetType().Name);
+        public string Identifier => GetType().FullName;
 
         public Tile Tile { get; internal set; }
 

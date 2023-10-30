@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeltaMachine.Core.GameContents.Sections.Items;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -8,28 +9,58 @@ namespace Colin.Core.Resources
 {
     public class CodeResources<T0> where T0 : ICodeResource
     {
-        public static Dictionary<Type, T0> TypeMaps = new Dictionary<Type, T0>();
-        public static Dictionary<int, string> NameMaps = new Dictionary<int, string>();
-        public static T1 Get<T1>() where T1 : T0 => (T1)TypeMaps.GetValueOrDefault( typeof( T1 ) );
+        public static Dictionary<Type, T0> Resources = new Dictionary<Type, T0>();
+        public static Dictionary<string, Type> IdentifierMaps = new Dictionary<string, Type>();
+        public static Dictionary<string, int> SerializeMaps = new Dictionary<string, int>();
+        public static Dictionary<int, string> HashMaps = new Dictionary<int, string>();
+
+        public static T1 Get<T1>() where T1 : T0 => (T1)Resources.GetValueOrDefault( typeof( T1 ) );
+        public static T0 Get( Type type )
+        {
+            if(Resources.TryGetValue( type, out T0 value ))
+                return value;
+            else return default;
+        }
+        public static T0 Get( string identifier )
+        {
+            if(IdentifierMaps.TryGetValue( identifier, out Type type ))
+                return Get( type );
+            else return default;
+        }
+
         public void Load()
         {
-            TypeMaps.Clear();
-            NameMaps.Clear();
+            Resources.Clear();
+            SerializeMaps.Clear();
             foreach(var item in Assembly.GetExecutingAssembly().GetTypes())
             {
                 if(!item.IsAbstract && item.IsSubclassOf( typeof( T0 ) ))
                 {
-                    TypeMaps.Add( item, (T0)Activator.CreateInstance( item ) );
-                    NameMaps.Add( NameMaps.Count , item.FullName );
+                    Resources.Add( item, (T0)Activator.CreateInstance( item ) );
+                    IdentifierMaps.Add( item.FullName, item );
+                    SerializeMaps.Add( item.FullName, item.FullName.GetMsnHashCode() );
                 }
             }
         }
-
         public void SaveMaps( string path )
         {
-            using(FileStream fileStream = new FileStream( path , FileMode.Create ) )
+            using(FileStream fileStream = new FileStream( path, FileMode.Create ))
             {
-                JsonSerializer.Serialize( fileStream , NameMaps );
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.WriteIndented = true;
+                JsonSerializer.Serialize( fileStream, SerializeMaps, SerializeMaps.GetType(), options );
+            }
+        }
+        public void LoadMaps( string path )
+        {
+            HashMaps.Clear();
+            using(FileStream fileStream = new FileStream( path, FileMode.Open ))
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.WriteIndented = true;
+                SerializeMaps = (Dictionary<string, int>)JsonSerializer.Deserialize( fileStream, SerializeMaps.GetType() );
+                foreach(var item in SerializeMaps)
+                    HashMaps.Add( item.Value , item.Key );
             }
         }
     }

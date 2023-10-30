@@ -1,4 +1,4 @@
-﻿using Colin.Core.Assets.GameAssets;
+﻿using Colin.Core.Resources;
 using DeltaMachine.Core.GameContents.GameSystems;
 using System;
 using System.Reflection;
@@ -68,7 +68,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                temp = GetOffset( 0 , -1 );
+                temp = GetOffset( 0, -1 );
                 if(temp is not null)
                     return temp;
                 else
@@ -114,9 +114,9 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 根据指定偏移量获取相对于该区块坐标偏移的区块.
         /// </summary>
-        public TileChunk GetOffset( int offsetX , int offsetY )
+        public TileChunk GetOffset( int offsetX, int offsetY )
         {
-            return Manager.GetChunk( CoordX + offsetX , CoordY + offsetY );
+            return Manager.GetChunk( CoordX + offsetX, CoordY + offsetY );
         }
 
         /// <summary>
@@ -148,15 +148,16 @@ namespace Colin.Core.Modulars.Tiles
         {
             CoordX = 0;
             CoordY = 0;
+            ActiveTimer = ActiveTime;
             Infos = new TileInfo[1];
         }
 
         /// <summary>
-        /// 创建一个空区块.
+        /// 创建空区块.
         /// </summary>
-        public void Create( )
+        public void Create()
         {
-            Infos = new TileInfo[ Width * Height * Depth ];
+            Infos = new TileInfo[Width * Height * Depth];
             int coord;
             for(int count = 0; count < Infos.Length; count++)
             {
@@ -250,7 +251,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="z"></param>
         public void Set<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
-            this[x, y, z].Behavior = TileAssets.Get<T>();
+            this[x, y, z].Behavior = CodeResources<TileBehavior>.Get<T>();
             this[x, y, z].Behavior.Tile = Tile;
             this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
         }
@@ -264,7 +265,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="z"></param>
         public void Set<T>( int index ) where T : TileBehavior, new()
         {
-            this[index].Behavior = TileAssets.Get<T>();
+            this[index].Behavior = CodeResources<TileBehavior>.Get<T>();
             this[index].Behavior.Tile = Tile;
             this[index].Behavior.OnInitialize( ref this[index] );
         }
@@ -378,14 +379,45 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].Collision = TileCollision.Passable;
         }
 
-        internal void LoadChunk( BinaryReader reader )
+        internal void LoadChunk( string path )
         {
-
+            using(FileStream fileStream = new FileStream( path, FileMode.Create ))
+            {
+                using(BinaryReader reader = new BinaryReader( fileStream ))
+                {
+                    Create();
+                    for(int count = 0; count < Infos.Length; count++)
+                    {
+                        Infos[count].LoadStep( reader );
+                        if(!Infos[count].Empty)
+                            if(CodeResources<TileBehavior>.HashMaps.TryGetValue( reader.ReadInt32(), out string value ))
+                            {
+                                Set( CodeResources<TileBehavior>.Get( value ), count );
+                            }
+                    }
+                }
+            }
         }
 
-        internal void SaveChunk( BinaryWriter writer )
+        internal void SaveChunk( string path )
         {
-
+            using(FileStream fileStream = new FileStream( path, FileMode.Create ))
+            {
+                using(BinaryWriter writer = new BinaryWriter( fileStream ))
+                {
+                    TileBehavior behavior;
+                    for(int count = 0; count < Infos.Length; count++)
+                    {
+                        behavior = Infos[count].Behavior;
+                        Infos[count].SaveStep( writer );
+                        if(!Infos[count].Empty && behavior is not null)
+                            if(CodeResources<TileBehavior>.SerializeMaps.TryGetValue( behavior.Identifier, out int value ))
+                            {
+                                writer.Write( value );
+                            }
+                    }
+                }
+            }
         }
     }
 }

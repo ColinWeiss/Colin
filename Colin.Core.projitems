@@ -47,7 +47,6 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\Pixel.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\GameAssets\TileAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
@@ -71,6 +70,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Point3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Resources\GameResources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResources.cs" />
     <Compile Include="..\Colin\Events\KeyEventArgs.cs" />
