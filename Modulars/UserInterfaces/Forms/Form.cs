@@ -73,7 +73,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Block = new Division( "Behavior" );
             if(!IsTransparent)
                 Block.BindRenderer<DivPixelRenderer>();
-            Block.Design.Color = new Color( 17, 18, 20 );
+            Block.Design.Color = new Color( 24, 25, 28 );
             Block.Layout.Top = _titleHeight;
             Block.Layout.Width = Layout.Width;
             Block.Layout.Height = Layout.Height;
@@ -135,6 +135,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 };
                 TitleColumn.Register( CloseButton );
             }
+
+            Division titleLine = new Division( "TitleLine" );
+            titleLine.Layout.Width = TitleColumn.Layout.Width;
+            titleLine.Layout.Height = 2;
+            titleLine.Design.Color = new Color( 51 , 45 , 31 );
+            titleLine.BindRenderer<DivPixelRenderer>();
+            Register( titleLine );
 
             base.Register( TitleColumn );
 
