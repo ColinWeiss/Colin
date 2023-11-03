@@ -75,7 +75,6 @@
         }
 
 
-
         /// <summary>
         /// 九宫绘制.
         /// </summary>
@@ -88,27 +87,27 @@
         /// <param name="Height"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, float x, float y, int Width, int Height, int cut, float depth )
+        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, float x, float y, int Width, int Height, Point cut, float depth )
         {
-            Point borderSize = new Point( cut );
-            Rectangle leftTop = new Rectangle( (int)x, (int)y, cut, cut );
-            Rectangle rightTop = new Rectangle( (int)x + Width - cut, (int)y, cut, cut );
-            Rectangle leftBottom = new Rectangle( (int)x, (int)y + Height - cut, cut, cut );
-            Rectangle rightBottom = new Rectangle( (int)x + Width - cut, (int)y + Height - cut, cut, cut );
-            Rectangle top = new Rectangle( (int)x + cut, (int)y, Width - cut * 2, cut );
-            Rectangle left = new Rectangle( (int)x, (int)y + cut, cut, Height - cut * 2 );
-            Rectangle right = new Rectangle( (int)x + Width - cut, (int)y + cut, cut, Height - cut * 2 );
-            Rectangle bottom = new Rectangle( (int)x + cut, (int)y + Height - cut, Width - cut * 2, cut );
-            Rectangle center = new Rectangle( (int)x + cut, (int)y + cut, Width - cut * 2, Height - cut * 2 );
+            Point borderSize = cut;
+            Rectangle leftTop = new Rectangle( (int)x, (int)y, cut.X, cut.Y );
+            Rectangle rightTop = new Rectangle( (int)x + Width - cut.X, (int)y, cut.X, cut.Y );
+            Rectangle leftBottom = new Rectangle( (int)x, (int)y + Height - cut.Y, cut.X, cut.Y );
+            Rectangle rightBottom = new Rectangle( (int)x + Width - cut.X, (int)y + Height - cut.Y, cut.X, cut.Y );
+            Rectangle top = new Rectangle( (int)x + cut.X, (int)y, Width - cut.X * 2, cut.Y );
+            Rectangle left = new Rectangle( (int)x, (int)y + cut.Y, cut.X, Height - cut.Y * 2 );
+            Rectangle right = new Rectangle( (int)x + Width - cut.X, (int)y + cut.Y, cut.X, Height - cut.Y * 2 );
+            Rectangle bottom = new Rectangle( (int)x + cut.X, (int)y + Height - cut.Y, Width - cut.X * 2, cut.Y );
+            Rectangle center = new Rectangle( (int)x + cut.X, (int)y + cut.Y, Width - cut.X * 2, Height - cut.Y * 2 );
             batch.Draw( texture, leftTop, new Rectangle( Point.Zero, borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, rightTop, new Rectangle( new Point( texture.Width - cut, 0 ), borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, leftBottom, new Rectangle( new Point( 0, texture.Height - cut ), borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, rightBottom, new Rectangle( new Point( texture.Width - cut, texture.Height - cut ), borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, top, new Rectangle( cut, 0, texture.Width - cut * 2, cut ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, left, new Rectangle( 0, cut, cut, texture.Height - cut * 2 ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, right, new Rectangle( texture.Width - cut, cut, cut, texture.Height - cut * 2 ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, bottom, new Rectangle( cut, texture.Height - cut, texture.Width - cut * 2, cut ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
-            batch.Draw( texture, center, new Rectangle( cut, cut, texture.Width - cut * 2, texture.Height - cut * 2 ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, rightTop, new Rectangle( new Point( texture.Width - cut.X, 0 ), borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, leftBottom, new Rectangle( new Point( 0, texture.Height - cut.Y ), borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, rightBottom, new Rectangle( new Point( texture.Width - cut.X, texture.Height - cut.Y ), borderSize ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, top, new Rectangle( cut.X, 0, texture.Width - cut.X * 2, cut.Y ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, left, new Rectangle( 0, cut.Y, cut.X, texture.Height - cut.Y * 2 ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, right, new Rectangle( texture.Width - cut.X, cut.Y, cut.X, texture.Height - cut.Y * 2 ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, bottom, new Rectangle( cut.X, texture.Height - cut.Y, texture.Width - cut.X * 2, cut.Y ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
+            batch.Draw( texture, center, new Rectangle( cut.X, cut.Y, texture.Width - cut.X * 2, texture.Height - cut.Y * 2 ), color, 0f, Vector2.Zero, SpriteEffects.None, depth );
         }
 
         /// <summary>
@@ -122,7 +121,7 @@
         /// <param name="Height"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, int Width, int Height, int cut, float depth )
+        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, int Width, int Height, Point cut, float depth )
         {
             batch.DrawNineCut( texture, color, (int)pos.X, (int)pos.Y, Width, Height, cut, depth );
         }
@@ -137,7 +136,7 @@
         /// <param name="size"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, Point size, int cut, float depth )
+        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, Point size, Point cut, float depth )
         {
             batch.DrawNineCut( texture, color, (int)pos.X, (int)pos.Y, size.X, size.Y, cut, depth );
         }
@@ -152,7 +151,7 @@
         /// <param name="size"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Point pos, Point size, int cut, float depth )
+        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Point pos, Point size, Point cut, float depth )
         {
             batch.DrawNineCut( texture, color, pos.X, pos.Y, size.X, size.Y, cut, depth );
         }
@@ -166,7 +165,7 @@
         /// <param name="rec"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Rectangle rec, int cut, float depth )
+        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Rectangle rec, Point cut, float depth )
         {
             batch.DrawNineCut( texture, color, rec.X, rec.Y, rec.Width, rec.Height, cut, depth );
         }

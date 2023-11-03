@@ -107,6 +107,7 @@
             Name = name;
             Events = new DivisionEventResponder( this );
             Interact.IsInteractive = true;
+            Interact.IsBubbling = true;
             Design.Color = Color.White;
             Design.Scale = Vector2.One;
             Children = new List<Division>();
@@ -124,7 +125,7 @@
             Controller?.OnInit();
             _renderer?.RendererInit();
             if(Parent != null)
-                Layout.Calculation( Parent.Layout ); //刷新一下.
+                Layout.Calculation( this ); //刷新一下.
             ForEach( child => child.DoInitialize() );
             Events.DoInitialize();
             InitializationCompleted = true;
@@ -157,7 +158,7 @@
             }
             Controller?.Layout( ref Layout );
             if(Parent != null)
-                Layout.Calculation( Parent.Layout );
+                Layout.Calculation( this );
             Controller?.Interact( ref Interact );
             Controller?.Design( ref Design );
             Events.DoUpdate();
@@ -224,7 +225,7 @@
                 else if(ParentCanvas == null)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState );
                 else
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
+                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
             }
             _renderer?.DoRender( batch );//渲染器进行渲染.
             RenderChildren( batch );
@@ -285,7 +286,7 @@
             if(doInit)
             {
                 division.DoInitialize();
-                division.Layout.Calculation( Layout );
+                //       division.Layout.Calculation( this );
             }
             division._interface = _interface;
             division._container = _container;
@@ -344,7 +345,12 @@
 		/// </summary>
 		/// <param name="point">输入的点.</param>
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
-		public virtual bool ContainsPoint( Point point ) => Layout.TotalHitBox.Contains( point );
+		public virtual bool ContainsPoint( Point point )
+        {
+            if(Layout.ScissorEnable)
+                return Layout.GetTotalScissor( this ).Contains( point ) && Layout.TotalHitBox.Contains( point );
+            return Layout.TotalHitBox.Contains( point );
+        }
 
         private bool disposedValue;
         protected virtual void Dispose( bool disposing )

@@ -45,6 +45,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\TitleColumn1.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\ControllerCursor.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\Pixel.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Slider.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />

@@ -41,6 +41,11 @@
         public bool IsInteractive;
 
         /// <summary>
+        /// 指示划分元素在处理事件时是否捕获事件.
+        /// </summary>
+        public bool IsBubbling;
+
+        /// <summary>
         /// 指示划分元素是否为可选中的.
         /// </summary>
         public bool IsSelectable;

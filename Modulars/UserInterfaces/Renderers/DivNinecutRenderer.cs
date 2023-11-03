@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     {
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
-        public int Cut;
+        public Point Cut;
         public override void RendererInit() { }
         public override void DoRender( SpriteBatch batch )
         {

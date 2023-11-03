@@ -67,7 +67,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
             DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
             _substrateRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Substrate0" ) );
-            _substrateRenderer.Cut = 4;
+            _substrateRenderer.Cut = new Point( 4, 4 );
             base.Register( Substrate );
 
             Block = new Division( "Behavior" );
@@ -89,7 +89,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 _titleColumnDec = new Division( "TitleColumn.Decoration" );
                 DivNinecutRenderer _decRenderer = _titleColumnDec.BindRenderer<DivNinecutRenderer>();
                 _decRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Decoration" ) );
-                _decRenderer.Cut = 8;
+                _decRenderer.Cut = new Point( 8, 8 );
                 _titleColumnDec.Interact.IsInteractive = false;
                 _titleColumnDec.Layout.Width = TitleColumn.Layout.Width;
                 _titleColumnDec.Layout.Height = TitleColumn.Layout.Height;
@@ -120,16 +120,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Layout.Top = 6;
                 CloseButton.Layout.Width = 24;
                 CloseButton.Layout.Height = 24;
-                CloseButton.Events.LeftClickBefore += ( ) =>
+                CloseButton.Events.LeftClickBefore += () =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0_Off" ) );
                 };
-                CloseButton.Events.LeftClickAfter += ( ) =>
+                CloseButton.Events.LeftClickAfter += () =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
                     Close();
                 };
-                CloseButton.Events.HoverOver += ( ) =>
+                CloseButton.Events.HoverOver += () =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close0" ) );
                 };
@@ -139,7 +139,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Division titleLine = new Division( "TitleLine" );
             titleLine.Layout.Width = TitleColumn.Layout.Width;
             titleLine.Layout.Height = 2;
-            titleLine.Design.Color = new Color( 51 , 45 , 31 );
+            titleLine.Design.Color = new Color( 51, 45, 31 );
             titleLine.BindRenderer<DivPixelRenderer>();
             Register( titleLine );
 
@@ -150,10 +150,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Width += 8;
             Layout.Height += _titleHeight + 8;
 
-            Events.LeftClickBefore += ( ) => Interface.Container.SetTop( this );
+            Events.LeftClickBefore += () => Interface.Container.SetTop( this );
             Events.KeyClickBefore += ( object s, KeyEventArgs e ) =>
             {
-                if(e.Key == Keys.Escape && IsVisible )
+                if(e.Key == Keys.Escape && IsVisible)
                 {
                     e.Captured = true;
                     Close();

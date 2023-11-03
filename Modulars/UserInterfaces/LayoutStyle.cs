@@ -58,7 +58,7 @@
         public Point TotalLocation => new Point( TotalLeft, TotalTop );
         public Vector2 LocationF
         {
-            get =>new Vector2( Left, Top );
+            get => new Vector2( Left, Top );
             set
             {
                 Left = (int)value.X;
@@ -162,8 +162,9 @@
         /// 对样式进行计算.
         /// </summary>
         /// <param name="parent"></param>
-        public void Calculation( LayoutStyle parent )
+        public void Calculation( Division div )
         {
+            LayoutStyle parent = div.Parent.Layout;
             TotalLeft = parent.TotalLeft + Left + parent.PaddingLeft;
             TotalTop = parent.TotalTop + Top + parent.PaddingTop;
             if(_needRefreshSizeRelative)
@@ -183,12 +184,27 @@
                 _scissor = TotalHitBox;
                 if(parent.IsCanvas)
                     _scissor = HitBox;
+                if(div.ParentCanvas is not null)
+                {
+                    _scissor = GetForParentCanvasHitBox( div );
+                }
             }
             if(IsCanvas)
             {
                 _scissor.X = 0;
                 _scissor.Y = 0;
             }
+        }
+        public Rectangle GetForParentCanvasHitBox( Division div )
+        {
+            return new Rectangle( TotalLocation - div.ParentCanvas.Layout.TotalLocation, Size );
+        }
+        public Rectangle GetTotalScissor( Division div )
+        {
+            if(div.ParentCanvas is not null)
+                return new Rectangle( TotalLocation - div.ParentCanvas.Layout.TotalLocation, Size );
+            else
+                return Scissor;
         }
     }
 }

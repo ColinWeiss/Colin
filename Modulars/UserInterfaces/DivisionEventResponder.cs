@@ -98,7 +98,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             if(Div.IsVisible && Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
             {
-                e.Captured = true;
+                if( Div.Interact.IsBubbling )
+                    e.Captured = true;
                 action?.Invoke();
             }
         }

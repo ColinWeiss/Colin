@@ -16,7 +16,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         }
         public override void OnInit()
         {
-            BindRenderer<DivNinecutRenderer>().Bind( Sprite.Get( "UserInterfaces/Forms/Button" ) ).Cut = 8;
+            BindRenderer<DivNinecutRenderer>().Bind( Sprite.Get( "UserInterfaces/Forms/Button" ) ).Cut = new Point( 8, 8 );
             Register( Label );
             base.OnInit();
         }

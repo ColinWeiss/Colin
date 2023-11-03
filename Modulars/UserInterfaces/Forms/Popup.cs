@@ -47,7 +47,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
             DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
             _substrateRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Substrate1" ) );
-            _substrateRenderer.Cut = 6;
+            _substrateRenderer.Cut = new Point( 6, 6 );
             base.Register( Substrate );
 
             Block = new Division( "Behavior" );
@@ -61,7 +61,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             TitleColumn = new Division( "TitleColumn" );
             DivNinecutRenderer _tileColumnRenderer = TitleColumn.BindRenderer<DivNinecutRenderer>();
             _tileColumnRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/TitleColumn1" ) );
-            _tileColumnRenderer.Cut = 6;
+            _tileColumnRenderer.Cut = new Point( 6, 6 );
             TitleColumn.Interact.IsInteractive = false;
             TitleColumn.Layout.Width = Layout.Width;
             TitleColumn.Layout.Height = _titleHeight;
