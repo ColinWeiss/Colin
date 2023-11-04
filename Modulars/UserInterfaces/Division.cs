@@ -121,6 +121,11 @@
         {
             if(InitializationCompleted)
                 return;
+            if(!(this is Container))
+            {
+                _interface = Parent?._interface;
+                _container = Parent?._container;
+            }
             OnInit();
             Controller?.OnInit();
             _renderer?.RendererInit();
@@ -347,8 +352,6 @@
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
 		public virtual bool ContainsPoint( Point point )
         {
-            if(Layout.ScissorEnable)
-                return Layout.GetTotalScissor( this ).Contains( point ) && Layout.TotalHitBox.Contains( point );
             return Layout.TotalHitBox.Contains( point );
         }
 

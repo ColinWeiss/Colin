@@ -13,14 +13,16 @@
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;
             ContainerInitialize();
+            Interface.Scene.Events.ClientSizeChanged += Events_ClientSizeChanged;
             base.OnInit();
         }
-        public override void DoUpdate( GameTime time )
+
+        private void Events_ClientSizeChanged( object sender, EventArgs e )
         {
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;
-            base.DoUpdate( time );
         }
+
         /// <summary>
         /// 在此处进行容器初始化操作.
         /// </summary>

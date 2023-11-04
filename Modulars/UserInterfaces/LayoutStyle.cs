@@ -185,9 +185,7 @@
                 if(parent.IsCanvas)
                     _scissor = HitBox;
                 if(div.ParentCanvas is not null)
-                {
                     _scissor = GetForParentCanvasHitBox( div );
-                }
             }
             if(IsCanvas)
             {
@@ -198,13 +196,6 @@
         public Rectangle GetForParentCanvasHitBox( Division div )
         {
             return new Rectangle( TotalLocation - div.ParentCanvas.Layout.TotalLocation, Size );
-        }
-        public Rectangle GetTotalScissor( Division div )
-        {
-            if(div.ParentCanvas is not null)
-                return new Rectangle( TotalLocation - div.ParentCanvas.Layout.TotalLocation, Size );
-            else
-                return Scissor;
         }
     }
 }
