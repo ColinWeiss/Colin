@@ -36,12 +36,12 @@ namespace Colin.Core.Assets
         public static SoundEffect Get( string path )
         {
             SoundEffect _sound;
-            if(Sounds.TryGetValue( Explorer.ConvertPath( "Sounds", path ), out _sound ))
+            if(Sounds.TryGetValue( Explorer.PathConcat( "Sounds", path ), out _sound ))
                 return _sound;
             else
             {
-                _sound = EngineInfo.Engine.Content.Load<SoundEffect>( Explorer.ConvertPath( "Sounds", path ) );
-                Sounds.Add( Explorer.ConvertPath( "Sounds", path ), _sound );
+                _sound = EngineInfo.Engine.Content.Load<SoundEffect>( Explorer.PathConcat( "Sounds", path ) );
+                Sounds.Add( Explorer.PathConcat( "Sounds", path ), _sound );
                 return _sound;
             }
         }

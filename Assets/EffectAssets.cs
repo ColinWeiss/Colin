@@ -12,11 +12,11 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( Explorer.ConvertPath( EngineInfo.Engine.Content.RootDirectory, "Effects" )))
+            if(!Directory.Exists( Explorer.PathConcat( EngineInfo.Engine.Content.RootDirectory, "Effects" )))
                 return;
             Effect _effect;
             string _fileName;
-            string[] _xnbFileNames = Directory.GetFiles( Explorer.ConvertPath( EngineInfo.Engine.Content.RootDirectory, "Effects" ), "*.xnb*", SearchOption.AllDirectories );
+            string[] _xnbFileNames = Directory.GetFiles( Explorer.PathConcat( EngineInfo.Engine.Content.RootDirectory, "Effects" ), "*.xnb*", SearchOption.AllDirectories );
             for(int count = 0; count < _xnbFileNames.Length; count++)
             {
                 Progress = count / _xnbFileNames.Length + 1 / _xnbFileNames.Length;
@@ -35,12 +35,12 @@ namespace Colin.Core.Assets
         public static Effect Get( string path )
         {
             Effect _texture;
-            if(Effects.TryGetValue( Explorer.ConvertPath( "Effects", path ), out _texture ))
+            if(Effects.TryGetValue( Explorer.PathConcat( "Effects", path ), out _texture ))
                 return _texture;
             else
             {
-                Effects.Add( Explorer.ConvertPath( "Effects", path ), _texture );
-                _texture = EngineInfo.Engine.Content.Load<Effect>( Explorer.ConvertPath( "Effects", path ) );
+                Effects.Add( Explorer.PathConcat( "Effects", path ), _texture );
+                _texture = EngineInfo.Engine.Content.Load<Effect>( Explorer.PathConcat( "Effects", path ) );
                 return _texture;
             }
         }

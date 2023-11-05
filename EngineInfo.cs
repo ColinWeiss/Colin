@@ -59,6 +59,10 @@ namespace Colin.Core
                 else
                     return _engineName;
             }
+            set
+            {
+                _engineName = value;
+            }
         }
 
         /// <summary>

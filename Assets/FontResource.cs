@@ -37,7 +37,7 @@ namespace Colin.Core.Assets
         public static FontSystem Get( string path )
         {
             FontSystem _font;
-            if(_fonts.TryGetValue( Explorer.ConvertPath( "Fonts", path ), out _font ))
+            if(_fonts.TryGetValue( Explorer.PathConcat( "Fonts", path ), out _font ))
                 return _font;
             else
                 return _font;

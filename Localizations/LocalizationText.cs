@@ -10,7 +10,7 @@
             Name = name;
             GameLanguages.OnLanguageChanged += () =>
             {
-                if(GameLanguages.Current.Common.TryGetValue( Name, out string value ))
+                if(GameLanguages.Current.Texts.TryGetValue( Name, out string value ))
                     _value = value;
                 else
                     _value = "[文本错误]";

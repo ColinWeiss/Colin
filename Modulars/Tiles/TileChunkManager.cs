@@ -10,7 +10,7 @@ namespace Colin.Core.Modulars.Tiles
 
         /// <summary>
         /// 区块字典.
-        /// <br>用于存储当前已被加载进内存的区块.</br>
+        /// <br>用于存储当前已被加载的区块.</br>
         /// <br>键: 区块坐标.</br>
         /// <br>值: 区块.</br>
         /// </summary>
@@ -26,28 +26,38 @@ namespace Colin.Core.Modulars.Tiles
         {
             return GetChunk( coord.X, coord.Y );
         }
-
         /// <summary>
-        /// 此处存放需要处理卸载操作的区块.
-        /// <br>请于业务逻辑中处理本队列内容.</br>
+        /// 从世界坐标获取区块坐标与物块位于区块内的坐标.
         /// </summary>
-        public Queue<TileChunk> UnLoadQueue = new Queue<TileChunk>();
-
-        public void DoUpdate()
+        /// <param name="coordX"></param>
+        /// <param name="coordY"></param>
+        /// <returns></returns>
+        public (Point, Point) GetConvertWorldCoord( int coordX, int coordY )
         {
-            TileChunk current;
-            for(int count = 0; count < Chunks.Count; count++)
-            {
-                current = Chunks.ElementAt( count ).Value;
-                if( current.Importance )
-                    continue;
-                current.ActiveTimer -= Time.UnscaledDeltaTime;
-                if(current.ActiveTimer <= 0)
-                {
-                    UnLoadQueue.Enqueue( current );
-                }
-            }
+            int chunkCoordX = coordX >= 0 ? coordX / TileOption.ChunkWidth : (coordX + 1) / TileOption.ChunkWidth - 1;
+            int chunkCoordY = coordY >= 0 ? coordY / TileOption.ChunkHeight : (coordY + 1) / TileOption.ChunkHeight - 1;
+            int tileCoordX = coordX >= 0 ? coordX % TileOption.ChunkWidth : (coordX + 1) % TileOption.ChunkWidth + (TileOption.ChunkWidth - 1);
+            int tileCoordY = coordY >= 0 ? coordY % TileOption.ChunkHeight : (coordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
+            return (new Point( chunkCoordX, chunkCoordY ), new Point( tileCoordX, tileCoordY ));
         }
+        public TileChunk GetChunkForTileCoord( int tileCoordX, int tileCoordY )
+        {
+            int indexX = tileCoordX >= 0 ? tileCoordX / TileOption.ChunkWidth : (tileCoordX + 1) / TileOption.ChunkWidth - 1;
+            int indexY = tileCoordY >= 0 ? tileCoordY / TileOption.ChunkHeight : (tileCoordY + 1) / TileOption.ChunkHeight - 1;
+            return GetChunk( indexX, indexY );
+        }
+        public ref TileInfo GetTile( int x, int y, int z )
+        {
+            int indexX = x >= 0 ? x % TileOption.ChunkWidth : ((x + 1) % TileOption.ChunkWidth) + (TileOption.ChunkWidth - 1);
+            int indexY = y >= 0 ? y % TileOption.ChunkHeight : ((y + 1) % TileOption.ChunkHeight) + (TileOption.ChunkHeight - 1);
+            TileChunk target = GetChunkForTileCoord( x, y );
+            if(target is not null)
+                return ref target[indexX, indexY, z];
+            else
+                return ref TileInfo.Null;
+        }
+
+        public void DoUpdate() { }
         /// <summary>
         /// 在指定坐标新创建一个空区块.
         /// <br>[!] 这个行为会强制覆盖指定坐标的区块, 无论它是否已经加载.</br>

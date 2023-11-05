@@ -42,7 +42,7 @@ namespace Colin.Core.Modulars.Tiles
         public void Start() { }
         public void DoUpdate( GameTime time )
         {
-            Manager.DoUpdate( );
+            Manager.DoUpdate();
         }
         public void Dispose()
         {
@@ -55,43 +55,32 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="y"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public ref TileInfo this[int x , int y , int z]
-        {
-            get
-            {
-                TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
-                if(targetChunk is not null)
-                    return ref targetChunk[x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z];
-                else
-                    return ref TileInfo.Null;
-            }
-        }
+        public ref TileInfo this[int x, int y, int z] => ref GetTile( x, y, z );
         /// <summary>
         /// 索引器: 根据世界物块坐标获取指定位置的物块.
         /// </summary>
-        public ref TileInfo this[Point3 coord]
-        {
-            get
-            {
-                TileChunk targetChunk = Manager.GetChunk( coord.X / TileOption.ChunkWidth, coord.Y / TileOption.ChunkHeight );
-                if(targetChunk is not null)
-                    return ref targetChunk[coord.X % TileOption.ChunkWidth, coord.Y % TileOption.ChunkHeight, coord.Z];
-                else
-                    return ref TileInfo.Null;
-            }
-        }
-
-        public void RegisterChunk( int x, int y ) => Manager.CreateChunk( x , y );
-        public TileChunk GetChunk( int x, int y ) => Manager.GetChunk( x , y );
+        public ref TileInfo this[Point3 coord] => ref GetTile( coord.X, coord.Y, coord.Z );
+        public void RegisterChunk( int x, int y ) => Manager.CreateChunk( x, y );
+        public TileChunk GetChunk( int x, int y ) => Manager.GetChunk( x, y );
+        /// <summary>
+        /// 从世界坐标获取区块坐标与物块位于区块内的坐标.
+        /// </summary>
+        /// <param name="coordX"></param>
+        /// <param name="coordY"></param>
+        /// <returns></returns>
+        public (Point, Point) GetConvertWorldCoord( int coordX, int coordY ) => Manager.GetConvertWorldCoord( coordX, coordY );
+        public TileChunk GetChunkForTileCoord( int tileCoordX, int tileCoordY ) => Manager.GetChunkForTileCoord( tileCoordX, tileCoordY );
+        public ref TileInfo GetTile( int x, int y, int z ) => ref Manager.GetTile( x , y , z );
 
         /// <summary>
         /// 使用世界物块坐标在指定位置放置物块.
         /// </summary>
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
-            TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth , y / TileOption.ChunkHeight );
-            if( targetChunk is not null )
-                targetChunk.Place<T>( x % TileOption.ChunkWidth , y % TileOption.ChunkHeight , z );
+            var coords = GetConvertWorldCoord( x, y );
+            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item2.Y );
+            if(targetChunk is not null)
+                targetChunk.Place<T>( coords.Item2.X, coords.Item2.Y, z );
         }
 
         /// <summary>
@@ -99,9 +88,10 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
-            TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
+            var coords = GetConvertWorldCoord( x, y );
+            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item2.Y );
             if(targetChunk is not null)
-                targetChunk.Place( behavior , x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z );
+                targetChunk.Place( behavior, coords.Item2.X, coords.Item2.Y, z );
         }
 
         /// <summary>
@@ -109,9 +99,11 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public void Destruction( int x, int y, int z )
         {
-            TileChunk targetChunk = Manager.GetChunk( x / TileOption.ChunkWidth, y / TileOption.ChunkHeight );
+            var coords = GetConvertWorldCoord( x, y );
+            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item2.Y );
             if(targetChunk is not null)
-                targetChunk.Destruction( x % TileOption.ChunkWidth, y % TileOption.ChunkHeight, z );
+                targetChunk.Destruction( coords.Item2.X, coords.Item2.Y, z );
         }
+
     }
 }

@@ -25,8 +25,7 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public bool FinalPresentation { get; set; }
 
-        private SceneCamera _camera;
-        public SceneCamera Camera => _camera;
+        public SceneCamera Camera => Scene.SceneCamera;
 
         public RenderTarget2D SceneRt { get; set; }
 
@@ -38,15 +37,6 @@ namespace Colin.Core.Modulars.Backgrounds
         private Effect LeftRightLoopEffect;
 
         private Texture2D _screenMap;
-
-        /// <summary>
-        /// 设置该场景所使用的摄像机.
-        /// </summary>
-        /// <param name="camera">摄像机.</param>
-        public void SetCamera( SceneCamera camera )
-        {
-            _camera = camera;
-        }
 
         /// <summary>
         /// 设置背景样式.
