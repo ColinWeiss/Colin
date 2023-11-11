@@ -77,10 +77,10 @@ namespace Colin.Core.Modulars.Tiles
             if(File.Exists( path ))
             {
                 TileChunk chunk = new TileChunk();
+                chunk.Tile = Tile;
                 chunk.LoadChunk( path );
                 chunk.CoordX = x;
                 chunk.CoordY = y;
-                chunk.Tile = Tile;
                 chunk.Manager = this;
                 Chunks.Add( chunk.Coord, chunk );
             }

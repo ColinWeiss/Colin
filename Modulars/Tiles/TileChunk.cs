@@ -382,7 +382,7 @@ namespace Colin.Core.Modulars.Tiles
 
         internal void LoadChunk( string path )
         {
-            using(FileStream fileStream = new FileStream( path, FileMode.Create ))
+            using(FileStream fileStream = new FileStream( path, FileMode.Open ))
             {
                 using(BinaryReader reader = new BinaryReader( fileStream ))
                 {

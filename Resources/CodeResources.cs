@@ -42,7 +42,7 @@ namespace Colin.Core.Resources
                 }
             }
         }
-        public void SaveMaps( string path )
+        public static void SaveMaps( string path )
         {
             using(FileStream fileStream = new FileStream( path, FileMode.Create ))
             {
@@ -51,7 +51,7 @@ namespace Colin.Core.Resources
                 JsonSerializer.Serialize( fileStream, SerializeMaps, SerializeMaps.GetType(), options );
             }
         }
-        public void LoadMaps( string path )
+        public static void LoadMaps( string path )
         {
             HashMaps.Clear();
             using(FileStream fileStream = new FileStream( path, FileMode.Open ))
