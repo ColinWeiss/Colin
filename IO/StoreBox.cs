@@ -31,7 +31,7 @@ namespace Colin.Core.IO
         /// </summary>
         public void Save( string fileName )
         {
-            string _fullPath = Explorer.PathConcat( BasicsDirectory.DataDir, fileName );
+            string _fullPath = Path.Combine( BasicsDirectory.DataDir, fileName );
             using(FileStream fileStream = new FileStream( _fullPath, FileMode.OpenOrCreate ))
             {
                 JsonSerializer.Serialize( fileStream, _datas );
@@ -43,7 +43,7 @@ namespace Colin.Core.IO
         /// </summary>
         public void Load( string fileName )
         {
-            string _fullPath = Explorer.PathConcat( BasicsDirectory.DataDir, fileName );
+            string _fullPath = Path.Combine( BasicsDirectory.DataDir, fileName );
             using(FileStream fileStream = new FileStream( _fullPath, FileMode.Open ))
             {
                 _datas = (Dictionary<string, object>)JsonSerializer.Deserialize( fileStream, typeof( Dictionary<string, object> ) );

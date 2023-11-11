@@ -18,11 +18,11 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( Explorer.PathConcat( EngineInfo.Engine.Content.RootDirectory, "Textures" ) ))
+            if(!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ) ))
                 return;
             Texture2D _texture;
             string _fileName;
-            string[] TextureFileNames = Directory.GetFiles( Explorer.PathConcat( EngineInfo.Engine.Content.RootDirectory, "Textures" ), "*.xnb*", SearchOption.AllDirectories );
+            string[] TextureFileNames = Directory.GetFiles( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ), "*.xnb*", SearchOption.AllDirectories );
             for(int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;
@@ -43,12 +43,12 @@ namespace Colin.Core.Assets
         public static Texture2D Get( string path )
         {
             Texture2D _texture;
-            if(_textures.TryGetValue( Explorer.PathConcat( "Textures", path ), out _texture ))
+            if(_textures.TryGetValue( Path.Combine( "Textures", path ), out _texture ))
                 return _texture;
             else
             {
-                _texture = EngineInfo.Engine.Content.Load<Texture2D>( Explorer.PathConcat( "Textures", path ) );
-                _textures.Add( Explorer.PathConcat( "Textures", path ), _texture );
+                _texture = EngineInfo.Engine.Content.Load<Texture2D>( Path.Combine( "Textures", path ) );
+                _textures.Add( Path.Combine( "Textures", path ), _texture );
                 return _texture;
             }
         }
