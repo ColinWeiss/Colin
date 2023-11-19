@@ -5,6 +5,25 @@
     /// </summary>
     public static class SpriteBatchExt
     {
+        /// <summary>
+        /// 绘制一条线.
+        /// </summary>
+        public static void DrawLine( this SpriteBatch batch, Line line, Color color )
+        {
+            float radian = (line.End - line.Start).GetRadian();
+            Sprite pixel = Sprite.Get( "Pixel" );
+            float depth = pixel.Depth;
+            if(pixel is not null)
+                batch.Draw( pixel.Source, line.Start, null, color, radian, Vector2.Zero, new Vector2( Vector2.Distance( line.Start, line.End ), 1f ), SpriteEffects.None, depth );
+        }
+
+        /// <summary>
+        /// 绘制一条线.
+        /// </summary>
+        public static void DrawLine( this SpriteBatch batch, Vector2 start, Vector2 end, Color color )
+        {
+            batch.DrawLine( new Line( start, end ), color );
+        }
 
         /// <summary>
         /// 矩形绘制.
@@ -73,7 +92,6 @@
         {
             batch.Draw( TextureAssets.Get( "Pixel" ), rect, color );
         }
-
 
         /// <summary>
         /// 九宫绘制.

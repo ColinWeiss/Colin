@@ -46,6 +46,5 @@ namespace Colin.Core
             float distanceSquared = direction.LengthSquared();
             return distanceSquared > 0 && distanceSquared < Radius * Radius;
         }
-
     }
 }

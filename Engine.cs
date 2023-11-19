@@ -13,6 +13,7 @@ using Colin.Core.ModLoaders;
 using Colin.Core.IO;
 using Colin.Core.ModLoaders;
 using Colin.Core.Developments;
+using Microsoft.Xna.Framework.Input;
 #if WINDOWS
 using System.Windows.Forms;
 #endif

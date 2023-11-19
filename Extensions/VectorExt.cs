@@ -59,7 +59,7 @@
             float s = (float)Math.Sin(radian);
             return new Vector2(c * vec.X - s * vec.Y, s * vec.X + c * vec.Y) + center;
         }
-        public static float ToRotation(this Vector2 v) => MathF.Atan2(v.Y, v.X);
+        public static float GetRadian(this Vector2 v) => MathF.Atan2(v.Y, v.X);
         public static float Slop(this Vector2 vec)
         {
             return vec.Y / vec.X;
@@ -88,7 +88,7 @@
         }
         public static float AngleBetween(this Vector2 a, Vector2 b)
         {
-            return Math.Abs(a.ToRotation() - b.ToRotation());
+            return Math.Abs(a.GetRadian() - b.GetRadian());
         }
         public static Vector2 MutiplyXY(this Vector2 a, Vector2 b)
         {

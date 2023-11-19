@@ -72,7 +72,7 @@
 
         public static Sprite Get( string path )
         {
-            if(SpritePool.Instance.TryGetValue( string.Concat( "Textures\\", path ), out Sprite sprite ))
+            if(SpritePool.Instance.TryGetValue( Path.Combine( "Textures", path ), out Sprite sprite ))
                 return sprite;
             else
                 return new Sprite( TextureAssets.Get( path ) );
