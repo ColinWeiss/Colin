@@ -108,7 +108,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 TitleLabel = new Label( "TitleLabel" );
                 TitleLabel.SetText( "标题" );
                 TitleLabel.Layout.Left = Icon.Layout.Left + Icon.Layout.Width + 8;
-                TitleLabel.FontRenderer.Font = FontResource.Get( "GlowSans" ).GetFont( 32 );
+                TitleLabel.FontRenderer.Font = FontAssets.Get( "GlowSans" ).GetFont( 32 );
                 TitleLabel.Design.Color = new Color( 255, 223, 135 );
                 TitleColumn.Register( TitleLabel );
 

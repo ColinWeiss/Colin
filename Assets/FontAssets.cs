@@ -3,7 +3,7 @@ using FontStashSharp;
 
 namespace Colin.Core.Assets
 {
-    public class FontResource : IGameAsset
+    public class FontAssets : IGameAsset
     {
         public string Name => "字体资源";
 

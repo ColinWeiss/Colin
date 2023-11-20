@@ -185,7 +185,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\FontResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\FontAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\UnsafeObject.cs" />
     <Compile Include="..\Colin\Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\TextureAssets.cs" />
