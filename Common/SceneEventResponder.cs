@@ -14,6 +14,8 @@ namespace Colin.Core.Common
         public event EventHandler ClientSizeChanged;
         public event EventHandler OrientationChanged;
 
+        public event Action Reset;
+
         public MouseEventResponder Mouse;
 
         public KeysEventResponder KeysEvent; 
@@ -27,6 +29,7 @@ namespace Colin.Core.Common
         }
         public void DoUpdate( GameTime time )
         {
+            Reset?.Invoke();
             MouseEventArgs mouseEvent = new MouseEventArgs( "MouseEvent" );
             Mouse.Response( mouseEvent );
             Keys[] lasts = KeyboardResponder.StateLast.GetPressedKeys();

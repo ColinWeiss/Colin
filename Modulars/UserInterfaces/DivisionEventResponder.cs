@@ -62,7 +62,6 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Invoke( e, LeftClickBefore );
                 Invoke( e, () =>
                 {
-                    Div.Interface.LastFocus = Div.Interface.Focus;
                     Div.Interface.Focus = Div;
                     if(!Div.Interact.IsDraggable)
                         return;

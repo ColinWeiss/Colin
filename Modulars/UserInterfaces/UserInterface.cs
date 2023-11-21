@@ -28,6 +28,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         public void DoInitialize()
         {
             Events = new EventResponder( "UserInterface.EventResponder" );
+            Scene.Events.Reset += () => LastFocus = Focus;
             Scene.Events.Mouse.Register( Events );
             Scene.Events.KeysEvent.Register( Events );
         }

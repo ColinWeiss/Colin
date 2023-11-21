@@ -26,18 +26,14 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\Unifont.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Panel0.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Slider.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Button.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0_Off.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close1.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close1_Off.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Decoration.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Block.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\BlockBorder.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Close.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Close_Using.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Icon.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Default\Substrate.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Icon0.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Icon1.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Substrate0.png" />
