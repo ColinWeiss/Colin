@@ -25,6 +25,11 @@
 
         public int CursorPosition;
 
+        /// <summary>
+        /// 允许开头的空格.
+        /// </summary>
+        public bool AllowStartedSpace = false;
+
         public bool AllowBreaks = false;
 
         public Keys[] FunctionKeys = new Keys[]
@@ -33,7 +38,8 @@
             Keys.LeftShift,
             Keys.RightShift,
             Keys.LeftAlt,
-            Keys.RightAlt
+            Keys.RightAlt,
+            Keys.Tab
         };
 
         public override void OnInit()
@@ -61,7 +67,7 @@
         {
             if(Editing)
             {
-                if(e.Key == Keys.Back && Text.Length > 0)
+                if(e.Key == Keys.Back && CursorPosition > 0)
                 {
                     Text = Text.Remove( CursorPosition - 1, 1 );
                     CursorPosition--;
@@ -71,13 +77,10 @@
                     Text += "\n";
                     CursorPosition++;
                 }
-                else if(CursorPosition == Text.Length && !FunctionKeys.Contains( e.Key ))
-                {
-                    Text += e.Character;
-                    CursorPosition++;
-                }
                 else if(!FunctionKeys.Contains( e.Key ))
                 {
+                    if(e.Key == Keys.Space && CursorPosition <= 0 && !AllowStartedSpace)
+                        return;
                     Text = Text.Insert( CursorPosition, e.Character.ToString() );
                     CursorPosition += e.Character.ToString().Length;
                 }
@@ -90,17 +93,17 @@
             InputRect = Layout.TotalHitBox;
             InputRect.Y += 16;
             InputRect.X += 16;
-            if(Text != string.Empty)
+            if( Text != string.Empty && Editing )
             {
-                if(KeyboardResponder.IsKeyClickAfter( Keys.Left ))
-                    CursorPosition--;
-                if(KeyboardResponder.IsKeyClickAfter( Keys.Right ))
-                    CursorPosition++;
-                if(KeyboardResponder.IsKeyClickAfter( Keys.Up ))
-                    CursorPosition = Math.Clamp( CursorPosition, 0, Text.Length );
+                Console.WriteLine( CursorPosition );
+
+                if(KeyboardResponder.IsKeyClickBefore( Keys.Left ))
+                    CursorPosition = Math.Clamp( CursorPosition-1, 0, Text.Length );
+                if(KeyboardResponder.IsKeyClickBefore( Keys.Right ))
+                    CursorPosition = Math.Clamp( CursorPosition+1 , 0 , Text.Length );
             }
             else
-                CursorPosition = 0;
+                CursorPosition = Text.Length;
 
             DisplayText = Text.Insert( CursorPosition, "|" );
             if(Editing)
