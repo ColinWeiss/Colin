@@ -182,6 +182,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         }
         public void Close()
         {
+
             OnClose?.Invoke();
             (Controller as DivGradientController).Close();
         }

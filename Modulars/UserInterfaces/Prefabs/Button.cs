@@ -20,11 +20,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             Register( Label );
             base.OnInit();
         }
-        public override void DoUpdate( GameTime time )
+        public override void OnUpdate( GameTime time )
         {
             Label.Layout.Left = Layout.Width / 2 - Label.Layout.Width / 2;
-            Label.Layout.Top = Layout.Height / 2 - Label.FontRenderer.Font.LineHeight / 2;
-            base.DoUpdate( time );
+            Label.Layout.Top = Layout.Height / 2 - Label.FontRenderer.Font.LineHeight / 2 - 2;
+            base.OnUpdate( time );
         }
     }
 }

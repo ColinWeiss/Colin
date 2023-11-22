@@ -146,7 +146,7 @@
         /// 执行划分元素的逻辑刷新.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void DoUpdate( GameTime time )
+        public void DoUpdate( GameTime time )
         {
             PreUpdate( time );
             if(!IsVisible)
