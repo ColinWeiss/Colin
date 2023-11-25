@@ -391,7 +391,7 @@ namespace Colin.Core.Modulars.Tiles
                     {
                         Infos[count].LoadStep( reader );
                         if(!Infos[count].Empty)
-                            if(CodeResources<TileBehavior>.HashMaps.TryGetValue( reader.ReadInt32(), out string value ))
+                            if(CodeResources<TileBehavior>.HashMap.TryGetValue( reader.ReadInt32(), out string value ))
                             {
                                 Set( CodeResources<TileBehavior>.Get( value ), count );
                             }
@@ -412,7 +412,7 @@ namespace Colin.Core.Modulars.Tiles
                         behavior = Infos[count].Behavior;
                         Infos[count].SaveStep( writer );
                         if(!Infos[count].Empty && behavior is not null)
-                            if(CodeResources<TileBehavior>.SerializeMaps.TryGetValue( behavior.Identifier, out int value ))
+                            if(CodeResources<TileBehavior>.SerializeTable.TryGetValue( behavior.Identifier, out int value ))
                             {
                                 writer.Write( value );
                             }

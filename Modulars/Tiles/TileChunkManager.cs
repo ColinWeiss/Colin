@@ -15,6 +15,8 @@ namespace Colin.Core.Modulars.Tiles
         /// <br>值: 区块.</br>
         /// </summary>
         public Dictionary<Point, TileChunk> Chunks = new Dictionary<Point, TileChunk>();
+        public bool HasChunk( int x, int y ) => Chunks.ContainsKey( new Point( x, y ) );
+        public bool HasChunk( Point coord ) => Chunks.ContainsKey( coord );
         public TileChunk GetChunk( int x, int y )
         {
             if(Chunks.TryGetValue( new Point( x, y ), out TileChunk chunk ))

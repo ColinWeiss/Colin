@@ -10,9 +10,9 @@ namespace Colin.Core.Resources
     public class CodeResources<T0> where T0 : ICodeResource
     {
         public static Dictionary<Type, T0> Resources = new Dictionary<Type, T0>();
-        public static Dictionary<string, Type> IdentifierMaps = new Dictionary<string, Type>();
-        public static Dictionary<string, int> SerializeMaps = new Dictionary<string, int>();
-        public static Dictionary<int, string> HashMaps = new Dictionary<int, string>();
+        public static Dictionary<string, Type> IdentifierTable = new Dictionary<string, Type>();
+        public static Dictionary<string, int> SerializeTable = new Dictionary<string, int>();
+        public static Dictionary<int, string> HashMap = new Dictionary<int, string>();
 
         public static T1 Get<T1>() where T1 : T0 => (T1)Resources.GetValueOrDefault( typeof( T1 ) );
         public static T0 Get( Type type )
@@ -23,7 +23,7 @@ namespace Colin.Core.Resources
         }
         public static T0 Get( string identifier )
         {
-            if(IdentifierMaps.TryGetValue( identifier, out Type type ))
+            if(IdentifierTable.TryGetValue( identifier, out Type type ))
                 return Get( type );
             else return default;
         }
@@ -31,36 +31,36 @@ namespace Colin.Core.Resources
         public void Load()
         {
             Resources.Clear();
-            SerializeMaps.Clear();
+            SerializeTable.Clear();
             foreach(var item in Assembly.GetExecutingAssembly().GetTypes())
             {
                 if(!item.IsAbstract && item.IsSubclassOf( typeof( T0 ) ))
                 {
                     Resources.Add( item, (T0)Activator.CreateInstance( item ) );
-                    IdentifierMaps.Add( item.FullName, item );
-                    SerializeMaps.Add( item.FullName, item.FullName.GetMsnHashCode() );
+                    IdentifierTable.Add( item.FullName, item );
+                    SerializeTable.Add( item.FullName, item.FullName.GetMsnHashCode() );
                 }
             }
         }
-        public static void SaveMaps( string path )
+        public static void SaveTable( string path )
         {
             using(FileStream fileStream = new FileStream( path, FileMode.Create ))
             {
                 JsonSerializerOptions options = new JsonSerializerOptions();
                 options.WriteIndented = true;
-                JsonSerializer.Serialize( fileStream, SerializeMaps, SerializeMaps.GetType(), options );
+                JsonSerializer.Serialize( fileStream, SerializeTable, SerializeTable.GetType(), options );
             }
         }
-        public static void LoadMaps( string path )
+        public static void LoadTable( string path )
         {
-            HashMaps.Clear();
+            HashMap.Clear();
             using(FileStream fileStream = new FileStream( path, FileMode.Open ))
             {
                 JsonSerializerOptions options = new JsonSerializerOptions();
                 options.WriteIndented = true;
-                SerializeMaps = (Dictionary<string, int>)JsonSerializer.Deserialize( fileStream, SerializeMaps.GetType() );
-                foreach(var item in SerializeMaps)
-                    HashMaps.Add( item.Value , item.Key );
+                SerializeTable = (Dictionary<string, int>)JsonSerializer.Deserialize( fileStream, SerializeTable.GetType() );
+                foreach(var item in SerializeTable)
+                    HashMap.Add( item.Value , item.Key );
             }
         }
     }

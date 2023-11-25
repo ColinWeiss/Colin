@@ -62,6 +62,8 @@ namespace Colin.Core.Modulars.Tiles
         public ref TileInfo this[Point3 coord] => ref GetTile( coord.X, coord.Y, coord.Z );
         public void RegisterChunk( int x, int y ) => Manager.CreateChunk( x, y );
         public TileChunk GetChunk( int x, int y ) => Manager.GetChunk( x, y );
+        public bool HasChunk( int x, int y ) => Manager.HasChunk( x , y );
+        public bool HasChunk( Point coord ) => Manager.HasChunk( coord );
         /// <summary>
         /// 从世界坐标获取区块坐标与物块位于区块内的坐标.
         /// </summary>

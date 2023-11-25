@@ -134,7 +134,7 @@
             {
                 if(Chunk is null)
                     return ref _null;
-                else if(CoordZ + 1 < Tile.Depth)
+                else if(CoordZ + 1 < Chunk.Depth)
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ + 1];
                 else
                     return ref _null;

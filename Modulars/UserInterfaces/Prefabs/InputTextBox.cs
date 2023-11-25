@@ -95,8 +95,6 @@
             InputRect.X += 16;
             if( Text != string.Empty && Editing )
             {
-                Console.WriteLine( CursorPosition );
-
                 if(KeyboardResponder.IsKeyClickBefore( Keys.Left ))
                     CursorPosition = Math.Clamp( CursorPosition-1, 0, Text.Length );
                 if(KeyboardResponder.IsKeyClickBefore( Keys.Right ))
