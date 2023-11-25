@@ -78,7 +78,7 @@ namespace Colin.Core.Modulars.Tiles
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
             var coords = GetConvertWorldCoord( x, y );
-            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item2.Y );
+            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item1.Y );
             if(targetChunk is not null)
                 targetChunk.Place<T>( coords.Item2.X, coords.Item2.Y, z );
         }
@@ -89,7 +89,7 @@ namespace Colin.Core.Modulars.Tiles
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
             var coords = GetConvertWorldCoord( x, y );
-            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item2.Y );
+            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item1.Y );
             if(targetChunk is not null)
                 targetChunk.Place( behavior, coords.Item2.X, coords.Item2.Y, z );
         }
@@ -100,10 +100,9 @@ namespace Colin.Core.Modulars.Tiles
         public void Destruction( int x, int y, int z )
         {
             var coords = GetConvertWorldCoord( x, y );
-            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item2.Y );
+            TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item1.Y );
             if(targetChunk is not null)
                 targetChunk.Destruction( coords.Item2.X, coords.Item2.Y, z );
         }
-
     }
 }
