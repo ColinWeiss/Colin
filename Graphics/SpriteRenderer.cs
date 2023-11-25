@@ -10,7 +10,7 @@
         /// <summary>
         /// 当前渲染信息.
         /// </summary>
-        public SpriteRenderInfo Frame;
+        public SpriteRenderInfo Info;
 
         /// <summary>
         /// 旋转.
@@ -34,14 +34,14 @@
 
         public virtual void Render( SpriteBatch batch )
         {
-            batch.Draw( Sprite.Source, Position + Anchor, Frame.Frame, Color.White, Rotation, Anchor, Scale, SpriteEffects.None, Sprite.Depth );
+            batch.Draw( Sprite.Source, Position + Anchor, Info.Frame, Color.White, Rotation, Anchor, Scale, SpriteEffects.None, Sprite.Depth );
         }
 
         public virtual SpriteRenderer Clone()
         {
             SpriteRenderer result = new SpriteRenderer();
             result.Position = Position;
-            result.Frame = Frame;
+            result.Info = Info;
             result.Rotation = Rotation;
             result.Anchor = Anchor;
             result.Scale = Scale;
