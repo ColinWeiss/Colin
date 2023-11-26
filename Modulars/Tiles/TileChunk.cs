@@ -3,6 +3,7 @@ using DeltaMachine.Core.GameContents.GameSystems;
 using System;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -380,7 +381,7 @@ namespace Colin.Core.Modulars.Tiles
             Infos[id].Collision = TileCollision.Passable;
         }
 
-        internal void LoadChunk( string path )
+        public void LoadChunk( string path )
         {
             using(FileStream fileStream = new FileStream( path, FileMode.Open ))
             {
@@ -399,8 +400,10 @@ namespace Colin.Core.Modulars.Tiles
                 }
             }
         }
+        public async void LoadChunkAsync( string path )
+            => await Task.Run( () => LoadChunk( path ) );
 
-        internal void SaveChunk( string path )
+        public void SaveChunk( string path )
         {
             using(FileStream fileStream = new FileStream( path, FileMode.Create ))
             {
@@ -420,5 +423,8 @@ namespace Colin.Core.Modulars.Tiles
                 }
             }
         }
+        public async void SaveChunkAsync( string path )
+            => await Task.Run( () => SaveChunk( path ) );
+
     }
 }

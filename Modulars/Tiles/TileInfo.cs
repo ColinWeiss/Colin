@@ -151,7 +151,15 @@
             Scripts.Add( t.GetType(), t );
             return t;
         }
-        public T GetScript<T>() where T : TileScript => Scripts.GetValueOrDefault( typeof( T ), null ) as T;
+        public T GetScript<T>() where T : TileScript
+        {
+            if(Scripts is null)
+                return null;
+            else if(Scripts.TryGetValue( typeof( T ), out TileScript script ))
+                return script as T;
+            else
+                return null;
+        }
 
         public TileBehavior Behavior = null;
 

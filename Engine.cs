@@ -117,7 +117,6 @@ namespace Colin.Core
             Components.Add( scene );
             CurrentScene = scene;
             GC.Collect();
-
         }
 
         protected override sealed void Initialize()

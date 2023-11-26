@@ -44,7 +44,7 @@ namespace Colin.Core.Modulars.Backgrounds
         /// <param name="style"></param>
         public void SetBackgroundStyle( BackgroundStyle style )
         {
-            if(CurrentStyle != style)
+          //  if(CurrentStyle != style)
                 CurrentStyle = style;
         }
 
