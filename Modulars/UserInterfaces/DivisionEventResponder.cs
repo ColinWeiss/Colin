@@ -47,6 +47,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// </summary>
         public bool DraggingState = false;
 
+        public bool S = false;
+
         public void DoInitialize()
         {
             Mouse.Hover += ( s, e ) =>
@@ -62,6 +64,10 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Invoke( e, LeftClickBefore );
                 Invoke( e, () =>
                 {
+                    if(!S)
+                        S = true;
+                    else
+                        return;
                     Div.Interface.Focus = Div;
                     if(!Div.Interact.IsDraggable)
                         return;
@@ -81,6 +87,9 @@ namespace Colin.Core.Modulars.UserInterfaces
             Mouse.LeftDown += ( s, e ) => Invoke( e, LeftDown );
             Mouse.LeftClickAfter += ( s, e ) =>
             {
+                if(!S)
+                    return;
+                S = false;
                 DragOver?.Invoke();
                 Invoke( e, LeftClickAfter );
                 if(!Div.Interact.IsDraggable)
@@ -97,7 +106,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             if(Div.IsVisible && Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
             {
-                if( Div.Interact.IsBubbling )
+                if(Div.Interact.IsBubbling)
                     e.Captured = true;
                 action?.Invoke();
             }

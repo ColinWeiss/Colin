@@ -130,7 +130,7 @@
             Controller?.OnInit();
             _renderer?.RendererInit();
             if(Parent != null)
-                Layout.Calculation( this ); //刷新一下.
+                LayoutStyle.Calculation( this ); //刷新一下.
             ForEach( child => child.DoInitialize() );
             Events.DoInitialize();
             InitializationCompleted = true;
@@ -151,7 +151,7 @@
             PreUpdate( time );
             if(!IsVisible)
                 return;
-            if(!(this is Container))
+            if( this is Container is false )
             {
                 _interface = Parent?._interface;
                 _container = Parent?._container;
@@ -163,7 +163,7 @@
             }
             Controller?.Layout( ref Layout );
             if(Parent != null)
-                Layout.Calculation( this );
+                LayoutStyle.Calculation( this );
             Controller?.Interact( ref Interact );
             Controller?.Design( ref Design );
             Events.DoUpdate();
@@ -267,9 +267,6 @@
         {
             Children.ForEach( child =>
             {
-                //   if( Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ) )
-                //       child?.RenderTexture( spriteBatch );
-                //    else
                 child?.DoRender( spriteBatch );
             } );
         }
@@ -289,10 +286,7 @@
             if(IsCanvas)
                 division.ParentCanvas = this;
             if(doInit)
-            {
                 division.DoInitialize();
-                //       division.Layout.Calculation( this );
-            }
             division._interface = _interface;
             division._container = _container;
             Children.Add( division );
