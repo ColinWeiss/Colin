@@ -44,7 +44,9 @@ namespace Colin.Core.Modulars.Tiles
         }
         public Point ConvertPositionToWorldCoord( Vector2 position )
         {
-            return (position / TileOption.TileSizeF).ToPoint();
+            int coordX = (int)Math.Floor( position.X / TileOption.TileWidth);
+            int coordY = (int)Math.Floor( position.Y / TileOption.TileHeight) ;
+            return new Point( coordX, coordY );
         }
         public TileChunk GetChunkForWorldCoord( int worldCoordX, int worldCoordY )
         {
