@@ -17,7 +17,7 @@ namespace Colin.Core.Extensions
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static float Ceil( float f )
         {
-            return (float)Math.Ceiling( f );
+            return f = (float)Math.Ceiling( f );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -856,7 +856,21 @@ namespace Colin.Core.Extensions
             return new Vector2( x, y );
         }
 
-        #endregion
+        public static float AdvancedFloor( this float value )
+        {
+            if( value >= 0 )
+                return (float)Math.Floor( value );
+            else
+                return (float)Math.Ceiling( value );
+        }
+        public static float AdvancedCeiling( this float value )
+        {
+            if(value >= 0)
+                return (float)Math.Ceiling( value );
+            else
+                return (float)Math.Floor( value );
+        }
 
+        #endregion
     }
 }

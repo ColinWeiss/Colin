@@ -65,8 +65,6 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public void DoRender( SpriteBatch batch )
         {
-            using var _perfmonCallback = Perfmon.StartScopedWatch("Background.Render");
-
             if (CurrentStyle != null)
             {
                 BackgroundLayer layer;

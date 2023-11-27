@@ -34,7 +34,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="coordX"></param>
         /// <param name="coordY"></param>
         /// <returns></returns>
-        public (Point, Point) GetConvertWorldCoord( int coordX, int coordY )
+        public (Point, Point) ConvertWorldCoordToTileCoord( int coordX, int coordY )
         {
             int chunkCoordX = coordX >= 0 ? coordX / TileOption.ChunkWidth : (coordX + 1) / TileOption.ChunkWidth - 1;
             int chunkCoordY = coordY >= 0 ? coordY / TileOption.ChunkHeight : (coordY + 1) / TileOption.ChunkHeight - 1;
@@ -42,17 +42,21 @@ namespace Colin.Core.Modulars.Tiles
             int tileCoordY = coordY >= 0 ? coordY % TileOption.ChunkHeight : (coordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
             return (new Point( chunkCoordX, chunkCoordY ), new Point( tileCoordX, tileCoordY ));
         }
-        public TileChunk GetChunkForTileCoord( int tileCoordX, int tileCoordY )
+        public Point ConvertPositionToWorldCoord( Vector2 position )
         {
-            int indexX = tileCoordX >= 0 ? tileCoordX / TileOption.ChunkWidth : (tileCoordX + 1) / TileOption.ChunkWidth - 1;
-            int indexY = tileCoordY >= 0 ? tileCoordY / TileOption.ChunkHeight : (tileCoordY + 1) / TileOption.ChunkHeight - 1;
+            return (position / TileOption.TileSizeF).ToPoint();
+        }
+        public TileChunk GetChunkForWorldCoord( int worldCoordX, int worldCoordY )
+        {
+            int indexX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
+            int indexY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
             return GetChunk( indexX, indexY );
         }
         public ref TileInfo GetTile( int x, int y, int z )
         {
             int indexX = x >= 0 ? x % TileOption.ChunkWidth : ((x + 1) % TileOption.ChunkWidth) + (TileOption.ChunkWidth - 1);
             int indexY = y >= 0 ? y % TileOption.ChunkHeight : ((y + 1) % TileOption.ChunkHeight) + (TileOption.ChunkHeight - 1);
-            TileChunk target = GetChunkForTileCoord( x, y );
+            TileChunk target = GetChunkForWorldCoord( x, y );
             if(target is not null)
                 return ref target[indexX, indexY, z];
             else

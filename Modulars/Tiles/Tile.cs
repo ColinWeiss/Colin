@@ -70,15 +70,16 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="coordX"></param>
         /// <param name="coordY"></param>
         /// <returns></returns>
-        public (Point, Point) GetConvertWorldCoord( int coordX, int coordY ) => Manager.GetConvertWorldCoord( coordX, coordY );
-        public TileChunk GetChunkForTileCoord( int tileCoordX, int tileCoordY ) => Manager.GetChunkForTileCoord( tileCoordX, tileCoordY );
+        public (Point, Point) ConvertWorldCoordToTileCoord( int coordX, int coordY ) => Manager.ConvertWorldCoordToTileCoord( coordX, coordY );
+        public Point ConvertPositionToWorldCoord( Vector2 position ) => Manager.ConvertPositionToWorldCoord( position );
+        public TileChunk GetChunkForWorldCoord( int worldCoordX, int worldCoordY ) => Manager.GetChunkForWorldCoord( worldCoordX, worldCoordY );
         public ref TileInfo GetTile( int x, int y, int z ) => ref Manager.GetTile( x , y , z );
         /// <summary>
         /// 使用世界物块坐标在指定位置放置物块.
         /// </summary>
         public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
         {
-            var coords = GetConvertWorldCoord( x, y );
+            var coords = ConvertWorldCoordToTileCoord( x, y );
             TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item1.Y );
             if(targetChunk is not null)
                 targetChunk.Place<T>( coords.Item2.X, coords.Item2.Y, z );
@@ -89,7 +90,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public void Place( TileBehavior behavior, int x, int y, int z )
         {
-            var coords = GetConvertWorldCoord( x, y );
+            var coords = ConvertWorldCoordToTileCoord( x, y );
             TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item1.Y );
             if(targetChunk is not null)
                 targetChunk.Place( behavior, coords.Item2.X, coords.Item2.Y, z );
@@ -100,7 +101,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public void Destruction( int x, int y, int z )
         {
-            var coords = GetConvertWorldCoord( x, y );
+            var coords = ConvertWorldCoordToTileCoord( x, y );
             TileChunk targetChunk = GetChunk( coords.Item1.X, coords.Item1.Y );
             if(targetChunk is not null)
                 targetChunk.Destruction( coords.Item2.X, coords.Item2.Y, z );
