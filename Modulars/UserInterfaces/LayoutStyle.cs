@@ -5,8 +5,6 @@
     /// </summary>
     public struct LayoutStyle
     {
-        public bool IsHidden;
-
         private bool _needRefreshSizeRelative;
         private bool _needRefreshLocationRelative;
 
@@ -185,7 +183,7 @@
                 if(parent.IsCanvas)
                     div.Layout._scissor = div.Layout.HitBox;
                 if(div.ParentCanvas is not null)
-                    div.Layout._scissor = div.Layout.GetForParentCanvasHitBox( div );
+                    div.Layout._scissor = GetForParentCanvasHitBox( div );
             }
             if(div.Layout.IsCanvas)
             {
@@ -193,9 +191,12 @@
                 div.Layout._scissor.Y = 0;
             }
         }
-        public Rectangle GetForParentCanvasHitBox( Division div )
+        public static Rectangle GetForParentCanvasHitBox( Division div )
         {
-            return new Rectangle( TotalLocation - div.ParentCanvas.Layout.TotalLocation, Size );
+            if(div.ParentCanvas is null)
+                return Rectangle.Empty;
+            else
+                return new Rectangle( div.Layout.TotalLocation - div.ParentCanvas.Layout.TotalLocation, div.Layout.Size );
         }
     }
 }

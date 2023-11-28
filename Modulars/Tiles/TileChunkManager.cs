@@ -65,12 +65,6 @@ namespace Colin.Core.Modulars.Tiles
                 return ref TileInfo.Null;
         }
 
-        public void DoUpdate() 
-        {
-            Tile.Destruction( 0 , 0 , 0 );
-            Tile.Destruction( 1, 0, 0 );
-            Console.WriteLine( Tile[0 , 1 , 0].HitBox );
-        }
         /// <summary>
         /// 在指定坐标新创建一个空区块.
         /// <br>[!] 这个行为会强制覆盖指定坐标的区块, 无论它是否已经加载.</br>

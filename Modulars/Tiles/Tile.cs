@@ -42,7 +42,6 @@ namespace Colin.Core.Modulars.Tiles
         public void Start() { }
         public void DoUpdate( GameTime time )
         {
-            Manager.DoUpdate();
         }
         public void Dispose()
         {

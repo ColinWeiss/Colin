@@ -24,6 +24,17 @@
             }
         }
 
+        private bool isHidden = false;
+        public bool IsHidden
+        {
+            get => isHidden;
+            set
+            {
+                ForEach( a => a.isHidden = value );
+                isHidden = value;
+            }
+        }
+
         /// <summary>
         /// 划分元素的布局样式
         /// </summary>
@@ -207,7 +218,7 @@
         /// <param name="time">游戏计时状态快照.</param>
         public void DoRender( SpriteBatch batch )
         {
-            if(!IsVisible && !Layout.IsHidden)
+            if(!IsVisible && !IsHidden)
                 return;
             if(IsCanvas)
             {
