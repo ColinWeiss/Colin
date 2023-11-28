@@ -161,7 +161,6 @@ namespace Colin.Core
             ModContent.DoInitialize();
 #if WINDOWS
             IMEHandler = new WinFormsIMEHandler( Engine, true );
-
 #elif DESKTOP
             IMEHandler = new SdlIMEHandler( Engine );
 #endif
