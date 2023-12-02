@@ -29,7 +29,8 @@ namespace Colin.Core.Assets
                 _fileName = IGameAsset.ArrangementPath( TextureFileNames[count] );
                 _texture = EngineInfo.Engine.Content.Load<Texture2D>( _fileName );
                 _textures.Add( _fileName, _texture );
-          //      EngineConsole.WriteLine( ConsoleTextType.Remind, "纹理资源: " + (int)(Progress * 100) + "%" );
+                Sprite.New( _texture );
+                //      EngineConsole.WriteLine( ConsoleTextType.Remind, "纹理资源: " + (int)(Progress * 100) + "%" );
             }
         }
 

@@ -8,16 +8,19 @@
         public override void DoRender( SpriteBatch batch )
         {
             if(_sprite is not null)
+            {
+                Frame currentFrame = _sprite.Frame;
                 batch.Draw(
-                    _sprite.Source,
-                    Division.Layout.TotalLocationF + Division.Design.Anchor
-                    + Division.Layout.HalfF - _sprite.Half,
-                    _sprite.SpriteFrame.Frame, Division.Design.Color,
-                    Division.Design.Rotation,
-                    Division.Design.Anchor,
-                    Division.Design.Scale,
-                    SpriteEffects.None,
-                    _sprite.Depth );
+                  _sprite.Source,
+                  Division.Layout.TotalLocationF + Division.Design.Anchor
+                  + Division.Layout.HalfF - currentFrame.HalfF,
+                  currentFrame.GetFrame(), Division.Design.Color,
+                  Division.Design.Rotation,
+                  Division.Design.Anchor,
+                  Division.Design.Scale,
+                  SpriteEffects.None,
+                  _sprite.Depth );
+            }
         }
         public DivTextureRenderer Bind( Sprite sprite )
         {

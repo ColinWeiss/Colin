@@ -19,7 +19,7 @@
         {
             OpenColor = new ColorGradienter();
             OpenColor.Set( Color.Transparent );
-            OpenColor.Target = Color.White;
+            OpenColor.Target = new Color( 255 , 255 , 255 , 200 );
             OpenColor.Time = 0.08f;
 
             CloseColor = new ColorGradienter();

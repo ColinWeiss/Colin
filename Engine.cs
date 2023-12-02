@@ -114,6 +114,7 @@ namespace Colin.Core
             Components.Add( Singleton<ControllerResponder>.Instance );
             Components.Add( Singleton<MouseResponder>.Instance );
             Components.Add( Singleton<KeyboardResponder>.Instance );
+            Components.Add( SpritePool.Instance );
             Components.Add( scene );
             CurrentScene = scene;
             GC.Collect();

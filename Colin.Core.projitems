@@ -97,8 +97,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\IDrawBatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\MinDrawBatcher2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpriteRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpriteRenderInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Frame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\VectorGradienter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Vert2.cs" />

@@ -30,9 +30,14 @@
         public int Height => Source.Height;
 
         /// <summary>
+        /// 指示该 Sprite 的帧格刷新是否交由自动化运行程序.
+        /// </summary>
+        public bool AutoUpdateFrame = true;
+
+        /// <summary>
         /// 选取帧格.
         /// </summary>
-        public SpriteRenderInfo SpriteFrame;
+        public Frame Frame;
 
         /// <summary>
         /// 纹理批绘制参数.
@@ -50,15 +55,37 @@
                 Depth = _sprite.Depth;
             }
             else
+            {
                 SpritePool.Instance.Add( Source.Name, this );
+            }
+        }
+
+        public static void New( Texture2D texture2D )
+        {
+            new Sprite( texture2D );
         }
 
         public Sprite( Texture2D texture )
         {
             Source = texture;
-            SpriteFrame.Width = texture.Width;
-            SpriteFrame.Height = texture.Height;
-            SpriteFrame.Direction = Direction.Portrait;
+            Frame.Width = texture.Width;
+            Frame.Height = texture.Height;
+            Frame.Direction = Direction.Portrait;
+            AddThisToGraphicCoreSpritePool();
+        }
+
+        public Sprite( Texture2D texture, int frameMax = 1 , bool isLoop = true , bool isPlay = true , Direction direction = Direction.Portrait )
+        {
+            Source = texture;
+            Frame.Width = texture.Width;
+            Frame.Height = texture.Height;
+            Frame.IsLoop = isLoop;
+            Frame.IsPlay = isPlay;
+            Frame.Direction = direction;
+            if(Frame.Direction is Direction.Portrait)
+                Frame.Height = texture.Height / frameMax;
+            if(Frame.Direction is Direction.Transverse)
+                Frame.Width = texture.Width / frameMax;
             AddThisToGraphicCoreSpritePool();
         }
 
@@ -72,10 +99,11 @@
 
         public static Sprite Get( string path )
         {
-            if(SpritePool.Instance.TryGetValue( Path.Combine( "Textures", path ), out Sprite sprite ))
+            string realPath = path.Replace( '/', Path.DirectorySeparatorChar );
+            if(SpritePool.Instance.TryGetValue( Path.Combine( "Textures", realPath ), out Sprite sprite ))
                 return sprite;
             else
-                return new Sprite( TextureAssets.Get( path ) );
+                return new Sprite( TextureAssets.Get( realPath ) );
         }
     }
 }
