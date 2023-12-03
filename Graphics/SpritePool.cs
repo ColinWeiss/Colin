@@ -35,9 +35,10 @@
         public void Update( GameTime gameTime )
         {
             Sprite _sprite;
-            for(int count = 0; count < Count; count++)
+            List<Sprite> _sprites = Values.ToList();
+            for(int count = 0; count < _sprites.Count; count++)
             {
-                _sprite = Values.ElementAt( count );
+                _sprite = _sprites[count];
                 if(_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
                     && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
                     _sprite.Frame.UpdateFrame();
