@@ -84,9 +84,9 @@ namespace Colin.Core.Graphics
             switch(Direction)
             {
                 case Direction.Portrait:
-                    return new Rectangle( X * Width, Y + Current * Height, Width, Height );
+                    return new Rectangle( X * Width, Current * Height, Width, Height );
                 case Direction.Transverse:
-                    return new Rectangle( X + Current * Width, Y * Height, Width, Height );
+                    return new Rectangle( Current * Width, Y * Height, Width, Height );
             };
             return Rectangle.Empty;
         }
