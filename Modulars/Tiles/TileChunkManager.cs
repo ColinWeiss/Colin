@@ -15,6 +15,13 @@ namespace Colin.Core.Modulars.Tiles
         /// <br>值: 区块.</br>
         /// </summary>
         public Dictionary<Point, TileChunk> Chunks = new Dictionary<Point, TileChunk>();
+
+        /// <summary>
+        /// 指示默认（玩家所处）的量子层.
+        /// <br>在探索时拓展未知区块时会拓展同量子层的区块</br>
+        /// </summary>
+        public int QuantumLayer = 0;
+
         public bool HasChunk( int x, int y ) => Chunks.ContainsKey( new Point( x, y ) );
         public bool HasChunk( Point coord ) => Chunks.ContainsKey( coord );
         public TileChunk GetChunk( int x, int y )
@@ -69,17 +76,18 @@ namespace Colin.Core.Modulars.Tiles
         /// 在指定坐标新创建一个空区块.
         /// <br>[!] 这个行为会强制覆盖指定坐标的区块, 无论它是否已经加载.</br>
         /// </summary>
-        public void CreateChunk( int x, int y )
+        public void CreateChunk( int x, int y, int? quantumLayer = null )
         {
             TileChunk chunk = new TileChunk();
             chunk.CoordX = x;
             chunk.CoordY = y;
+            chunk.QuantumLayer = quantumLayer ?? this.QuantumLayer;
             chunk.Tile = Tile;
             chunk.Create();
             chunk.Manager = this;
             Chunks.Add( chunk.Coord, chunk );
         }
-        public void LoadChunk( int x, int y, string path )
+        public void LoadChunk( int x, int y, string path, int? quantumLayer = null )
         {
             if(File.Exists( path ))
             {
@@ -88,6 +96,7 @@ namespace Colin.Core.Modulars.Tiles
                 chunk.LoadChunk( path );
                 chunk.CoordX = x;
                 chunk.CoordY = y;
+                chunk.QuantumLayer = quantumLayer ?? this.QuantumLayer;
                 chunk.Manager = this;
                 Chunks.Add( chunk.Coord, chunk );
             }

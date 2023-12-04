@@ -46,6 +46,13 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordY;
 
         /// <summary>
+        /// 指示区块的量子层.
+        /// <br>同一二维位置可以存在不同量子层的区块，用于无缝子世界</br>
+        /// </summary>
+        public int QuantumLayer;
+
+
+        /// <summary>
         /// 指示该区块是否属于需要一直进行维护的区块.
         /// </summary>
         public bool Importance = false;
