@@ -67,7 +67,7 @@ namespace Colin.Core.Modulars.Tiles
         /// 区块最大活跃时间.
         /// <br>单位: 秒.</br>
         /// </summary>
-        public float ActiveTime = 30;
+        public float ActiveTime = 5;
 
         public Point Coord => new Point( CoordX, CoordY );
 
@@ -157,7 +157,6 @@ namespace Colin.Core.Modulars.Tiles
             CoordX = 0;
             CoordY = 0;
             ActiveTimer = ActiveTime;
-            Importance = true;
             Infos = new TileInfo[1];
         }
 
@@ -407,7 +406,7 @@ namespace Colin.Core.Modulars.Tiles
                 }
             }
         }
-        public async void LoadChunkAsync( string path )
+        public async Task LoadChunkAsync( string path )
             => await Task.Run( () => LoadChunk( path ) );
 
         public void SaveChunk( string path )
