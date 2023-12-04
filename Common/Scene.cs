@@ -77,7 +77,7 @@ namespace Colin.Core.Common
         /// </summary>
         public virtual void SceneInit() { }
 
-        private bool Started = false;
+        internal bool Started = false;
         public override sealed void Update( GameTime gameTime )
         {
             if(!Started)
@@ -95,8 +95,14 @@ namespace Colin.Core.Common
         public virtual void UpdatePreset() { }
         public virtual void SceneUpdate() { }
 
+        internal bool SkipRender = true;
         public override sealed void Draw( GameTime gameTime )
         {
+            if( SkipRender is true )
+            {
+                SkipRender = false;
+                return;
+            }
             RenderPreset();
             IRenderableISceneModule renderMode;
             RenderTarget2D frameRenderLayer;
