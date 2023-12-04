@@ -86,15 +86,18 @@ namespace Colin.Core.Common
                 Modules.DoStart();
                 Started = true;
             }
+            UpdatePreset();
             Modules.DoUpdate( gameTime );
             SceneUpdate();
             base.Update( gameTime );
         }
         public virtual void Start() { }
+        public virtual void UpdatePreset() { }
         public virtual void SceneUpdate() { }
 
         public override sealed void Draw( GameTime gameTime )
         {
+            RenderPreset();
             IRenderableISceneModule renderMode;
             RenderTarget2D frameRenderLayer;
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
@@ -132,6 +135,7 @@ namespace Colin.Core.Common
             EngineInfo.SpriteBatch.End();
             base.Draw( gameTime );
         }
+        public virtual void RenderPreset() { }
         public virtual void SceneRender() { }
 
         /// <summary>

@@ -12,7 +12,7 @@
 
         private static SpritePool _instance = new SpritePool();
         public static SpritePool Instance => _instance;
-        public static float DepthSteps = 1000000f;
+        public static float DepthSteps = 100000f;
         public bool LoadComplete { get; private set; } = false;
 
         public void Initialize()
