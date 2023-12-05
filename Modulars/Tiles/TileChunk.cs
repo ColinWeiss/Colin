@@ -47,26 +47,6 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public int QuantumLayer;
 
-        /// <summary>
-        /// 指示该区块是否属于需要一直进行维护的区块.
-        /// </summary>
-        public bool Importance = false;
-
-        /// <summary>
-        /// 区块当前活跃时间.
-        /// <br>[!] 归零后区块将自动保存并卸载.</br>
-        /// </summary>
-        public float ActiveTimer;
-        /// <summary>
-        /// 区块最大活跃时间.
-        /// <br>单位: 秒.</br>
-        /// </summary>
-        public float ActiveTime = 5;
-        /// <summary>
-        /// 指示区块是否应执行卸载操作.
-        /// </summary>
-        public bool NeedUnload => ActiveTimer <= 0;
-
         public Point Coord => new Point( CoordX, CoordY );
 
         private TileChunk temp;
@@ -152,7 +132,6 @@ namespace Colin.Core.Modulars.Tiles
         {
             CoordX = 0;
             CoordY = 0;
-            ActiveTimer = ActiveTime;
             Infos = new TileInfo[1];
         }
 
