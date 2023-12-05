@@ -29,5 +29,18 @@
             RenderTargetUsage.PreserveContents );
             return renderTarget;
         }
+        public static RenderTarget2D CreateWithDepth( int width, int height )
+        {
+            RenderTarget2D renderTarget = new RenderTarget2D(
+            EngineInfo.Graphics.GraphicsDevice,
+            width,
+            height,
+            false,
+            SurfaceFormat.Vector4,
+            DepthFormat.Depth24,
+            0,
+            RenderTargetUsage.PreserveContents );
+            return renderTarget;
+        }
     }
 }
