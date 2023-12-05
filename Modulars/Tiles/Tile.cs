@@ -188,7 +188,7 @@ namespace Colin.Core.Modulars.Tiles
                 chunk.LoadChunk( path );
                 chunk.CoordX = x;
                 chunk.CoordY = y;
-                chunk.QuantumLayer = quantumLayer ?? this.QuantumLayer;
+                chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
                 Chunks.Add( chunk.Coord, chunk );
             }
             else
