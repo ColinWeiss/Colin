@@ -83,7 +83,7 @@ namespace Colin.Core.Modulars.Tiles
             chunk.CoordY = y;
             chunk.QuantumLayer = quantumLayer ?? this.QuantumLayer;
             chunk.Tile = Tile;
-            chunk.Create();
+            chunk.DoInitialize();
             chunk.Manager = this;
             Chunks.Add( chunk.Coord, chunk );
         }

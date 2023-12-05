@@ -1,9 +1,11 @@
-﻿using Colin.Core.Resources;
+﻿using Colin.Core.Common;
+using Colin.Core.Resources;
 using DeltaMachine.Core.GameContents.GameSystems;
 using System;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Forms.Design.Behavior;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -50,7 +52,6 @@ namespace Colin.Core.Modulars.Tiles
         /// <br>同一二维位置可以存在不同量子层的区块，用于无缝子世界</br>
         /// </summary>
         public int QuantumLayer;
-
 
         /// <summary>
         /// 指示该区块是否属于需要一直进行维护的区块.
@@ -161,231 +162,189 @@ namespace Colin.Core.Modulars.Tiles
         }
 
         /// <summary>
-        /// 创建空区块.
+        /// 执行初始化操作.
+        /// <br>该操作会令区块初始化其整个物块信息的数组.</br>
         /// </summary>
-        public void Create()
+        public void DoInitialize()
         {
             Infos = new TileInfo[Width * Height * Depth];
-            int coord;
             for(int count = 0; count < Infos.Length; count++)
-            {
-                coord = count % (Width * Height);
-                Infos[count] = new TileInfo();
-                Infos[count].Tile = Tile;
-                Infos[count].Chunk = this;
-                Infos[count].Index = count;
-                Infos[count].CoordX = coord % Width;
-                Infos[count].CoordY = coord / Width;
-                Infos[count].CoordZ = count / (Width * Height);
-            }
+                CreateInfo( count );
         }
 
         /// <summary>
-        /// 根据坐标向区块内放置物块.
+        /// 在指定索引处创建空物块信息.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Place<T>( int x, int y, int z ) where T : TileBehavior, new()
+        public void CreateInfo( int index )
         {
-            if(this[x, y, z].Empty)
-            {
-                CreateTileDefaultInfo( x, y, z );
-                Set<T>( x, y, z );
-                this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
-                this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
-            }
+            Infos[index] = new TileInfo();
+            Infos[index].Tile = Tile;
+            Infos[index].Chunk = this;
+            Infos[index].Empty = true;
+            Infos[index].Index = index;
+            Infos[index].Scripts = new Dictionary<Type, TileScript>();
         }
-
-        /// <summary>
-        /// 根据索引向区块内放置物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Place<T>( int index ) where T : TileBehavior, new()
-        {
-            if(this[index].Empty)
-            {
-                CreateTileDefaultInfo( index );
-                Set<T>( index );
-                this[index].Behavior.OnPlace( ref this[index] );
-                this[index].Behavior.DoRefresh( ref this[index], 1 );
-            }
-        }
-
-        /// <summary>
-        /// 根据坐标向区块内放置物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Place( TileBehavior behavior, int x, int y, int z )
-        {
-            if(this[x, y, z].Empty)
-            {
-                CreateTileDefaultInfo( x, y, z );
-                Set( behavior, x, y, z );
-                this[x, y, z].Behavior.OnPlace( ref this[x, y, z] );
-                this[x, y, z].Behavior.DoRefresh( ref this[x, y, z], 1 );
-            }
-        }
-
-        /// <summary>
-        /// 根据索引向区块内放置物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Place( TileBehavior behavior, int index )
-        {
-            CreateTileDefaultInfo( index );
-            Set( behavior, index );
-            this[index].Behavior.Tile = Tile;
-            this[index].Behavior.OnPlace( ref this[index] );
-            this[index].Behavior.DoRefresh( ref this[index], 1 );
-        }
-
-        /// <summary>
-        /// 根据坐标设置区块内物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Set<T>( int x, int y, int z ) where T : TileBehavior, new()
-        {
-            this[x, y, z].Behavior = CodeResources<TileBehavior>.Get<T>();
-            this[x, y, z].Behavior.Tile = Tile;
-            this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
-        }
-
-        /// <summary>
-        /// 根据索引设置区块内物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Set<T>( int index ) where T : TileBehavior, new()
-        {
-            this[index].Behavior = CodeResources<TileBehavior>.Get<T>();
-            this[index].Behavior.Tile = Tile;
-            this[index].Behavior.OnInitialize( ref this[index] );
-        }
-
-        /// <summary>
-        /// 根据坐标设置区块内物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Set( TileBehavior behavior, int x, int y, int z )
-        {
-            this[x, y, z].Behavior = behavior;
-            this[x, y, z].Behavior.Tile = Tile;
-            this[x, y, z].Behavior.OnInitialize( ref this[x, y, z] );
-        }
-
-        /// <summary>
-        /// 根据索引设置区块内物块.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Set( TileBehavior behavior, int index )
-        {
-            this[index].Behavior = behavior;
-            this[index].Behavior.Tile = Tile;
-            this[index].Behavior.OnInitialize( ref this[index] );
-        }
-
-        /// <summary>
-        /// 破坏指定坐标处的物块.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public void Destruction( int x, int y, int z )
-        {
-            if(!this[x, y, z].Empty)
-            {
-                DeleteTileInfo( x, y, z );
-                this[x, y, z].Behavior.DoDestruction( ref this[x, y, z] );
-                this[x, y, z].Behavior.DoRefresh( ref this[x, y, z] );
-                this[x, y, z].Behavior = null;
-                this[x, y, z].Scripts.Clear();
-            }
-        }
-
         /// <summary>
         /// 在指定坐标处创建物块信息.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        internal void CreateTileDefaultInfo( int x, int y, int z )
-        {
-            int id = (z * Height * Width) + (x + y * Width);
-            Infos[id].Tile = Tile;
-            Infos[id].Chunk = this;
-            Infos[id].CoordX = x;
-            Infos[id].CoordY = y;
-            Infos[id].CoordZ = z;
-            Infos[id].Index = id;
-            Infos[id].Empty = false;
-        }
+        public void CreateInfo( int x, int y, int z ) => CreateInfo( (z * Height * Width) + x + y * Width );
 
         /// <summary>
-        /// 在指定索引处创建物块信息.
+        /// 根据索引和指定类型设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        internal void CreateTileDefaultInfo( int index )
+        public void Set<T>( int index ) where T : TileBehavior, new()
         {
-            int id = index;
-            int coord = index % (Width * Height);
-            Infos[id].Tile = Tile;
-            Infos[id].Chunk = this;
-            Infos[id].Empty = false;
-            Infos[id].Index = id;
-            Infos[id].CoordX = coord % Width;
-            Infos[id].CoordY = coord / Width;
-            Infos[id].CoordZ = index / (Width * Height);
+            ref TileInfo info = ref this[index];
+            info.Behavior = CodeResources<TileBehavior>.Get<T>();
+            info.Behavior.Tile = Tile;
+            info.Behavior.OnInitialize( ref info );
         }
+        /// <summary>
+        /// 根据坐标和指定类型设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
+        /// </summary>
+        public void Set<T>( int x, int y, int z ) where T : TileBehavior, new() => Set<T>( z * Width * Height + x + y * Width );
+        /// <summary>
+        /// 根据索引和引用设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
+        /// </summary>
+        public void Set( TileBehavior behavior, int index )
+        {
+            ref TileInfo info = ref this[index];
+            info.Behavior = behavior;
+            info.Behavior.Tile = Tile;
+            info.Behavior.OnInitialize( ref this[index] );
+        }
+        /// <summary>
+        /// 根据坐标和引用设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
+        /// </summary>
+        public void Set( TileBehavior behavior, int x, int y, int z ) => Set( behavior, z * Width * Height + x + y * Width );
 
         /// <summary>
-        /// 在指定坐标处删除物块信息.
+        /// 根据索引和指定类型放置物块.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        internal void DeleteTileInfo( int x, int y, int z )
+        /// <param name="doEvent">指示是否触发放置事件.</param>
+        /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
+        public void Place<T>( int index, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
         {
-            int id = (z * Width * Height) + (x + y * Width);
-            Infos[id].Collision = TileCollision.Passable;
-            Infos[id].Empty = true;
+            ref TileInfo info = ref this[index];
+            if(info.Empty)
+            {
+                info.Empty = false;
+                Set<T>( index );
+                if(doEvent)
+                {
+                    info.Behavior.OnPlace( ref info );
+                    foreach(var script in info.Scripts.Values)
+                        script.OnPlace();
+                }
+                if(doRefresh)
+                {
+                    DoRefresh( index, 1 );
+                }
+            }
         }
+        /// <summary>
+        /// 根据坐标和指定类型放置物块.
+        /// </summary>
+        /// <param name="doEvent">指示是否触发放置事件.</param>
+        /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
+        public void Place<T>( int x, int y, int z, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
+            => Place<T>( z * Width * Height + x + y * Width, doEvent, doRefresh );
+        /// <summary>
+        /// 根据索引和引用放置物块.
+        /// </summary>
+        /// <param name="doEvent">指示是否触发放置事件.</param>
+        /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
+        public void Place( TileBehavior behavior, int index, bool doEvent = true, bool doRefresh = true )
+        {
+            ref TileInfo info = ref this[index];
+            if(info.Empty)
+            {
+                info.Empty = false;
+                Set( behavior, index );
+                if(doEvent)
+                {
+                    info.Behavior.OnPlace( ref info );
+                    foreach(var script in info.Scripts.Values)
+                        script.OnPlace();
+                }
+                if(doRefresh)
+                {
+                    DoRefresh( index, 1 );
+                }
+            }
+        }
+        /// <summary>
+        /// 根据坐标向区块内放置物块.
+        /// </summary>
+        /// <param name="doEvent">指示是否触发放置事件.</param>
+        /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
+        public void Place( TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+            => Place( behavior, z * Width * Height + x + y * Width, doEvent, doRefresh );
 
         /// <summary>
-        /// 在指定索引处删除物块信息.
+        /// 根据索引破坏区块内物块.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        internal void DeleteTileInfo( int index )
+        /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
+        /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
+        public void Destruction( int index, bool doEvent = true, bool doRefresh = true )
         {
-            int id = index;
-            Infos[id].Empty = true;
-            Infos[id].Collision = TileCollision.Passable;
+            ref TileInfo info = ref this[index];
+            if(!info.Empty)
+            {
+                info.Empty = true;
+                if(doEvent)
+                {
+                    info.Behavior.OnDestruction( ref info );
+                    foreach(var script in info.Scripts.Values)
+                        script.OnDestruction();
+                }
+                if(doRefresh)
+                {
+                    DoRefresh( index, 1 );
+                }
+                info.Behavior = null;
+                info.Scripts.Clear();
+            }
         }
+        /// <summary>
+        /// 根据坐标破坏区块内物块.
+        /// </summary>
+        /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
+        /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
+        public void Destruction( int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+            => Destruction( z * Width * Height + x + y * Width, doEvent, doRefresh );
+
+        /// <summary>
+        /// 执行刷新操作.
+        /// </summary>
+        /// <param name="step">传播范围.</param>
+        public void DoRefresh( int index, int step )
+        {
+            ref TileInfo info = ref this[index];
+            if(step > 0)
+            {
+                if(!info.Top.Empty)
+                    DoRefresh( info.Top.Index, step - 1 );
+                if(!info.Bottom.Empty)
+                    DoRefresh( info.Bottom.Index, step - 1 );
+                if(!info.Left.Empty)
+                    DoRefresh( info.Left.Index, step - 1 );
+                if(!info.Right.Empty)
+                    DoRefresh( info.Right.Index, step - 1 );
+            }
+            info.Behavior?.OnRefresh( ref info );
+            foreach(var script in info.Scripts.Values)
+                script.OnRefresh();
+        }
+        /// <summary>
+        /// 执行刷新操作.
+        /// </summary>
+        /// <param name="step">传播范围.</param>
+        public void DoRefresh( int x, int y, int z, int step )
+            => DoRefresh( z * Width * Height + x + y * Width, step );
 
         public void LoadChunk( string path )
         {
@@ -393,7 +352,7 @@ namespace Colin.Core.Modulars.Tiles
             {
                 using(BinaryReader reader = new BinaryReader( fileStream ))
                 {
-                    Create();
+                    DoInitialize();
                     for(int count = 0; count < Infos.Length; count++)
                     {
                         Infos[count].LoadStep( reader );
@@ -431,6 +390,5 @@ namespace Colin.Core.Modulars.Tiles
         }
         public async void SaveChunkAsync( string path )
             => await Task.Run( () => SaveChunk( path ) );
-
     }
 }
