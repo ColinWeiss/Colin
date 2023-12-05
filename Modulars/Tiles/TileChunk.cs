@@ -1,11 +1,5 @@
-﻿using Colin.Core.Common;
-using Colin.Core.Resources;
-using DeltaMachine.Core.GameContents.GameSystems;
-using System;
-using System.Reflection;
-using System.Text.Json;
+﻿using Colin.Core.Resources;
 using System.Threading.Tasks;
-using System.Windows.Forms.Design.Behavior;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -63,12 +57,15 @@ namespace Colin.Core.Modulars.Tiles
         /// <br>[!] 归零后区块将自动保存并卸载.</br>
         /// </summary>
         public float ActiveTimer;
-
         /// <summary>
         /// 区块最大活跃时间.
         /// <br>单位: 秒.</br>
         /// </summary>
         public float ActiveTime = 5;
+        /// <summary>
+        /// 指示区块是否应执行卸载操作.
+        /// </summary>
+        public bool NeedUnload => ActiveTimer <= 0;
 
         public Point Coord => new Point( CoordX, CoordY );
 
@@ -118,14 +115,12 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        public TileChunkManager Manager { get; internal set; }
-
         /// <summary>
         /// 根据指定偏移量获取相对于该区块坐标偏移的区块.
         /// </summary>
         public TileChunk GetOffset( int offsetX, int offsetY )
         {
-            return Manager.GetChunk( CoordX + offsetX, CoordY + offsetY );
+            return Tile.GetChunk( CoordX + offsetX, CoordY + offsetY );
         }
 
         /// <summary>
