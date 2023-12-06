@@ -151,6 +151,18 @@ namespace Colin.Core.Modulars.Tiles
         }
 
         /// <summary>
+        /// 执行指定坐标下的物块刷新行为.
+        /// </summary>
+        /// <param name="radius">刷新半径, 为 0 时只刷新指定坐标块.</param>
+        public void DoRefresh( int x , int y , int z, int radius )
+        {
+            var coords = GetCoords( x, y );
+            TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
+            if(targetChunk is not null)
+                targetChunk.DoRefresh( coords.tCoord.X, coords.tCoord.Y, z , radius );
+        }
+
+        /// <summary>
         /// 使用世界物块坐标破坏指定位置的物块.
         /// </summary>
         public void Destruction( int x, int y, int z , bool doEvent = true , bool doRefresh = true )
