@@ -308,6 +308,7 @@ namespace Colin.Core.Modulars.Tiles
                             if(CodeResources<TileBehavior>.HashMap.TryGetValue( reader.ReadInt32(), out string value ))
                             {
                                 Set( CodeResources<TileBehavior>.Get( value ), count );
+                                TileRefresher.RefreshMark(Infos[count].WorldCoord3, 0);
                             }
                     }
                 }

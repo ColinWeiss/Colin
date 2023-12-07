@@ -1,5 +1,6 @@
 ﻿using SharpDX.Direct3D9;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,55 +13,55 @@ namespace Colin.Core.Modulars.Tiles
 
         public Tile Tile => Scene.GetModule<Tile>();
 
-        public Queue<Point3> RefreshQueue = new Queue<Point3>();
+        public ConcurrentQueue<Point3> RefreshQueue = new();
+
+        /// <summary>
+        /// 用于模块之间的联动事件，如渲染器的刷新
+        /// </summary>
+        public Action<Point3> RefreshEvent = null;
 
         public void DoInitialize()
         {
         }
+
         public void Start()
         {
         }
-        public void DoUpdate( GameTime time )
+
+        public void DoUpdate(GameTime time)
         {
-            while(RefreshQueue.Count > 0)
+            while (!RefreshQueue.IsEmpty)
             {
-                Point3 coord = RefreshQueue.Dequeue();
+                RefreshQueue.TryDequeue(out Point3 coord);
                 ref TileInfo info = ref Tile[coord];
-                RefreshHandle( coord );
-                if(info.Empty)
+                RefreshHandle(coord);
+                if (info.Empty)
                 {
                     info.Behavior = null;
                     info.Scripts.Clear();
-                    info.AddScript<TileArtScript>();
                 }
-                else
-                    info.Scripts.Remove( typeof( TileArtScript ));
             }
         }
-        public void RefreshMark( Point3 coord, int radius = 0 )
+
+        public void RefreshMark(Point3 coord, int radius = 0)
         {
-            RefreshQueue.Enqueue( coord );
-            for(int i = 1; i <= radius; i++)
-            {
-                for(int x = -1; x <= 1; x++)
-                    for(int y = -1; y <= 1; y++)
-                    {
-                        if(x == 0 && y == 0)
-                            continue;
-                        RefreshQueue.Enqueue( new Point3( coord.X + x * i, coord.Y + y * i, coord.Z ) );
-                    }
-            }
+            for (int x = -radius; x <= radius; x++)
+                for (int y = -radius; y <= radius; y++)
+                    RefreshQueue.Enqueue(new Point3(coord.X + x, coord.Y + y, coord.Z));
         }
-        public void RefreshHandle( Point3 coord )
+
+        public void RefreshHandle(Point3 coord)
         {
             ref TileInfo info = ref Tile[coord];
-            info.Behavior?.OnRefresh( ref info );
-            foreach(var script in info.Scripts.Values)
+            info.Behavior?.OnRefresh(ref info);
+            foreach (var script in info.Scripts.Values)
                 script.OnRefresh();
+            RefreshEvent?.Invoke(coord);
         }
 
         public void Dispose()
         {
+            RefreshEvent = null;
         }
     }
 }
