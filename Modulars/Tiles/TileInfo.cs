@@ -22,7 +22,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 指示物块的横坐标.
         /// </summary>
-        public int CoordX =>  Index % ( TileOption.ChunkWidth * TileOption.ChunkHeight) % TileOption.ChunkWidth;
+        public int CoordX => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) % TileOption.ChunkWidth;
 
         /// <summary>
         /// 指示物块的纵坐标.
@@ -160,10 +160,26 @@ namespace Colin.Core.Modulars.Tiles
         }
         public T GetScript<T>() where T : TileScript
         {
+            if(Scripts is null)
+                return null;
             if(Scripts.TryGetValue( typeof( T ), out TileScript script ))
                 return script as T;
             else
                 return null;
+        }
+
+        /// <summary>
+        /// 获取该物块是否为空气的值. 
+        /// <br>[!] 该值与 <see cref="IsNull"/> 显然不同, 不要混淆.</br>
+        /// </summary>
+        public bool IsArt
+        {
+            get
+            {
+                if(Scripts is null)
+                    return false;
+                return Scripts.ContainsKey( typeof( TileArtScript ) );
+            }
         }
 
         public TileBehavior Behavior = null;
@@ -203,5 +219,7 @@ namespace Colin.Core.Modulars.Tiles
 
         internal static TileInfo _null = new TileInfo();
         public static ref TileInfo Null => ref _null;
+
+        public bool IsNull => Equals( Null );
     }
 }

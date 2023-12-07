@@ -14,6 +14,11 @@ namespace Colin.Core.Modulars.Tiles
         public Tile Tile { get; internal set; } = null;
 
         /// <summary>
+        /// 获取物块区块所属的物块刷新模块.
+        /// </summary>
+        public TileRefresher TileRefresher => Tile.Scene.GetModule<TileRefresher>();
+
+        /// <summary>
         /// 获取区块的宽度.
         /// <br>它与 <see cref="TileOption.ChunkWidth"/> 的值相等.</br>
         /// </summary>
@@ -215,7 +220,7 @@ namespace Colin.Core.Modulars.Tiles
                 }
                 if(doRefresh)
                 {
-                    DoRefresh( index, 1 );
+                    TileRefresher.RefreshMark( info.WorldCoord3, 1 );
                 }
             }
         }
@@ -246,7 +251,7 @@ namespace Colin.Core.Modulars.Tiles
                 }
                 if(doRefresh)
                 {
-                    DoRefresh( index, 1 );
+                    TileRefresher.RefreshMark( info.WorldCoord3, 1 );
                 }
             }
         }
@@ -277,10 +282,8 @@ namespace Colin.Core.Modulars.Tiles
                 }
                 if(doRefresh)
                 {
-                    DoRefresh( index, 1 );
+                    TileRefresher.RefreshMark( info.WorldCoord3, 1 );
                 }
-                info.Behavior = null;
-                info.Scripts.Clear();
             }
         }
         /// <summary>
@@ -290,35 +293,6 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
         public void Destruction( int x, int y, int z, bool doEvent = true, bool doRefresh = true )
             => Destruction( z * Width * Height + x + y * Width, doEvent, doRefresh );
-
-        /// <summary>
-        /// 执行刷新操作.
-        /// </summary>
-        /// <param name="step">传播范围.</param>
-        public void DoRefresh( int index, int step )
-        {
-            ref TileInfo info = ref this[index];
-            if(step > 0)
-            {
-                if(!info.Top.Empty)
-                    DoRefresh( info.Top.Index, step - 1 );
-                if(!info.Bottom.Empty)
-                    DoRefresh( info.Bottom.Index, step - 1 );
-                if(!info.Left.Empty)
-                    DoRefresh( info.Left.Index, step - 1 );
-                if(!info.Right.Empty)
-                    DoRefresh( info.Right.Index, step - 1 );
-            }
-            info.Behavior?.OnRefresh( ref info );
-            foreach(var script in info.Scripts.Values)
-                script.OnRefresh();
-        }
-        /// <summary>
-        /// 执行刷新操作.
-        /// </summary>
-        /// <param name="step">传播范围.</param>
-        public void DoRefresh( int x, int y, int z, int step )
-            => DoRefresh( z * Width * Height + x + y * Width, step );
 
         public void LoadChunk( string path )
         {
