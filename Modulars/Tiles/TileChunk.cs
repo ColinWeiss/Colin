@@ -152,6 +152,11 @@ namespace Colin.Core.Modulars.Tiles
         }
 
         /// <summary>
+        /// 清除区块.
+        /// </summary>
+        public void Clear() => DoInitialize();
+
+        /// <summary>
         /// 在指定索引处创建空物块信息.
         /// </summary>
         public void CreateInfo( int index )

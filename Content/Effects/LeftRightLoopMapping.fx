@@ -29,7 +29,7 @@ struct VertexShaderOutput
 
 float4 PixelShaderFunction( VertexShaderOutput input ) : COLOR
 {
-    float2 uv = input.TextureCoordinates * DrawCount + Offset;
+    float2 uv = (input.TextureCoordinates - 0.5) * DrawCount + Offset;
     float4 MappingColor = SAMPLE_TEXTURE(MappingTexture, uv);
     MappingColor = max( 0, sign( -uv.y * (uv.y - 1) ) ) * MappingColor;
     return SAMPLE_TEXTURE(SpriteTexture, input.TextureCoordinates) * MappingColor;

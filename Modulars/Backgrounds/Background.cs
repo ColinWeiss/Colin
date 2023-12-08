@@ -9,6 +9,7 @@ using Colin.Core.Graphics;
 
 using DeltaMachine.Core.Common.Utilities;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Core.Modulars.Backgrounds
 {
@@ -105,12 +106,12 @@ namespace Colin.Core.Modulars.Backgrounds
             layer.Transform = Matrix.CreateTranslation( translateBody ) * Matrix.CreateTranslation( translateCenter );
             offset *= new Vector2( -layer.Translation.X, -layer.Translation.Y );
             offset.X += CurrentStyle.LoopLayerOffset.X / layer.Sprite.Height;
-            offset.Y -= CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
+            offset.Y += CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
 
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null );
 
             LeftRightLoopEffect.Parameters["MappingTexture"].SetValue( layer.Sprite.Source );
-            LeftRightLoopEffect.Parameters["DrawCount"].SetValue( drawCount );
+            LeftRightLoopEffect.Parameters["DrawCount"].SetValue( drawCount * ( Vector2.One * 2f - Camera.Zoom )  );
             LeftRightLoopEffect.Parameters["Offset"].SetValue( offset );
             LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
 
