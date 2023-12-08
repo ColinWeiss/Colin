@@ -215,6 +215,7 @@ namespace Colin.Core.Modulars.Tiles
             ref TileInfo info = ref this[index];
             if(info.Empty)
             {
+                info.Scripts.Clear();
                 info.Empty = false;
                 Set<T>( index );
                 if(doEvent)
@@ -246,6 +247,7 @@ namespace Colin.Core.Modulars.Tiles
             ref TileInfo info = ref this[index];
             if(info.Empty)
             {
+                info.Scripts.Clear();
                 info.Empty = false;
                 Set( behavior, index );
                 if(doEvent)
