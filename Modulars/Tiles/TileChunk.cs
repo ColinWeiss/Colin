@@ -210,64 +210,76 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public void Place<T>( int index, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
+        public bool Place<T>( int index, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
         {
             ref TileInfo info = ref this[index];
-            if(info.Empty)
+            if(!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
             {
-                info.Scripts.Clear();
-                info.Empty = false;
-                Set<T>( index );
-                if(doEvent)
+                if(info.Empty)
                 {
-                    info.Behavior.OnPlace( ref info );
-                    foreach(var script in info.Scripts.Values)
-                        script.OnPlace();
+                    info.Scripts.Clear();
+                    info.Empty = false;
+                    Set<T>( index );
+                    if(doEvent)
+                    {
+                        info.Behavior.OnPlace( ref info );
+                        foreach(var script in info.Scripts.Values)
+                            script.OnPlace();
+                    }
+                    if(doRefresh)
+                    {
+                        TileRefresher.RefreshMark( info.WorldCoord3, 1 );
+                    }
+                    return true;
                 }
-                if(doRefresh)
-                {
-                    TileRefresher.RefreshMark( info.WorldCoord3, 1 );
-                }
+                else return false;
             }
+            else return false;
         }
         /// <summary>
         /// 根据坐标和指定类型放置物块.
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public void Place<T>( int x, int y, int z, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
+        public bool Place<T>( int x, int y, int z, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
             => Place<T>( z * Width * Height + x + y * Width, doEvent, doRefresh );
         /// <summary>
         /// 根据索引和引用放置物块.
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public void Place( TileBehavior behavior, int index, bool doEvent = true, bool doRefresh = true )
+        public bool Place( TileBehavior behavior, int index, bool doEvent = true, bool doRefresh = true )
         {
             ref TileInfo info = ref this[index];
-            if(info.Empty)
+            if(!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
             {
-                info.Scripts.Clear();
-                info.Empty = false;
-                Set( behavior, index );
-                if(doEvent)
+                if(info.Empty)
                 {
-                    info.Behavior.OnPlace( ref info );
-                    foreach(var script in info.Scripts.Values)
-                        script.OnPlace();
+                    info.Scripts.Clear();
+                    info.Empty = false;
+                    Set( behavior, index );
+                    if(doEvent)
+                    {
+                        info.Behavior.OnPlace( ref info );
+                        foreach(var script in info.Scripts.Values)
+                            script.OnPlace();
+                    }
+                    if(doRefresh)
+                    {
+                        TileRefresher.RefreshMark( info.WorldCoord3, 1 );
+                    }
+                    return true;
                 }
-                if(doRefresh)
-                {
-                    TileRefresher.RefreshMark( info.WorldCoord3, 1 );
-                }
+                else return false;
             }
+            else return false;
         }
         /// <summary>
         /// 根据坐标向区块内放置物块.
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public void Place( TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+        public bool Place( TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true )
             => Place( behavior, z * Width * Height + x + y * Width, doEvent, doRefresh );
 
         /// <summary>
@@ -275,30 +287,36 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
         /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
-        public void Destruction( int index, bool doEvent = true, bool doRefresh = true )
+        public bool Destruction( int index, bool doEvent = true, bool doRefresh = true )
         {
             ref TileInfo info = ref this[index];
-            if(!info.Empty)
+            if(!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
             {
-                info.Empty = true;
-                if(doEvent)
+                if(!info.Empty)
                 {
-                    info.Behavior.OnDestruction( ref info );
-                    foreach(var script in info.Scripts.Values)
-                        script.OnDestruction();
+                    info.Empty = true;
+                    if(doEvent)
+                    {
+                        info.Behavior.OnDestruction( ref info );
+                        foreach(var script in info.Scripts.Values)
+                            script.OnDestruction();
+                    }
+                    if(doRefresh)
+                    {
+                        TileRefresher.RefreshMark( info.WorldCoord3, 1 );
+                    }
+                    return true;
                 }
-                if(doRefresh)
-                {
-                    TileRefresher.RefreshMark( info.WorldCoord3, 1 );
-                }
+                else return false;
             }
+            else return false;
         }
         /// <summary>
         /// 根据坐标破坏区块内物块.
         /// </summary>
         /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
         /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
-        public void Destruction( int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+        public bool Destruction( int x, int y, int z, bool doEvent = true, bool doRefresh = true )
             => Destruction( z * Width * Height + x + y * Width, doEvent, doRefresh );
 
         public void LoadChunk( string path )

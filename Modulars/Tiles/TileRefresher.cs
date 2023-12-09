@@ -53,9 +53,21 @@ namespace Colin.Core.Modulars.Tiles
         public void RefreshHandle(Point3 coord)
         {
             ref TileInfo info = ref Tile[coord];
-            info.Behavior?.OnRefresh(ref info);
-            foreach (var script in info.Scripts.Values)
-                script.OnRefresh();
+            if(info.IsNull)
+                return;
+            if( Tile.TilePointers.TryGetValue( info.WorldCoord2 , out Point coreCoord ) )
+            {
+                info = ref Tile[new Point3( coreCoord.X , coreCoord.Y , coord.Z )];
+                info.Behavior?.OnRefresh( ref info );
+                foreach(var script in info.Scripts.Values)
+                    script.OnRefresh();
+            }
+            else
+            {
+                info.Behavior?.OnRefresh( ref info );
+                foreach(var script in info.Scripts.Values)
+                    script.OnRefresh();
+            }
             RefreshEvent?.Invoke(coord);
         }
 

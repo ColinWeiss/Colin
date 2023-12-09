@@ -29,6 +29,11 @@ namespace Colin.Core.Modulars.Tiles
         public Dictionary<Point, TileChunk> Chunks = new Dictionary<Point, TileChunk>();
 
         /// <summary>
+        /// 物块指针字典, 允许你通过某个物块访问其他物块.
+        /// </summary>
+        public Dictionary<Point, Point> TilePointers = new Dictionary<Point, Point>();
+
+        /// <summary>
         /// 创建物块模块.
         /// </summary>
         /// <param name="depth"></param>
@@ -111,7 +116,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 从世界坐标获取区块坐标与物块区块坐标.
         /// </summary>
-        public (Point cCoord, Point tCoord ) GetCoords( int worldCoordX, int worldCoordY )
+        public (Point cCoord, Point tCoord) GetCoords( int worldCoordX, int worldCoordY )
         {
             int chunkCoordX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
             int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
@@ -132,33 +137,39 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 使用世界物块坐标在指定位置放置物块.
         /// </summary>
-        public void Place<T>( int x, int y, int z, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
+        public bool Place<T>( int x, int y, int z, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
         {
             var coords = GetCoords( x, y );
             TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
             if(targetChunk is not null)
-                targetChunk.Place<T>( coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+                return targetChunk.Place<T>( coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+            else
+                return false;
         }
         /// <summary>
         /// 使用世界物块坐标在指定位置放置物块.
         /// </summary>
-        public void Place( TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+        public bool Place( TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true )
         {
             var coords = GetCoords( x, y );
             TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
             if(targetChunk is not null)
-                targetChunk.Place( behavior, coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+                return targetChunk.Place( behavior, coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+            else
+                return false;
         }
 
         /// <summary>
         /// 使用世界物块坐标破坏指定位置的物块.
         /// </summary>
-        public void Destruction( int x, int y, int z , bool doEvent = true , bool doRefresh = true )
+        public bool Destruction( int x, int y, int z, bool doEvent = true, bool doRefresh = true )
         {
             var coords = GetCoords( x, y );
             TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
             if(targetChunk is not null)
-                targetChunk.Destruction( coords.tCoord.X, coords.tCoord.Y, z , doEvent , doRefresh );
+                return targetChunk.Destruction( coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+            else
+                return false;
         }
 
         /// <summary>

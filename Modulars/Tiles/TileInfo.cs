@@ -168,20 +168,6 @@ namespace Colin.Core.Modulars.Tiles
                 return null;
         }
 
-        /// <summary>
-        /// 获取该物块是否为空气的值. 
-        /// <br>[!] 该值与 <see cref="IsNull"/> 显然不同, 不要混淆.</br>
-        /// </summary>
-        public bool IsArt
-        {
-            get
-            {
-                if(Scripts is null)
-                    return false;
-                return Scripts.ContainsKey( typeof( TileArtScript ) );
-            }
-        }
-
         public TileBehavior Behavior = null;
 
         public RectangleF HitBox => new RectangleF( WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF );
