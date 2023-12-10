@@ -1,9 +1,11 @@
-﻿namespace Colin.Core.Graphics
+﻿using System.Collections.Concurrent;
+
+namespace Colin.Core.Graphics
 {
     /// <summary>
     /// 纹理缓存, 单例.
     /// </summary>
-    public class SpritePool : Dictionary<string, Sprite>, IGameComponent, IUpdateable
+    public class SpritePool : ConcurrentDictionary<string, Sprite>, IGameComponent, IUpdateable
     {
         public event EventHandler<EventArgs> EnabledChanged;
         public event EventHandler<EventArgs> UpdateOrderChanged;
@@ -23,28 +25,23 @@
                 LoadComplete = true;
             }
         }
-        public new void Add( string key, Sprite value )
+        public void Add( string key, Sprite value )
         {
             if(!ContainsKey( key ))
             {
                 value.Depth = Count / DepthSteps;
-                base.Add( key, value );
+                TryAdd( key, value );
             }
         }
-
         public void Update( GameTime gameTime )
         {
             Sprite _sprite;
-            lock(Values)
+            for(int count = 0; count < Values.Count; count++)
             {
-                List<Sprite> sprites = new List<Sprite>( Values );
-                for(int count = 0; count < sprites.Count; count++)
-                {
-                    _sprite = sprites[count];
-                    if(_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
-                        && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
-                        _sprite.Frame.UpdateFrame();
-                }
+                _sprite = Values.ElementAt( count );
+                if(_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
+                    && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
+                    _sprite.Frame.UpdateFrame();
             }
         }
     }

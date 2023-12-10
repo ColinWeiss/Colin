@@ -111,7 +111,7 @@ namespace Colin.Core.Modulars.Backgrounds
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null );
 
             LeftRightLoopEffect.Parameters["MappingTexture"].SetValue( layer.Sprite.Source );
-            LeftRightLoopEffect.Parameters["DrawCount"].SetValue( drawCount * ( Vector2.One * 2f - Camera.Zoom )  );
+            LeftRightLoopEffect.Parameters["DrawCount"].SetValue( drawCount / Camera.Zoom );
             LeftRightLoopEffect.Parameters["Offset"].SetValue( offset );
             LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
 
