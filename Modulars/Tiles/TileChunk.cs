@@ -222,6 +222,14 @@ namespace Colin.Core.Modulars.Tiles
                     Set<T>( index );
                     if(doEvent)
                     {
+                        foreach(var script in info.Scripts.Values)
+                        {
+                            if(script.CanPlace() is false)
+                            {
+                                info.Scripts.Clear();
+                                return false;
+                            }
+                        }
                         info.Behavior.OnPlace( ref info );
                         foreach(var script in info.Scripts.Values)
                             script.OnPlace();
@@ -260,6 +268,14 @@ namespace Colin.Core.Modulars.Tiles
                     Set( behavior, index );
                     if(doEvent)
                     {
+                        foreach(var script in info.Scripts.Values)
+                        {
+                            if(script.CanPlace() is false)
+                            {
+                                info.Scripts.Clear();
+                                return false;
+                            }
+                        }
                         info.Behavior.OnPlace( ref info );
                         foreach(var script in info.Scripts.Values)
                             script.OnPlace();

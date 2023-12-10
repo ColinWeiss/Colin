@@ -19,6 +19,12 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordZ => Info.CoordZ;
         public Vector2 Coord => new Vector2( CoordX , CoordY );
         public Point WorldCoord => Info.WorldCoord2;
+
+        /// <summary>
+        /// 判断是否允许放置.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool CanPlace() => true;
         /// <summary>
         /// 在第一次放置时执行.
         /// </summary>

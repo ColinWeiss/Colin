@@ -14,6 +14,14 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         public bool Empty;
 
+        public bool IsPointer
+        {
+            get
+            {
+                return !IsNull && Tile.TilePointers.ContainsKey( WorldCoord2 );
+            }
+        }
+
         /// <summary>
         /// 指示物块在区块内的索引.
         /// </summary>
