@@ -2,7 +2,7 @@
 {
     public class ProgressBar : Division
     {
-        public ProgressBar( string name ) : base( name )
+        public ProgressBar(string name) : base( name )
         {
             Fill = new Division( "Fill" );
         }
@@ -22,29 +22,29 @@
             Register( Fill );
             base.OnInit();
         }
-        public override void OnUpdate( GameTime time )
+        public override void OnUpdate(GameTime time)
         {
-            if(Direction == Direction.Portrait)
+            if (Direction == Direction.Portrait)
                 Fill.Do( Portrait );
-            else if(Direction == Direction.Transverse)
+            else if (Direction == Direction.Transverse)
                 Fill.Do( Transverse );
             base.OnUpdate( time );
         }
-        private void Portrait( Division division )
+        private void Portrait(Division division)
         {
-            if(Toward == Direction.Down)
+            if (Toward == Direction.Down)
                 division.Layout.Height = (int)(Percentage * Layout.Height);
-            else if(Toward == Direction.Up)
+            else if (Toward == Direction.Up)
             {
                 division.Layout.Top = Layout.Height - (int)(Percentage * Layout.Height) + FillOffset.Y;
                 division.Layout.Height = (int)(Percentage * Layout.Height);
             }
         }
-        private void Transverse( Division division )
+        private void Transverse(Division division)
         {
-            if(Toward == Direction.Right)
+            if (Toward == Direction.Right)
                 division.Layout.Width = (int)(Percentage * Layout.Width);
-            else if(Toward == Direction.Left)
+            else if (Toward == Direction.Left)
             {
                 division.Layout.Left = Layout.Width - (int)(Percentage * Layout.Width) + FillOffset.Y;
                 division.Layout.Width = (int)(Percentage * Layout.Width);

@@ -1,5 +1,4 @@
-﻿using Colin.Core.IO;
-using FontStashSharp;
+﻿using FontStashSharp;
 
 namespace Colin.Core.Assets
 {
@@ -14,12 +13,12 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Fonts" ) ))
+            if (!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Fonts" ) ))
                 return;
             FontSystem _font;
             string _fileName;
             string[] _fontFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Fonts" ), "*.*", SearchOption.AllDirectories );
-            for(int count = 0; count < _fontFileNames.Length; count++)
+            for (int count = 0; count < _fontFileNames.Length; count++)
             {
                 Progress = count / _fontFileNames.Length + 1 / _fontFileNames.Length;
                 _font = new FontSystem();
@@ -34,10 +33,10 @@ namespace Colin.Core.Assets
         /// </summary>
         /// <param name="path">路径.</param>
         /// <returns>字体.</returns>
-        public static FontSystem Get( string path )
+        public static FontSystem Get(string path)
         {
             FontSystem _font;
-            if(_fonts.TryGetValue( Path.Combine( "Fonts", path ), out _font ))
+            if (_fonts.TryGetValue( Path.Combine( "Fonts", path ), out _font ))
                 return _font;
             else
                 return _font;

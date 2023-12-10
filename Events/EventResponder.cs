@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
     public class EventResponder
     {
@@ -14,7 +10,7 @@ namespace Colin.Core.Events
 
         public bool Postorder = true;
 
-        public EventResponder( string name )
+        public EventResponder(string name)
         {
             Name = name;
             Children = new List<EventResponder>();
@@ -22,20 +18,20 @@ namespace Colin.Core.Events
         /// <summary>
         /// 令其与其的子元素响应事件.
         /// </summary>
-        public void Response( BasicEventArgs theEvent )
+        public void Response(BasicEventArgs theEvent)
         {
             EventResponder child;
-            for(int count = Postorder ? Children.Count - 1 : 0; Postorder ? count >= 0 : count < Children.Count; count += Postorder ? -1 : 1)
+            for (int count = Postorder ? Children.Count - 1 : 0; Postorder ? count >= 0 : count < Children.Count; count += Postorder ? -1 : 1)
             {
                 child = Children[count];
-                if(!theEvent.Captured)
+                if (!theEvent.Captured)
                     child.Response( theEvent );
             }
-            if(!theEvent.Captured)
+            if (!theEvent.Captured)
                 Handle( theEvent );
         }
-        public virtual void Handle( BasicEventArgs theEvent ) { }
-        public void Register( EventResponder responder )
+        public virtual void Handle(BasicEventArgs theEvent) { }
+        public void Register(EventResponder responder)
         {
             responder.Parent = this;
             Children.Add( responder );

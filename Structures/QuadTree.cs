@@ -21,7 +21,7 @@
         /// <param name="splitCount">How many leaves a branch can hold before it splits into sub-branches.</param>
 		/// <param name="depthLimit">Maximum distance a node can be from the tree root.</param>
         /// <param name="region">The region that your quadtree occupies, all inserted quads should fit into this.</param>
-        public QuadTree( int splitCount, int depthLimit, ref Rectangle region )
+        public QuadTree(int splitCount, int depthLimit, ref Rectangle region)
         {
             this.splitCount = splitCount;
             this.depthLimit = depthLimit;
@@ -33,7 +33,7 @@
         /// <param name="splitCount">How many leaves a branch can hold before it splits into sub-branches.</param>
 		/// <param name="depthLimit">Maximum distance a node can be from the tree root.</param>
         /// <param name="region">The region that your quadtree occupies, all inserted quads should fit into this.</param>
-		public QuadTree( int splitCount, int depthLimit, Rectangle region )
+		public QuadTree(int splitCount, int depthLimit, Rectangle region)
             : this( splitCount, depthLimit, ref region )
         {
 
@@ -47,7 +47,7 @@
         /// <param name="y">Y position of the region.</param>
         /// <param name="width">Width of the region.</param>
         /// <param name="height">Height of the region.</param>
-        public QuadTree( int splitCount, int depthLimit, int x, int y, int width, int height )
+        public QuadTree(int splitCount, int depthLimit, int x, int y, int width, int height)
             : this( splitCount, depthLimit, new Rectangle( x, y, x + width, y + height ) )
         {
 
@@ -79,10 +79,10 @@
         /// </summary>
         /// <param name="value">The leaf value.</param>
         /// <param name="quad">The leaf size.</param>
-        public void Insert( T value, ref Rectangle quad )
+        public void Insert(T value, ref Rectangle quad)
         {
             Leaf leaf;
-            if(!leafLookup.TryGetValue( value, out leaf ))
+            if (!leafLookup.TryGetValue( value, out leaf ))
             {
                 leaf = CreateLeaf( value, ref quad );
                 leafLookup.Add( value, leaf );
@@ -94,7 +94,7 @@
         /// </summary>
         /// <param name="value">The leaf value.</param>
         /// <param name="quad">The leaf quad.</param>
-        public void Insert( T value, Rectangle quad )
+        public void Insert(T value, Rectangle quad)
         {
             Insert( value, ref quad );
         }
@@ -106,7 +106,7 @@
         /// <param name="y">Y position of the leaf.</param>
         /// <param name="width">Width of the leaf.</param>
         /// <param name="height">Height of the leaf.</param>
-        public void Insert( T value, int x, int y, int width, int height )
+        public void Insert(T value, int x, int y, int width, int height)
         {
             var quad = new Rectangle( x, y, x + width, y + height );
             Insert( value, ref quad );
@@ -118,9 +118,9 @@
         /// <returns>True if any values were found.</returns>
         /// <param name="quad">The area to search.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchArea( ref Rectangle quad, ref List<T> values )
+        public bool SearchArea(ref Rectangle quad, ref List<T> values)
         {
-            if(values != null)
+            if (values != null)
                 values.Clear();
             else
                 values = new List<T>();
@@ -133,7 +133,7 @@
         /// <returns>True if any values were found.</returns>
         /// <param name="quad">The area to search.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchArea( Rectangle quad, ref List<T> values )
+        public bool SearchArea(Rectangle quad, ref List<T> values)
         {
             return SearchArea( ref quad, ref values );
         }
@@ -146,7 +146,7 @@
         /// <param name="width">Width of the search area.</param>
         /// <param name="height">Height of the search area.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchArea( int x, int y, int width, int height, ref List<T> values )
+        public bool SearchArea(int x, int y, int width, int height, ref List<T> values)
         {
             var quad = new Rectangle( x, y, x + width, y + height );
             return SearchArea( ref quad, ref values );
@@ -159,9 +159,9 @@
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool SearchPoint( float x, float y, ref List<T> values )
+        public bool SearchPoint(float x, float y, ref List<T> values)
         {
-            if(values != null)
+            if (values != null)
                 values.Clear();
             else
                 values = new List<T>();
@@ -175,37 +175,37 @@
         /// <returns>True if any collisions were found.</returns>
         /// <param name="value">The value to check collisions against.</param>
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
-        public bool FindCollisions( T value, ref List<T> values )
+        public bool FindCollisions(T value, ref List<T> values)
         {
-            if(values != null)
+            if (values != null)
                 values.Clear();
             else
                 values = new List<T>( leafLookup.Count );
 
             Leaf leaf;
-            if(leafLookup.TryGetValue( value, out leaf ))
+            if (leafLookup.TryGetValue( value, out leaf ))
             {
                 var branch = leaf.Branch;
 
                 //Add the leaf's siblings (prevent it from colliding with itself)
-                if(branch.Leaves.Count > 0)
-                    for(int i = 0; i < branch.Leaves.Count; ++i)
-                        if(leaf != branch.Leaves[i] && leaf.Quad.Intersects( branch.Leaves[i].Quad ))
+                if (branch.Leaves.Count > 0)
+                    for (int i = 0; i < branch.Leaves.Count; ++i)
+                        if (leaf != branch.Leaves[i] && leaf.Quad.Intersects( branch.Leaves[i].Quad ))
                             values.Add( branch.Leaves[i].Value );
 
                 //Add the branch's children
-                if(branch.Split)
-                    for(int i = 0; i < 4; ++i)
-                        if(branch.Branches[i] != null)
+                if (branch.Split)
+                    for (int i = 0; i < 4; ++i)
+                        if (branch.Branches[i] != null)
                             branch.Branches[i].SearchQuad( ref leaf.Quad, values );
 
                 //Add all leaves back to the root
                 branch = branch.Parent;
-                while(branch != null)
+                while (branch != null)
                 {
-                    if(branch.Leaves.Count > 0)
-                        for(int i = 0; i < branch.Leaves.Count; ++i)
-                            if(leaf.Quad.Intersects( branch.Leaves[i].Quad ))
+                    if (branch.Leaves.Count > 0)
+                        for (int i = 0; i < branch.Leaves.Count; ++i)
+                            if (leaf.Quad.Intersects( branch.Leaves[i].Quad ))
                                 values.Add( branch.Leaves[i].Value );
                     branch = branch.Parent;
                 }
@@ -222,16 +222,16 @@
             CountBranches( root, ref count );
             return count;
         }
-        void CountBranches( Branch branch, ref int count )
+        void CountBranches(Branch branch, ref int count)
         {
             ++count;
-            if(branch.Split)
-                for(int i = 0; i < 4; ++i)
-                    if(branch.Branches[i] != null)
+            if (branch.Split)
+                for (int i = 0; i < 4; ++i)
+                    if (branch.Branches[i] != null)
                         CountBranches( branch.Branches[i], ref count );
         }
 
-        static Branch CreateBranch( QuadTree<T> tree, Branch parent, int branchDepth, ref Rectangle quad )
+        static Branch CreateBranch(QuadTree<T> tree, Branch parent, int branchDepth, ref Rectangle quad)
         {
             var branch = branchPool.Count > 0 ? branchPool.Pop() : new Branch();
             branch.Tree = tree;
@@ -247,7 +247,7 @@
             return branch;
         }
 
-        static Leaf CreateLeaf( T value, ref Rectangle quad )
+        static Leaf CreateLeaf(T value, ref Rectangle quad)
         {
             var leaf = leafPool.Count > 0 ? leafPool.Pop() : new Leaf();
             leaf.Value = value;
@@ -271,9 +271,9 @@
                 Parent = null;
                 Split = false;
 
-                for(int i = 0; i < 4; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
-                    if(Branches[i] != null)
+                    if (Branches[i] != null)
                     {
                         branchPool.Push( Branches[i] );
                         Branches[i].Clear();
@@ -281,7 +281,7 @@
                     }
                 }
 
-                for(int i = 0; i < Leaves.Count; ++i)
+                for (int i = 0; i < Leaves.Count; ++i)
                 {
                     leafPool.Push( Leaves[i] );
                     Leaves[i].Branch = null;
@@ -291,16 +291,16 @@
                 Leaves.Clear();
             }
 
-            internal void Insert( Leaf leaf )
+            internal void Insert(Leaf leaf)
             {
                 //If this branch is already split
-                if(Split)
+                if (Split)
                 {
-                    for(int i = 0; i < 4; ++i)
+                    for (int i = 0; i < 4; ++i)
                     {
-                        if(Quads[i].Contains( leaf.Quad ))
+                        if (Quads[i].Contains( leaf.Quad ))
                         {
-                            if(Branches[i] == null)
+                            if (Branches[i] == null)
                                 Branches[i] = CreateBranch( Tree, this, Depth + 1, ref Quads[i] );
                             Branches[i].Insert( leaf );
                             return;
@@ -317,32 +317,32 @@
                     leaf.Branch = this;
 
                     //Once I have reached capacity, split the node
-                    if(Leaves.Count >= Tree.splitCount && Depth < Tree.depthLimit)
+                    if (Leaves.Count >= Tree.splitCount && Depth < Tree.depthLimit)
                     {
                         Split = true;
                     }
                 }
             }
 
-            internal void SearchQuad( ref Rectangle quad, List<T> values )
+            internal void SearchQuad(ref Rectangle quad, List<T> values)
             {
-                if(Leaves.Count > 0)
-                    for(int i = 0; i < Leaves.Count; ++i)
-                        if(quad.Intersects( Leaves[i].Quad ))
+                if (Leaves.Count > 0)
+                    for (int i = 0; i < Leaves.Count; ++i)
+                        if (quad.Intersects( Leaves[i].Quad ))
                             values.Add( Leaves[i].Value );
-                for(int i = 0; i < 4; ++i)
-                    if(Branches[i] != null)
+                for (int i = 0; i < 4; ++i)
+                    if (Branches[i] != null)
                         Branches[i].SearchQuad( ref quad, values );
             }
 
-            internal void SearchPoint( float x, float y, List<T> values )
+            internal void SearchPoint(float x, float y, List<T> values)
             {
-                if(Leaves.Count > 0)
-                    for(int i = 0; i < Leaves.Count; ++i)
-                        if(Leaves[i].Quad.Contains( x, y ))
+                if (Leaves.Count > 0)
+                    for (int i = 0; i < Leaves.Count; ++i)
+                        if (Leaves[i].Quad.Contains( x, y ))
                             values.Add( Leaves[i].Value );
-                for(int i = 0; i < 4; ++i)
-                    if(Branches[i] != null)
+                for (int i = 0; i < 4; ++i)
+                    if (Branches[i] != null)
                         Branches[i].SearchPoint( x, y, values );
             }
         }

@@ -1,7 +1,4 @@
-﻿
-using Colin.Core.IO;
-
-namespace Colin.Core.Assets
+﻿namespace Colin.Core.Assets
 {
     /// <summary>
     /// 包含游戏已加载的纹理资产类.
@@ -18,12 +15,12 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ) ))
+            if (!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ) ))
                 return;
             Texture2D _texture;
             string _fileName;
             string[] TextureFileNames = Directory.GetFiles( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ), "*.xnb*", SearchOption.AllDirectories );
-            for(int count = 0; count < TextureFileNames.Length; count++)
+            for (int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;
                 _fileName = IGameAsset.ArrangementPath( TextureFileNames[count] );
@@ -41,10 +38,10 @@ namespace Colin.Core.Assets
         /// </summary>
         /// <param name="path">路径.</param>
         /// <returns>纹理贴图.</returns>
-        public static Texture2D Get( string path )
+        public static Texture2D Get(string path)
         {
             Texture2D _texture;
-            if(_textures.TryGetValue( Path.Combine( "Textures", path ), out _texture ))
+            if (_textures.TryGetValue( Path.Combine( "Textures", path ), out _texture ))
                 return _texture;
             else
             {

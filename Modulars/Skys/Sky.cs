@@ -1,6 +1,4 @@
-﻿using Colin.Core.Common;
-
-namespace Colin.Core.Modulars.Skys
+﻿namespace Colin.Core.Modulars.Skys
 {
     public class Sky : ISceneModule, IRenderableISceneModule
     {
@@ -29,17 +27,17 @@ namespace Colin.Core.Modulars.Skys
         {
 
         }
-        public void DoUpdate( GameTime time )
+        public void DoUpdate(GameTime time)
         {
             CurrentSkyStyle?.DoUpdate( time );
         }
 
-        public void DoRender( SpriteBatch batch )
+        public void DoRender(SpriteBatch batch)
         {
             CurrentSkyStyle?.DoRender();
         }
 
-        public void ChangeSkyStyle( SkyStyle skyStyle )
+        public void ChangeSkyStyle(SkyStyle skyStyle)
         {
             NextStyle = skyStyle;
         }

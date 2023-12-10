@@ -13,20 +13,20 @@ namespace Colin.Core.Inputs
 
         public static KeyboardState StateLast = new KeyboardState();
 
-        public override void Update( GameTime gameTime )
+        public override void Update(GameTime gameTime)
         {
             StateLast = State;
             State = Keyboard.GetState();
             base.Update( gameTime );
         }
 
-        public static bool IsKeyDown( Keys keys ) => State.IsKeyDown( keys );
+        public static bool IsKeyDown(Keys keys) => State.IsKeyDown( keys );
 
-        public static bool IsKeyUp( Keys keys ) => State.IsKeyUp( keys );
+        public static bool IsKeyUp(Keys keys) => State.IsKeyUp( keys );
 
-        public static bool IsKeyClickBefore( Keys keys ) => StateLast.IsKeyUp( keys ) && State.IsKeyDown( keys );
+        public static bool IsKeyClickBefore(Keys keys) => StateLast.IsKeyUp( keys ) && State.IsKeyDown( keys );
 
-        public static bool IsKeyClickAfter( Keys keys ) => StateLast.IsKeyDown( keys ) && State.IsKeyUp( keys );
+        public static bool IsKeyClickAfter(Keys keys) => StateLast.IsKeyDown( keys ) && State.IsKeyUp( keys );
 
     }
 }

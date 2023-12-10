@@ -19,10 +19,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         }
         public override void RendererInit()
         {
-            if(Font == null)
+            if (Font == null)
                 Font = FontAssets.Get( "Unifont" ).GetFont( 16 );
         }
-        public override void DoRender( SpriteBatch batch )
+        public override void DoRender(SpriteBatch batch)
         {
             batch.DrawString( Font, _text, Division.Layout.TotalLocationF + Division.Design.Anchor,
                 Division.Design.Color, Division.Design.Rotation, Division.Design.Anchor, Division.Design.Scale,

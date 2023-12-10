@@ -1,6 +1,4 @@
-﻿using Colin.Core.Extensions;
-
-namespace Colin.Core.Modulars.UserInterfaces.Renderers
+﻿namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
     public class DivNinecutRenderer : DivisionRenderer
     {
@@ -8,7 +6,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         public Sprite Sprite => _sprite;
         public Point Cut;
         public override void RendererInit() { }
-        public override void DoRender( SpriteBatch batch )
+        public override void DoRender(SpriteBatch batch)
         {
             batch.DrawNineCut(
                 _sprite.Source,
@@ -18,12 +16,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
                 Cut,
                 _sprite.Depth );
         }
-        public DivNinecutRenderer Bind( Sprite sprite )
+        public DivNinecutRenderer Bind(Sprite sprite)
         {
             _sprite = sprite;
             return this;
         }
-        public DivNinecutRenderer Bind( Texture2D texture )
+        public DivNinecutRenderer Bind(Texture2D texture)
         {
             _sprite = new Sprite( texture );
             return this;

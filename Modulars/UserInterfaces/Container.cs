@@ -5,7 +5,7 @@
     /// </summary>
     public class Container : Division
     {
-        public Container( string name ) : base( name ) => _container = this;
+        public Container(string name) : base( name ) => _container = this;
         public override sealed void OnInit()
         {
             Interact.IsInteractive = true;
@@ -17,7 +17,7 @@
             base.OnInit();
         }
 
-        private void Events_ClientSizeChanged( object sender, EventArgs e )
+        private void Events_ClientSizeChanged(object sender, EventArgs e)
         {
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;
@@ -27,17 +27,17 @@
         /// 在此处进行容器初始化操作.
         /// </summary>
         public virtual void ContainerInitialize() { }
-        public void SetTop( Division division )
+        public void SetTop(Division division)
         {
-            if(Children.Contains( division ))
+            if (Children.Contains( division ))
             {
                 Children.Remove( division );
                 Register( division );
             }
         }
-        public override bool Register( Division division, bool doInit = false )
+        public override bool Register(Division division, bool doInit = false)
         {
-            if(base.Register( division, doInit ))
+            if (base.Register( division, doInit ))
             {
                 return true;
             }

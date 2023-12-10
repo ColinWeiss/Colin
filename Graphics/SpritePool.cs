@@ -19,27 +19,27 @@ namespace Colin.Core.Graphics
 
         public void Initialize()
         {
-            if(LoadComplete is false)
+            if (LoadComplete is false)
             {
                 EngineConsole.WriteLine( ConsoleTextType.Remind, "纹理缓存初始化完毕." );
                 LoadComplete = true;
             }
         }
-        public void Add( string key, Sprite value )
+        public void Add(string key, Sprite value)
         {
-            if(!ContainsKey( key ))
+            if (!ContainsKey( key ))
             {
                 value.Depth = Count / DepthSteps;
                 TryAdd( key, value );
             }
         }
-        public void Update( GameTime gameTime )
+        public void Update(GameTime gameTime)
         {
             Sprite _sprite;
-            for(int count = 0; count < Values.Count; count++)
+            for (int count = 0; count < Values.Count; count++)
             {
                 _sprite = Values.ElementAt( count );
-                if(_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
+                if (_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
                     && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
                     _sprite.Frame.UpdateFrame();
             }

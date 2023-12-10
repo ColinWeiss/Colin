@@ -1,7 +1,4 @@
 ﻿using Colin.Core.Events;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Common
 {
@@ -18,7 +15,7 @@ namespace Colin.Core.Common
 
         public MouseEventResponder Mouse;
 
-        public KeysEventResponder KeysEvent; 
+        public KeysEventResponder KeysEvent;
 
         public void Start() { }
         public void DoInitialize()
@@ -27,7 +24,7 @@ namespace Colin.Core.Common
             KeysEvent = new KeysEventResponder( "Scene.KeysEventResponder" );
             KeysEvent.Postorder = false;
         }
-        public void DoUpdate( GameTime time )
+        public void DoUpdate(GameTime time)
         {
             Reset?.Invoke();
             MouseEventArgs mouseEvent = new MouseEventArgs( "MouseEvent" );
@@ -35,9 +32,9 @@ namespace Colin.Core.Common
             Keys[] lasts = KeyboardResponder.StateLast.GetPressedKeys();
             Keys[] current = KeyboardResponder.State.GetPressedKeys();
             KeyEventArgs keysEvent;
-            foreach(var key in lasts)
+            foreach (var key in lasts)
             {
-                if(!current.Contains( key ))
+                if (!current.Contains( key ))
                 {
                     keysEvent = new KeyEventArgs( "KeyEvent" );
                     keysEvent.Key = key;
@@ -45,16 +42,16 @@ namespace Colin.Core.Common
                     KeysEvent.Response( keysEvent );
                 }
             }
-            foreach(var key in current)
+            foreach (var key in current)
             {
                 if (!lasts.Contains( key ))
                 {
-                    keysEvent = new KeyEventArgs( "KeyEvent" ); 
+                    keysEvent = new KeyEventArgs( "KeyEvent" );
                     keysEvent.Key = key;
                     keysEvent.ClickBefore = true;
                     KeysEvent.Response( keysEvent );
                 }
-                if(lasts.Contains( key ))
+                if (lasts.Contains( key ))
                 {
                     keysEvent = new KeyEventArgs( "KeyEvent" );
                     keysEvent.Key = key;
@@ -63,7 +60,7 @@ namespace Colin.Core.Common
                 }
             }
         }
-        public void InvokeSizeChange( object sender, EventArgs e )
+        public void InvokeSizeChange(object sender, EventArgs e)
         {
             ClientSizeChanged?.Invoke( this, e );
             OrientationChanged?.Invoke( this, e );

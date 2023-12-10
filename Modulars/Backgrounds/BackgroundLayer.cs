@@ -40,7 +40,7 @@
         /// </summary>
         public Matrix Transform;
 
-        public BackgroundLayer( Sprite sprite )
+        public BackgroundLayer(Sprite sprite)
         {
             Sprite = sprite;
         }

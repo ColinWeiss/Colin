@@ -10,7 +10,7 @@
         /// <param name="i"></param>
         /// <param name="maxi"></param>
         /// <returns></returns>
-        public static Color Closer( this ref Color current, Color target, float i, float maxi )
+        public static Color Closer(this ref Color current, Color target, float i, float maxi)
         {
             float r = current.R;
             float g = current.G;

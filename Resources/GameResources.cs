@@ -1,8 +1,5 @@
 ﻿using Colin.Core.Modulars.Tiles;
 using DeltaMachine.Core.GameContents.Sections.Items;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Resources
 {
@@ -12,7 +9,7 @@ namespace Colin.Core.Resources
         {
             return CodeResources<Item>.Get<T>();
         }
-        public static T GetTileBehavior<T>( ) where T : TileBehavior
+        public static T GetTileBehavior<T>() where T : TileBehavior
         {
             return CodeResources<TileBehavior>.Get<T>();
         }

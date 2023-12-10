@@ -30,7 +30,7 @@
         /// </summary>
         public static uint FrameCount;
 
-        internal static void Update( float dt )
+        internal static void Update(float dt)
         {
             TotalTime += dt;
             DeltaTime = dt * TimeScale;

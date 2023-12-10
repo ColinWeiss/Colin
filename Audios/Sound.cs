@@ -1,5 +1,4 @@
-﻿using Colin.Core.Common;
-using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework.Audio;
 
 namespace Colin.Core.Audios
 {
@@ -21,7 +20,7 @@ namespace Colin.Core.Audios
 
         }
 
-        public void DoUpdate( GameTime time )
+        public void DoUpdate(GameTime time)
         {
 
         }
@@ -30,14 +29,14 @@ namespace Colin.Core.Audios
         /// 播放指定音效.
         /// </summary>
         /// <param name="soundEffect">音效.</param>
-        public void Play( SoundEffect soundEffect, bool useInstance = true )
+        public void Play(SoundEffect soundEffect, bool useInstance = true)
         {
-            if(EngineInfo.Config.SoundEffect)
+            if (EngineInfo.Config.SoundEffect)
             {
-                if(useInstance)
+                if (useInstance)
                 {
                     SoundEffectInstance _instance = soundEffect?.CreateInstance();
-                    if(_instance != null)
+                    if (_instance != null)
                     {
                         _instance.Volume = EngineInfo.Config.SoundEffectVolume;
                         _instance.Play();
@@ -52,9 +51,9 @@ namespace Colin.Core.Audios
         /// 播放指定音效.
         /// </summary>
         /// <param name="soundEffect">音效.</param>
-        public void PlayInstance( SoundEffectInstance instance )
+        public void PlayInstance(SoundEffectInstance instance)
         {
-            if(EngineInfo.Config.SoundEffect)
+            if (EngineInfo.Config.SoundEffect)
             {
                 instance.Volume = EngineInfo.Config.SoundEffectVolume;
                 instance.Play();

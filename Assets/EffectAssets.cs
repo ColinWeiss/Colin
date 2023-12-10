@@ -1,6 +1,4 @@
-﻿using Colin.Core.IO;
-
-namespace Colin.Core.Assets
+﻿namespace Colin.Core.Assets
 {
     public class EffectAssets : IGameAsset
     {
@@ -12,12 +10,12 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Effects" )))
+            if (!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Effects" ) ))
                 return;
             Effect _effect;
             string _fileName;
             string[] _xnbFileNames = Directory.GetFiles( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Effects" ), "*.xnb*", SearchOption.AllDirectories );
-            for(int count = 0; count < _xnbFileNames.Length; count++)
+            for (int count = 0; count < _xnbFileNames.Length; count++)
             {
                 Progress = count / _xnbFileNames.Length + 1 / _xnbFileNames.Length;
                 _fileName = IGameAsset.ArrangementPath( _xnbFileNames[count] );
@@ -32,10 +30,10 @@ namespace Colin.Core.Assets
         /// </summary>
         /// <param name="path">路径.</param>
         /// <returns>着色器.</returns>
-        public static Effect Get( string path )
+        public static Effect Get(string path)
         {
             Effect _texture;
-            if(Effects.TryGetValue( Path.Combine( "Effects", path ), out _texture ))
+            if (Effects.TryGetValue( Path.Combine( "Effects", path ), out _texture ))
                 return _texture;
             else
             {

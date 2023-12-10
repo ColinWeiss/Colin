@@ -53,20 +53,20 @@ namespace Colin.Core.Inputs
         public static bool DPad_Down_Released => state.DPad.Down == ButtonState.Pressed && stateLast.DPad.Down == ButtonState.Released;
         #endregion
 
-        public override void Update( GameTime gameTime )
+        public override void Update(GameTime gameTime)
         {
             stateLast = state;
             state = GamePad.GetState( PlayerIndex.One );
-            if(state.IsConnected)
+            if (state.IsConnected)
             {
                 //       EngineInfo.Engine.IsMouseVisible = false;
-                if(state.ThumbSticks.Right.X > 0)
+                if (state.ThumbSticks.Right.X > 0)
                     cursorPosition.X += 3;
-                if(state.ThumbSticks.Right.X < 0)
+                if (state.ThumbSticks.Right.X < 0)
                     cursorPosition.X -= 3;
-                if(state.ThumbSticks.Right.Y > 0)
+                if (state.ThumbSticks.Right.Y > 0)
                     cursorPosition.Y -= 3;
-                if(state.ThumbSticks.Right.Y < 0)
+                if (state.ThumbSticks.Right.Y < 0)
                     cursorPosition.Y += 3;
                 //          Console.WriteLine( SectionInfo.ThumbSticks.Right );
             }

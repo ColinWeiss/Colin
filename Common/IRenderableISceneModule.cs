@@ -1,6 +1,4 @@
-﻿using Colin.Core.Extensions;
-
-namespace Colin.Core.Common
+﻿namespace Colin.Core.Common
 {
     /// <summary>
     /// 为应在 <see cref="Scene.Draw"/> 中渲染的场景模块定义的接口.
@@ -28,14 +26,14 @@ namespace Colin.Core.Common
         /// </summary>
         public bool FinalPresentation { get; set; }
 
-        public void DoRender( SpriteBatch batch );
+        public void DoRender(SpriteBatch batch);
 
         public void InitRenderTarget()
         {
             SceneRt?.Dispose();
             SceneRt = RenderTargetExt.CreateDefault();
         }
-        public void OnClientSizeChanged( object o, EventArgs e )
+        public void OnClientSizeChanged(object o, EventArgs e)
         {
             InitRenderTarget();
         }

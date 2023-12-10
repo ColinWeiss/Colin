@@ -18,14 +18,14 @@ namespace Colin.Core.Common
             get => parent;
             set
             {
-                if(parent != value)
+                if (parent != value)
                 {
-                    if(parent != null)
+                    if (parent != null)
                     {
                         parent.children.Remove( this );
                     }
                     parent = value;
-                    if(parent != null)
+                    if (parent != null)
                     {
                         parent.children.Add( this );
                     }
@@ -47,7 +47,7 @@ namespace Colin.Core.Common
             get => localRotation;
             set
             {
-                if(localRotation != value)
+                if (localRotation != value)
                 {
                     localRotation = value;
                     SetNeedsLocalUpdate();
@@ -60,7 +60,7 @@ namespace Colin.Core.Common
             get => localPosition;
             set
             {
-                if(localPosition != value)
+                if (localPosition != value)
                 {
                     localPosition = value;
                     SetNeedsLocalUpdate();
@@ -73,7 +73,7 @@ namespace Colin.Core.Common
             get => localScale;
             set
             {
-                if(localScale != value)
+                if (localScale != value)
                 {
                     localScale = value;
                     SetNeedsLocalUpdate();
@@ -87,31 +87,31 @@ namespace Colin.Core.Common
 
         public Matrix InvertAbsolute => UpdateAbsoluteAndGet( ref invertAbsolute );
 
-        public void ToLocalPosition( ref Vector2 absolute, out Vector2 local )
+        public void ToLocalPosition(ref Vector2 absolute, out Vector2 local)
         {
             Vector2.Transform( ref absolute, ref invertAbsolute, out local );
         }
 
-        public void ToAbsolutePosition( ref Vector2 local, out Vector2 absolute )
+        public void ToAbsolutePosition(ref Vector2 local, out Vector2 absolute)
         {
             Vector2.Transform( ref local, ref this.absolute, out absolute );
         }
 
-        public Vector2 ToLocalPosition( Vector2 absolute )
+        public Vector2 ToLocalPosition(Vector2 absolute)
         {
             Vector2 result;
             ToLocalPosition( ref absolute, out result );
             return result;
         }
 
-        public Vector2 ToAbsolutePosition( Vector2 local )
+        public Vector2 ToAbsolutePosition(Vector2 local)
         {
             Vector2 result;
             ToAbsolutePosition( ref local, out result );
             return result;
         }
 
-        public void Register( Transform2D transform ) => transform.Parent = this;
+        public void Register(Transform2D transform) => transform.Parent = this;
 
         private void SetNeedsLocalUpdate()
         {
@@ -122,7 +122,7 @@ namespace Colin.Core.Common
         private void SetNeedsAbsoluteUpdate()
         {
             needsAbsoluteUpdate = true;
-            foreach(Transform2D transform in children)
+            foreach (Transform2D transform in children)
             {
                 transform.SetNeedsAbsoluteUpdate();
             }
@@ -139,7 +139,7 @@ namespace Colin.Core.Common
 
         private void UpdateAbsolute()
         {
-            if(Parent == null)
+            if (Parent == null)
             {
                 absolute = local;
                 absoluteScale = localScale;
@@ -159,18 +159,18 @@ namespace Colin.Core.Common
             needsAbsoluteUpdate = false;
         }
 
-        private T UpdateLocalAndGet<T>( ref T field )
+        private T UpdateLocalAndGet<T>(ref T field)
         {
-            if(needsLocalUpdate)
+            if (needsLocalUpdate)
                 UpdateLocal();
             return field;
         }
 
-        private T UpdateAbsoluteAndGet<T>( ref T field )
+        private T UpdateAbsoluteAndGet<T>(ref T field)
         {
-            if(needsLocalUpdate)
+            if (needsLocalUpdate)
                 UpdateLocal();
-            if(needsAbsoluteUpdate)
+            if (needsAbsoluteUpdate)
                 UpdateAbsolute();
             return field;
         }

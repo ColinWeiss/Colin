@@ -21,7 +21,7 @@ namespace Colin.Core.Extensions
         /// resets rng with new seed
         /// </summary>
         /// <param name="seed">Seed.</param>
-        public static void SetSeed( int seed )
+        public static void SetSeed(int seed)
         {
             _seed = seed;
             Rand = new System.Random( _seed );
@@ -43,7 +43,7 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <returns>The float.</returns>
         /// <param name="max">Max.</param>
-        public static float NextFloat( float max )
+        public static float NextFloat(float max)
         {
             return (float)Rand.NextDouble() * max;
         }
@@ -54,7 +54,7 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <returns>The float.</returns>
         /// <param name="max">Max.</param>
-        public static int NextInt( int max )
+        public static int NextInt(int max)
         {
             return Rand.Next( max );
         }
@@ -97,7 +97,7 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static int Range( int min, int max )
+        public static int Range(int min, int max)
         {
             return Rand.Next( min, max );
         }
@@ -109,7 +109,7 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static float Range( float min, float max )
+        public static float Range(float min, float max)
         {
             return min + NextFloat( max - min );
         }
@@ -121,7 +121,7 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Vector2 Range( Vector2 min, Vector2 max )
+        public static Vector2 Range(Vector2 min, Vector2 max)
         {
             return min + new Vector2( NextFloat( max.X - min.X ), NextFloat( max.Y - min.Y ) );
         }
@@ -141,7 +141,7 @@ namespace Colin.Core.Extensions
         /// returns true if the next random is less than percent. Percent should be between 0 and 1
         /// </summary>
         /// <param name="percent">Percent.</param>
-        public static bool Chance( float percent )
+        public static bool Chance(float percent)
         {
             return NextFloat() < percent;
         }
@@ -151,7 +151,7 @@ namespace Colin.Core.Extensions
         /// returns true if the next random is less than value. Value should be between 0 and 100.
         /// </summary>
         /// <param name="value">Value.</param>
-        public static bool Chance( int value )
+        public static bool Chance(int value)
         {
             return NextInt( 100 ) < value;
         }
@@ -163,9 +163,9 @@ namespace Colin.Core.Extensions
         /// <param name="first">First.</param>
         /// <param name="second">Second.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T Choose<T>( T first, T second )
+        public static T Choose<T>(T first, T second)
         {
-            if(NextInt( 2 ) == 0)
+            if (NextInt( 2 ) == 0)
                 return first;
 
             return second;
@@ -179,9 +179,9 @@ namespace Colin.Core.Extensions
         /// <param name="second">Second.</param>
         /// <param name="third">Third.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T Choose<T>( T first, T second, T third )
+        public static T Choose<T>(T first, T second, T third)
         {
-            switch(NextInt( 3 ))
+            switch (NextInt( 3 ))
             {
                 case 0:
                     return first;
@@ -201,9 +201,9 @@ namespace Colin.Core.Extensions
         /// <param name="third">Third.</param>
         /// <param name="fourth">Fourth.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T Choose<T>( T first, T second, T third, T fourth )
+        public static T Choose<T>(T first, T second, T third, T fourth)
         {
-            switch(NextInt( 4 ))
+            switch (NextInt( 4 ))
             {
                 case 0:
                     return first;
@@ -216,11 +216,11 @@ namespace Colin.Core.Extensions
             }
         }
 
-        public static string RandomString( int size = 38 )
+        public static string RandomString(int size = 38)
         {
             var builder = new StringBuilder();
             char ch;
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 ch = Convert.ToChar( Convert.ToInt32( Math.Floor( 26 * NextFloat() + 65 ) ) );
                 builder.Append( ch );
@@ -234,26 +234,26 @@ namespace Colin.Core.Extensions
         /// <param name="first">First.</param>
         /// <param name="second">Second.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void Swap<T>( ref T first, ref T second )
+        public static void Swap<T>(ref T first, ref T second)
         {
             T temp = first;
             first = second;
             second = temp;
         }
 
-        public static T GetRandom<T>( this T[] array ) => array[Rand.Next( 0, array.Length )];
+        public static T GetRandom<T>(this T[] array) => array[Rand.Next( 0, array.Length )];
 
-        public static bool NextBool( this Random rand )
+        public static bool NextBool(this Random rand)
         {
             return rand.Next( 2 ) == 1;
         }
-        public static Vector2 NextVectorUnit( this Random rand )
+        public static Vector2 NextVectorUnit(this Random rand)
         {
             float x = (float)(rand.NextBool() ? rand.NextDouble() : -rand.NextDouble());
             float y = (float)(rand.NextBool() ? rand.NextDouble() : -rand.NextDouble());
             return new Vector2( x, y );
         }
-        public static Vector2 NextVectorRec( this Random rand, Point size )
+        public static Vector2 NextVectorRec(this Random rand, Point size)
         {
             float x = (float)rand.NextDouble() * size.X;
             float y = (float)rand.NextDouble() * size.Y;

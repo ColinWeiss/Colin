@@ -1,8 +1,4 @@
-﻿using SharpDX.Direct3D9;
-using System;
-using System.Reflection;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 表示瓦片地图中的单个瓦片.
@@ -90,7 +86,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(Chunk is null)
+                if (Chunk is null)
                     return ref _null;
                 else
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y - 1, CoordZ];
@@ -101,7 +97,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(Chunk is null)
+                if (Chunk is null)
                     return ref _null;
                 else
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y + 1, CoordZ];
@@ -112,7 +108,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(Chunk is null)
+                if (Chunk is null)
                     return ref _null;
                 else
                     return ref Tile[WorldCoord2.X - 1, WorldCoord2.Y, CoordZ];
@@ -123,7 +119,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(Chunk is null)
+                if (Chunk is null)
                     return ref _null;
                 else
                     return ref Tile[WorldCoord2.X + 1, WorldCoord2.Y, CoordZ];
@@ -134,9 +130,9 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(Chunk is null)
+                if (Chunk is null)
                     return ref _null;
-                else if(CoordZ - 1 >= 0)
+                else if (CoordZ - 1 >= 0)
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ - 1];
                 else
                     return ref _null;
@@ -147,9 +143,9 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(Chunk is null)
+                if (Chunk is null)
                     return ref _null;
-                else if(CoordZ + 1 < Chunk.Depth)
+                else if (CoordZ + 1 < Chunk.Depth)
                     return ref Tile[WorldCoord2.X, WorldCoord2.Y, CoordZ + 1];
                 else
                     return ref _null;
@@ -168,9 +164,9 @@ namespace Colin.Core.Modulars.Tiles
         }
         public T GetScript<T>() where T : TileScript
         {
-            if(Scripts is null)
+            if (Scripts is null)
                 return null;
-            if(Scripts.TryGetValue( typeof( T ), out TileScript script ))
+            if (Scripts.TryGetValue( typeof( T ), out TileScript script ))
                 return script as T;
             else
                 return null;
@@ -191,20 +187,20 @@ namespace Colin.Core.Modulars.Tiles
             Scripts = new Dictionary<Type, TileScript>();
         }
 
-        internal void LoadStep( BinaryReader reader )
+        internal void LoadStep(BinaryReader reader)
         {
             Empty = reader.ReadBoolean();
-            if(!Empty)
+            if (!Empty)
             {
                 Texture.LoadStep( reader );
                 Collision = (TileCollision)reader.ReadInt32();
             }
         }
 
-        internal void SaveStep( BinaryWriter writer )
+        internal void SaveStep(BinaryWriter writer)
         {
             writer.Write( Empty );
-            if(!Empty)
+            if (!Empty)
             {
                 Texture.SaveStep( writer );
                 writer.Write( (int)Collision );

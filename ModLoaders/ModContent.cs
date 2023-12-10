@@ -8,11 +8,11 @@ namespace Colin.Core.ModLoaders
 
         public static Dictionary<IMod, Assembly> ModCodes = new Dictionary<IMod, Assembly>();
 
-        public static Assembly GetCode( string modName )
+        public static Assembly GetCode(string modName)
         {
-            if(Mods.TryGetValue( modName, out IMod mod ))
+            if (Mods.TryGetValue( modName, out IMod mod ))
             {
-                if(ModCodes.TryGetValue( mod, out Assembly code ))
+                if (ModCodes.TryGetValue( mod, out Assembly code ))
                     return code;
                 else
                     return null;
@@ -27,6 +27,6 @@ namespace Colin.Core.ModLoaders
             ModCodes.Add( EngineInfo.Engine, Assembly.GetExecutingAssembly() );
         }
 
-        public static string GetModDomain( IMod mod ) => string.Concat( mod.Name, ": " );
+        public static string GetModDomain(IMod mod) => string.Concat( mod.Name, ": " );
     }
 }

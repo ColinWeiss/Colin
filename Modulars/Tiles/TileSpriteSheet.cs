@@ -18,9 +18,9 @@
 
         public int Height;
 
-        public static TileSpriteSheet Query( string key )
+        public static TileSpriteSheet Query(string key)
         {
-            if(!inited)
+            if (!inited)
                 LoadTileSpriteSheets();
             return TileSpriteRepository.GetValueOrDefault( key, null );
         }
@@ -32,12 +32,12 @@
             inited = true;
         }
 
-        public static void RegisterTileSpriteSheet( string key, Point cornerOffset, Point borderOffset, Point solidOffset, int height )
+        public static void RegisterTileSpriteSheet(string key, Point cornerOffset, Point borderOffset, Point solidOffset, int height)
         {
             TileSpriteRepository.Add( key, new TileSpriteSheet( cornerOffset, borderOffset, solidOffset, height ) );
         }
 
-        protected TileSpriteSheet( Point cornerOffset, Point borderOffset, Point solidOffset, int height )
+        protected TileSpriteSheet(Point cornerOffset, Point borderOffset, Point solidOffset, int height)
         {
             CornerTextureOffset = cornerOffset;
             BorderTextureOffset = borderOffset;

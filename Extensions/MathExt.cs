@@ -9,19 +9,19 @@ namespace Colin.Core.Extensions
         public const float Rad2Deg = 57.29578f;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Round( float f )
+        public static float Round(float f)
         {
             return (float)Math.Round( f );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Ceil( float f )
+        public static float Ceil(float f)
         {
             return f = (float)Math.Ceiling( f );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int CeilToInt( float f )
+        public static int CeilToInt(float f)
         {
             return (int)Math.Ceiling( (double)f );
         }
@@ -32,30 +32,30 @@ namespace Colin.Core.Extensions
         /// <returns>The ceil to int.</returns>
         /// <param name="y">F.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int FastCeilToInt( float y )
+        public static int FastCeilToInt(float y)
         {
             return 32768 - (int)(32768f - y);
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Floor( float f )
+        public static float Floor(float f)
         {
             return (float)Math.Floor( f );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int FloorToInt( float f )
+        public static int FloorToInt(float f)
         {
             return (int)Math.Floor( (double)f );
         }
 
         /// <summary>返回将浮点值从度数转换为弧度的结果.</summary>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Radians( float x ) => x * 0.0174532925f;
+        public static float Radians(float x) => x * 0.0174532925f;
 
         /// <summary>返回将浮点数从弧度转换为度数的结果.</summary>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Degrees( float x ) => x * 57.295779513f;
+        public static float Degrees(float x) => x * 57.295779513f;
 
         /// <summary>
         /// 将float降到x以下最接近的int值.
@@ -64,14 +64,14 @@ namespace Colin.Core.Extensions
         /// <returns>The floor to int.</returns>
         /// <param name="x">The x coordinate.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int FastFloorToInt( float x )
+        public static int FastFloorToInt(float x)
         {
             // we shift to guaranteed positive before casting then shift back after
             return (int)(x + 32768f) - 32768;
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int RoundToInt( float f )
+        public static int RoundToInt(float f)
         {
             return (int)Math.Round( f );
         }
@@ -82,7 +82,7 @@ namespace Colin.Core.Extensions
         /// <returns>The to int.</returns>
         /// <param name="f">F.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int TruncateToInt( float f )
+        public static int TruncateToInt(float f)
         {
             return (int)Math.Truncate( f );
         }
@@ -92,24 +92,24 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <param name="value">Value.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Clamp01( float value )
+        public static float Clamp01(float value)
         {
-            if(value < 0f)
+            if (value < 0f)
                 return 0f;
 
-            if(value > 1f)
+            if (value > 1f)
                 return 1f;
 
             return value;
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Clamp( float value, float min, float max )
+        public static float Clamp(float value, float min, float max)
         {
-            if(value < min)
+            if (value < min)
                 return min;
 
-            if(value > max)
+            if (value > max)
                 return max;
 
             return value;
@@ -123,7 +123,7 @@ namespace Colin.Core.Extensions
         /// <param name="max">The maximum value. If <c>value</c> is greater than <c>max</c>, <c>max</c> will be returned.</param>
         /// <returns>The clamped value.</returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int Clamp( int value, int min, int max )
+        public static int Clamp(int value, int min, int max)
         {
             value = value > max ? max : value;
             value = value < min ? min : value;
@@ -132,38 +132,38 @@ namespace Colin.Core.Extensions
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Snap( float value, float increment )
+        public static float Snap(float value, float increment)
         {
             return Round( value / increment ) * increment;
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Snap( float value, float increment, float offset )
+        public static float Snap(float value, float increment, float offset)
         {
             return Round( (value - offset) / increment ) * increment + offset;
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Lerp( float from, float to, float t )
+        public static float Lerp(float from, float to, float t)
         {
             return from + (to - from) * Clamp01( t );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float InverseLerp( float from, float to, float t )
+        public static float InverseLerp(float from, float to, float t)
         {
-            if(from < to)
+            if (from < to)
             {
-                if(t < from)
+                if (t < from)
                     return 0.0f;
-                else if(t > to)
+                else if (t > to)
                     return 1.0f;
             }
             else
             {
-                if(t < to)
+                if (t < to)
                     return 1.0f;
-                else if(t > from)
+                else if (t > from)
                     return 0.0f;
             }
 
@@ -171,7 +171,7 @@ namespace Colin.Core.Extensions
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float UnclampedLerp( float from, float to, float t )
+        public static float UnclampedLerp(float from, float to, float t)
         {
             return from + (to - from) * t;
         }
@@ -184,10 +184,10 @@ namespace Colin.Core.Extensions
         /// <param name="b">The blue component.</param>
         /// <param name="t">T.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float LerpAngle( float a, float b, float t )
+        public static float LerpAngle(float a, float b, float t)
         {
             float num = Repeat( b - a, 360f );
-            if(num > 180f)
+            if (num > 180f)
                 num -= 360f;
 
             return a + num * Clamp01( t );
@@ -201,10 +201,10 @@ namespace Colin.Core.Extensions
         /// <param name="b">The blue component.</param>
         /// <param name="t">T.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float LerpAngleRadians( float a, float b, float t )
+        public static float LerpAngleRadians(float a, float b, float t)
         {
             float num = Repeat( b - a, MathHelper.TwoPi );
-            if(num > MathHelper.Pi)
+            if (num > MathHelper.Pi)
                 num -= MathHelper.TwoPi;
 
             return a + num * Clamp01( t );
@@ -216,7 +216,7 @@ namespace Colin.Core.Extensions
         /// <param name="t">T.</param>
         /// <param name="length">Length.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Repeat( float t, float length )
+        public static float Repeat(float t, float length)
         {
             return t - Floor( t / length ) * length;
         }
@@ -228,10 +228,10 @@ namespace Colin.Core.Extensions
         /// <param name="t">T.</param>
         /// <param name="length">Length.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int IncrementWithWrap( int t, int length )
+        public static int IncrementWithWrap(int t, int length)
         {
             t++;
-            if(t == length)
+            if (t == length)
                 return 0;
 
             return t;
@@ -245,10 +245,10 @@ namespace Colin.Core.Extensions
         /// <param name="t">T.</param>
         /// <param name="length">Length.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int DecrementWithWrap( int t, int length )
+        public static int DecrementWithWrap(int t, int length)
         {
             t--;
-            if(t < 0)
+            if (t < 0)
                 return length - 1;
 
             return t;
@@ -262,7 +262,7 @@ namespace Colin.Core.Extensions
         /// <param name="t">T.</param>
         /// <param name="length">Length.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float PingPong( float t, float length )
+        public static float PingPong(float t, float length)
         {
             t = Repeat( t, length * 2f );
             return length - Math.Abs( t - length );
@@ -276,9 +276,9 @@ namespace Colin.Core.Extensions
         /// <param name="value">Value.</param>
         /// <param name="threshold">Threshold.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float SignThreshold( float value, float threshold )
+        public static float SignThreshold(float value, float threshold)
         {
-            if(Math.Abs( value ) >= threshold)
+            if (Math.Abs( value ) >= threshold)
                 return Math.Sign( value );
             else
                 return 0;
@@ -292,10 +292,10 @@ namespace Colin.Core.Extensions
         /// <param name="current">Current.</param>
         /// <param name="target">Target.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float DeltaAngle( float current, float target )
+        public static float DeltaAngle(float current, float target)
         {
             var num = Repeat( target - current, 360f );
-            if(num > 180f)
+            if (num > 180f)
                 num -= 360f;
 
             return num;
@@ -309,10 +309,10 @@ namespace Colin.Core.Extensions
         /// <param name="current">Current.</param>
         /// <param name="target">Target.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float DeltaAngleRadians( float current, float target )
+        public static float DeltaAngleRadians(float current, float target)
         {
             var num = Repeat( target - current, 2 * MathHelper.Pi );
-            if(num > MathHelper.Pi)
+            if (num > MathHelper.Pi)
                 num -= 2 * MathHelper.Pi;
 
             return num;
@@ -327,9 +327,9 @@ namespace Colin.Core.Extensions
         /// <param name="end">End.</param>
         /// <param name="shift">Shift.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Approach( float start, float end, float shift )
+        public static float Approach(float start, float end, float shift)
         {
-            if(start < end)
+            if (start < end)
                 return Math.Min( start + shift, end );
 
             return Math.Max( start - shift, end );
@@ -344,10 +344,10 @@ namespace Colin.Core.Extensions
         /// <param name="end">End.</param>
         /// <param name="shift">Shift.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float ApproachAngle( float start, float end, float shift )
+        public static float ApproachAngle(float start, float end, float shift)
         {
             float deltaAngle = DeltaAngle( start, end );
-            if(-shift < deltaAngle && deltaAngle < shift)
+            if (-shift < deltaAngle && deltaAngle < shift)
                 return end;
 
             return Repeat( Approach( start, start + deltaAngle, shift ), 360f );
@@ -361,10 +361,10 @@ namespace Colin.Core.Extensions
         /// <param name="end">End.</param>
         /// <param name="shift">Shift.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float ApproachAngleRadians( float start, float end, float shift )
+        public static float ApproachAngleRadians(float start, float end, float shift)
         {
             float deltaAngleRadians = DeltaAngleRadians( start, end );
-            if(-shift < deltaAngleRadians && deltaAngleRadians < shift)
+            if (-shift < deltaAngleRadians && deltaAngleRadians < shift)
                 return end;
 
             return Repeat( Approach( start, start + deltaAngleRadians, shift ), MathHelper.TwoPi );
@@ -378,7 +378,7 @@ namespace Colin.Core.Extensions
         /// <param name="value2">Value2.</param>
         /// <param name="tolerance">Tolerance.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static bool Approximately( float value1, float value2, float tolerance = Epsilon )
+        public static bool Approximately(float value1, float value2, float tolerance = Epsilon)
         {
             return Math.Abs( value1 - value2 ) <= tolerance;
         }
@@ -392,7 +392,7 @@ namespace Colin.Core.Extensions
         /// <param name="b">The blue component.</param>
         /// <param name="c">C.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float MinOf( float a, float b, float c )
+        public static float MinOf(float a, float b, float c)
         {
             return Math.Min( a, Math.Min( b, c ) );
         }
@@ -406,7 +406,7 @@ namespace Colin.Core.Extensions
         /// <param name="b">The blue component.</param>
         /// <param name="c">C.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float MaxOf( float a, float b, float c )
+        public static float MaxOf(float a, float b, float c)
         {
             return Math.Max( a, Math.Max( b, c ) );
         }
@@ -421,7 +421,7 @@ namespace Colin.Core.Extensions
         /// <param name="c">C.</param>
         /// <param name="d">D.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float MinOf( float a, float b, float c, float d )
+        public static float MinOf(float a, float b, float c, float d)
         {
             return Math.Min( a, Math.Min( b, Math.Min( c, d ) ) );
         }
@@ -436,7 +436,7 @@ namespace Colin.Core.Extensions
         /// <param name="c">C.</param>
         /// <param name="d">D.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float MinOf( float a, float b, float c, float d, float e )
+        public static float MinOf(float a, float b, float c, float d, float e)
         {
             return Math.Min( a, Math.Min( b, Math.Min( c, Math.Min( d, e ) ) ) );
         }
@@ -451,7 +451,7 @@ namespace Colin.Core.Extensions
         /// <param name="c">C.</param>
         /// <param name="d">D.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float MaxOf( float a, float b, float c, float d )
+        public static float MaxOf(float a, float b, float c, float d)
         {
             return Math.Max( a, Math.Max( b, Math.Max( c, d ) ) );
         }
@@ -466,7 +466,7 @@ namespace Colin.Core.Extensions
         /// <param name="c">C.</param>
         /// <param name="d">D.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float MaxOf( float a, float b, float c, float d, float e )
+        public static float MaxOf(float a, float b, float c, float d, float e)
         {
             return Math.Max( a, Math.Max( b, Math.Max( c, Math.Max( d, e ) ) ) );
         }
@@ -479,7 +479,7 @@ namespace Colin.Core.Extensions
         /// <param name="min">Minimum.</param>
         /// <param name="max">Max.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static bool Between( float value, float min, float max )
+        public static bool Between(float value, float min, float max)
         {
             return value >= min && value <= max;
         }
@@ -492,7 +492,7 @@ namespace Colin.Core.Extensions
         /// <param name="min">Minimum.</param>
         /// <param name="max">Max.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static bool Between( int value, int min, int max )
+        public static bool Between(int value, int min, int max)
         {
             return value >= min && value <= max;
         }
@@ -504,7 +504,7 @@ namespace Colin.Core.Extensions
         /// <returns><c>true</c>, if even was ised, <c>false</c> otherwise.</returns>
         /// <param name="value">Value.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static bool IsEven( int value )
+        public static bool IsEven(int value)
         {
             return value % 2 == 0;
         }
@@ -516,7 +516,7 @@ namespace Colin.Core.Extensions
         /// <returns><c>true</c>, if odd was ised, <c>false</c> otherwise.</returns>
         /// <param name="value">Value.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static bool IsOdd( int value )
+        public static bool IsOdd(int value)
         {
             return value % 2 != 0;
         }
@@ -529,7 +529,7 @@ namespace Colin.Core.Extensions
         /// <param name="value">Value.</param>
         /// <param name="roundedAmount">roundedAmount.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float RoundWithRoundedAmount( float value, out float roundedAmount )
+        public static float RoundWithRoundedAmount(float value, out float roundedAmount)
         {
             var rounded = Round( value );
             roundedAmount = value - rounded * Round( value / rounded );
@@ -544,7 +544,7 @@ namespace Colin.Core.Extensions
         /// <param name="min">Lminimum value.</param>
         /// <param name="max">maximum value</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Map01( float value, float min, float max )
+        public static float Map01(float value, float min, float max)
         {
             return (value - min) * 1f / (max - min);
         }
@@ -557,7 +557,7 @@ namespace Colin.Core.Extensions
         /// <param name="min">Lminimum value.</param>
         /// <param name="max">maximum value</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Map10( float value, float min, float max )
+        public static float Map10(float value, float min, float max)
         {
             return 1f - Map01( value, min, max );
         }
@@ -572,7 +572,7 @@ namespace Colin.Core.Extensions
         /// <param name="rightMin">Right minimum.</param>
         /// <param name="rightMax">Right max.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Map( float value, float leftMin, float leftMax, float rightMin, float rightMax )
+        public static float Map(float value, float leftMin, float leftMax, float rightMin, float rightMax)
         {
             return rightMin + (value - leftMin) * (rightMax - rightMin) / (leftMax - leftMin);
         }
@@ -585,7 +585,7 @@ namespace Colin.Core.Extensions
         /// <param name="value">Value.</param>
         /// <param name="roundToNearest">Round to nearest.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float RoundToNearest( float value, float roundToNearest )
+        public static float RoundToNearest(float value, float roundToNearest)
         {
             return Round( value / roundToNearest ) * roundToNearest;
         }
@@ -597,7 +597,7 @@ namespace Colin.Core.Extensions
         /// <param name="value">The value to check.</param>
         /// <param name="ep">The threshold to check the value with. <see cref="Epsilon"/> is used by default.</param>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static bool WithinEpsilon( float value, float ep = Epsilon )
+        public static bool WithinEpsilon(float value, float ep = Epsilon)
         {
             return Math.Abs( value ) < ep;
         }
@@ -609,14 +609,14 @@ namespace Colin.Core.Extensions
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Hypotenuse( float x, float y )
+        public static float Hypotenuse(float x, float y)
         {
             return Sqrt( x * x + y * y );
         }
 
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static int ClosestPowerOfTwoGreaterThan( int x )
+        public static int ClosestPowerOfTwoGreaterThan(int x)
         {
             x--;
             x |= x >> 1;
@@ -636,14 +636,14 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <param name="val">Value.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Sqrt( float val )
+        public static float Sqrt(float val)
         {
             return (float)Math.Sqrt( val );
         }
 
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Pow( float x, float y )
+        public static float Pow(float x, float y)
         {
             return (float)Math.Pow( x, y );
         }
@@ -654,7 +654,7 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <param name="f">F.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Sin( float f )
+        public static float Sin(float f)
         {
             return (float)Math.Sin( f );
         }
@@ -665,7 +665,7 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <param name="f">F.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Cos( float f )
+        public static float Cos(float f)
         {
             return (float)Math.Cos( f );
         }
@@ -676,14 +676,14 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <param name="f">F.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Acos( float f )
+        public static float Acos(float f)
         {
             return (float)Math.Acos( f );
         }
 
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Exp( float power )
+        public static float Exp(float power)
         {
             return (float)Math.Exp( power );
         }
@@ -695,7 +695,7 @@ namespace Colin.Core.Extensions
         /// <param name="y">The y coordinate.</param>
         /// <param name="x">The x coordinate.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float Atan2( float y, float x )
+        public static float Atan2(float y, float x)
         {
             return (float)Math.Atan2( y, x );
         }
@@ -705,14 +705,14 @@ namespace Colin.Core.Extensions
         #region Vector2
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static float AngleBetweenVectors( Vector2 from, Vector2 to )
+        public static float AngleBetweenVectors(Vector2 from, Vector2 to)
         {
             return Atan2( to.Y - from.Y, to.X - from.X );
         }
 
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 AngleToVector( float angleRadians, float length )
+        public static Vector2 AngleToVector(float angleRadians, float length)
         {
             return new Vector2( Cos( angleRadians ) * length, Sin( angleRadians ) * length );
         }
@@ -722,7 +722,7 @@ namespace Colin.Core.Extensions
         /// helper for moving a value around in a circle.
         /// </summary>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 RotateAround( Vector2 position, float speed )
+        public static Vector2 RotateAround(Vector2 position, float speed)
         {
             var time = Time.TotalTime * speed;
 
@@ -742,7 +742,7 @@ namespace Colin.Core.Extensions
         /// <param name="center">Center.</param>
         /// <param name="angleInDegrees">Angle in degrees.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 RotateAround( Vector2 point, Vector2 center, float angleInDegrees )
+        public static Vector2 RotateAround(Vector2 point, Vector2 center, float angleInDegrees)
         {
             angleInDegrees = MathHelper.ToRadians( angleInDegrees );
             var cos = Cos( angleInDegrees );
@@ -763,7 +763,7 @@ namespace Colin.Core.Extensions
         /// <param name="center">Center.</param>
         /// <param name="angleInDegrees">Angle in radians.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 RotateAroundRadians( Vector2 point, Vector2 center, float angleInRadians )
+        public static Vector2 RotateAroundRadians(Vector2 point, Vector2 center, float angleInRadians)
         {
             var cos = Cos( angleInRadians );
             var sin = Sin( angleInRadians );
@@ -782,7 +782,7 @@ namespace Colin.Core.Extensions
         /// <param name="radius">Radius.</param>
         /// <param name="angleInDegrees">Angle in degrees.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 PointOnCircle( Vector2 circleCenter, float radius, float angleInDegrees )
+        public static Vector2 PointOnCircle(Vector2 circleCenter, float radius, float angleInDegrees)
         {
             var radians = MathHelper.ToRadians( angleInDegrees );
             return new Vector2
@@ -801,7 +801,7 @@ namespace Colin.Core.Extensions
         /// <param name="radius">Radius.</param>
         /// <param name="angleInDegrees">Angle in radians.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 PointOnCircleRadians( Vector2 circleCenter, float radius, float angleInRadians )
+        public static Vector2 PointOnCircleRadians(Vector2 circleCenter, float radius, float angleInRadians)
         {
             return new Vector2
             {
@@ -820,8 +820,8 @@ namespace Colin.Core.Extensions
         /// <param name="yMagnitude">Y magnitude.</param>
         /// <param name="phase">Phase.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 Lissajou( float xFrequency = 2f, float yFrequency = 3f, float xMagnitude = 1,
-                                       float yMagnitude = 1, float phase = 0 )
+        public static Vector2 Lissajou(float xFrequency = 2f, float yFrequency = 3f, float xMagnitude = 1,
+                                       float yMagnitude = 1, float phase = 0)
         {
             var x = Sin( Time.TotalTime * xFrequency + phase ) * xMagnitude;
             var y = Cos( Time.TotalTime * yFrequency ) * yMagnitude;
@@ -843,9 +843,9 @@ namespace Colin.Core.Extensions
         /// <param name="damping">Damping.</param>
         /// <param name="oscillationInterval">Oscillation interval.</param>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Vector2 LissajouDamped( float xFrequency = 2f, float yFrequency = 3f, float xMagnitude = 1,
+        public static Vector2 LissajouDamped(float xFrequency = 2f, float yFrequency = 3f, float xMagnitude = 1,
                                              float yMagnitude = 1, float phase = 0.5f, float damping = 0f,
-                                             float oscillationInterval = 5f )
+                                             float oscillationInterval = 5f)
         {
             var wrappedTime = PingPong( Time.TotalTime, oscillationInterval );
             var damped = Pow( MathHelper.E, -damping * wrappedTime );
@@ -856,16 +856,16 @@ namespace Colin.Core.Extensions
             return new Vector2( x, y );
         }
 
-        public static float AdvancedFloor( this float value )
+        public static float AdvancedFloor(this float value)
         {
-            if( value >= 0 )
+            if (value >= 0)
                 return (float)Math.Floor( value );
             else
                 return (float)Math.Ceiling( value );
         }
-        public static float AdvancedCeiling( this float value )
+        public static float AdvancedCeiling(this float value)
         {
-            if(value >= 0)
+            if (value >= 0)
                 return (float)Math.Ceiling( value );
             else
                 return (float)Math.Floor( value );

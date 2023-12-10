@@ -4,7 +4,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
     public class PopupInputTextBox : Popup
     {
-        public PopupInputTextBox( string name, int width, int height, int titleHeight ) : base( name, width, height, titleHeight ) { }
+        public PopupInputTextBox(string name, int width, int height, int titleHeight) : base( name, width, height, titleHeight ) { }
 
         public InputTextBox InputTextBox;
 
@@ -19,7 +19,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Register( InputTextBox );
             base.PopupInit();
         }
-        public override void OnUpdate( GameTime time )
+        public override void OnUpdate(GameTime time)
         {
             base.OnUpdate( time );
         }

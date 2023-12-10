@@ -13,7 +13,7 @@
         /// 保存语言包至指定路径.
         /// <br>[!] 语言包文件类型为 JSON.</br>
         /// </summary>
-        public void Save( string path )
+        public void Save(string path)
         {
 
         }

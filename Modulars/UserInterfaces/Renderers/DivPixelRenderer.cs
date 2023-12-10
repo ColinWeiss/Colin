@@ -16,9 +16,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         {
             _pixel = Sprite.Get( "Pixel" );
         }
-        public override void DoRender( SpriteBatch batch )
+        public override void DoRender(SpriteBatch batch)
         {
-            if(_pixel != null)
+            if (_pixel != null)
                 batch.Draw(
                   _pixel.Source,
                   Division.Layout.TotalLocationF + Division.Design.Anchor,
@@ -30,17 +30,17 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
                   SpriteEffects.None,
                   _pixel.Depth );
         }
-        public DivPixelRenderer SetDesignColor( Color color )
+        public DivPixelRenderer SetDesignColor(Color color)
         {
             Division.Design.Color = color;
             return this;
         }
-        public DivPixelRenderer SetDesignColor( Color color, int a = 255 )
+        public DivPixelRenderer SetDesignColor(Color color, int a = 255)
         {
             Division.Design.Color = new Color( color, a );
             return this;
         }
-        public DivPixelRenderer SetDesignColor( int r, int g, int b, int a = 255 )
+        public DivPixelRenderer SetDesignColor(int r, int g, int b, int a = 255)
         {
             SetDesignColor( new Color( r, g, b, a ) );
             return this;

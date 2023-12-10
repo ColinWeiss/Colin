@@ -77,7 +77,7 @@ namespace Colin.Core
 
         public void Load()
         {
-            if(File.Exists( ConfigPath ))
+            if (File.Exists( ConfigPath ))
             {
                 Config result = JsonSerializer.Deserialize<Config>( File.ReadAllText( ConfigPath ) );
                 IsFullScreen = result.IsFullScreen;

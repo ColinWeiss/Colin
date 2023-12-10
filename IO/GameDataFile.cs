@@ -41,14 +41,14 @@ namespace Colin.Core.IO
         {
             GameDatas.Clear();
             buffer = null;
-            using(FileStream = File.OpenRead( path ))
+            using (FileStream = File.OpenRead( path ))
             {
-                using(BinaryReader reader = new BinaryReader( FileStream ))
+                using (BinaryReader reader = new BinaryReader( FileStream ))
                 {
-                    if(Encoding.ASCII.GetString( reader.ReadBytes( FileHeader.Length ) ) != FileHeader)
+                    if (Encoding.ASCII.GetString( reader.ReadBytes( FileHeader.Length ) ) != FileHeader)
                         throw new Exception( "Type error." );
                     buffer = new GameData[reader.ReadInt32()]; //读文件个数, 创建缓冲区.
-                    for(int i = 0; i < buffer.Length; i++)
+                    for (int i = 0; i < buffer.Length; i++)
                     {
                         string fileName = reader.ReadString(); //读名字
                         int length = reader.ReadInt32(); //读大小
@@ -62,7 +62,7 @@ namespace Colin.Core.IO
             }
         }
 
-        public virtual void LoadDatas( BinaryReader binaryReader ) { }
+        public virtual void LoadDatas(BinaryReader binaryReader) { }
 
         /// <summary>
         /// 向包文件内添加文件.
@@ -70,20 +70,20 @@ namespace Colin.Core.IO
         /// </summary>
         /// <param name="filePath">包含文件名在内的路径.</param>
         /// <param name="fileBytes">文件字节.</param>
-        public void AddFile( string filePath, byte[] fileBytes )
+        public void AddFile(string filePath, byte[] fileBytes)
         {
             //     filePath = ArrangementPath( filePath );
-            lock(GameDatas)
+            lock (GameDatas)
                 GameDatas[filePath] = new GameData( filePath, fileBytes.Length );
         }
 
         public void Save()
         {
-            if(FileStream != null)
+            if (FileStream != null)
             {
                 throw new IOException( path );
             }
-            using(FileStream = File.Create( path ))
+            using (FileStream = File.Create( path ))
             {
                 using BinaryWriter writer = new BinaryWriter( FileStream );
                 {
@@ -93,7 +93,7 @@ namespace Colin.Core.IO
                     writer.Write( buffer.Length ); //存文件个数.
 
                     GameData[] array = buffer;
-                    foreach(GameData f in array)
+                    foreach (GameData f in array)
                     {
                         writer.Write( f.path );
                         writer.Write( f.length );
@@ -104,9 +104,9 @@ namespace Colin.Core.IO
             }
         }
 
-        public virtual void SaveDatas( BinaryWriter binaryWriter ) { }
+        public virtual void SaveDatas(BinaryWriter binaryWriter) { }
 
-        public GameDataFile( string path )
+        public GameDataFile(string path)
         {
             this.path = path;
         }

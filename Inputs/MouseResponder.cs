@@ -65,7 +65,7 @@ namespace Colin.Core.Inputs
         /// </summary>
         public static Vector2 Position => State.Position.ToVector2();
 
-        public override void Update( GameTime gameTime )
+        public override void Update(GameTime gameTime)
         {
             StateLast = State;
             State = Mouse.GetState();

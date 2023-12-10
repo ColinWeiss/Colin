@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
     /// <summary>
     /// <br>事件冒泡系统中的事件对象.</br>
@@ -14,7 +10,7 @@ namespace Colin.Core.Events
         /// 指示该事件是否被捕获.
         /// </summary>
         public bool Captured;
-        public BasicEventArgs( string name )
+        public BasicEventArgs(string name)
         {
             Name = name;
         }

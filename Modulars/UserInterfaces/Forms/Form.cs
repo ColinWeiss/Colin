@@ -33,14 +33,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             set
             {
                 _isTransparent = value;
-                if(!_isTransparent)
+                if (!_isTransparent)
                     Block.BindRenderer<DivPixelRenderer>();
                 else
                     Block.ClearRenderer();
             }
         }
 
-        public Form( string name, int width, int height, int titleHeight ) : base( name )
+        public Form(string name, int width, int height, int titleHeight) : base( name )
         {
             Layout.Width = width;
             Layout.Height = height;
@@ -71,7 +71,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             base.Register( Substrate );
 
             Block = new Division( "Behavior" );
-            if(!IsTransparent)
+            if (!IsTransparent)
                 Block.BindRenderer<DivPixelRenderer>();
             Block.Design.Color = new Color( 24, 25, 28 );
             Block.Layout.Top = _titleHeight;
@@ -151,9 +151,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Height += _titleHeight + 8;
 
             Events.LeftClickBefore += () => Interface.Container.SetTop( this );
-            Events.KeyClickBefore += ( object s, KeyEventArgs e ) =>
+            Events.KeyClickBefore += (object s, KeyEventArgs e) =>
             {
-                if(e.Key == Keys.Escape && IsVisible)
+                if (e.Key == Keys.Escape && IsVisible)
                 {
                     e.Captured = true;
                     Close();
@@ -162,7 +162,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             base.OnInit();
         }
         public virtual void FormInit() { }
-        public override bool Register( Division division, bool doInit = false ) => Block.Register( division, doInit );
+        public override bool Register(Division division, bool doInit = false) => Block.Register( division, doInit );
 
         public event Action OnOpen;
         public event Action OnFirstShow;
@@ -173,7 +173,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         public void Show()
         {
             OnOpen?.Invoke();
-            if(!_firstShow)
+            if (!_firstShow)
             {
                 OnFirstShow?.Invoke();
                 _firstShow = true;

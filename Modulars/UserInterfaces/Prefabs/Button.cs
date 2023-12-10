@@ -5,7 +5,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public class Button : Division
     {
         public Label Label;
-        public Button( string name, string text = "" ) : base( name )
+        public Button(string name, string text = "") : base( name )
         {
             Label = new Label( "ButtonText" );
             Label.FontRenderer = Label.BindRenderer<DivFontRenderer>();
@@ -20,7 +20,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             Register( Label );
             base.OnInit();
         }
-        public override void OnUpdate( GameTime time )
+        public override void OnUpdate(GameTime time)
         {
             Label.Layout.Left = Layout.Width / 2 - Label.Layout.Width / 2;
             Label.Layout.Top = Layout.Height / 2 - Label.FontRenderer.Font.LineHeight / 2 - 2;

@@ -9,7 +9,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
     {
         private int _titleHeight;
 
-        public Popup( string name, int width, int height, int titleHeight ) : base( name )
+        public Popup(string name, int width, int height, int titleHeight) : base( name )
         {
             Layout.Width = width;
             Layout.Height = height;
@@ -84,16 +84,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Layout.Top = 2;
                 CloseButton.Layout.Width = 14;
                 CloseButton.Layout.Height = 12;
-                CloseButton.Events.LeftClickBefore += ( ) =>
+                CloseButton.Events.LeftClickBefore += () =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1_Off" ) );
                 };
-                CloseButton.Events.LeftClickAfter += ( ) =>
+                CloseButton.Events.LeftClickAfter += () =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
                     Close();
                 };
-                CloseButton.Events.HoverOver += ( ) =>
+                CloseButton.Events.HoverOver += () =>
                 {
                     _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
                 };
@@ -106,9 +106,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Width += 8;
             Layout.Height += _titleHeight + 8;
 
-            Events.KeyClickBefore += ( object s, KeyEventArgs e ) =>
+            Events.KeyClickBefore += (object s, KeyEventArgs e) =>
             {
-                if(e.Key == Keys.Escape && IsVisible)
+                if (e.Key == Keys.Escape && IsVisible)
                 {
                     e.Captured = true;
                     Close();
@@ -117,7 +117,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             base.OnInit();
         }
         public virtual void PopupInit() { }
-        public override bool Register( Division division, bool doInit = false ) => Block.Register( division, doInit );
+        public override bool Register(Division division, bool doInit = false) => Block.Register( division, doInit );
         public void Show() => (Controller as DivGradientController).Open();
         public void Close() => (Controller as DivGradientController).Close();
     }

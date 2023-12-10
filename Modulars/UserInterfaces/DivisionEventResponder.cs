@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using Microsoft.Xna.Framework.Input;
 namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
@@ -9,7 +8,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
         public Division Div;
 
-        public DivisionEventResponder( Division division ) => Div = division;
+        public DivisionEventResponder(Division division) => Div = division;
 
         public MouseEventResponder Mouse = new MouseEventResponder( "MouseEvents" );
 
@@ -51,29 +50,29 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void DoInitialize()
         {
-            Mouse.Hover += ( s, e ) =>
+            Mouse.Hover += (s, e) =>
                 {
-                    if(Div.Interact.Interaction && !Div.Interact.InteractionLast)
+                    if (Div.Interact.Interaction && !Div.Interact.InteractionLast)
                         HoverStart?.Invoke();
                     Invoke( e, Hover );
-                    if(!Div.Interact.Interaction && Div.Interact.InteractionLast)
+                    if (!Div.Interact.Interaction && Div.Interact.InteractionLast)
                         HoverOver?.Invoke();
                 };
-            Mouse.LeftClickBefore += ( s, e ) =>
+            Mouse.LeftClickBefore += (s, e) =>
             {
                 Invoke( e, LeftClickBefore );
                 Invoke( e, () =>
                 {
-                    if(!S)
+                    if (!S)
                         S = true;
                     else
                         return;
                     Div.Interface.Focus = Div;
-                    if(!Div.Interact.IsDraggable)
+                    if (!Div.Interact.IsDraggable)
                         return;
                     DragStart?.Invoke();
                     DraggingState = true;
-                    if(Div.Parent != null)
+                    if (Div.Parent != null)
                     {
                         Point mouseForParentLocation = MouseResponder.State.Position - Div.Parent.Layout.Location;
                         _cachePos = mouseForParentLocation - Div.Layout.Location;
@@ -84,29 +83,29 @@ namespace Colin.Core.Modulars.UserInterfaces
                     }
                 } );
             };
-            Mouse.LeftDown += ( s, e ) => Invoke( e, LeftDown );
-            Mouse.LeftClickAfter += ( s, e ) =>
+            Mouse.LeftDown += (s, e) => Invoke( e, LeftDown );
+            Mouse.LeftClickAfter += (s, e) =>
             {
-                if(!S)
+                if (!S)
                     return;
                 S = false;
                 DragOver?.Invoke();
                 Invoke( e, LeftClickAfter );
-                if(!Div.Interact.IsDraggable)
+                if (!Div.Interact.IsDraggable)
                     return;
                 DraggingState = false;
                 _cachePos = new Point( -1, -1 );
             };
-            Mouse.LeftUp += ( s, e ) => Invoke( e, LeftUp );
+            Mouse.LeftUp += (s, e) => Invoke( e, LeftUp );
             Keys.ClickBefore += KeyClickBefore;
             Keys.Down += KeyDown;
             Keys.ClickAfter += KeyClickAfter;
         }
-        private void Invoke( MouseEventArgs e, Action action )
+        private void Invoke(MouseEventArgs e, Action action)
         {
-            if(Div.IsVisible && Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
+            if (Div.IsVisible && Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
             {
-                if(Div.Interact.IsBubbling)
+                if (Div.Interact.IsBubbling)
                     e.Captured = true;
                 action?.Invoke();
             }
@@ -115,16 +114,16 @@ namespace Colin.Core.Modulars.UserInterfaces
         public void DoUpdate()
         {
             Div.Interact.InteractionLast = Div.Interact.Interaction;
-            if(Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
+            if (Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
                 Div.Interact.Interaction = true;
             else
                 Div.Interact.Interaction = false;
-            if(DraggingState && Div.Interact.IsDraggable)
+            if (DraggingState && Div.Interact.IsDraggable)
             {
-                if(!Div.Interact.IsDraggable)
+                if (!Div.Interact.IsDraggable)
                     return;
                 DraggingState = true;
-                if(Div.Parent != null)
+                if (Div.Parent != null)
                 {
                     Point _resultLocation = MouseResponder.State.Position - Div.Parent.Layout.Location - _cachePos;
                     Div.Layout.Left = _resultLocation.X;
@@ -136,16 +135,16 @@ namespace Colin.Core.Modulars.UserInterfaces
                     Div.Layout.Left = _resultLocation.X;
                     Div.Layout.Top = _resultLocation.Y;
                 }
-                if(Div.Interact.IsDraggable && Div.Interact.DragLimit != Rectangle.Empty)
+                if (Div.Interact.IsDraggable && Div.Interact.DragLimit != Rectangle.Empty)
                 {
                     Div.Layout.Left = Math.Clamp( Div.Layout.Left, 0, Div.Interact.DragLimit.Width - Div.Layout.Width );
                     Div.Layout.Top = Math.Clamp( Div.Layout.Top, 0, Div.Interact.DragLimit.Height - Div.Layout.Height );
                 }
                 Dragging?.Invoke();
             }
-            if(Div.Interface.Focus == Div && Div.Interface.LastFocus != Div)
+            if (Div.Interface.Focus == Div && Div.Interface.LastFocus != Div)
                 GetFocus?.Invoke();
-            if(Div.Interface.Focus != Div && Div.Interface.LastFocus == Div)
+            if (Div.Interface.Focus != Div && Div.Interface.LastFocus == Div)
                 LoseFocus?.Invoke();
         }
     }

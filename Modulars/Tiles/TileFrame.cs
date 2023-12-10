@@ -31,7 +31,7 @@
                 Width * TileOption.TileSize.X,
                 Height * TileOption.TileSize.X );
 
-        public TileFrame( int x, int y, int width = 1, int height = 1 )
+        public TileFrame(int x, int y, int width = 1, int height = 1)
         {
             X = x;
             Y = y;
@@ -39,7 +39,7 @@
             Height = height;
         }
 
-        internal void LoadStep( BinaryReader reader )
+        internal void LoadStep(BinaryReader reader)
         {
             X = reader.ReadInt32();
             Y = reader.ReadInt32();
@@ -47,7 +47,7 @@
             Height = reader.ReadInt32();
         }
 
-        internal void SaveStep( BinaryWriter writer )
+        internal void SaveStep(BinaryWriter writer)
         {
             writer.Write( X );
             writer.Write( Y );

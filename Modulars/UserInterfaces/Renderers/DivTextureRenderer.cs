@@ -5,9 +5,9 @@
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
         public override void RendererInit() { }
-        public override void DoRender( SpriteBatch batch )
+        public override void DoRender(SpriteBatch batch)
         {
-            if(_sprite is not null)
+            if (_sprite is not null)
             {
                 Frame currentFrame = _sprite.Frame;
                 batch.Draw(
@@ -22,12 +22,12 @@
                   _sprite.Depth );
             }
         }
-        public DivTextureRenderer Bind( Sprite sprite )
+        public DivTextureRenderer Bind(Sprite sprite)
         {
             _sprite = sprite;
             return this;
         }
-        public DivTextureRenderer Bind( Texture2D texture )
+        public DivTextureRenderer Bind(Texture2D texture)
         {
             _sprite = new Sprite( texture );
             return this;

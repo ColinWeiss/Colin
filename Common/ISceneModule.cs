@@ -33,6 +33,6 @@
         /// <summary>
         /// 进行逻辑计算.
         /// </summary>
-        public void DoUpdate( GameTime time );
+        public void DoUpdate(GameTime time);
     }
 }

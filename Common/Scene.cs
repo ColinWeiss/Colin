@@ -1,5 +1,4 @@
-﻿
-/* 项目“DeltaMachine.Desktop”的未合并的更改
+﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
 在此之前:
 using Colin.Core.Collections;
 using Colin.Core.Extensions;
@@ -9,9 +8,6 @@ using Colin.Core.Assets;
 using Colin.Core.Collections;
 using Colin.Core.Extensions;
 */
-using Colin.Core.Events;
-using Colin.Core.Extensions;
-using System.Runtime.InteropServices;
 
 namespace Colin.Core.Common
 {
@@ -44,14 +40,14 @@ namespace Colin.Core.Common
 
         public Scene() : base( EngineInfo.Engine )
         {
-            Events = new SceneEventResponder( );
+            Events = new SceneEventResponder();
             // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
         }
 
         public override sealed void Initialize()
         {
             Started = false;
-            if(InitializeOnSwitch)
+            if (InitializeOnSwitch)
             {
                 InitRenderTarget( this, new EventArgs() );
                 Events.OrientationChanged += InitRenderTarget;
@@ -66,7 +62,7 @@ namespace Colin.Core.Common
             base.Initialize();
         }
 
-        internal void InitRenderTarget( object s, EventArgs e )
+        internal void InitRenderTarget(object s, EventArgs e)
         {
             SceneRenderTarget?.Dispose();
             SceneRenderTarget = RenderTargetExt.CreateDefault();
@@ -78,9 +74,9 @@ namespace Colin.Core.Common
         public virtual void SceneInit() { }
 
         internal bool Started = false;
-        public override sealed void Update( GameTime gameTime )
+        public override sealed void Update(GameTime gameTime)
         {
-            if(!Started)
+            if (!Started)
             {
                 Start();
                 Modules.DoStart();
@@ -96,9 +92,9 @@ namespace Colin.Core.Common
         public virtual void SceneUpdate() { }
 
         internal bool SkipRender = true;
-        public override sealed void Draw( GameTime gameTime )
+        public override sealed void Draw(GameTime gameTime)
         {
-            if( SkipRender is true )
+            if (SkipRender is true)
             {
                 SkipRender = false;
                 return;
@@ -108,10 +104,10 @@ namespace Colin.Core.Common
             RenderTarget2D frameRenderLayer;
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
             EngineInfo.Graphics.GraphicsDevice.Clear( Color.Black );
-            for(int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
+            for (int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
             {
                 renderMode = Modules.RenderableComponents.Values.ElementAt( count );
-                if(renderMode.Visible)
+                if (renderMode.Visible)
                 {
                     frameRenderLayer = renderMode.SceneRt;
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( frameRenderLayer );
@@ -120,13 +116,13 @@ namespace Colin.Core.Common
                 }
             }
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
-            for(int count = Modules.RenderableComponents.Values.Count - 1; count >= 0; count--)
+            for (int count = Modules.RenderableComponents.Values.Count - 1; count >= 0; count--)
             {
                 renderMode = Modules.RenderableComponents.Values.ElementAt( count );
-                if(renderMode.FinalPresentation)
+                if (renderMode.FinalPresentation)
                 {
                     frameRenderLayer = renderMode.SceneRt;
-                    if(SceneShaders.Effects.TryGetValue( renderMode, out Effect e ))
+                    if (SceneShaders.Effects.TryGetValue( renderMode, out Effect e ))
                         EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred, effect: e );
                     else
                         EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred );
@@ -169,7 +165,7 @@ namespace Colin.Core.Common
         /// 根据指定对象删除场景模块.
         /// </summary>
         /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-        public bool RemoveModule( ISceneModule module ) => Modules.Remove( module );
+        public bool RemoveModule(ISceneModule module) => Modules.Remove( module );
 
         /// <summary>
         /// 我不在乎你加不加载, 但我希望玩家的电脑犯病的时候我们能把重要数据保存下来.
@@ -178,20 +174,20 @@ namespace Colin.Core.Common
         /// </summary>
         public virtual void SaveDatas() { }
 
-        protected override void Dispose( bool disposing )
+        protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
-                for(int count = 0; count < Modules.Components.Count; count++)
+                for (int count = 0; count < Modules.Components.Count; count++)
                     Modules.Components.Values.ElementAt( count ).Dispose();
-                for(int count = 0; count < Modules.RenderableComponents.Count; count++)
+                for (int count = 0; count < Modules.RenderableComponents.Count; count++)
                 {
                     Modules.RenderableComponents.Values.ElementAt( count ).SceneRt.Dispose();
                     Modules.RenderableComponents.Values.ElementAt( count ).Dispose();
                 }
                 Modules.Clear();
             }
-            if( Game.Window is not null )
+            if (Game.Window is not null)
             {
                 Game.Window.ClientSizeChanged -= Events.InvokeSizeChange;
                 Game.Window.OrientationChanged -= Events.InvokeSizeChange;

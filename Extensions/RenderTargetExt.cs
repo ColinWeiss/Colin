@@ -16,7 +16,7 @@
             return renderTarget;
         }
 
-        public static RenderTarget2D CreateDefault( int width, int height )
+        public static RenderTarget2D CreateDefault(int width, int height)
         {
             RenderTarget2D renderTarget = new RenderTarget2D(
             EngineInfo.Graphics.GraphicsDevice,
@@ -29,7 +29,7 @@
             RenderTargetUsage.PreserveContents );
             return renderTarget;
         }
-        public static RenderTarget2D CreateWithDepth( int width, int height )
+        public static RenderTarget2D CreateWithDepth(int width, int height)
         {
             RenderTarget2D renderTarget = new RenderTarget2D(
             EngineInfo.Graphics.GraphicsDevice,

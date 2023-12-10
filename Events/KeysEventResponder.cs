@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
     public class KeysEventResponder : EventResponder
     {
-        public KeysEventResponder( string name ) : base( name ) { }
+        public KeysEventResponder(string name) : base( name ) { }
         public event EventHandler<KeyEventArgs> ClickBefore;
         public event EventHandler<KeyEventArgs> Down;
         public event EventHandler<KeyEventArgs> ClickAfter;
 
-        public override void Handle( BasicEventArgs theEvent )
+        public override void Handle(BasicEventArgs theEvent)
         {
-            if(theEvent is KeyEventArgs keysEvent)
+            if (theEvent is KeyEventArgs keysEvent)
             {
-                if(keysEvent.ClickBefore)
+                if (keysEvent.ClickBefore)
                     ClickBefore?.Invoke( this, keysEvent );
-                if(keysEvent.Down)
+                if (keysEvent.Down)
                     Down?.Invoke( this, keysEvent );
-                if(keysEvent.ClickAfter)
+                if (keysEvent.ClickAfter)
                     ClickAfter?.Invoke( this, keysEvent );
             }
         }

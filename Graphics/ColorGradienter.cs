@@ -1,13 +1,11 @@
-﻿using Colin.Core.Extensions;
-
-namespace Colin.Core.Graphics
+﻿namespace Colin.Core.Graphics
 {
     public class ColorGradienter
     {
         public Color Default;
         public Color Current;
         public Color Target;
-        public void Set( Color color )
+        public void Set(Color color)
         {
             Default = color;
             Current = color;
@@ -20,12 +18,12 @@ namespace Colin.Core.Graphics
         public GradientStyle GradientStyle = GradientStyle.Linear;
         public Color Update()
         {
-            if(_start)
+            if (_start)
             {
                 Timer += Colin.Core.Time.UnscaledDeltaTime;
-                if(Timer <= Time)
+                if (Timer <= Time)
                 {
-                    switch(GradientStyle)
+                    switch (GradientStyle)
                     {
                         case GradientStyle.Linear:
                             _currentValue = Timer / Time;
@@ -37,7 +35,7 @@ namespace Colin.Core.Graphics
                     Current.Closer( Target, _currentValue, 1f );
                 }
             }
-            if(Timer > Time)
+            if (Timer > Time)
             {
                 Current = Target;
                 _start = false;

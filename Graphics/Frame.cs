@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Colin.Core.Graphics
+﻿namespace Colin.Core.Graphics
 {
     /// <summary>
     ///  帧格信息.
@@ -81,7 +79,7 @@ namespace Colin.Core.Graphics
         /// </summary>
         public Rectangle GetFrame()
         {
-            switch(Direction)
+            switch (Direction)
             {
                 case Direction.Portrait:
                     return new Rectangle( X * Width, Current * Height, Width, Height );
@@ -96,15 +94,15 @@ namespace Colin.Core.Graphics
         /// </summary>
         public void UpdateFrame()
         {
-            if(!IsPlay)
+            if (!IsPlay)
                 return;
             Timer += Time.DeltaTime;
-            if(Timer > Interval)
+            if (Timer > Interval)
             {
                 Timer = 0;
-                if(Current < FrameMax + Start)
+                if (Current < FrameMax + Start)
                     Current++;
-                else if(IsLoop)
+                else if (IsLoop)
                     Current = Start;
             }
         }

@@ -1,7 +1,4 @@
-﻿using Colin.Core.Modulars.Tiles;
-using DeltaMachine.Core.Scenes.Worlds;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
     /// <summary>
     /// 可编程物块行为.
@@ -17,7 +14,7 @@ namespace Colin.Core.Modulars.Tiles
         public int CoordX => Info.CoordX;
         public int CoordY => Info.CoordY;
         public int CoordZ => Info.CoordZ;
-        public Vector2 Coord => new Vector2( CoordX , CoordY );
+        public Vector2 Coord => new Vector2( CoordX, CoordY );
         public Point WorldCoord => Info.WorldCoord2;
 
         /// <summary>
@@ -41,8 +38,8 @@ namespace Colin.Core.Modulars.Tiles
         /// 于物块被破坏时执行.
         /// </summary>
         public virtual void OnDestruction() { }
-        public virtual void LoadStep( BinaryReader reader ) { }
-        public virtual void SaveStep( BinaryWriter writer ) { }
+        public virtual void LoadStep(BinaryReader reader) { }
+        public virtual void SaveStep(BinaryWriter writer) { }
 
         /// <summary>
         /// 判断同层指定相对于该物块坐标具有指定偏移位置处的物块是否相同.
@@ -50,10 +47,10 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="dx">偏移的X坐标.</param>
         /// <param name="dy">偏移的Y坐标.</param>
         /// <returns></returns>
-        public bool IsSame( int dx, int dy )
+        public bool IsSame(int dx, int dy)
         {
             TileInfo info = Tile[WorldCoord.X + dx, WorldCoord.Y + dy, CoordZ];
-            if(info.Behavior is null || Info.Behavior is null)
+            if (info.Behavior is null || Info.Behavior is null)
                 return false;
             else
                 return info.Behavior.Equals( Info.Behavior );

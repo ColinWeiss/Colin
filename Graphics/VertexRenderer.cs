@@ -12,7 +12,7 @@ namespace Colin.Core.Graphics
         public Vector3 position;
         public Color color;
 
-        public VertexInfo( Vector3 pos, Color color )
+        public VertexInfo(Vector3 pos, Color color)
         {
             position = pos;
             this.color = color;
@@ -41,7 +41,7 @@ namespace Colin.Core.Graphics
 
         int instanceCount = 10000;
 
-        public void Initialize( GraphicsDevice device )
+        public void Initialize(GraphicsDevice device)
         {
             GenerateInstanceVertexDeclaration();
             GenerateGeometry( device );
@@ -52,7 +52,7 @@ namespace Colin.Core.Graphics
             bindings[1] = new VertexBufferBinding( instanceBuffer, 0, 1 );
         }
 
-        public void Load( ContentManager Content )
+        public void Load(ContentManager Content)
         {
             effect = Content.Load<Effect>( "InstancingShader" );
             texture = TextureAssets.Get( "UI/Default" );
@@ -73,7 +73,7 @@ namespace Colin.Core.Graphics
             instanceVertexDeclaration = new VertexDeclaration( instanceStreamElements );
         }
 
-        public void GenerateGeometry( GraphicsDevice device )
+        public void GenerateGeometry(GraphicsDevice device)
         {
             VertexPositionTexture[] vertices = new VertexPositionTexture[4];
 
@@ -101,12 +101,12 @@ namespace Colin.Core.Graphics
             indexBuffer.SetData( indices );
         }
 
-        private void GenerateInstanceInformation( GraphicsDevice device, int count )
+        private void GenerateInstanceInformation(GraphicsDevice device, int count)
         {
             instances = new InstanceInfo[count];
             Random rnd = new Random();
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 instances[i].Position = new Vector4( -rnd.Next( 1600 ), -rnd.Next( 1600 ), 0, 0 );
             }
@@ -115,7 +115,7 @@ namespace Colin.Core.Graphics
         }
 
         [Obsolete]
-        public void Draw( ref Matrix view, ref Matrix projection, GraphicsDevice device )
+        public void Draw(ref Matrix view, ref Matrix projection, GraphicsDevice device)
         {
             device.Clear( Color.CornflowerBlue );
 

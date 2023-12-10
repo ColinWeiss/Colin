@@ -1,6 +1,5 @@
 ﻿using Colin.Core.ModLoaders;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.IMEHelper;
 using System.Reflection;
 
 namespace Colin.Core
@@ -51,7 +50,7 @@ namespace Colin.Core
         {
             get
             {
-                if(_engineName == string.Empty)
+                if (_engineName == string.Empty)
                 {
                     _engineName = Assembly.GetExecutingAssembly().FullName.Split( ',' ).First();
                     return _engineName;
@@ -158,7 +157,7 @@ namespace Colin.Core
         /// </summary>
         public static IMEHandler IMEHandler;
 
-        internal static void Init( Engine engine )
+        internal static void Init(Engine engine)
         {
             Engine = engine;
             ModContent.DoInitialize();
@@ -173,7 +172,7 @@ namespace Colin.Core
         /// 从设备获取信息.
         /// </summary>
         /// <param name="gameTime">游戏刻.</param>
-        internal static void GetInformationFromDevice( GameTime gameTime )
+        internal static void GetInformationFromDevice(GameTime gameTime)
         {
             GameTimeCache = gameTime;
             MouseStateLast = MouseState;

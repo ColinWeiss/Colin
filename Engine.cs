@@ -13,7 +13,6 @@ using Colin.Core.ModLoaders;
 using Colin.Core.IO;
 using Colin.Core.ModLoaders;
 using Colin.Core.Developments;
-using Microsoft.Xna.Framework.Input;
 #if WINDOWS
 using System.Windows.Forms;
 #endif
@@ -68,7 +67,7 @@ namespace Colin.Core
         {
             Preparator.DoCheck();
             EngineInfo.Init( this );
-            if(EngineInfo.Graphics == null)
+            if (EngineInfo.Graphics == null)
             {
                 EngineInfo.Graphics = new GraphicsDeviceManager( this )
                 {
@@ -87,7 +86,7 @@ namespace Colin.Core
 #endif
         }
 
-        public void SetTargetFrame( int frame )
+        public void SetTargetFrame(int frame)
         {
             _targetFrame = frame;
             TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / frame ) );
@@ -97,11 +96,11 @@ namespace Colin.Core
         /// 切换场景.
         /// </summary>
         /// <param name="scene">要切换到的场景对象.</param>
-        public void SetScene( Scene scene )
+        public void SetScene(Scene scene)
         {
-            if(CurrentScene != null)
+            if (CurrentScene != null)
             {
-                if(CurrentScene.InitializeOnSwitch)
+                if (CurrentScene.InitializeOnSwitch)
                 {
                     Window.ClientSizeChanged -= CurrentScene.InitRenderTarget;
                     Window.OrientationChanged -= CurrentScene.InitRenderTarget;
@@ -123,7 +122,7 @@ namespace Colin.Core
         protected override sealed void Initialize()
         {
             EngineInfo.SpriteBatch = new SpriteBatch( EngineInfo.Graphics.GraphicsDevice );
-            EngineInfo.DrawBatcherAlt = new(EngineInfo.Graphics.GraphicsDevice);
+            EngineInfo.DrawBatcherAlt = new( EngineInfo.Graphics.GraphicsDevice );
             EngineInfo.Config = new Config();
             EngineInfo.Config.Load();
             TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / TargetFrame ) );
@@ -140,7 +139,7 @@ namespace Colin.Core
             Preparator.OnLoadComplete += Start;
             base.LoadContent();
         }
-        public virtual void Load( ) { }
+        public virtual void Load() { }
 
         /// <summary>
         /// 在程序开始运行时执行.
@@ -148,12 +147,12 @@ namespace Colin.Core
         public virtual void Start() { }
 
         private bool Started = false;
-        protected override sealed void Update( GameTime gameTime )
+        protected override sealed void Update(GameTime gameTime)
         {
-            if(!Enable)
+            if (!Enable)
                 return;
             Time.Update( (float)gameTime.ElapsedGameTime.TotalSeconds );
-            if(!Started)
+            if (!Started)
             {
 #if WINDOWS
                 Form.Location =
@@ -171,9 +170,9 @@ namespace Colin.Core
         }
         public virtual void DoUpdate() { }
 
-        protected override sealed void Draw( GameTime gameTime )
+        protected override sealed void Draw(GameTime gameTime)
         {
-            if(!Visiable)
+            if (!Visiable)
                 return;
             GraphicsDevice.Clear( Color.Black );
             base.Draw( gameTime );
@@ -181,19 +180,19 @@ namespace Colin.Core
         }
         public virtual void DoRender() { }
 
-        protected override void OnExiting( object sender, EventArgs args )
+        protected override void OnExiting(object sender, EventArgs args)
         {
             CurrentScene?.SaveDatas();
             EngineInfo.Config.Save();
             base.OnExiting( sender, args );
         }
 
-        protected override void OnActivated( object sender, EventArgs args )
+        protected override void OnActivated(object sender, EventArgs args)
         {
             //  Enable = true;
             base.OnActivated( sender, args );
         }
-        protected override void OnDeactivated( object sender, EventArgs args )
+        protected override void OnDeactivated(object sender, EventArgs args)
         {
             //  Enable = false;
             base.OnDeactivated( sender, args );

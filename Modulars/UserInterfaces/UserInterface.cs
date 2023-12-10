@@ -1,5 +1,4 @@
-﻿using Colin.Core.Common;
-using Colin.Core.Events;
+﻿using Colin.Core.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -35,23 +34,23 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void Start() { }
 
-        public void DoUpdate( GameTime time )
+        public void DoUpdate(GameTime time)
         {
             Container?.DoUpdate( time );
         }
 
-        public void DoRender( SpriteBatch batch )
+        public void DoRender(SpriteBatch batch)
         {
             batch.Begin();
             Container?.DoRender( batch );
             batch.End();
         }
 
-        public void Register( Container container ) => Container?.Register( container );
+        public void Register(Container container) => Container?.Register( container );
 
-        public void Remove( Container container, bool dispose ) => Container?.Remove( container );
+        public void Remove(Container container, bool dispose) => Container?.Remove( container );
 
-        public void SetContainer( Container container )
+        public void SetContainer(Container container)
         {
             container._interface = this;
             _contianer = container;

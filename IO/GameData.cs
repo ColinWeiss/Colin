@@ -24,15 +24,15 @@
         /// 保存文件至指定路径.
         /// </summary>
         /// <param name="async">指示该操作是否使用异步操作.</param>
-        public async void Save( bool async )
+        public async void Save(bool async)
         {
-            if(async)
+            if (async)
                 await File.WriteAllBytesAsync( path, bytes );
             else
                 File.WriteAllBytes( path, bytes );
         }
 
-        public GameData( string path, byte[] bytes )
+        public GameData(string path, byte[] bytes)
         {
             this.path = path;
             this.bytes = bytes;
@@ -44,7 +44,7 @@
         /// <param name="name">文件名称.</param>
         /// <param name="length">文件大小.</param>
         /// <param name="bytes">文件字节.</param>
-        public GameData( string path, int length )
+        public GameData(string path, int length)
         {
             this.path = path;
             this.length = length;
@@ -57,7 +57,7 @@
         /// <param name="path">文件路径.</param>
         /// <param name="length">文件大小.</param>
         /// <param name="bytes">文件字节.</param>
-        public GameData( string path, int length, byte[] bytes )
+        public GameData(string path, int length, byte[] bytes)
         {
             this.path = path;
             this.length = length;

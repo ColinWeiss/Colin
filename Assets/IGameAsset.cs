@@ -25,7 +25,7 @@
         /// </summary>
         /// <param name="path">路径.</param>
         /// <returns>整理后的路径, 得到不含扩展名和 "Content/" 的资产路径.</returns>
-        public static string ArrangementPath( string path )
+        public static string ArrangementPath(string path)
         {
             string _result = path;
             _result = _result.Replace( ".xnb", "" );

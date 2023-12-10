@@ -143,7 +143,7 @@
         {
             get
             {
-                if(_scissor == Rectangle.Empty)
+                if (_scissor == Rectangle.Empty)
                     scissorDefault = true;
                 return _scissor;
             }
@@ -160,40 +160,40 @@
         /// 对样式进行计算.
         /// </summary>
         /// <param name="parent"></param>
-        public static void Calculation( Division div )
+        public static void Calculation(Division div)
         {
             LayoutStyle parent = div.Parent.Layout;
             div.Layout.TotalLeft = parent.TotalLeft + div.Layout.Left + parent.PaddingLeft;
             div.Layout.TotalTop = parent.TotalTop + div.Layout.Top + parent.PaddingTop;
-            if(div.Layout._needRefreshSizeRelative)
+            if (div.Layout._needRefreshSizeRelative)
             {
                 div.Layout.Width = (int)(parent.Width * div.Layout.RelativeWidth);
                 div.Layout.Height = (int)(parent.Height * div.Layout.RelativeHeight);
                 div.Layout._needRefreshSizeRelative = false;
             }
-            if(div.Layout._needRefreshLocationRelative)
+            if (div.Layout._needRefreshLocationRelative)
             {
                 div.Layout.Left = (int)(parent.Left * div.Layout.RelativeLeft);
                 div.Layout.Top = (int)(parent.Top * div.Layout.RelativeTop);
                 div.Layout._needRefreshLocationRelative = false;
             }
-            if(div.Layout.ScissorEnable && div.Layout.scissorDefault)
+            if (div.Layout.ScissorEnable && div.Layout.scissorDefault)
             {
                 div.Layout._scissor = div.Layout.TotalHitBox;
-                if(parent.IsCanvas)
+                if (parent.IsCanvas)
                     div.Layout._scissor = div.Layout.HitBox;
-                if(div.ParentCanvas is not null)
+                if (div.ParentCanvas is not null)
                     div.Layout._scissor = GetForParentCanvasHitBox( div );
             }
-            if(div.Layout.IsCanvas)
+            if (div.Layout.IsCanvas)
             {
                 div.Layout._scissor.X = 0;
                 div.Layout._scissor.Y = 0;
             }
         }
-        public static Rectangle GetForParentCanvasHitBox( Division div )
+        public static Rectangle GetForParentCanvasHitBox(Division div)
         {
-            if(div.ParentCanvas is null)
+            if (div.ParentCanvas is null)
                 return Rectangle.Empty;
             else
                 return new Rectangle( div.Layout.TotalLocation - div.ParentCanvas.Layout.TotalLocation, div.Layout.Size );

@@ -8,19 +8,19 @@
         /// <summary>
         /// 绘制一条线.
         /// </summary>
-        public static void DrawLine( this SpriteBatch batch, Line line, Color color )
+        public static void DrawLine(this SpriteBatch batch, Line line, Color color)
         {
             float radian = (line.End - line.Start).GetRadian();
             Sprite pixel = Sprite.Get( "Pixel" );
             float depth = pixel.Depth;
-            if(pixel is not null)
+            if (pixel is not null)
                 batch.Draw( pixel.Source, line.Start, null, color, radian, Vector2.Zero, new Vector2( Vector2.Distance( line.Start, line.End ), 1f ), SpriteEffects.None, depth );
         }
 
         /// <summary>
         /// 绘制一条线.
         /// </summary>
-        public static void DrawLine( this SpriteBatch batch, Vector2 start, Vector2 end, Color color )
+        public static void DrawLine(this SpriteBatch batch, Vector2 start, Vector2 end, Color color)
         {
             batch.DrawLine( new Line( start, end ), color );
         }
@@ -32,7 +32,7 @@
         /// <param name="start"></param>
         /// <param name="size"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle( this SpriteBatch batch, Vector2 start, Vector2 size, Color color )
+        public static void DrawRectangle(this SpriteBatch batch, Vector2 start, Vector2 size, Color color)
         {
             batch.DrawRectangle( new Rectangle( start.ToPoint(), size.ToPoint() ), color );
         }
@@ -44,7 +44,7 @@
         /// <param name="start"></param>
         /// <param name="size"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle( this SpriteBatch batch, Point start, Point size, Color color )
+        public static void DrawRectangle(this SpriteBatch batch, Point start, Point size, Color color)
         {
             batch.DrawRectangle( new Rectangle( start, size ), color );
         }
@@ -58,7 +58,7 @@
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle( this SpriteBatch batch, float x, float y, float width, float height, Color color )
+        public static void DrawRectangle(this SpriteBatch batch, float x, float y, float width, float height, Color color)
         {
             batch.DrawRectangle( new Rectangle( (int)x, (int)y, (int)width, (int)height ), color );
         }
@@ -72,7 +72,7 @@
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle( this SpriteBatch batch, int x, int y, int width, int height, Color color )
+        public static void DrawRectangle(this SpriteBatch batch, int x, int y, int width, int height, Color color)
         {
             batch.DrawRectangle( new Rectangle( x, y, width, height ), color );
         }
@@ -80,7 +80,7 @@
         /// <summary>
         /// 矩形绘制.
         /// </summary>
-        public static void DrawRectangle( this SpriteBatch batch, RectangleF rect, Color color )
+        public static void DrawRectangle(this SpriteBatch batch, RectangleF rect, Color color)
         {
             batch.DrawRectangle( new Rectangle( (int)Math.Round( rect.X ), (int)Math.Round( rect.Y ), (int)rect.Width, (int)rect.Height ), color );
         }
@@ -88,7 +88,7 @@
         /// <summary>
         /// 矩形绘制.
         /// </summary>
-        public static void DrawRectangle( this SpriteBatch batch, Rectangle rect, Color color )
+        public static void DrawRectangle(this SpriteBatch batch, Rectangle rect, Color color)
         {
             batch.Draw( TextureAssets.Get( "Pixel" ), rect, color );
         }
@@ -105,7 +105,7 @@
         /// <param name="Height"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, float x, float y, int Width, int Height, Point cut, float depth )
+        public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, float x, float y, int Width, int Height, Point cut, float depth)
         {
             Point borderSize = cut;
             Rectangle leftTop = new Rectangle( (int)x, (int)y, cut.X, cut.Y );
@@ -139,7 +139,7 @@
         /// <param name="Height"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, int Width, int Height, Point cut, float depth )
+        public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, int Width, int Height, Point cut, float depth)
         {
             batch.DrawNineCut( texture, color, (int)pos.X, (int)pos.Y, Width, Height, cut, depth );
         }
@@ -154,7 +154,7 @@
         /// <param name="size"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, Point size, Point cut, float depth )
+        public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, Point size, Point cut, float depth)
         {
             batch.DrawNineCut( texture, color, (int)pos.X, (int)pos.Y, size.X, size.Y, cut, depth );
         }
@@ -169,7 +169,7 @@
         /// <param name="size"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Point pos, Point size, Point cut, float depth )
+        public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, Point pos, Point size, Point cut, float depth)
         {
             batch.DrawNineCut( texture, color, pos.X, pos.Y, size.X, size.Y, cut, depth );
         }
@@ -183,7 +183,7 @@
         /// <param name="rec"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
-        public static void DrawNineCut( this SpriteBatch batch, Texture2D texture, Color color, Rectangle rec, Point cut, float depth )
+        public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, Rectangle rec, Point cut, float depth)
         {
             batch.DrawNineCut( texture, color, rec.X, rec.Y, rec.Width, rec.Height, cut, depth );
         }

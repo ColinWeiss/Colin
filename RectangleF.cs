@@ -32,7 +32,7 @@ namespace Colin.Core
         {
             get
             {
-                if(Width == 0 && Height == 0 && X == 0)
+                if (Width == 0 && Height == 0 && X == 0)
                 {
                     return Y == 0;
                 }
@@ -73,14 +73,14 @@ namespace Colin.Core
 
         internal string DebugDisplayString => X + "  " + Y + "  " + Width + "  " + Height;
 
-        public RectangleF( float x, float y, float width, float height )
+        public RectangleF(float x, float y, float width, float height)
         {
             X = x;
             Y = y;
             Width = width;
             Height = height;
         }
-        public RectangleF( Vector2 location, Vector2 size )
+        public RectangleF(Vector2 location, Vector2 size)
         {
             X = location.X;
             Y = location.Y;
@@ -88,9 +88,9 @@ namespace Colin.Core
             Height = size.Y;
         }
 
-        public bool Contains( float x, float y )
+        public bool Contains(float x, float y)
         {
-            if(X <= x && x < X + Width && Y <= y)
+            if (X <= x && x < X + Width && Y <= y)
             {
                 return y < Y + Height;
             }
@@ -98,9 +98,9 @@ namespace Colin.Core
             return false;
         }
 
-        public bool Contains( Vector2 value )
+        public bool Contains(Vector2 value)
         {
-            if(X <= value.X && value.X < X + Width && Y <= value.Y)
+            if (X <= value.X && value.X < X + Width && Y <= value.Y)
             {
                 return value.Y < Y + Height;
             }
@@ -108,14 +108,14 @@ namespace Colin.Core
             return false;
         }
 
-        public void Contains( ref Vector2 value, out bool result )
+        public void Contains(ref Vector2 value, out bool result)
         {
             result = X <= value.X && value.X < X + Width && Y <= value.Y && value.Y < Y + Height;
         }
 
-        public bool Contains( RectangleF value )
+        public bool Contains(RectangleF value)
         {
-            if(X <= value.X && value.X + value.Width <= X + Width && Y <= value.Y)
+            if (X <= value.X && value.X + value.Width <= X + Width && Y <= value.Y)
             {
                 return value.Y + value.Height <= Y + Height;
             }
@@ -123,12 +123,12 @@ namespace Colin.Core
             return false;
         }
 
-        public void Contains( ref RectangleF value, out bool result )
+        public void Contains(ref RectangleF value, out bool result)
         {
             result = X <= value.X && value.X + value.Width <= X + Width && Y <= value.Y && value.Y + value.Height <= Y + Height;
         }
 
-        public void Inflate( float horizontalAmount, float verticalAmount )
+        public void Inflate(float horizontalAmount, float verticalAmount)
         {
             X -= horizontalAmount;
             Y -= verticalAmount;
@@ -136,9 +136,9 @@ namespace Colin.Core
             Height += verticalAmount * 2;
         }
 
-        public bool Intersects( RectangleF value )
+        public bool Intersects(RectangleF value)
         {
-            if(value.Left < Right && Left < value.Right && value.Top < Bottom)
+            if (value.Left < Right && Left < value.Right && value.Top < Bottom)
             {
                 return Top < value.Bottom;
             }
@@ -146,20 +146,20 @@ namespace Colin.Core
             return false;
         }
 
-        public void Intersects( ref RectangleF value, out bool result )
+        public void Intersects(ref RectangleF value, out bool result)
         {
             result = value.Left < Right && Left < value.Right && value.Top < Bottom && Top < value.Bottom;
         }
 
-        public static RectangleF Intersect( RectangleF value1, RectangleF value2 )
+        public static RectangleF Intersect(RectangleF value1, RectangleF value2)
         {
             Intersect( ref value1, ref value2, out var result );
             return result;
         }
 
-        public static void Intersect( ref RectangleF value1, ref RectangleF value2, out RectangleF result )
+        public static void Intersect(ref RectangleF value1, ref RectangleF value2, out RectangleF result)
         {
-            if(value1.Intersects( value2 ))
+            if (value1.Intersects( value2 ))
             {
                 float num = Math.Min( value1.X + value1.Width, value2.X + value2.Width );
                 float num2 = Math.Max( value1.X, value2.X );
@@ -173,13 +173,13 @@ namespace Colin.Core
             }
         }
 
-        public void Offset( float offsetX, float offsetY )
+        public void Offset(float offsetX, float offsetY)
         {
             X += offsetX;
             Y += offsetY;
         }
 
-        public void Offset( Vector2 amount )
+        public void Offset(Vector2 amount)
         {
             X += amount.X;
             Y += amount.Y;
@@ -190,14 +190,14 @@ namespace Colin.Core
             return "{X:" + X + " Y:" + Y + " Width:" + Width + " Height:" + Height + "}";
         }
 
-        public static RectangleF Union( RectangleF value1, RectangleF value2 )
+        public static RectangleF Union(RectangleF value1, RectangleF value2)
         {
             float num = Math.Min( value1.X, value2.X );
             float num2 = Math.Min( value1.Y, value2.Y );
             return new RectangleF( num, num2, Math.Max( value1.Right, value2.Right ) - num, Math.Max( value1.Bottom, value2.Bottom ) - num2 );
         }
 
-        public static void Union( ref RectangleF value1, ref RectangleF value2, out RectangleF result )
+        public static void Union(ref RectangleF value1, ref RectangleF value2, out RectangleF result)
         {
             result.X = Math.Min( value1.X, value2.X );
             result.Y = Math.Min( value1.Y, value2.Y );
@@ -205,7 +205,7 @@ namespace Colin.Core
             result.Height = Math.Max( value1.Bottom, value2.Bottom ) - result.Y;
         }
 
-        public void Deconstruct( out float x, out float y, out float width, out float height )
+        public void Deconstruct(out float x, out float y, out float width, out float height)
         {
             x = X;
             y = Y;

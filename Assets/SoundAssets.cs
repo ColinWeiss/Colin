@@ -1,5 +1,4 @@
-﻿using Colin.Core.IO;
-using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework.Audio;
 
 namespace Colin.Core.Assets
 {
@@ -13,12 +12,12 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if(!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ) ))
+            if (!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ) ))
                 return;
             SoundEffect _sound;
             string _fileName;
             string[] TextureFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Sounds" ), "*.xnb*", SearchOption.AllDirectories );
-            for(int count = 0; count < TextureFileNames.Length; count++)
+            for (int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / TextureFileNames.Length + 1 / TextureFileNames.Length;
                 _fileName = IGameAsset.ArrangementPath( TextureFileNames[count] );
@@ -33,10 +32,10 @@ namespace Colin.Core.Assets
         /// </summary>
         /// <param name="path">路径.</param>
         /// <returns>声音.</returns>
-        public static SoundEffect Get( string path )
+        public static SoundEffect Get(string path)
         {
             SoundEffect _sound;
-            if(Sounds.TryGetValue( Path.Combine( "Sounds", path ), out _sound ))
+            if (Sounds.TryGetValue( Path.Combine( "Sounds", path ), out _sound ))
                 return _sound;
             else
             {

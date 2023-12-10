@@ -60,7 +60,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 temp = GetOffset( 0, -1 );
-                if(temp is not null)
+                if (temp is not null)
                     return temp;
                 else
                     return null;
@@ -71,7 +71,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 temp = GetOffset( 0, 1 );
-                if(temp is not null)
+                if (temp is not null)
                     return temp;
                 else
                     return null;
@@ -82,7 +82,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 temp = GetOffset( -1, 0 );
-                if(temp is not null)
+                if (temp is not null)
                     return temp;
                 else
                     return null;
@@ -93,7 +93,7 @@ namespace Colin.Core.Modulars.Tiles
             get
             {
                 temp = GetOffset( 1, 0 );
-                if(temp is not null)
+                if (temp is not null)
                     return temp;
                 else
                     return null;
@@ -103,7 +103,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 根据指定偏移量获取相对于该区块坐标偏移的区块.
         /// </summary>
-        public TileChunk GetOffset( int offsetX, int offsetY )
+        public TileChunk GetOffset(int offsetX, int offsetY)
         {
             return Tile.GetChunk( CoordX + offsetX, CoordY + offsetY );
         }
@@ -125,9 +125,9 @@ namespace Colin.Core.Modulars.Tiles
         {
             get
             {
-                if(x < 0)
+                if (x < 0)
                     x = Width + x;
-                if(y < 0)
+                if (y < 0)
                     y = Height + y;
                 return ref Infos[z * Width * Height + x + y * Width];
             }
@@ -147,7 +147,7 @@ namespace Colin.Core.Modulars.Tiles
         public void DoInitialize()
         {
             Infos = new TileInfo[Width * Height * Depth];
-            for(int count = 0; count < Infos.Length; count++)
+            for (int count = 0; count < Infos.Length; count++)
                 CreateInfo( count );
         }
 
@@ -159,7 +159,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 在指定索引处创建空物块信息.
         /// </summary>
-        public void CreateInfo( int index )
+        public void CreateInfo(int index)
         {
             Infos[index] = new TileInfo();
             Infos[index].Tile = Tile;
@@ -174,12 +174,12 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        public void CreateInfo( int x, int y, int z ) => CreateInfo( (z * Height * Width) + x + y * Width );
+        public void CreateInfo(int x, int y, int z) => CreateInfo( (z * Height * Width) + x + y * Width );
 
         /// <summary>
         /// 根据索引和指定类型设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
         /// </summary>
-        public void Set<T>( int index ) where T : TileBehavior, new()
+        public void Set<T>(int index) where T : TileBehavior, new()
         {
             ref TileInfo info = ref this[index];
             info.Behavior = CodeResources<TileBehavior>.Get<T>();
@@ -189,11 +189,11 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 根据坐标和指定类型设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
         /// </summary>
-        public void Set<T>( int x, int y, int z ) where T : TileBehavior, new() => Set<T>( z * Width * Height + x + y * Width );
+        public void Set<T>(int x, int y, int z) where T : TileBehavior, new() => Set<T>( z * Width * Height + x + y * Width );
         /// <summary>
         /// 根据索引和引用设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
         /// </summary>
-        public void Set( TileBehavior behavior, int index )
+        public void Set(TileBehavior behavior, int index)
         {
             ref TileInfo info = ref this[index];
             info.Behavior = behavior;
@@ -203,38 +203,38 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 根据坐标和引用设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
         /// </summary>
-        public void Set( TileBehavior behavior, int x, int y, int z ) => Set( behavior, z * Width * Height + x + y * Width );
+        public void Set(TileBehavior behavior, int x, int y, int z) => Set( behavior, z * Width * Height + x + y * Width );
 
         /// <summary>
         /// 根据索引和指定类型放置物块.
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public bool Place<T>( int index, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
+        public bool Place<T>(int index, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
         {
             ref TileInfo info = ref this[index];
-            if(!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
+            if (!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
             {
-                if(info.Empty)
+                if (info.Empty)
                 {
                     info.Scripts.Clear();
                     info.Empty = false;
                     Set<T>( index );
-                    if(doEvent)
+                    if (doEvent)
                     {
-                        foreach(var script in info.Scripts.Values)
+                        foreach (var script in info.Scripts.Values)
                         {
-                            if(script.CanPlace() is false)
+                            if (script.CanPlace() is false)
                             {
                                 info.Scripts.Clear();
                                 return false;
                             }
                         }
                         info.Behavior.OnPlace( ref info );
-                        foreach(var script in info.Scripts.Values)
+                        foreach (var script in info.Scripts.Values)
                             script.OnPlace();
                     }
-                    if(doRefresh)
+                    if (doRefresh)
                     {
                         TileRefresher.RefreshMark( info.WorldCoord3, 1 );
                     }
@@ -249,38 +249,38 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public bool Place<T>( int x, int y, int z, bool doEvent = true, bool doRefresh = true ) where T : TileBehavior, new()
+        public bool Place<T>(int x, int y, int z, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
             => Place<T>( z * Width * Height + x + y * Width, doEvent, doRefresh );
         /// <summary>
         /// 根据索引和引用放置物块.
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public bool Place( TileBehavior behavior, int index, bool doEvent = true, bool doRefresh = true )
+        public bool Place(TileBehavior behavior, int index, bool doEvent = true, bool doRefresh = true)
         {
             ref TileInfo info = ref this[index];
-            if(!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
+            if (!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
             {
-                if(info.Empty)
+                if (info.Empty)
                 {
                     info.Scripts.Clear();
                     info.Empty = false;
                     Set( behavior, index );
-                    if(doEvent)
+                    if (doEvent)
                     {
-                        foreach(var script in info.Scripts.Values)
+                        foreach (var script in info.Scripts.Values)
                         {
-                            if(script.CanPlace() is false)
+                            if (script.CanPlace() is false)
                             {
                                 info.Scripts.Clear();
                                 return false;
                             }
                         }
                         info.Behavior.OnPlace( ref info );
-                        foreach(var script in info.Scripts.Values)
+                        foreach (var script in info.Scripts.Values)
                             script.OnPlace();
                     }
-                    if(doRefresh)
+                    if (doRefresh)
                     {
                         TileRefresher.RefreshMark( info.WorldCoord3, 1 );
                     }
@@ -295,7 +295,7 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         /// <param name="doEvent">指示是否触发放置事件.</param>
         /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-        public bool Place( TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+        public bool Place(TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
             => Place( behavior, z * Width * Height + x + y * Width, doEvent, doRefresh );
 
         /// <summary>
@@ -303,21 +303,21 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
         /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
-        public bool Destruction( int index, bool doEvent = true, bool doRefresh = true )
+        public bool Destruction(int index, bool doEvent = true, bool doRefresh = true)
         {
             ref TileInfo info = ref this[index];
-            if(!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
+            if (!Tile.TilePointers.ContainsKey( info.WorldCoord2 ))
             {
-                if(!info.Empty)
+                if (!info.Empty)
                 {
                     info.Empty = true;
-                    if(doEvent)
+                    if (doEvent)
                     {
                         info.Behavior.OnDestruction( ref info );
-                        foreach(var script in info.Scripts.Values)
+                        foreach (var script in info.Scripts.Values)
                             script.OnDestruction();
                     }
-                    if(doRefresh)
+                    if (doRefresh)
                     {
                         TileRefresher.RefreshMark( info.WorldCoord3, 1 );
                     }
@@ -332,45 +332,45 @@ namespace Colin.Core.Modulars.Tiles
         /// </summary>
         /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
         /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
-        public bool Destruction( int x, int y, int z, bool doEvent = true, bool doRefresh = true )
+        public bool Destruction(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
             => Destruction( z * Width * Height + x + y * Width, doEvent, doRefresh );
 
-        public void LoadChunk( string path )
+        public void LoadChunk(string path)
         {
-            using(FileStream fileStream = new FileStream( path, FileMode.Open ))
+            using (FileStream fileStream = new FileStream( path, FileMode.Open ))
             {
-                using(BinaryReader reader = new BinaryReader( fileStream ))
+                using (BinaryReader reader = new BinaryReader( fileStream ))
                 {
                     DoInitialize();
-                    for(int count = 0; count < Infos.Length; count++)
+                    for (int count = 0; count < Infos.Length; count++)
                     {
                         Infos[count].LoadStep( reader );
-                        if(!Infos[count].Empty)
-                            if(CodeResources<TileBehavior>.HashMap.TryGetValue( reader.ReadInt32(), out string value ))
+                        if (!Infos[count].Empty)
+                            if (CodeResources<TileBehavior>.HashMap.TryGetValue( reader.ReadInt32(), out string value ))
                             {
                                 Set( CodeResources<TileBehavior>.Get( value ), count );
-                                TileRefresher.RefreshMark(Infos[count].WorldCoord3, 0);
+                                TileRefresher.RefreshMark( Infos[count].WorldCoord3, 0 );
                             }
                     }
                 }
             }
         }
-        public async Task LoadChunkAsync( string path )
+        public async Task LoadChunkAsync(string path)
             => await Task.Run( () => LoadChunk( path ) );
 
-        public void SaveChunk( string path )
+        public void SaveChunk(string path)
         {
-            using(FileStream fileStream = new FileStream( path, FileMode.Create ))
+            using (FileStream fileStream = new FileStream( path, FileMode.Create ))
             {
-                using(BinaryWriter writer = new BinaryWriter( fileStream ))
+                using (BinaryWriter writer = new BinaryWriter( fileStream ))
                 {
                     TileBehavior behavior;
-                    for(int count = 0; count < Infos.Length; count++)
+                    for (int count = 0; count < Infos.Length; count++)
                     {
                         behavior = Infos[count].Behavior;
                         Infos[count].SaveStep( writer );
-                        if(!Infos[count].Empty && behavior is not null)
-                            if(CodeResources<TileBehavior>.SerializeTable.TryGetValue( behavior.Identifier, out int value ))
+                        if (!Infos[count].Empty && behavior is not null)
+                            if (CodeResources<TileBehavior>.SerializeTable.TryGetValue( behavior.Identifier, out int value ))
                             {
                                 writer.Write( value );
                             }
@@ -378,7 +378,7 @@ namespace Colin.Core.Modulars.Tiles
                 }
             }
         }
-        public async void SaveChunkAsync( string path )
+        public async void SaveChunkAsync(string path)
             => await Task.Run( () => SaveChunk( path ) );
     }
 }

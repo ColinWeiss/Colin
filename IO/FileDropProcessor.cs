@@ -11,7 +11,7 @@ namespace Colin.Core.IO
         {
             get
             {
-                if(_instance == null)
+                if (_instance == null)
                     _instance = new FileDropProcessor();
                 return _instance;
             }
@@ -23,19 +23,19 @@ namespace Colin.Core.IO
 
         public override void Initialize()
         {
-            foreach(var item in Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var item in Assembly.GetExecutingAssembly().GetTypes())
             {
-                if(!item.IsAbstract && item.GetInterfaces().Contains( typeof( IFileDropBehavior ) ))
+                if (!item.IsAbstract && item.GetInterfaces().Contains( typeof( IFileDropBehavior ) ))
                 {
                     FileDropBehaviors.Add( (IFileDropBehavior)Activator.CreateInstance( item ) );
                 }
             }
-            if(PlatformInfo.MonoGamePlatform == MonoGamePlatform.Windows || PlatformInfo.MonoGamePlatform == MonoGamePlatform.DesktopGL)
+            if (PlatformInfo.MonoGamePlatform == MonoGamePlatform.Windows || PlatformInfo.MonoGamePlatform == MonoGamePlatform.DesktopGL)
             {
-                Game.Window.FileDrop += ( s, e ) =>
+                Game.Window.FileDrop += (s, e) =>
                 {
                     IFileDropBehavior fileDropBehavior;
-                    for(int count = 0; count < FileDropBehaviors.Count; count++)
+                    for (int count = 0; count < FileDropBehaviors.Count; count++)
                     {
                         fileDropBehavior = FileDropBehaviors[count];
                         fileDropBehavior.OnFileDrop( e.Files );

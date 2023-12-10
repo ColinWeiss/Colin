@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="start">起点.</param>
         /// <param name="end">终点.</param>
-        public Line( Vector2 start, Vector2 end )
+        public Line(Vector2 start, Vector2 end)
         {
             Start = start;
             End = end;

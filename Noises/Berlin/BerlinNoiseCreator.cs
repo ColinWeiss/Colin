@@ -37,7 +37,7 @@
 
         private static Texture2D Pixel;
 
-        public BerlinNoiseCreator( Point size )
+        public BerlinNoiseCreator(Point size)
         {
             Width = size.X;
             Height = size.Y;
@@ -46,7 +46,7 @@
             Init();
         }
 
-        public BerlinNoiseCreator( Point size, BerlinNoiseInfo info )
+        public BerlinNoiseCreator(Point size, BerlinNoiseInfo info)
         {
             Width = size.X;
             Height = size.Y;
@@ -55,7 +55,7 @@
             Init();
         }
 
-        public BerlinNoiseCreator( Point size, BerlinNoiseInfo info, int seed )
+        public BerlinNoiseCreator(Point size, BerlinNoiseInfo info, int seed)
         {
             Width = size.X;
             Height = size.Y;
@@ -64,7 +64,7 @@
             Init();
         }
 
-        public BerlinNoiseCreator( int width, int height )
+        public BerlinNoiseCreator(int width, int height)
         {
             Width = width;
             Height = height;
@@ -73,7 +73,7 @@
             Init();
         }
 
-        public BerlinNoiseCreator( int width, int height, BerlinNoiseInfo info )
+        public BerlinNoiseCreator(int width, int height, BerlinNoiseInfo info)
         {
             Width = width;
             Height = height;
@@ -82,7 +82,7 @@
             Init();
         }
 
-        public BerlinNoiseCreator( int width, int height, BerlinNoiseInfo info, int seed )
+        public BerlinNoiseCreator(int width, int height, BerlinNoiseInfo info, int seed)
         {
             Width = width;
             Height = height;
@@ -97,19 +97,19 @@
 
         private void Init()
         {
-            if(Pixel == null)
+            if (Pixel == null)
             {
                 Pixel = new Texture2D( EngineInfo.Graphics.GraphicsDevice, 1, 1 );
                 Pixel.SetData( new Color[] { Color.White } );
             }
-            if(Info.Single)
+            if (Info.Single)
             {
                 Random = new Random( Seed );
                 Points = new byte[Width * Height];
                 Span<byte> points = Points;
                 points.Fill( 0 );
                 _map1D = new int[Width * Height];
-                for(int count = 0; count < _map1D.Length; count++)
+                for (int count = 0; count < _map1D.Length; count++)
                     _map1D[count] = Random.Next( Info.Amplitude );
             }
             else
@@ -119,7 +119,7 @@
                 Span<byte> points = Points;
                 points.Fill( 0 );
                 _map2D = new Vector2[Width * Height];
-                for(int count = 0; count < _map2D.Length; count++)
+                for (int count = 0; count < _map2D.Length; count++)
                 {
                     bool xf = Random.Next( 2 ) == 1;
                     bool yf = Random.Next( 2 ) == 1;
@@ -128,15 +128,15 @@
             }
         }
 
-        private void SetPoint( int x, int y, byte value )
+        private void SetPoint(int x, int y, byte value)
         {
-            for(int y0 = y; y0 < Height; y0++)
+            for (int y0 = y; y0 < Height; y0++)
             {
                 Points[x + y0 * Width] = value;
             }
         }
 
-        private float Perlin( float x )
+        private float Perlin(float x)
         {
             int x1 = (int)x;
             int x2 = x1 + 1;
@@ -150,7 +150,7 @@
             return product1 + t * (product2 - product1);
         }
 
-        private float Perlin( float x, float y )
+        private float Perlin(float x, float y)
         {
             int p0x = (int)x; // P0坐标
             int p0y = (int)y;
@@ -193,7 +193,7 @@
             return n1 * (1f - t1) + n0 * t1;
         }
 
-        private float[] Grad( float x, float y )
+        private float[] Grad(float x, float y)
         {
             float[] vec = new float[2];
             vec[0] = _map2D[(int)(x + y * Width)].X;
@@ -203,9 +203,9 @@
 
         public void Create()
         {
-            if(Info.Single)
+            if (Info.Single)
             {
-                for(int x = 0; x < Width; x++)
+                for (int x = 0; x < Width; x++)
                 {
                     float x0 = (float)x / Width * Info.Scale;
                     SetPoint( x, (int)(Height / 2 + Perlin( x0 )), 1 );
@@ -213,16 +213,16 @@
             }
             else
             {
-                for(int x = 0; x < Width; x++)
+                for (int x = 0; x < Width; x++)
                 {
-                    for(int y = 0; y < Height; y++)
+                    for (int y = 0; y < Height; y++)
                     {
                         float x0 = (float)x / Width * Info.Scale;
                         float y0 = (float)y / Height * Info.Scale;
                         float color = 122.5f + 255 * Perlin( x0, y0 );
-                        if(color > Info.Limit)
+                        if (color > Info.Limit)
                             color = Info.Limit;
-                        if(color < 0)
+                        if (color < 0)
                             color = 0;
                         SetPoint( x, y, (byte)color );
                     }
@@ -230,13 +230,13 @@
             }
         }
 
-        public void Render( SpriteBatch spriteBatch, Vector2 position )
+        public void Render(SpriteBatch spriteBatch, Vector2 position)
         {
-            for(int x = 0; x < Width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for(int y = 0; y < Height; y++)
+                for (int y = 0; y < Height; y++)
                 {
-                    if(Points[x + y * Width] > 0)
+                    if (Points[x + y * Width] > 0)
                     {
                         spriteBatch.Draw( Pixel, position + new Vector2( x, y ),
                             new Color( Color.White, Info.Single ? 255 : Points[x + y * Width] ) );

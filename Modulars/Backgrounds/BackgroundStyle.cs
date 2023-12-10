@@ -35,7 +35,7 @@
 
         public virtual void UpdateStyle() { }
 
-        protected Texture2D GetBackgroundTexture( string path )
+        protected Texture2D GetBackgroundTexture(string path)
         {
             return TextureAssets.Get( string.Concat( "Backgrounds/", path ) );
         }

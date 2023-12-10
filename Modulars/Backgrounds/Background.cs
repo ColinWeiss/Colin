@@ -7,10 +7,6 @@ using Colin.Core.Common;
 using Colin.Core.Graphics;
 */
 
-using DeltaMachine.Core.Common.Utilities;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-
 namespace Colin.Core.Modulars.Backgrounds
 {
     /// <summary>
@@ -43,10 +39,10 @@ namespace Colin.Core.Modulars.Backgrounds
         /// 设置背景样式.
         /// </summary>
         /// <param name="style"></param>
-        public void SetBackgroundStyle( BackgroundStyle style )
+        public void SetBackgroundStyle(BackgroundStyle style)
         {
-          //  if(CurrentStyle != style)
-                CurrentStyle = style;
+            //  if(CurrentStyle != style)
+            CurrentStyle = style;
         }
 
         public void DoInitialize()
@@ -59,28 +55,28 @@ namespace Colin.Core.Modulars.Backgrounds
 
         }
 
-        public void DoUpdate( GameTime time )
+        public void DoUpdate(GameTime time)
         {
             CurrentStyle?.UpdateStyle();
         }
 
-        public void DoRender( SpriteBatch batch )
+        public void DoRender(SpriteBatch batch)
         {
             if (CurrentStyle != null)
             {
                 BackgroundLayer layer;
-                for(int count = 0; count < CurrentStyle.Layers.Count; count++)
+                for (int count = 0; count < CurrentStyle.Layers.Count; count++)
                 {
                     layer = CurrentStyle.Layers[count];
-                    if(layer.IsFix)
+                    if (layer.IsFix)
                         RenderFixBackground( layer );
-                    if(layer.IsLoop && layer.LoopStyle == BackgroundLoopStyle.LeftRightConnect)
+                    if (layer.IsLoop && layer.LoopStyle == BackgroundLoopStyle.LeftRightConnect)
                         RenderLeftRightLoopBackground( layer );
                 }
             }
         }
 
-        public void RenderFixBackground( BackgroundLayer layer )
+        public void RenderFixBackground(BackgroundLayer layer)
         {
             EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp );
             EngineInfo.SpriteBatch.Draw(
@@ -97,7 +93,7 @@ namespace Colin.Core.Modulars.Backgrounds
             EngineInfo.SpriteBatch.End();
         }
 
-        public void RenderLeftRightLoopBackground( BackgroundLayer layer )
+        public void RenderLeftRightLoopBackground(BackgroundLayer layer)
         {
             Vector3 translateBody = new Vector3( -(Camera.Position - CurrentStyle.LoopLayerDrawPosition) * layer.Parallax, 0f );
             Vector3 translateCenter = new Vector3( Camera.Translate, 0f );
@@ -123,15 +119,15 @@ namespace Colin.Core.Modulars.Backgrounds
         }
 
         private bool disposedValue;
-        private void Dispose( bool disposing )
+        private void Dispose(bool disposing)
         {
-            if(!disposedValue)
+            if (!disposedValue)
             {
-                if(disposing)
+                if (disposing)
                 {
                 }
-           //     Scene = null;
-            //    _camera = null;
+                //     Scene = null;
+                //    _camera = null;
                 disposedValue = true;
             }
         }

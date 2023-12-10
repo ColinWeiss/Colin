@@ -37,7 +37,7 @@
         /// </summary>  
         /// <param name="informationType">信息类型.</param>  
         /// <param name="output">输出内容.</param>  
-        public static void WriteLine( ConsoleTextType informationType, object output )
+        public static void WriteLine(ConsoleTextType informationType, object output)
         {
             WriteLine( informationType, output.ToString() );
         }
@@ -47,7 +47,7 @@
         /// </summary>  
         /// <param name="informationType">信息类型.</param>  
         /// <param name="output">输出内容.</param>  
-        public static void WriteLine( ConsoleTextType informationType, string output )
+        public static void WriteLine(ConsoleTextType informationType, string output)
         {
 #if WINDOWS
             Console.ForegroundColor = GetConsoleColor( informationType );
@@ -62,9 +62,9 @@
         /// </summary>  
         /// <param name="informationType">信息类型.</param>  
         /// <returns></returns>  
-        private static ConsoleColor GetConsoleColor( ConsoleTextType informationType )
+        private static ConsoleColor GetConsoleColor(ConsoleTextType informationType)
         {
-            switch(informationType)
+            switch (informationType)
             {
                 case ConsoleTextType.Normal:
                     return ConsoleColor.DarkGray;

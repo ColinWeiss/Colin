@@ -69,7 +69,7 @@
         }
         public T GetRenderer<T>() where T : DivisionRenderer
         {
-            if(_renderer is T)
+            if (_renderer is T)
                 return _renderer as T;
             else
                 return null;
@@ -113,7 +113,7 @@
         /// <br>[!] 虽然此处的名称可重复, 但该名称的作用是利于调试, 故建议使用不同的、可辨识的名称加以区分.</br>
         /// </summary>
         /// <param name="name">划分元素的名称.</param>
-        public Division( string name )
+        public Division(string name)
         {
             Name = name;
             Events = new DivisionEventResponder( this );
@@ -130,9 +130,9 @@
         /// </summary>
         public void DoInitialize()
         {
-            if(InitializationCompleted)
+            if (InitializationCompleted)
                 return;
-            if(!(this is Container))
+            if (!(this is Container))
             {
                 _interface = Parent?._interface;
                 _container = Parent?._container;
@@ -140,7 +140,7 @@
             OnInit();
             Controller?.OnInit();
             _renderer?.RendererInit();
-            if(Parent != null)
+            if (Parent != null)
                 LayoutStyle.Calculation( this ); //刷新一下.
             ForEach( child => child.DoInitialize() );
             Events.DoInitialize();
@@ -157,23 +157,23 @@
         /// 执行划分元素的逻辑刷新.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public void DoUpdate( GameTime time )
+        public void DoUpdate(GameTime time)
         {
             PreUpdate( time );
-            if(!IsVisible)
+            if (!IsVisible)
                 return;
-            if( this is Container is false )
+            if (this is Container is false)
             {
                 _interface = Parent?._interface;
                 _container = Parent?._container;
             }
-            if(!_started)
+            if (!_started)
             {
                 Start( time );
                 _started = true;
             }
             Controller?.Layout( ref Layout );
-            if(Parent != null)
+            if (Parent != null)
                 LayoutStyle.Calculation( this );
             Controller?.Interact( ref Interact );
             Controller?.Design( ref Design );
@@ -184,28 +184,28 @@
         /// <summary>
         /// 发生于 <see cref="DoUpdate(GameTime)"/> 第一帧执行时.
         /// </summary>
-        public virtual void Start( GameTime time ) { }
+        public virtual void Start(GameTime time) { }
         /// <summary>
         /// 发生于 <see cref="DoUpdate"/> 执行时, 但不受 <see cref="IsVisible"/> 控制.
         /// <br>相较于 <see cref="UpdateChildren"/> 与 <see cref="OnUpdate"/> 最先执行.</br>
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void PreUpdate( GameTime time ) { }
+        public virtual void PreUpdate(GameTime time) { }
         /// <summary>
         /// 发生于 <see cref="DoUpdate"/> 执行时, 受 <see cref="IsVisible"/> 控制.
         /// <br>相较于 <see cref="UpdateChildren"/> 更快执行.</br>
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void OnUpdate( GameTime time ) { }
+        public virtual void OnUpdate(GameTime time) { }
         /// <summary>
         /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoUpdate"/>.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void UpdateChildren( GameTime time )
+        public virtual void UpdateChildren(GameTime time)
         {
             Children.ForEach( child =>
             {
-                if(Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ))
+                if (Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ))
                     child?.DoUpdate( time );
                 else
                     child?.DoUpdate( time );
@@ -216,11 +216,11 @@
         /// 执行划分元素的渲染.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public void DoRender( SpriteBatch batch )
+        public void DoRender(SpriteBatch batch)
         {
-            if(!IsVisible && !IsHidden)
+            if (!IsVisible && !IsHidden)
                 return;
-            if(IsCanvas)
+            if (IsCanvas)
             {
                 batch.End();
                 EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Canvas );
@@ -232,38 +232,38 @@
                 CullMode = CullMode.None,
                 ScissorTestEnable = true
             };
-            if(Layout.ScissorEnable)
+            if (Layout.ScissorEnable)
             {
                 batch.End();
                 EngineInfo.Graphics.GraphicsDevice.ScissorRectangle = Layout.Scissor;
-                if(IsCanvas)
+                if (IsCanvas)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: Layout.CanvasTransform );
-                else if(ParentCanvas == null)
+                else if (ParentCanvas == null)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState );
                 else
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
             }
             _renderer?.DoRender( batch );//渲染器进行渲染.
             RenderChildren( batch );
-            if(Layout.ScissorEnable)
+            if (Layout.ScissorEnable)
             {
                 batch.End();
                 batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
             }
-            if(IsCanvas)
+            if (IsCanvas)
             {
                 batch.End();
-                if(Parent.IsCanvas)
+                if (Parent.IsCanvas)
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Parent.Canvas );
-                if(ParentCanvas != null)
+                if (ParentCanvas != null)
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( ParentCanvas.Canvas );
                 else
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Interface.SceneRt );
 
                 //     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
-                if(Parent.IsCanvas)
+                if (Parent.IsCanvas)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform );
-                else if(ParentCanvas != null)
+                else if (ParentCanvas != null)
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas.Layout.CanvasTransform );
                 else
                     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
@@ -274,7 +274,7 @@
         /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoRender"/>.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void RenderChildren( SpriteBatch spriteBatch )
+        public virtual void RenderChildren(SpriteBatch spriteBatch)
         {
             Children.ForEach( child =>
             {
@@ -288,15 +288,15 @@
 		/// <param name="division">需要添加的划分元素.</param>
 		/// <param name="doInit">执行添加划分元素的初始化.</param>
 		/// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-		public virtual bool Register( Division division, bool doInit = false )
+		public virtual bool Register(Division division, bool doInit = false)
         {
             division.Parent = this;
             division.ParentCanvas = ParentCanvas;
             Events.Mouse.Register( division.Events.Mouse );
             Events.Keys.Register( division.Events.Keys );
-            if(IsCanvas)
+            if (IsCanvas)
                 division.ParentCanvas = this;
-            if(doInit)
+            if (doInit)
                 division.DoInitialize();
             division._interface = _interface;
             division._container = _container;
@@ -309,7 +309,7 @@
 		/// </summary>
 		/// <param name="division">需要移除的划分元素.</param>
 		/// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-		public virtual bool Remove( Division division )
+		public virtual bool Remove(Division division)
         {
             division.Parent = null;
             division.ParentCanvas = null;
@@ -321,14 +321,14 @@
         /// <summary>
         /// 移除所有子元素.
         /// </summary>
-        public virtual void Clear( bool dispose = false )
+        public virtual void Clear(bool dispose = false)
         {
             Division _div;
-            for(int count = 0; count < Children.Count; count++)
+            for (int count = 0; count < Children.Count; count++)
             {
                 _div = Children[count];
                 Remove( _div );
-                if(dispose)
+                if (dispose)
                     _div.Dispose();
             }
             Children.Clear();
@@ -338,37 +338,37 @@
 		/// 遍历划分元素, 并执行传入方法.
 		/// </summary>
 		/// <param name="action">要执行的方法.</param>
-		public void ForEach( Action<Division> action )
+		public void ForEach(Action<Division> action)
         {
             Division _div;
-            for(int count = 0; count < Children.Count; count++)
+            for (int count = 0; count < Children.Count; count++)
             {
                 _div = Children[count];
                 action.Invoke( _div );
             }
         }
 
-        public void Do( Action<Division> action ) => action( this );
+        public void Do(Action<Division> action) => action( this );
 
         /// <summary>
 		/// 判断该划分元素是否包含指定点.
 		/// </summary>
 		/// <param name="point">输入的点.</param>
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
-		public virtual bool ContainsPoint( Point point )
+		public virtual bool ContainsPoint(Point point)
         {
             return Layout.TotalHitBox.Contains( point );
         }
 
         private bool disposedValue;
-        protected virtual void Dispose( bool disposing )
+        protected virtual void Dispose(bool disposing)
         {
-            if(!disposedValue)
+            if (!disposedValue)
             {
-                if(disposing)
+                if (disposing)
                 {
                     Canvas?.Dispose();
-                    for(int count = 0; count < Children.Count; count++)
+                    for (int count = 0; count < Children.Count; count++)
                         Children[count].Dispose();
                     OnDispose?.Invoke();
                 }

@@ -9,7 +9,7 @@
 
         public Division Division;
 
-        public DivisionEvent( Division container )
+        public DivisionEvent(Division container)
         {
             Division = container;
         }

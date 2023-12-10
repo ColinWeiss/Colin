@@ -48,7 +48,7 @@
 
         private void AddThisToGraphicCoreSpritePool()
         {
-            if(SpritePool.Instance.ContainsKey( Source.Name ))
+            if (SpritePool.Instance.ContainsKey( Source.Name ))
             {
                 Sprite _sprite;
                 SpritePool.Instance.TryGetValue( Source.Name, out _sprite );
@@ -60,12 +60,12 @@
             }
         }
 
-        public static void New( Texture2D texture2D )
+        public static void New(Texture2D texture2D)
         {
             new Sprite( texture2D );
         }
 
-        public Sprite( Texture2D texture )
+        public Sprite(Texture2D texture)
         {
             Source = texture;
             Frame.Width = texture.Width;
@@ -74,7 +74,7 @@
             AddThisToGraphicCoreSpritePool();
         }
 
-        public Sprite( Texture2D texture, int frameMax = 1 , bool isLoop = true , bool isPlay = true , Direction direction = Direction.Portrait )
+        public Sprite(Texture2D texture, int frameMax = 1, bool isLoop = true, bool isPlay = true, Direction direction = Direction.Portrait)
         {
             Source = texture;
             Frame.Width = texture.Width;
@@ -82,25 +82,25 @@
             Frame.IsLoop = isLoop;
             Frame.IsPlay = isPlay;
             Frame.Direction = direction;
-            if(Frame.Direction is Direction.Portrait)
+            if (Frame.Direction is Direction.Portrait)
                 Frame.Height = texture.Height / frameMax;
-            if(Frame.Direction is Direction.Transverse)
+            if (Frame.Direction is Direction.Transverse)
                 Frame.Width = texture.Width / frameMax;
             AddThisToGraphicCoreSpritePool();
         }
 
-        public static Sprite Get( Texture2D texture )
+        public static Sprite Get(Texture2D texture)
         {
-            if(SpritePool.Instance.TryGetValue( texture.Name, out Sprite sprite ))
+            if (SpritePool.Instance.TryGetValue( texture.Name, out Sprite sprite ))
                 return sprite;
             else
                 return new Sprite( texture );
         }
 
-        public static Sprite Get( string path )
+        public static Sprite Get(string path)
         {
             string realPath = path.Replace( '/', Path.DirectorySeparatorChar );
-            if(SpritePool.Instance.TryGetValue( Path.Combine( "Textures", realPath ), out Sprite sprite ))
+            if (SpritePool.Instance.TryGetValue( Path.Combine( "Textures", realPath ), out Sprite sprite ))
                 return sprite;
             else
                 return new Sprite( TextureAssets.Get( realPath ) );
