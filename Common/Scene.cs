@@ -77,7 +77,7 @@ namespace Colin.Core.Common
         /// </summary>
         public virtual void SceneInit() { }
 
-        private bool Started = false;
+        internal bool Started = false;
         public override sealed void Update( GameTime gameTime )
         {
             if(!Started)
@@ -86,15 +86,24 @@ namespace Colin.Core.Common
                 Modules.DoStart();
                 Started = true;
             }
+            UpdatePreset();
             Modules.DoUpdate( gameTime );
             SceneUpdate();
             base.Update( gameTime );
         }
         public virtual void Start() { }
+        public virtual void UpdatePreset() { }
         public virtual void SceneUpdate() { }
 
+        internal bool SkipRender = true;
         public override sealed void Draw( GameTime gameTime )
         {
+            if( SkipRender is true )
+            {
+                SkipRender = false;
+                return;
+            }
+            RenderPreset();
             IRenderableISceneModule renderMode;
             RenderTarget2D frameRenderLayer;
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
@@ -132,6 +141,7 @@ namespace Colin.Core.Common
             EngineInfo.SpriteBatch.End();
             base.Draw( gameTime );
         }
+        public virtual void RenderPreset() { }
         public virtual void SceneRender() { }
 
         /// <summary>

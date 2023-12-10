@@ -153,6 +153,9 @@ namespace Colin.Core
 
         public static Vector2 MousePositionF => MouseState.Position.ToVector2();
 
+        /// <summary>
+        /// 输入法处理.
+        /// </summary>
         public static IMEHandler IMEHandler;
 
         internal static void Init( Engine engine )

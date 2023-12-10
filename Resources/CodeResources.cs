@@ -41,6 +41,9 @@ namespace Colin.Core.Resources
                     SerializeTable.Add( item.FullName, item.FullName.GetMsnHashCode() );
                 }
             }
+            HashMap.Clear();
+            foreach(var item in SerializeTable)
+                HashMap.Add( item.Value , item.Key );
         }
         public static void SaveTable( string path )
         {
