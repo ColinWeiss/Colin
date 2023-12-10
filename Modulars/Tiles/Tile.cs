@@ -69,7 +69,7 @@ namespace Colin.Core.Modulars.Tiles
         /// <param name="coordX"></param>
         /// <param name="coordY"></param>
         /// <returns></returns>
-        public (Point, Point) ConvertWorldCoordToTileCoord( int coordX, int coordY ) => Manager.ConvertWorldCoordToTileCoord( coordX, coordY );
+        public (Point chunkCoord, Point tileCoord) ConvertWorldCoordToTileCoord( int coordX, int coordY ) => Manager.ConvertWorldCoordToTileCoord( coordX, coordY );
         public Point ConvertPositionToWorldCoord( Vector2 position ) => Manager.ConvertPositionToWorldCoord( position );
         public TileChunk GetChunkForWorldCoord( int worldCoordX, int worldCoordY ) => Manager.GetChunkForWorldCoord( worldCoordX, worldCoordY );
         public ref TileInfo GetTile( int x, int y, int z ) => ref Manager.GetTile( x , y , z );
