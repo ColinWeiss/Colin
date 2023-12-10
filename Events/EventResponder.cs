@@ -25,16 +25,16 @@
             {
                 child = Children[count];
                 if (!theEvent.Captured)
-                    child.Response( theEvent );
+                    child.Response(theEvent);
             }
             if (!theEvent.Captured)
-                Handle( theEvent );
+                Handle(theEvent);
         }
         public virtual void Handle(BasicEventArgs theEvent) { }
         public void Register(EventResponder responder)
         {
             responder.Parent = this;
-            Children.Add( responder );
+            Children.Add(responder);
         }
     }
 }

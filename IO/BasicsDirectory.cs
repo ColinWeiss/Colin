@@ -7,19 +7,19 @@
         /// </summary>
         public static string ProgramDir =>
             Path.Combine(
-                Environment.GetFolderPath( Environment.SpecialFolder.Personal ),
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                 "My Games",
-                EngineInfo.EngineName );
+                EngineInfo.EngineName);
 
         /// <summary>
         /// 指示存档文件夹路径.
         /// </summary>
-        public static string ArchiveDir => Path.Combine( ProgramDir, "Archive" );
+        public static string ArchiveDir => Path.Combine(ProgramDir, "Archive");
 
         /// <summary>
         /// 指示数据文件夹路径.
         /// </summary>
-        public static string DataDir => Path.Combine( ProgramDir, "Data" );
+        public static string DataDir => Path.Combine(ProgramDir, "Data");
 
     }
 }

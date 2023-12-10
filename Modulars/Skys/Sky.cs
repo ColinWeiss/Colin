@@ -29,7 +29,7 @@
         }
         public void DoUpdate(GameTime time)
         {
-            CurrentSkyStyle?.DoUpdate( time );
+            CurrentSkyStyle?.DoUpdate(time);
         }
 
         public void DoRender(SpriteBatch batch)

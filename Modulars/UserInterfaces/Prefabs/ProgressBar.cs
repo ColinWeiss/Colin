@@ -2,9 +2,9 @@
 {
     public class ProgressBar : Division
     {
-        public ProgressBar(string name) : base( name )
+        public ProgressBar(string name) : base(name)
         {
-            Fill = new Division( "Fill" );
+            Fill = new Division("Fill");
         }
 
         public Division Fill;
@@ -19,16 +19,16 @@
 
         public override void OnInit()
         {
-            Register( Fill );
+            Register(Fill);
             base.OnInit();
         }
         public override void OnUpdate(GameTime time)
         {
             if (Direction == Direction.Portrait)
-                Fill.Do( Portrait );
+                Fill.Do(Portrait);
             else if (Direction == Direction.Transverse)
-                Fill.Do( Transverse );
-            base.OnUpdate( time );
+                Fill.Do(Transverse);
+            base.OnUpdate(time);
         }
         private void Portrait(Division division)
         {

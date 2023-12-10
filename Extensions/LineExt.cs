@@ -7,7 +7,7 @@
         /// </summary>
         public static bool LineIntersectLine(this Line line, Line targetLine)
         {
-            return line.QuickReject( targetLine ) && line.Straddle( targetLine );
+            return line.QuickReject(targetLine) && line.Straddle(targetLine);
         }
 
         /// <summary>
@@ -38,14 +38,14 @@
         /// </summary>
         static bool QuickReject(this Line line, Line targetLine)
         {
-            float l1xMax = MathF.Max( line.Start.X, line.End.X );
-            float l1yMax = MathF.Max( line.Start.Y, line.End.Y );
-            float l1xMin = MathF.Min( line.Start.X, line.End.X );
-            float l1yMin = MathF.Min( line.Start.Y, line.End.Y );
-            float l2xMax = MathF.Max( targetLine.Start.X, targetLine.End.X );
-            float l2yMax = MathF.Max( targetLine.Start.Y, targetLine.End.Y );
-            float l2xMin = MathF.Min( targetLine.Start.X, targetLine.End.X );
-            float l2yMin = MathF.Min( targetLine.Start.Y, targetLine.End.Y );
+            float l1xMax = MathF.Max(line.Start.X, line.End.X);
+            float l1yMax = MathF.Max(line.Start.Y, line.End.Y);
+            float l1xMin = MathF.Min(line.Start.X, line.End.X);
+            float l1yMin = MathF.Min(line.Start.Y, line.End.Y);
+            float l2xMax = MathF.Max(targetLine.Start.X, targetLine.End.X);
+            float l2yMax = MathF.Max(targetLine.Start.Y, targetLine.End.Y);
+            float l2xMin = MathF.Min(targetLine.Start.X, targetLine.End.X);
+            float l2yMin = MathF.Min(targetLine.Start.Y, targetLine.End.Y);
             if (l1xMax < l2xMin || l1yMax < l2yMin || l2xMax < l1xMin || l2yMax < l1yMin)
                 return false;
             return true;

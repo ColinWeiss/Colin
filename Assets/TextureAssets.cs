@@ -15,18 +15,18 @@
 
         public void LoadResource()
         {
-            if (!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ) ))
+            if (!Directory.Exists(Path.Combine(EngineInfo.Engine.Content.RootDirectory, "Textures")))
                 return;
             Texture2D _texture;
             string _fileName;
-            string[] TextureFileNames = Directory.GetFiles( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Textures" ), "*.xnb*", SearchOption.AllDirectories );
+            string[] TextureFileNames = Directory.GetFiles(Path.Combine(EngineInfo.Engine.Content.RootDirectory, "Textures"), "*.xnb*", SearchOption.AllDirectories);
             for (int count = 0; count < TextureFileNames.Length; count++)
             {
                 Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;
-                _fileName = IGameAsset.ArrangementPath( TextureFileNames[count] );
-                _texture = EngineInfo.Engine.Content.Load<Texture2D>( _fileName );
-                _textures.Add( _fileName, _texture );
-                Sprite.New( _texture );
+                _fileName = IGameAsset.ArrangementPath(TextureFileNames[count]);
+                _texture = EngineInfo.Engine.Content.Load<Texture2D>(_fileName);
+                _textures.Add(_fileName, _texture);
+                Sprite.New(_texture);
                 //      EngineConsole.WriteLine( ConsoleTextType.Remind, "纹理资源: " + (int)(Progress * 100) + "%" );
             }
         }
@@ -41,12 +41,12 @@
         public static Texture2D Get(string path)
         {
             Texture2D _texture;
-            if (_textures.TryGetValue( Path.Combine( "Textures", path ), out _texture ))
+            if (_textures.TryGetValue(Path.Combine("Textures", path), out _texture))
                 return _texture;
             else
             {
-                _texture = EngineInfo.Engine.Content.Load<Texture2D>( Path.Combine( "Textures", path ) );
-                _textures.Add( Path.Combine( "Textures", path ), _texture );
+                _texture = EngineInfo.Engine.Content.Load<Texture2D>(Path.Combine("Textures", path));
+                _textures.Add(Path.Combine("Textures", path), _texture);
                 return _texture;
             }
         }

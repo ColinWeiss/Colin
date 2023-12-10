@@ -37,7 +37,7 @@
 
         protected Texture2D GetBackgroundTexture(string path)
         {
-            return TextureAssets.Get( string.Concat( "Backgrounds/", path ) );
+            return TextureAssets.Get(string.Concat("Backgrounds/", path));
         }
 
     }

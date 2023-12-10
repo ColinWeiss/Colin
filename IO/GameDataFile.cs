@@ -41,20 +41,20 @@ namespace Colin.Core.IO
         {
             GameDatas.Clear();
             buffer = null;
-            using (FileStream = File.OpenRead( path ))
+            using (FileStream = File.OpenRead(path))
             {
-                using (BinaryReader reader = new BinaryReader( FileStream ))
+                using (BinaryReader reader = new BinaryReader(FileStream))
                 {
-                    if (Encoding.ASCII.GetString( reader.ReadBytes( FileHeader.Length ) ) != FileHeader)
-                        throw new Exception( "Type error." );
+                    if (Encoding.ASCII.GetString(reader.ReadBytes(FileHeader.Length)) != FileHeader)
+                        throw new Exception("Type error.");
                     buffer = new GameData[reader.ReadInt32()]; //读文件个数, 创建缓冲区.
                     for (int i = 0; i < buffer.Length; i++)
                     {
                         string fileName = reader.ReadString(); //读名字
                         int length = reader.ReadInt32(); //读大小
-                        byte[] bytes = reader.ReadBytes( length ); //读数据
-                        LoadDatas( reader );
-                        GameData file = new GameData( fileName, length );
+                        byte[] bytes = reader.ReadBytes(length); //读数据
+                        LoadDatas(reader);
+                        GameData file = new GameData(fileName, length);
                         buffer[i] = file;
                         GameDatas[file.path] = file;
                     }
@@ -74,31 +74,31 @@ namespace Colin.Core.IO
         {
             //     filePath = ArrangementPath( filePath );
             lock (GameDatas)
-                GameDatas[filePath] = new GameData( filePath, fileBytes.Length );
+                GameDatas[filePath] = new GameData(filePath, fileBytes.Length);
         }
 
         public void Save()
         {
             if (FileStream != null)
             {
-                throw new IOException( path );
+                throw new IOException(path);
             }
-            using (FileStream = File.Create( path ))
+            using (FileStream = File.Create(path))
             {
-                using BinaryWriter writer = new BinaryWriter( FileStream );
+                using BinaryWriter writer = new BinaryWriter(FileStream);
                 {
-                    writer.Write( Encoding.ASCII.GetBytes( FileHeader ) ); //存文件头.
+                    writer.Write(Encoding.ASCII.GetBytes(FileHeader)); //存文件头.
 
                     buffer = GameDatas.Values.ToArray();
-                    writer.Write( buffer.Length ); //存文件个数.
+                    writer.Write(buffer.Length); //存文件个数.
 
                     GameData[] array = buffer;
                     foreach (GameData f in array)
                     {
-                        writer.Write( f.path );
-                        writer.Write( f.length );
-                        writer.Write( f.bytes );
-                        SaveDatas( writer );
+                        writer.Write(f.path);
+                        writer.Write(f.length);
+                        writer.Write(f.bytes);
+                        SaveDatas(writer);
                     } //一个个存文件进去.
                 }
             }

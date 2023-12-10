@@ -5,7 +5,7 @@
     /// </summary>
     public class Container : Division
     {
-        public Container(string name) : base( name ) => _container = this;
+        public Container(string name) : base(name) => _container = this;
         public override sealed void OnInit()
         {
             Interact.IsInteractive = true;
@@ -29,15 +29,15 @@
         public virtual void ContainerInitialize() { }
         public void SetTop(Division division)
         {
-            if (Children.Contains( division ))
+            if (Children.Contains(division))
             {
-                Children.Remove( division );
-                Register( division );
+                Children.Remove(division);
+                Register(division);
             }
         }
         public override bool Register(Division division, bool doInit = false)
         {
-            if (base.Register( division, doInit ))
+            if (base.Register(division, doInit))
             {
                 return true;
             }

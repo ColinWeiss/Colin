@@ -6,7 +6,7 @@ namespace Colin.Core.Events
     {
         public readonly MouseState State;
         public readonly MouseState Last;
-        public MouseEventArgs(string name) : base( name )
+        public MouseEventArgs(string name) : base(name)
         {
             State = MouseResponder.State;
             Last = MouseResponder.StateLast;

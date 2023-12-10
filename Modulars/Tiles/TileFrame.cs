@@ -13,9 +13,9 @@
 
         public int Height;
 
-        public Point Location => new Point( X, Y );
+        public Point Location => new Point(X, Y);
 
-        public Vector2 LocationF => new Vector2( X, Y );
+        public Vector2 LocationF => new Vector2(X, Y);
 
         /// <summary>
         /// 指示该帧格是否为有效选帧.
@@ -29,7 +29,7 @@
                 X * TileOption.TileSize.X,
                 Y * TileOption.TileSize.Y,
                 Width * TileOption.TileSize.X,
-                Height * TileOption.TileSize.X );
+                Height * TileOption.TileSize.X);
 
         public TileFrame(int x, int y, int width = 1, int height = 1)
         {
@@ -49,10 +49,10 @@
 
         internal void SaveStep(BinaryWriter writer)
         {
-            writer.Write( X );
-            writer.Write( Y );
-            writer.Write( Width );
-            writer.Write( Height );
+            writer.Write(X);
+            writer.Write(Y);
+            writer.Write(Width);
+            writer.Write(Height);
         }
     }
 }

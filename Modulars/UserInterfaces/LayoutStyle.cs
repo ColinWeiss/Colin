@@ -46,24 +46,24 @@
 
         public Point Location
         {
-            get => new Point( Left, Top );
+            get => new Point(Left, Top);
             set
             {
                 Left = value.X;
                 Top = value.Y;
             }
         }
-        public Point TotalLocation => new Point( TotalLeft, TotalTop );
+        public Point TotalLocation => new Point(TotalLeft, TotalTop);
         public Vector2 LocationF
         {
-            get => new Vector2( Left, Top );
+            get => new Vector2(Left, Top);
             set
             {
                 Left = (int)value.X;
                 Top = (int)value.Y;
             }
         }
-        public Vector2 TotalLocationF => new Vector2( TotalLeft, TotalTop );
+        public Vector2 TotalLocationF => new Vector2(TotalLeft, TotalTop);
 
         public int Width;
         private float _relativeWidth;
@@ -97,7 +97,7 @@
 
         public Point Size
         {
-            get => new Point( Width, Height );
+            get => new Point(Width, Height);
             set
             {
                 Width = value.X;
@@ -106,7 +106,7 @@
         }
         public Vector2 SizeF
         {
-            get => new Vector2( Width, Height );
+            get => new Vector2(Width, Height);
             set
             {
                 Width = (int)value.X;
@@ -114,20 +114,20 @@
             }
         }
 
-        public Point Half => new Point( Width / 2, Height / 2 );
-        public Vector2 HalfF => new Vector2( Width / 2, Height / 2 );
+        public Point Half => new Point(Width / 2, Height / 2);
+        public Vector2 HalfF => new Vector2(Width / 2, Height / 2);
 
-        public Rectangle HitBox => new Rectangle( Left, Top, Width, Height );
+        public Rectangle HitBox => new Rectangle(Left, Top, Width, Height);
 
-        public Rectangle TotalHitBox => new Rectangle( TotalLeft, TotalTop, Width, Height );
+        public Rectangle TotalHitBox => new Rectangle(TotalLeft, TotalTop, Width, Height);
 
         public Rectangle InputBox;
 
         public Matrix CanvasTransform =>
-                Matrix.CreateTranslation( new Vector3( -new Vector2( TotalLeft, TotalTop ), 0f ) ) *
-                Matrix.CreateScale( 1f ) *
-                Matrix.CreateRotationZ( 0f ) *
-                Matrix.CreateTranslation( new Vector3( Vector2.Zero, 0f ) );
+                Matrix.CreateTranslation(new Vector3(-new Vector2(TotalLeft, TotalTop), 0f)) *
+                Matrix.CreateScale(1f) *
+                Matrix.CreateRotationZ(0f) *
+                Matrix.CreateTranslation(new Vector3(Vector2.Zero, 0f));
 
         /// <summary>
         /// 启用剪裁.
@@ -183,7 +183,7 @@
                 if (parent.IsCanvas)
                     div.Layout._scissor = div.Layout.HitBox;
                 if (div.ParentCanvas is not null)
-                    div.Layout._scissor = GetForParentCanvasHitBox( div );
+                    div.Layout._scissor = GetForParentCanvasHitBox(div);
             }
             if (div.Layout.IsCanvas)
             {
@@ -196,7 +196,7 @@
             if (div.ParentCanvas is null)
                 return Rectangle.Empty;
             else
-                return new Rectangle( div.Layout.TotalLocation - div.ParentCanvas.Layout.TotalLocation, div.Layout.Size );
+                return new Rectangle(div.Layout.TotalLocation - div.ParentCanvas.Layout.TotalLocation, div.Layout.Size);
         }
     }
 }

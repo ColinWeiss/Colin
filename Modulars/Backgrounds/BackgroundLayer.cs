@@ -28,7 +28,7 @@
         /// <summary>
         /// 指示该层的背景视差值.
         /// </summary>
-        public Vector2 Parallax = new Vector2( 1f, 1f );
+        public Vector2 Parallax = new Vector2(1f, 1f);
 
         /// <summary>
         /// 指示平移偏移量.

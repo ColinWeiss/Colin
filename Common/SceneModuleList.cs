@@ -13,7 +13,7 @@
 
         public Dictionary<Type, IRenderableISceneModule> RenderableComponents = new Dictionary<Type, IRenderableISceneModule>();
 
-        public string Name => nameof( SceneModuleList );
+        public string Name => nameof(SceneModuleList);
 
         public string DisplayName => Name;
 
@@ -26,7 +26,7 @@
             ISceneModule _com;
             for (int count = 0; count < Components.Count; count++)
             {
-                _com = Components.Values.ElementAt( count );
+                _com = Components.Values.ElementAt(count);
                 if (_com.Enable)
                     _com.Start();
             }
@@ -37,9 +37,9 @@
             ISceneModule _com;
             for (int count = 0; count < Components.Count; count++)
             {
-                _com = Components.Values.ElementAt( count );
+                _com = Components.Values.ElementAt(count);
                 if (_com.Enable)
-                    _com.DoUpdate( gameTime );
+                    _com.DoUpdate(gameTime);
             }
         }
 
@@ -48,21 +48,21 @@
         /// </summary>
         /// <typeparam name="T">指定的 <see cref="ISceneModule"/> 类型.</typeparam>
         /// <returns>如果成功获取, 那么返回指定对象, 否则返回 <see langword="null"/>.</returns>
-        public T GetModule<T>() where T : ISceneModule => (T)Components.GetValueOrDefault( typeof( T ), null );
+        public T GetModule<T>() where T : ISceneModule => (T)Components.GetValueOrDefault(typeof(T), null);
 
         /// <summary>
         /// 根据指定类型获取场景渲染组件.
         /// </summary>
         /// <typeparam name="T">指定的 <see cref="IRenderableISceneModule"/> 类型.</typeparam>
         /// <returns>如果成功获取, 那么返回指定对象, 否则返回 <see langword="null"/>.</returns>
-        public T GetRenderModule<T>() where T : IRenderableISceneModule => (T)RenderableComponents.GetValueOrDefault( typeof( T ), null );
+        public T GetRenderModule<T>() where T : IRenderableISceneModule => (T)RenderableComponents.GetValueOrDefault(typeof(T), null);
 
         /// <summary>
         /// 根据指定类型删除场景模块.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-        public bool RemoveModule<T>() where T : ISceneModule => Components.Remove( typeof( T ) );
+        public bool RemoveModule<T>() where T : ISceneModule => Components.Remove(typeof(T));
 
         public void Add(ISceneModule sceneMode)
         {
@@ -73,20 +73,20 @@
             {
                 dwMode.Visible = true;
                 dwMode.FinalPresentation = true;
-                RenderableComponents.Add( dwMode.GetType(), dwMode );
+                RenderableComponents.Add(dwMode.GetType(), dwMode);
                 dwMode.InitRenderTarget();
                 Scene.Events.ClientSizeChanged += dwMode.OnClientSizeChanged;
             }
-            Components.Add( sceneMode.GetType(), sceneMode );
+            Components.Add(sceneMode.GetType(), sceneMode);
         }
 
         public bool Remove(ISceneModule sceneMode)
         {
-            if (Components.Remove( sceneMode.GetType() ))
+            if (Components.Remove(sceneMode.GetType()))
             {
                 if (sceneMode is IRenderableISceneModule dwMode)
                 {
-                    RenderableComponents.Remove( dwMode.GetType() );
+                    RenderableComponents.Remove(dwMode.GetType());
                     Scene.Events.ClientSizeChanged -= dwMode.OnClientSizeChanged;
                 }
                 return true;

@@ -39,7 +39,7 @@
         /// <param name="output">输出内容.</param>  
         public static void WriteLine(ConsoleTextType informationType, object output)
         {
-            WriteLine( informationType, output.ToString() );
+            WriteLine(informationType, output.ToString());
         }
 
         /// <summary>  
@@ -50,11 +50,11 @@
         public static void WriteLine(ConsoleTextType informationType, string output)
         {
 #if WINDOWS
-            Console.ForegroundColor = GetConsoleColor( informationType );
+            Console.ForegroundColor = GetConsoleColor(informationType);
 #endif
-            string NowTime = string.Concat( "[", DateTime.Now.ToString( "yyyy-MM-dd HH:mm:ss" ), "]" );
-            string outPutText = string.Concat( NowTime, "\n =>", "[", EngineInfo.EngineName, "] ", output );
-            Console.WriteLine( outPutText );
+            string NowTime = string.Concat("[", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "]");
+            string outPutText = string.Concat(NowTime, "\n =>", "[", EngineInfo.EngineName, "] ", output);
+            Console.WriteLine(outPutText);
         }
 
         /// <summary>  

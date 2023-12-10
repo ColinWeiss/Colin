@@ -4,7 +4,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
     public class Label : Division
     {
-        public Label(string name) : base( name ) { }
+        public Label(string name) : base(name) { }
         public DivFontRenderer FontRenderer;
         public override void OnInit()
         {

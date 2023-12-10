@@ -25,7 +25,7 @@
         {
             this.splitCount = splitCount;
             this.depthLimit = depthLimit;
-            root = CreateBranch( this, null, 0, ref region );
+            root = CreateBranch(this, null, 0, ref region);
         }
         /// <summary>
         /// Creates a new QuadTree.
@@ -34,7 +34,7 @@
 		/// <param name="depthLimit">Maximum distance a node can be from the tree root.</param>
         /// <param name="region">The region that your quadtree occupies, all inserted quads should fit into this.</param>
 		public QuadTree(int splitCount, int depthLimit, Rectangle region)
-            : this( splitCount, depthLimit, ref region )
+            : this(splitCount, depthLimit, ref region)
         {
 
         }
@@ -48,7 +48,7 @@
         /// <param name="width">Width of the region.</param>
         /// <param name="height">Height of the region.</param>
         public QuadTree(int splitCount, int depthLimit, int x, int y, int width, int height)
-            : this( splitCount, depthLimit, new Rectangle( x, y, x + width, y + height ) )
+            : this(splitCount, depthLimit, new Rectangle(x, y, x + width, y + height))
         {
 
         }
@@ -82,12 +82,12 @@
         public void Insert(T value, ref Rectangle quad)
         {
             Leaf leaf;
-            if (!leafLookup.TryGetValue( value, out leaf ))
+            if (!leafLookup.TryGetValue(value, out leaf))
             {
-                leaf = CreateLeaf( value, ref quad );
-                leafLookup.Add( value, leaf );
+                leaf = CreateLeaf(value, ref quad);
+                leafLookup.Add(value, leaf);
             }
-            root.Insert( leaf );
+            root.Insert(leaf);
         }
         /// <summary>
         /// Insert a new leaf node into the QuadTree.
@@ -96,7 +96,7 @@
         /// <param name="quad">The leaf quad.</param>
         public void Insert(T value, Rectangle quad)
         {
-            Insert( value, ref quad );
+            Insert(value, ref quad);
         }
         /// <summary>
         /// Insert a new leaf node into the QuadTree.
@@ -108,8 +108,8 @@
         /// <param name="height">Height of the leaf.</param>
         public void Insert(T value, int x, int y, int width, int height)
         {
-            var quad = new Rectangle( x, y, x + width, y + height );
-            Insert( value, ref quad );
+            var quad = new Rectangle(x, y, x + width, y + height);
+            Insert(value, ref quad);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@
                 values.Clear();
             else
                 values = new List<T>();
-            root.SearchQuad( ref quad, values );
+            root.SearchQuad(ref quad, values);
             return values.Count > 0;
         }
         /// <summary>
@@ -135,7 +135,7 @@
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
         public bool SearchArea(Rectangle quad, ref List<T> values)
         {
-            return SearchArea( ref quad, ref values );
+            return SearchArea(ref quad, ref values);
         }
         /// <summary>
         /// 查找指定区域中包含的所有值。
@@ -148,8 +148,8 @@
         /// <param name="values">A list to populate with the results. If null, this function will create the list for you.</param>
         public bool SearchArea(int x, int y, int width, int height, ref List<T> values)
         {
-            var quad = new Rectangle( x, y, x + width, y + height );
-            return SearchArea( ref quad, ref values );
+            var quad = new Rectangle(x, y, x + width, y + height);
+            return SearchArea(ref quad, ref values);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@
                 values.Clear();
             else
                 values = new List<T>();
-            root.SearchPoint( x, y, values );
+            root.SearchPoint(x, y, values);
             return values.Count > 0;
         }
 
@@ -180,24 +180,24 @@
             if (values != null)
                 values.Clear();
             else
-                values = new List<T>( leafLookup.Count );
+                values = new List<T>(leafLookup.Count);
 
             Leaf leaf;
-            if (leafLookup.TryGetValue( value, out leaf ))
+            if (leafLookup.TryGetValue(value, out leaf))
             {
                 var branch = leaf.Branch;
 
                 //Add the leaf's siblings (prevent it from colliding with itself)
                 if (branch.Leaves.Count > 0)
                     for (int i = 0; i < branch.Leaves.Count; ++i)
-                        if (leaf != branch.Leaves[i] && leaf.Quad.Intersects( branch.Leaves[i].Quad ))
-                            values.Add( branch.Leaves[i].Value );
+                        if (leaf != branch.Leaves[i] && leaf.Quad.Intersects(branch.Leaves[i].Quad))
+                            values.Add(branch.Leaves[i].Value);
 
                 //Add the branch's children
                 if (branch.Split)
                     for (int i = 0; i < 4; ++i)
                         if (branch.Branches[i] != null)
-                            branch.Branches[i].SearchQuad( ref leaf.Quad, values );
+                            branch.Branches[i].SearchQuad(ref leaf.Quad, values);
 
                 //Add all leaves back to the root
                 branch = branch.Parent;
@@ -205,8 +205,8 @@
                 {
                     if (branch.Leaves.Count > 0)
                         for (int i = 0; i < branch.Leaves.Count; ++i)
-                            if (leaf.Quad.Intersects( branch.Leaves[i].Quad ))
-                                values.Add( branch.Leaves[i].Value );
+                            if (leaf.Quad.Intersects(branch.Leaves[i].Quad))
+                                values.Add(branch.Leaves[i].Value);
                     branch = branch.Parent;
                 }
             }
@@ -219,7 +219,7 @@
         public int CountBranches()
         {
             int count = 0;
-            CountBranches( root, ref count );
+            CountBranches(root, ref count);
             return count;
         }
         void CountBranches(Branch branch, ref int count)
@@ -228,7 +228,7 @@
             if (branch.Split)
                 for (int i = 0; i < 4; ++i)
                     if (branch.Branches[i] != null)
-                        CountBranches( branch.Branches[i], ref count );
+                        CountBranches(branch.Branches[i], ref count);
         }
 
         static Branch CreateBranch(QuadTree<T> tree, Branch parent, int branchDepth, ref Rectangle quad)
@@ -240,10 +240,10 @@
             branch.Depth = branchDepth;
             int midX = (int)(quad.X + (quad.Width - quad.X) * 0.5f);
             int midY = (int)(quad.Y + (quad.Height - quad.Y) * 0.5f);
-            branch.Quads[0] = new Rectangle( quad.X, quad.Y, midX, midY );
-            branch.Quads[1] = new Rectangle( midX, quad.Y, quad.Width, midY );
-            branch.Quads[2] = new Rectangle( midX, midY, quad.Width, quad.Height );
-            branch.Quads[3] = new Rectangle( quad.X, midY, midX, quad.Height );
+            branch.Quads[0] = new Rectangle(quad.X, quad.Y, midX, midY);
+            branch.Quads[1] = new Rectangle(midX, quad.Y, quad.Width, midY);
+            branch.Quads[2] = new Rectangle(midX, midY, quad.Width, quad.Height);
+            branch.Quads[3] = new Rectangle(quad.X, midY, midX, quad.Height);
             return branch;
         }
 
@@ -275,7 +275,7 @@
                 {
                     if (Branches[i] != null)
                     {
-                        branchPool.Push( Branches[i] );
+                        branchPool.Push(Branches[i]);
                         Branches[i].Clear();
                         Branches[i] = null;
                     }
@@ -283,7 +283,7 @@
 
                 for (int i = 0; i < Leaves.Count; ++i)
                 {
-                    leafPool.Push( Leaves[i] );
+                    leafPool.Push(Leaves[i]);
                     Leaves[i].Branch = null;
                     Leaves[i].Value = default;
                 }
@@ -298,22 +298,22 @@
                 {
                     for (int i = 0; i < 4; ++i)
                     {
-                        if (Quads[i].Contains( leaf.Quad ))
+                        if (Quads[i].Contains(leaf.Quad))
                         {
                             if (Branches[i] == null)
-                                Branches[i] = CreateBranch( Tree, this, Depth + 1, ref Quads[i] );
-                            Branches[i].Insert( leaf );
+                                Branches[i] = CreateBranch(Tree, this, Depth + 1, ref Quads[i]);
+                            Branches[i].Insert(leaf);
                             return;
                         }
                     }
 
-                    Leaves.Add( leaf );
+                    Leaves.Add(leaf);
                     leaf.Branch = this;
                 }
                 else
                 {
                     //Add the leaf to this node
-                    Leaves.Add( leaf );
+                    Leaves.Add(leaf);
                     leaf.Branch = this;
 
                     //Once I have reached capacity, split the node
@@ -328,22 +328,22 @@
             {
                 if (Leaves.Count > 0)
                     for (int i = 0; i < Leaves.Count; ++i)
-                        if (quad.Intersects( Leaves[i].Quad ))
-                            values.Add( Leaves[i].Value );
+                        if (quad.Intersects(Leaves[i].Quad))
+                            values.Add(Leaves[i].Value);
                 for (int i = 0; i < 4; ++i)
                     if (Branches[i] != null)
-                        Branches[i].SearchQuad( ref quad, values );
+                        Branches[i].SearchQuad(ref quad, values);
             }
 
             internal void SearchPoint(float x, float y, List<T> values)
             {
                 if (Leaves.Count > 0)
                     for (int i = 0; i < Leaves.Count; ++i)
-                        if (Leaves[i].Quad.Contains( x, y ))
-                            values.Add( Leaves[i].Value );
+                        if (Leaves[i].Quad.Contains(x, y))
+                            values.Add(Leaves[i].Value);
                 for (int i = 0; i < 4; ++i)
                     if (Branches[i] != null)
-                        Branches[i].SearchPoint( x, y, values );
+                        Branches[i].SearchPoint(x, y, values);
             }
         }
 

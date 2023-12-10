@@ -59,7 +59,7 @@
         /// <returns>若成功获取, 返回对象; 否则返回 <see langword="null"/>.</returns>
         public TileChunk GetChunk(int x, int y)
         {
-            if (Chunks.TryGetValue( new Point( x, y ), out TileChunk chunk ))
+            if (Chunks.TryGetValue(new Point(x, y), out TileChunk chunk))
                 return chunk;
             else
                 return null;
@@ -68,7 +68,7 @@
         /// 从指定坐标获取物块区块对象.
         /// </summary>
         /// <returns>若成功获取, 返回对象; 否则返回 <see langword="null"/>.</returns>
-        public TileChunk GetChunk(Point coord) => GetChunk( coord.X, coord.Y );
+        public TileChunk GetChunk(Point coord) => GetChunk(coord.X, coord.Y);
         /// <summary>
         /// 从世界物块坐标获取其坐标所在的区块对象.
         /// </summary>
@@ -77,7 +77,7 @@
         {
             int indexX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
             int indexY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
-            return GetChunk( indexX, indexY );
+            return GetChunk(indexX, indexY);
         }
         /// <summary>
         /// 索引器: 根据世界物块坐标获取指定位置的物块.
@@ -92,7 +92,7 @@
             {
                 int indexX = x >= 0 ? x % TileOption.ChunkWidth : ((x + 1) % TileOption.ChunkWidth) + (TileOption.ChunkWidth - 1);
                 int indexY = y >= 0 ? y % TileOption.ChunkHeight : ((y + 1) % TileOption.ChunkHeight) + (TileOption.ChunkHeight - 1);
-                TileChunk target = GetChunkForWorldCoord( x, y );
+                TileChunk target = GetChunkForWorldCoord(x, y);
                 if (target is not null)
                     return ref target[indexX, indexY, z];
                 else
@@ -106,11 +106,11 @@
         /// <summary>
         /// 判断指定坐标的区块是否存在.
         /// </summary>
-        public bool HasChunk(int x, int y) => Chunks.ContainsKey( new Point( x, y ) );
+        public bool HasChunk(int x, int y) => Chunks.ContainsKey(new Point(x, y));
         /// <summary>
         /// 判断指定坐标的区块是否存在.
         /// </summary>
-        public bool HasChunk(Point coord) => Chunks.ContainsKey( coord );
+        public bool HasChunk(Point coord) => Chunks.ContainsKey(coord);
         /// <summary>
         /// 从世界坐标获取区块坐标与物块区块坐标.
         /// </summary>
@@ -120,16 +120,16 @@
             int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
             int tileCoordX = worldCoordX >= 0 ? worldCoordX % TileOption.ChunkWidth : (worldCoordX + 1) % TileOption.ChunkWidth + (TileOption.ChunkWidth - 1);
             int tileCoordY = worldCoordY >= 0 ? worldCoordY % TileOption.ChunkHeight : (worldCoordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
-            return (new Point( chunkCoordX, chunkCoordY ), new Point( tileCoordX, tileCoordY ));
+            return (new Point(chunkCoordX, chunkCoordY), new Point(tileCoordX, tileCoordY));
         }
         /// <summary>
         /// 从指定位置获取世界物块坐标.
         /// </summary>
         public Point GetWorldCoordForPosition(Vector2 position)
         {
-            int coordX = (int)Math.Floor( position.X / TileOption.TileWidth );
-            int coordY = (int)Math.Floor( position.Y / TileOption.TileHeight );
-            return new Point( coordX, coordY );
+            int coordX = (int)Math.Floor(position.X / TileOption.TileWidth);
+            int coordY = (int)Math.Floor(position.Y / TileOption.TileHeight);
+            return new Point(coordX, coordY);
         }
 
         /// <summary>
@@ -137,10 +137,10 @@
         /// </summary>
         public bool Place<T>(int x, int y, int z, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
         {
-            var coords = GetCoords( x, y );
-            TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
+            var coords = GetCoords(x, y);
+            TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
             if (targetChunk is not null)
-                return targetChunk.Place<T>( coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+                return targetChunk.Place<T>(coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh);
             else
                 return false;
         }
@@ -149,10 +149,10 @@
         /// </summary>
         public bool Place(TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
         {
-            var coords = GetCoords( x, y );
-            TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
+            var coords = GetCoords(x, y);
+            TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
             if (targetChunk is not null)
-                return targetChunk.Place( behavior, coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+                return targetChunk.Place(behavior, coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh);
             else
                 return false;
         }
@@ -162,10 +162,10 @@
         /// </summary>
         public bool Destruction(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
         {
-            var coords = GetCoords( x, y );
-            TileChunk targetChunk = GetChunk( coords.cCoord.X, coords.cCoord.Y );
+            var coords = GetCoords(x, y);
+            TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
             if (targetChunk is not null)
-                return targetChunk.Destruction( coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh );
+                return targetChunk.Destruction(coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh);
             else
                 return false;
         }
@@ -182,7 +182,7 @@
             chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
             chunk.Tile = this;
             chunk.DoInitialize();
-            Chunks.Add( chunk.Coord, chunk );
+            Chunks.Add(chunk.Coord, chunk);
         }
 
         /// <summary>
@@ -190,29 +190,29 @@
         /// </summary>
         public void LoadChunk(int x, int y, string path, int? quantumLayer = null)
         {
-            if (File.Exists( path ))
+            if (File.Exists(path))
             {
                 TileChunk chunk = new TileChunk();
                 chunk.Tile = this;
-                chunk.LoadChunk( path );
+                chunk.LoadChunk(path);
                 chunk.CoordX = x;
                 chunk.CoordY = y;
                 chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
-                Chunks.Add( chunk.Coord, chunk );
+                Chunks.Add(chunk.Coord, chunk);
             }
             else
-                EngineConsole.WriteLine( ConsoleTextType.Error, string.Concat( "加载 (", x, ",", y, ") 处的区块时出现异常." ) );
+                EngineConsole.WriteLine(ConsoleTextType.Error, string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
         }
         /// <summary>
         /// 保存指定坐标的区块至指定路径.
         /// </summary>
         public void SaveChunk(int x, int y, string path)
         {
-            TileChunk chunk = GetChunk( x, y );
+            TileChunk chunk = GetChunk(x, y);
             if (chunk is not null)
-                chunk.SaveChunk( path );
+                chunk.SaveChunk(path);
             else
-                EngineConsole.WriteLine( ConsoleTextType.Error, string.Concat( "卸载 (", x, ",", y, ") 处的区块时出现异常." ) );
+                EngineConsole.WriteLine(ConsoleTextType.Error, string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
         }
     }
 }

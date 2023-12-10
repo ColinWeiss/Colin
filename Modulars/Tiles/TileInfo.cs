@@ -14,7 +14,7 @@
         {
             get
             {
-                return !IsNull && Tile.TilePointers.ContainsKey( WorldCoord2 );
+                return !IsNull && Tile.TilePointers.ContainsKey(WorldCoord2);
             }
         }
 
@@ -41,12 +41,12 @@
         /// <summary>
         /// 指示物块在所属区块中的坐标.
         /// </summary>
-        public Point ChunkCoord2 => new Point( CoordX, CoordY );
+        public Point ChunkCoord2 => new Point(CoordX, CoordY);
 
         /// <summary>
         /// 指示物块在所属区块中的坐标.
         /// </summary>
-        public Point3 ChunkCoord3 => new Point3( CoordX, CoordY, CoordZ );
+        public Point3 ChunkCoord3 => new Point3(CoordX, CoordY, CoordZ);
 
         /// <summary>
         /// 指示物块在世界内的坐标.
@@ -54,7 +54,7 @@
         public Point WorldCoord2 =>
             new Point(
                 Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
-                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y );
+                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y);
 
         /// <summary>
         /// 指示物块在世界内的坐标.
@@ -63,7 +63,7 @@
             new Point3(
                 Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
                 Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y,
-                CoordZ );
+                CoordZ);
 
         /// <summary>
         /// 指示物块纹理帧格.
@@ -159,14 +159,14 @@
             t.Tile = Tile;
             t.Chunk = Chunk;
             t.Index = Index;
-            Scripts.Add( t.GetType(), t );
+            Scripts.Add(t.GetType(), t);
             return t;
         }
         public T GetScript<T>() where T : TileScript
         {
             if (Scripts is null)
                 return null;
-            if (Scripts.TryGetValue( typeof( T ), out TileScript script ))
+            if (Scripts.TryGetValue(typeof(T), out TileScript script))
                 return script as T;
             else
                 return null;
@@ -174,7 +174,7 @@
 
         public TileBehavior Behavior = null;
 
-        public RectangleF HitBox => new RectangleF( WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF );
+        public RectangleF HitBox => new RectangleF(WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF);
 
         public TileInfo()
         {
@@ -182,7 +182,7 @@
             Empty = true;
             Tile = null;
             Chunk = null;
-            Texture = new TileFrame( -1, -1 );
+            Texture = new TileFrame(-1, -1);
             Collision = TileCollision.Passable;
             Scripts = new Dictionary<Type, TileScript>();
         }
@@ -192,24 +192,24 @@
             Empty = reader.ReadBoolean();
             if (!Empty)
             {
-                Texture.LoadStep( reader );
+                Texture.LoadStep(reader);
                 Collision = (TileCollision)reader.ReadInt32();
             }
         }
 
         internal void SaveStep(BinaryWriter writer)
         {
-            writer.Write( Empty );
+            writer.Write(Empty);
             if (!Empty)
             {
-                Texture.SaveStep( writer );
-                writer.Write( (int)Collision );
+                Texture.SaveStep(writer);
+                writer.Write((int)Collision);
             }
         }
 
         internal static TileInfo _null = new TileInfo();
         public static ref TileInfo Null => ref _null;
 
-        public bool IsNull => Equals( Null );
+        public bool IsNull => Equals(Null);
     }
 }

@@ -38,7 +38,7 @@ namespace Colin.Core.Common
 
         public SceneEventResponder Events;
 
-        public Scene() : base( EngineInfo.Engine )
+        public Scene() : base(EngineInfo.Engine)
         {
             Events = new SceneEventResponder();
             // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
@@ -49,12 +49,12 @@ namespace Colin.Core.Common
             Started = false;
             if (InitializeOnSwitch)
             {
-                InitRenderTarget( this, new EventArgs() );
+                InitRenderTarget(this, new EventArgs());
                 Events.OrientationChanged += InitRenderTarget;
                 Events.ClientSizeChanged += InitRenderTarget;
-                _components = new SceneModuleList( this );
-                _components.Add( Events );
-                _components.Add( SceneCamera = new SceneCamera() );
+                _components = new SceneModuleList(this);
+                _components.Add(Events);
+                _components.Add(SceneCamera = new SceneCamera());
                 SceneInit();
                 Game.Window.ClientSizeChanged += Events.InvokeSizeChange;
                 Game.Window.OrientationChanged += Events.InvokeSizeChange;
@@ -83,9 +83,9 @@ namespace Colin.Core.Common
                 Started = true;
             }
             UpdatePreset();
-            Modules.DoUpdate( gameTime );
+            Modules.DoUpdate(gameTime);
             SceneUpdate();
-            base.Update( gameTime );
+            base.Update(gameTime);
         }
         public virtual void Start() { }
         public virtual void UpdatePreset() { }
@@ -102,40 +102,40 @@ namespace Colin.Core.Common
             RenderPreset();
             IRenderableISceneModule renderMode;
             RenderTarget2D frameRenderLayer;
-            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
-            EngineInfo.Graphics.GraphicsDevice.Clear( Color.Black );
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(SceneRenderTarget);
+            EngineInfo.Graphics.GraphicsDevice.Clear(Color.Black);
             for (int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
             {
-                renderMode = Modules.RenderableComponents.Values.ElementAt( count );
+                renderMode = Modules.RenderableComponents.Values.ElementAt(count);
                 if (renderMode.Visible)
                 {
                     frameRenderLayer = renderMode.SceneRt;
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( frameRenderLayer );
-                    EngineInfo.Graphics.GraphicsDevice.Clear( Color.Transparent );
-                    renderMode.DoRender( EngineInfo.SpriteBatch );
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
+                    EngineInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
+                    renderMode.DoRender(EngineInfo.SpriteBatch);
                 }
             }
-            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( SceneRenderTarget );
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(SceneRenderTarget);
             for (int count = Modules.RenderableComponents.Values.Count - 1; count >= 0; count--)
             {
-                renderMode = Modules.RenderableComponents.Values.ElementAt( count );
+                renderMode = Modules.RenderableComponents.Values.ElementAt(count);
                 if (renderMode.FinalPresentation)
                 {
                     frameRenderLayer = renderMode.SceneRt;
-                    if (SceneShaders.Effects.TryGetValue( renderMode, out Effect e ))
-                        EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred, effect: e );
+                    if (SceneShaders.Effects.TryGetValue(renderMode, out Effect e))
+                        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
                     else
-                        EngineInfo.SpriteBatch.Begin( SpriteSortMode.Deferred );
-                    EngineInfo.SpriteBatch.Draw( frameRenderLayer, new Rectangle( 0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight ), Color.White );
+                        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred);
+                    EngineInfo.SpriteBatch.Draw(frameRenderLayer, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
                     EngineInfo.SpriteBatch.End();
                 }
             }
             SceneRender();
-            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( null );
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
             EngineInfo.SpriteBatch.Begin();
-            EngineInfo.SpriteBatch.Draw( SceneRenderTarget, new Rectangle( 0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight ), Color.White );
+            EngineInfo.SpriteBatch.Draw(SceneRenderTarget, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
             EngineInfo.SpriteBatch.End();
-            base.Draw( gameTime );
+            base.Draw(gameTime);
         }
         public virtual void RenderPreset() { }
         public virtual void SceneRender() { }
@@ -165,7 +165,7 @@ namespace Colin.Core.Common
         /// 根据指定对象删除场景模块.
         /// </summary>
         /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-        public bool RemoveModule(ISceneModule module) => Modules.Remove( module );
+        public bool RemoveModule(ISceneModule module) => Modules.Remove(module);
 
         /// <summary>
         /// 我不在乎你加不加载, 但我希望玩家的电脑犯病的时候我们能把重要数据保存下来.
@@ -179,11 +179,11 @@ namespace Colin.Core.Common
             if (disposing)
             {
                 for (int count = 0; count < Modules.Components.Count; count++)
-                    Modules.Components.Values.ElementAt( count ).Dispose();
+                    Modules.Components.Values.ElementAt(count).Dispose();
                 for (int count = 0; count < Modules.RenderableComponents.Count; count++)
                 {
-                    Modules.RenderableComponents.Values.ElementAt( count ).SceneRt.Dispose();
-                    Modules.RenderableComponents.Values.ElementAt( count ).Dispose();
+                    Modules.RenderableComponents.Values.ElementAt(count).SceneRt.Dispose();
+                    Modules.RenderableComponents.Values.ElementAt(count).Dispose();
                 }
                 Modules.Clear();
             }
@@ -192,7 +192,7 @@ namespace Colin.Core.Common
                 Game.Window.ClientSizeChanged -= Events.InvokeSizeChange;
                 Game.Window.OrientationChanged -= Events.InvokeSizeChange;
             }
-            base.Dispose( disposing );
+            base.Dispose(disposing);
         }
     }
 }

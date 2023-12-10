@@ -19,7 +19,7 @@
             get => isVisible;
             set
             {
-                ForEach( a => a.IsVisible = value );
+                ForEach(a => a.IsVisible = value);
                 isVisible = value;
             }
         }
@@ -30,7 +30,7 @@
             get => isHidden;
             set
             {
-                ForEach( a => a.isHidden = value );
+                ForEach(a => a.isHidden = value);
                 isHidden = value;
             }
         }
@@ -116,13 +116,13 @@
         public Division(string name)
         {
             Name = name;
-            Events = new DivisionEventResponder( this );
+            Events = new DivisionEventResponder(this);
             Interact.IsInteractive = true;
             Interact.IsBubbling = true;
             Design.Color = Color.White;
             Design.Scale = Vector2.One;
             Children = new List<Division>();
-            Controller = new DivisionController( this );
+            Controller = new DivisionController(this);
         }
 
         /// <summary>
@@ -141,8 +141,8 @@
             Controller?.OnInit();
             _renderer?.RendererInit();
             if (Parent != null)
-                LayoutStyle.Calculation( this ); //刷新一下.
-            ForEach( child => child.DoInitialize() );
+                LayoutStyle.Calculation(this); //刷新一下.
+            ForEach(child => child.DoInitialize());
             Events.DoInitialize();
             InitializationCompleted = true;
         }
@@ -159,7 +159,7 @@
         /// <param name="time">游戏计时状态快照.</param>
         public void DoUpdate(GameTime time)
         {
-            PreUpdate( time );
+            PreUpdate(time);
             if (!IsVisible)
                 return;
             if (this is Container is false)
@@ -169,17 +169,17 @@
             }
             if (!_started)
             {
-                Start( time );
+                Start(time);
                 _started = true;
             }
-            Controller?.Layout( ref Layout );
+            Controller?.Layout(ref Layout);
             if (Parent != null)
-                LayoutStyle.Calculation( this );
-            Controller?.Interact( ref Interact );
-            Controller?.Design( ref Design );
+                LayoutStyle.Calculation(this);
+            Controller?.Interact(ref Interact);
+            Controller?.Design(ref Design);
             Events.DoUpdate();
-            OnUpdate( time );
-            UpdateChildren( time );
+            OnUpdate(time);
+            UpdateChildren(time);
         }
         /// <summary>
         /// 发生于 <see cref="DoUpdate(GameTime)"/> 第一帧执行时.
@@ -203,13 +203,13 @@
         /// <param name="time">游戏计时状态快照.</param>
         public virtual void UpdateChildren(GameTime time)
         {
-            Children.ForEach( child =>
+            Children.ForEach(child =>
             {
-                if (Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ))
-                    child?.DoUpdate( time );
+                if (Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects(Layout.TotalHitBox))
+                    child?.DoUpdate(time);
                 else
-                    child?.DoUpdate( time );
-            } );
+                    child?.DoUpdate(time);
+            });
         }
 
         /// <summary>
@@ -223,9 +223,9 @@
             if (IsCanvas)
             {
                 batch.End();
-                EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Canvas );
-                batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Layout.CanvasTransform );
-                EngineInfo.Graphics.GraphicsDevice.Clear( Color.Transparent );
+                EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Canvas);
+                batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Layout.CanvasTransform);
+                EngineInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
             }
             var rasterizerState = new RasterizerState
             {
@@ -237,37 +237,37 @@
                 batch.End();
                 EngineInfo.Graphics.GraphicsDevice.ScissorRectangle = Layout.Scissor;
                 if (IsCanvas)
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: Layout.CanvasTransform );
+                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: Layout.CanvasTransform);
                 else if (ParentCanvas == null)
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState );
+                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState);
                 else
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
+                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: ParentCanvas?.Layout.CanvasTransform);
             }
-            _renderer?.DoRender( batch );//渲染器进行渲染.
-            RenderChildren( batch );
+            _renderer?.DoRender(batch);//渲染器进行渲染.
+            RenderChildren(batch);
             if (Layout.ScissorEnable)
             {
                 batch.End();
-                batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform );
+                batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform);
             }
             if (IsCanvas)
             {
                 batch.End();
                 if (Parent.IsCanvas)
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Parent.Canvas );
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Parent.Canvas);
                 if (ParentCanvas != null)
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( ParentCanvas.Canvas );
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(ParentCanvas.Canvas);
                 else
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( Interface.SceneRt );
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Interface.SceneRt);
 
                 //     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
                 if (Parent.IsCanvas)
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform );
+                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform);
                 else if (ParentCanvas != null)
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas.Layout.CanvasTransform );
+                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas.Layout.CanvasTransform);
                 else
-                    batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
-                batch.Draw( Canvas, Layout.TotalLocationF + Design.Anchor, null, Design.Color, 0f, Design.Anchor, Design.Scale, SpriteEffects.None, 0f );
+                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+                batch.Draw(Canvas, Layout.TotalLocationF + Design.Anchor, null, Design.Color, 0f, Design.Anchor, Design.Scale, SpriteEffects.None, 0f);
             }
         }
         /// <summary>
@@ -276,10 +276,10 @@
         /// <param name="time">游戏计时状态快照.</param>
         public virtual void RenderChildren(SpriteBatch spriteBatch)
         {
-            Children.ForEach( child =>
+            Children.ForEach(child =>
             {
-                child?.DoRender( spriteBatch );
-            } );
+                child?.DoRender(spriteBatch);
+            });
         }
 
         /// <summary>
@@ -292,15 +292,15 @@
         {
             division.Parent = this;
             division.ParentCanvas = ParentCanvas;
-            Events.Mouse.Register( division.Events.Mouse );
-            Events.Keys.Register( division.Events.Keys );
+            Events.Mouse.Register(division.Events.Mouse);
+            Events.Keys.Register(division.Events.Keys);
             if (IsCanvas)
                 division.ParentCanvas = this;
             if (doInit)
                 division.DoInitialize();
             division._interface = _interface;
             division._container = _container;
-            Children.Add( division );
+            Children.Add(division);
             return true;
         }
 
@@ -315,7 +315,7 @@
             division.ParentCanvas = null;
             division._container = null;
             division._interface = null;
-            return Children.Remove( division );
+            return Children.Remove(division);
         }
 
         /// <summary>
@@ -327,7 +327,7 @@
             for (int count = 0; count < Children.Count; count++)
             {
                 _div = Children[count];
-                Remove( _div );
+                Remove(_div);
                 if (dispose)
                     _div.Dispose();
             }
@@ -344,11 +344,11 @@
             for (int count = 0; count < Children.Count; count++)
             {
                 _div = Children[count];
-                action.Invoke( _div );
+                action.Invoke(_div);
             }
         }
 
-        public void Do(Action<Division> action) => action( this );
+        public void Do(Action<Division> action) => action(this);
 
         /// <summary>
 		/// 判断该划分元素是否包含指定点.
@@ -357,7 +357,7 @@
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
 		public virtual bool ContainsPoint(Point point)
         {
-            return Layout.TotalHitBox.Contains( point );
+            return Layout.TotalHitBox.Contains(point);
         }
 
         private bool disposedValue;
@@ -379,12 +379,12 @@
         public event Action OnDispose;
         ~Division()
         {
-            Dispose( disposing: false );
+            Dispose(disposing: false);
         }
         public void Dispose()
         {
-            Dispose( disposing: true );
-            GC.SuppressFinalize( this );
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

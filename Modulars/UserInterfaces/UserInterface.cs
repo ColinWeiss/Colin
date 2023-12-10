@@ -8,7 +8,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Division LastFocus;
 
-        private Container _contianer = new Container( "NomalContainer" );
+        private Container _contianer = new Container("NomalContainer");
 
         public Container Container => _contianer;
 
@@ -26,37 +26,37 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void DoInitialize()
         {
-            Events = new EventResponder( "UserInterface.EventResponder" );
+            Events = new EventResponder("UserInterface.EventResponder");
             Scene.Events.Reset += () => LastFocus = Focus;
-            Scene.Events.Mouse.Register( Events );
-            Scene.Events.KeysEvent.Register( Events );
+            Scene.Events.Mouse.Register(Events);
+            Scene.Events.KeysEvent.Register(Events);
         }
 
         public void Start() { }
 
         public void DoUpdate(GameTime time)
         {
-            Container?.DoUpdate( time );
+            Container?.DoUpdate(time);
         }
 
         public void DoRender(SpriteBatch batch)
         {
             batch.Begin();
-            Container?.DoRender( batch );
+            Container?.DoRender(batch);
             batch.End();
         }
 
-        public void Register(Container container) => Container?.Register( container );
+        public void Register(Container container) => Container?.Register(container);
 
-        public void Remove(Container container, bool dispose) => Container?.Remove( container );
+        public void Remove(Container container, bool dispose) => Container?.Remove(container);
 
         public void SetContainer(Container container)
         {
             container._interface = this;
             _contianer = container;
             container.DoInitialize();
-            Events.Register( container.Events.Mouse );
-            Events.Register( container.Events.Keys );
+            Events.Register(container.Events.Mouse);
+            Events.Register(container.Events.Keys);
         }
 
         public void Dispose()

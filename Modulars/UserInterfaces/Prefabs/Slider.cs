@@ -4,7 +4,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
     public class Slider : Division
     {
-        public Slider(string name) : base( name ) { }
+        public Slider(string name) : base(name) { }
 
         public Division Block;
 
@@ -39,9 +39,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         {
             if (Block is null)
             {
-                Block = new Division( "Block" );
+                Block = new Division("Block");
                 Block.BindRenderer<DivPixelRenderer>();
-                Block.Design.Color = new Color( 255, 223, 135 );
+                Block.Design.Color = new Color(255, 223, 135);
                 if (Direction is Direction.Portrait)
                 {
                     Block.Layout.Width = Layout.Width;
@@ -56,16 +56,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             if (Renderer is null)
             {
                 BindRenderer<DivNinecutRenderer>().
-                    Bind( Sprite.Get( "UserInterfaces/Deltas/Slider" ) ).Cut = new Point( 2, 8 );
+                    Bind(Sprite.Get("UserInterfaces/Deltas/Slider")).Cut = new Point(2, 8);
             }
             Block.Interact.IsDraggable = true;
-            Register( Block );
+            Register(Block);
             base.OnInit();
         }
         public override void OnUpdate(GameTime time)
         {
-            Block.Layout.Left = Math.Clamp( Block.Layout.Left, 0, Layout.Width - Block.Layout.Width );
-            Block.Layout.Top = Math.Clamp( Block.Layout.Top, 0, Layout.Height - Block.Layout.Height );
+            Block.Layout.Left = Math.Clamp(Block.Layout.Left, 0, Layout.Width - Block.Layout.Width);
+            Block.Layout.Top = Math.Clamp(Block.Layout.Top, 0, Layout.Height - Block.Layout.Height);
 
             Precent = Block.Layout.LocationF / (Layout.SizeF - Block.Layout.SizeF);
 
@@ -81,7 +81,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
                 else
                     Content.Layout.Top = 0;
             }
-            base.OnUpdate( time );
+            base.OnUpdate(time);
         }
     }
 }

@@ -4,7 +4,7 @@
     {
         public static DataProcessingCenter Instance => Singleton<DataProcessingCenter>.Instance;
 
-        public DataProcessingCenter() : base( EngineInfo.Engine ) { }
+        public DataProcessingCenter() : base(EngineInfo.Engine) { }
 
 
     }

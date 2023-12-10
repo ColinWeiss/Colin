@@ -2,7 +2,7 @@
 {
     public class DivGradientController : DivisionController
     {
-        public DivGradientController(Division div) : base( div ) { }
+        public DivGradientController(Division div) : base(div) { }
 
         private bool _openState = false;
         private bool _closeState = false;
@@ -18,24 +18,24 @@
         public override void OnInit()
         {
             OpenColor = new ColorGradienter();
-            OpenColor.Set( Color.Transparent );
-            OpenColor.Target = new Color( 255, 255, 255, 200 );
+            OpenColor.Set(Color.Transparent);
+            OpenColor.Target = new Color(255, 255, 255, 200);
             OpenColor.Time = 0.08f;
 
             CloseColor = new ColorGradienter();
-            CloseColor.Set( Color.White );
+            CloseColor.Set(Color.White);
             CloseColor.Target = Color.Transparent;
             CloseColor.Time = 0.12f;
 
             OpenScale = new VectorGradienter();
             OpenScale.GradientStyle = GradientStyle.EaseOutExpo;
-            OpenScale.Set( Vector2.One * 0.7f );
+            OpenScale.Set(Vector2.One * 0.7f);
             OpenScale.Target = Vector2.One;
             OpenScale.Time = 0.4f;
 
             CloseScale = new VectorGradienter();
             CloseScale.GradientStyle = GradientStyle.EaseOutExpo;
-            CloseScale.Set( Vector2.One );
+            CloseScale.Set(Vector2.One);
             CloseScale.Target = Vector2.One * 0.7f;
             CloseScale.Time = 2f;
 
@@ -58,7 +58,7 @@
                     OnClosed?.Invoke();
                 }
             }
-            base.Design( ref design );
+            base.Design(ref design);
         }
         public void Open()
         {

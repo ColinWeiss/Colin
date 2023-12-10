@@ -16,13 +16,13 @@
         /// </summary>
         public int Y;
 
-        public Point Size => new Point( Width, Height );
+        public Point Size => new Point(Width, Height);
 
-        public Vector2 SizeF => new Vector2( Width, Height );
+        public Vector2 SizeF => new Vector2(Width, Height);
 
-        public Point Half => new Point( Width / 2, Height / 2 );
+        public Point Half => new Point(Width / 2, Height / 2);
 
-        public Vector2 HalfF => new Vector2( Width / 2, Height / 2 );
+        public Vector2 HalfF => new Vector2(Width / 2, Height / 2);
 
         /// <summary>
         /// 帧格宽.
@@ -82,9 +82,9 @@
             switch (Direction)
             {
                 case Direction.Portrait:
-                    return new Rectangle( X * Width, Current * Height, Width, Height );
+                    return new Rectangle(X * Width, Current * Height, Width, Height);
                 case Direction.Transverse:
-                    return new Rectangle( Current * Width, Y * Height, Width, Height );
+                    return new Rectangle(Current * Width, Y * Height, Width, Height);
             };
             return Rectangle.Empty;
         }

@@ -13,18 +13,18 @@ namespace Colin.Core.Assets
 
         public void LoadResource()
         {
-            if (!Directory.Exists( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Fonts" ) ))
+            if (!Directory.Exists(string.Concat(EngineInfo.Engine.Content.RootDirectory, "/Fonts")))
                 return;
             FontSystem _font;
             string _fileName;
-            string[] _fontFileNames = Directory.GetFiles( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/Fonts" ), "*.*", SearchOption.AllDirectories );
+            string[] _fontFileNames = Directory.GetFiles(string.Concat(EngineInfo.Engine.Content.RootDirectory, "/Fonts"), "*.*", SearchOption.AllDirectories);
             for (int count = 0; count < _fontFileNames.Length; count++)
             {
                 Progress = count / _fontFileNames.Length + 1 / _fontFileNames.Length;
                 _font = new FontSystem();
-                _font.AddFont( File.ReadAllBytes( _fontFileNames[count] ) );
-                _fileName = IGameAsset.ArrangementPath( _fontFileNames[count] );
-                _fonts.Add( _fileName, _font );
+                _font.AddFont(File.ReadAllBytes(_fontFileNames[count]));
+                _fileName = IGameAsset.ArrangementPath(_fontFileNames[count]);
+                _fonts.Add(_fileName, _font);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Colin.Core.Assets
         public static FontSystem Get(string path)
         {
             FontSystem _font;
-            if (_fonts.TryGetValue( Path.Combine( "Fonts", path ), out _font ))
+            if (_fonts.TryGetValue(Path.Combine("Fonts", path), out _font))
                 return _font;
             else
                 return _font;

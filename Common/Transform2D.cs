@@ -3,7 +3,7 @@
 namespace Colin.Core.Common
 {
     [Serializable]
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     public class Transform2D
     {
         public Transform2D()
@@ -22,12 +22,12 @@ namespace Colin.Core.Common
                 {
                     if (parent != null)
                     {
-                        parent.children.Remove( this );
+                        parent.children.Remove(this);
                     }
                     parent = value;
                     if (parent != null)
                     {
-                        parent.children.Add( this );
+                        parent.children.Add(this);
                     }
                     SetNeedsAbsoluteUpdate();
                 }
@@ -36,11 +36,11 @@ namespace Colin.Core.Common
 
         public IEnumerable<Transform2D> Children => children;
 
-        public float AbsoluteRotation => UpdateAbsoluteAndGet( ref absoluteRotation );
+        public float AbsoluteRotation => UpdateAbsoluteAndGet(ref absoluteRotation);
 
-        public Vector2 AbsoluteScale => UpdateAbsoluteAndGet( ref absoluteScale );
+        public Vector2 AbsoluteScale => UpdateAbsoluteAndGet(ref absoluteScale);
 
-        public Vector2 AbsolutePosition => UpdateAbsoluteAndGet( ref absolutePosition );
+        public Vector2 AbsolutePosition => UpdateAbsoluteAndGet(ref absolutePosition);
 
         public float Rotation
         {
@@ -81,33 +81,33 @@ namespace Colin.Core.Common
             }
         }
 
-        public Matrix Local => UpdateLocalAndGet( ref absolute );
+        public Matrix Local => UpdateLocalAndGet(ref absolute);
 
-        public Matrix Absolute => UpdateAbsoluteAndGet( ref absolute );
+        public Matrix Absolute => UpdateAbsoluteAndGet(ref absolute);
 
-        public Matrix InvertAbsolute => UpdateAbsoluteAndGet( ref invertAbsolute );
+        public Matrix InvertAbsolute => UpdateAbsoluteAndGet(ref invertAbsolute);
 
         public void ToLocalPosition(ref Vector2 absolute, out Vector2 local)
         {
-            Vector2.Transform( ref absolute, ref invertAbsolute, out local );
+            Vector2.Transform(ref absolute, ref invertAbsolute, out local);
         }
 
         public void ToAbsolutePosition(ref Vector2 local, out Vector2 absolute)
         {
-            Vector2.Transform( ref local, ref this.absolute, out absolute );
+            Vector2.Transform(ref local, ref this.absolute, out absolute);
         }
 
         public Vector2 ToLocalPosition(Vector2 absolute)
         {
             Vector2 result;
-            ToLocalPosition( ref absolute, out result );
+            ToLocalPosition(ref absolute, out result);
             return result;
         }
 
         public Vector2 ToAbsolutePosition(Vector2 local)
         {
             Vector2 result;
-            ToAbsolutePosition( ref local, out result );
+            ToAbsolutePosition(ref local, out result);
             return result;
         }
 
@@ -130,9 +130,9 @@ namespace Colin.Core.Common
 
         private void UpdateLocal()
         {
-            Matrix matrix = Matrix.CreateScale( Scale.X, Scale.Y, 1f );
-            matrix *= Matrix.CreateRotationZ( Rotation );
-            matrix *= Matrix.CreateTranslation( Position.X, Position.Y, 0f );
+            Matrix matrix = Matrix.CreateScale(Scale.X, Scale.Y, 1f);
+            matrix *= Matrix.CreateRotationZ(Rotation);
+            matrix *= Matrix.CreateTranslation(Position.X, Position.Y, 0f);
             local = matrix;
             needsLocalUpdate = false;
         }
@@ -149,13 +149,13 @@ namespace Colin.Core.Common
             else
             {
                 Matrix matrix = Parent.Absolute;
-                Matrix.Multiply( ref local, ref matrix, out absolute );
+                Matrix.Multiply(ref local, ref matrix, out absolute);
                 absoluteScale = Parent.AbsoluteScale * Scale;
                 absoluteRotation = Parent.AbsoluteRotation + Rotation;
                 absolutePosition = Vector2.Zero;
-                ToAbsolutePosition( ref absolutePosition, out absolutePosition );
+                ToAbsolutePosition(ref absolutePosition, out absolutePosition);
             }
-            Matrix.Invert( ref absolute, out invertAbsolute );
+            Matrix.Invert(ref absolute, out invertAbsolute);
             needsAbsoluteUpdate = false;
         }
 

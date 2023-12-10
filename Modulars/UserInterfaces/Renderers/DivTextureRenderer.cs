@@ -19,7 +19,7 @@
                   Division.Design.Anchor,
                   Division.Design.Scale,
                   SpriteEffects.None,
-                  _sprite.Depth );
+                  _sprite.Depth);
             }
         }
         public DivTextureRenderer Bind(Sprite sprite)
@@ -29,7 +29,7 @@
         }
         public DivTextureRenderer Bind(Texture2D texture)
         {
-            _sprite = new Sprite( texture );
+            _sprite = new Sprite(texture);
             return this;
         }
     }

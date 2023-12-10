@@ -3,10 +3,10 @@
     public class Canvas : Division
     {
         public override sealed bool IsCanvas => true;
-        public Canvas(string name) : base( name ) { }
+        public Canvas(string name) : base(name) { }
         public override void OnInit()
         {
-            SetCanvas( Layout.Width, Layout.Height );
+            SetCanvas(Layout.Width, Layout.Height);
             base.OnInit();
         }
         public void SetCanvas(int width, int height)
@@ -15,12 +15,12 @@
             Layout.Height = height;
             Design.Anchor = Layout.SizeF / 2;
             Canvas?.Dispose();
-            Canvas = RenderTargetExt.CreateDefault( width, height );
+            Canvas = RenderTargetExt.CreateDefault(width, height);
         }
         public override void OnUpdate(GameTime time)
         {
             Layout.IsCanvas = IsCanvas;
-            base.OnUpdate( time );
+            base.OnUpdate(time);
         }
     }
 }

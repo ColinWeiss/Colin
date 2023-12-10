@@ -7,7 +7,7 @@ namespace Colin.Core.Inputs
     /// </summary>
     public class ControllerResponder : GameComponent, ISingleton
     {
-        public ControllerResponder() : base( EngineInfo.Engine ) { }
+        public ControllerResponder() : base(EngineInfo.Engine) { }
 
         public static GamePadState state;
 
@@ -56,7 +56,7 @@ namespace Colin.Core.Inputs
         public override void Update(GameTime gameTime)
         {
             stateLast = state;
-            state = GamePad.GetState( PlayerIndex.One );
+            state = GamePad.GetState(PlayerIndex.One);
             if (state.IsConnected)
             {
                 //       EngineInfo.Engine.IsMouseVisible = false;
@@ -73,7 +73,7 @@ namespace Colin.Core.Inputs
             //      else
             //         EngineInfo.Engine.IsMouseVisible = true;
 
-            base.Update( gameTime );
+            base.Update(gameTime);
         }
     }
 

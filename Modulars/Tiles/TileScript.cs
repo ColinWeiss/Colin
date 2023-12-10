@@ -14,7 +14,7 @@
         public int CoordX => Info.CoordX;
         public int CoordY => Info.CoordY;
         public int CoordZ => Info.CoordZ;
-        public Vector2 Coord => new Vector2( CoordX, CoordY );
+        public Vector2 Coord => new Vector2(CoordX, CoordY);
         public Point WorldCoord => Info.WorldCoord2;
 
         /// <summary>
@@ -53,7 +53,7 @@
             if (info.Behavior is null || Info.Behavior is null)
                 return false;
             else
-                return info.Behavior.Equals( Info.Behavior );
+                return info.Behavior.Equals(Info.Behavior);
         }
     }
 }

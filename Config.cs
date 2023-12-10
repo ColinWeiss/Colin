@@ -12,7 +12,7 @@ namespace Colin.Core
         /// 指示游戏配置文件的位置及其本身.
         /// <br>包含文件扩展名.</br>
         /// </summary>
-        public static string ConfigPath => string.Concat( BasicsDirectory.ProgramDir, "\\Configs.json" );
+        public static string ConfigPath => string.Concat(BasicsDirectory.ProgramDir, "\\Configs.json");
 
         /// <summary>
         /// 指示是否全屏.
@@ -51,7 +51,7 @@ namespace Colin.Core
             }
             set
             {
-                EngineInfo.Engine.SetTargetFrame( value );
+                EngineInfo.Engine.SetTargetFrame(value);
             }
         }
 
@@ -77,9 +77,9 @@ namespace Colin.Core
 
         public void Load()
         {
-            if (File.Exists( ConfigPath ))
+            if (File.Exists(ConfigPath))
             {
-                Config result = JsonSerializer.Deserialize<Config>( File.ReadAllText( ConfigPath ) );
+                Config result = JsonSerializer.Deserialize<Config>(File.ReadAllText(ConfigPath));
                 IsFullScreen = result.IsFullScreen;
                 SoundEffect = result.SoundEffect;
                 SoundEffectVolume = result.SoundEffectVolume;
@@ -93,8 +93,8 @@ namespace Colin.Core
         {
             JsonSerializerOptions serializerOptions = new JsonSerializerOptions();
             serializerOptions.WriteIndented = true;
-            string config = JsonSerializer.Serialize( this, serializerOptions );
-            File.WriteAllText( ConfigPath, config );
+            string config = JsonSerializer.Serialize(this, serializerOptions);
+            File.WriteAllText(ConfigPath, config);
         }
     }
 }

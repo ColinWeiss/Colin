@@ -4,8 +4,8 @@
     {
         public override void SetDefaultTexts()
         {
-            Texts.Add( "ON", "开" );
-            Texts.Add( "OFF", "关" );
+            Texts.Add("ON", "开");
+            Texts.Add("OFF", "关");
             base.SetDefaultTexts();
         }
     }

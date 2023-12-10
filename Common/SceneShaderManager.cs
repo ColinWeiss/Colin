@@ -8,8 +8,8 @@
 
         public void Add(IRenderableISceneModule iRComponent, Effect e)
         {
-            Effects.Add( iRComponent, e );
-            TypeCheck.Add( iRComponent.GetType(), e );
+            Effects.Add(iRComponent, e);
+            TypeCheck.Add(iRComponent.GetType(), e);
         }
     }
 }

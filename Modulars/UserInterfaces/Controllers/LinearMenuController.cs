@@ -20,18 +20,18 @@
         public Direction Toward = Direction.Down;
         public Vector2 Scroll;
         public Point TotalSize;
-        public LinearMenuController(Division division) : base( division ) { }
+        public LinearMenuController(Division division) : base(division) { }
         public override void Layout(ref LayoutStyle layout)
         {
             TotalSize = Point.Zero;
-            Division.ForEach( CalculateLayout );
+            Division.ForEach(CalculateLayout);
             if (Direction == Direction.Portrait)
-                Division.ForEach( Portrait );
+                Division.ForEach(Portrait);
             else if (Direction == Direction.Transverse)
-                Division.ForEach( Transverse );
+                Division.ForEach(Transverse);
             layout.Size = TotalSize;
             lastDiv = null;
-            base.Layout( ref layout );
+            base.Layout(ref layout);
         }
         private Division lastDiv;
         private void CalculateLayout(Division division)

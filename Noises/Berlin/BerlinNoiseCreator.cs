@@ -99,31 +99,31 @@
         {
             if (Pixel == null)
             {
-                Pixel = new Texture2D( EngineInfo.Graphics.GraphicsDevice, 1, 1 );
-                Pixel.SetData( new Color[] { Color.White } );
+                Pixel = new Texture2D(EngineInfo.Graphics.GraphicsDevice, 1, 1);
+                Pixel.SetData(new Color[] { Color.White });
             }
             if (Info.Single)
             {
-                Random = new Random( Seed );
+                Random = new Random(Seed);
                 Points = new byte[Width * Height];
                 Span<byte> points = Points;
-                points.Fill( 0 );
+                points.Fill(0);
                 _map1D = new int[Width * Height];
                 for (int count = 0; count < _map1D.Length; count++)
-                    _map1D[count] = Random.Next( Info.Amplitude );
+                    _map1D[count] = Random.Next(Info.Amplitude);
             }
             else
             {
-                Random = new Random( Seed );
+                Random = new Random(Seed);
                 Points = new byte[Width * Height];
                 Span<byte> points = Points;
-                points.Fill( 0 );
+                points.Fill(0);
                 _map2D = new Vector2[Width * Height];
                 for (int count = 0; count < _map2D.Length; count++)
                 {
-                    bool xf = Random.Next( 2 ) == 1;
-                    bool yf = Random.Next( 2 ) == 1;
-                    _map2D[count] = new Vector2( Random.NextSingle() * (xf ? 1 : -1), Random.NextSingle() * (yf ? 1 : -1) );
+                    bool xf = Random.Next(2) == 1;
+                    bool yf = Random.Next(2) == 1;
+                    _map2D[count] = new Vector2(Random.NextSingle() * (xf ? 1 : -1), Random.NextSingle() * (yf ? 1 : -1));
                 }
             }
         }
@@ -144,7 +144,7 @@
             float grad2 = _map1D[x2];
             float vec1 = x - x1;
             float vec2 = x - x2;
-            float t = 3 * MathF.Pow( vec1, 2 ) - 2 * MathF.Pow( vec1, 3 );
+            float t = 3 * MathF.Pow(vec1, 2) - 2 * MathF.Pow(vec1, 3);
             float product1 = grad1 * vec1;
             float product2 = grad2 * vec2;
             return product1 + t * (product2 - product1);
@@ -160,14 +160,14 @@
             int p2y = p0y + 1;
             int p3x = p0x + 1;  // P3坐标
             int p3y = p0y;
-            float g0x = Grad( p0x, p0y )[0];  // P0点的梯度
-            float g0y = Grad( p0x, p0y )[1];
-            float g1x = Grad( p1x, p1y )[0];  // P1点的梯度
-            float g1y = Grad( p1x, p1y )[1];
-            float g2x = Grad( p2x, p2y )[0];  // P2点的梯度
-            float g2y = Grad( p2x, p2y )[1];
-            float g3x = Grad( p3x, p3y )[0];  // P3点的梯度
-            float g3y = Grad( p3x, p3y )[1];
+            float g0x = Grad(p0x, p0y)[0];  // P0点的梯度
+            float g0y = Grad(p0x, p0y)[1];
+            float g1x = Grad(p1x, p1y)[0];  // P1点的梯度
+            float g1y = Grad(p1x, p1y)[1];
+            float g2x = Grad(p2x, p2y)[0];  // P2点的梯度
+            float g2y = Grad(p2x, p2y)[1];
+            float g3x = Grad(p3x, p3y)[0];  // P3点的梯度
+            float g3y = Grad(p3x, p3y)[1];
             float v0x = x - p0x;  // P0点的方向向量
             float v0y = y - p0y;
             float v1x = x - p1x;  // P1点的方向向量
@@ -181,7 +181,7 @@
             float product2 = g2x * v2x + g2y * v2y;  // P2点梯度向量和方向向量的点乘
             float product3 = g3x * v3x + g3y * v3y;  // P3点梯度向量和方向向量的点乘
             float d0 = x - p0x;
-            float t0 = 6f * MathF.Pow( d0, 5f ) - 15f * MathF.Pow( d0, 4f ) + 10f * MathF.Pow( d0, 3f );
+            float t0 = 6f * MathF.Pow(d0, 5f) - 15f * MathF.Pow(d0, 4f) + 10f * MathF.Pow(d0, 3f);
             float n0 = product1 * (1f - t0) + product2 * t0;
 
             // P0和P3的插值
@@ -189,7 +189,7 @@
 
             // P点的插值
             float d1 = y - p0y;
-            float t1 = 6f * MathF.Pow( d1, 5f ) - 15f * MathF.Pow( d1, 4f ) + 10f * MathF.Pow( d1, 3f );
+            float t1 = 6f * MathF.Pow(d1, 5f) - 15f * MathF.Pow(d1, 4f) + 10f * MathF.Pow(d1, 3f);
             return n1 * (1f - t1) + n0 * t1;
         }
 
@@ -208,7 +208,7 @@
                 for (int x = 0; x < Width; x++)
                 {
                     float x0 = (float)x / Width * Info.Scale;
-                    SetPoint( x, (int)(Height / 2 + Perlin( x0 )), 1 );
+                    SetPoint(x, (int)(Height / 2 + Perlin(x0)), 1);
                 }
             }
             else
@@ -219,12 +219,12 @@
                     {
                         float x0 = (float)x / Width * Info.Scale;
                         float y0 = (float)y / Height * Info.Scale;
-                        float color = 122.5f + 255 * Perlin( x0, y0 );
+                        float color = 122.5f + 255 * Perlin(x0, y0);
                         if (color > Info.Limit)
                             color = Info.Limit;
                         if (color < 0)
                             color = 0;
-                        SetPoint( x, y, (byte)color );
+                        SetPoint(x, y, (byte)color);
                     }
                 }
             }
@@ -238,8 +238,8 @@
                 {
                     if (Points[x + y * Width] > 0)
                     {
-                        spriteBatch.Draw( Pixel, position + new Vector2( x, y ),
-                            new Color( Color.White, Info.Single ? 255 : Points[x + y * Width] ) );
+                        spriteBatch.Draw(Pixel, position + new Vector2(x, y),
+                            new Color(Color.White, Info.Single ? 255 : Points[x + y * Width]));
                     }
                 }
             }

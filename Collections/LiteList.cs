@@ -27,7 +27,7 @@ namespace Colin.Core.Collections
             buffer = new T[size];
         }
 
-        public LiteList() : this( 5 )
+        public LiteList() : this(5)
         {
         }
 
@@ -42,7 +42,7 @@ namespace Colin.Core.Collections
         /// </summary>
         public void Clear()
         {
-            Array.Clear( buffer, 0, length );
+            Array.Clear(buffer, 0, length);
             length = 0;
         }
 
@@ -60,7 +60,7 @@ namespace Colin.Core.Collections
         public void Add(T item)
         {
             if (length == buffer.Length)
-                Array.Resize( ref buffer, Math.Max( buffer.Length << 1, 10 ) );
+                Array.Resize(ref buffer, Math.Max(buffer.Length << 1, 10));
             buffer[length++] = item;
         }
 
@@ -73,9 +73,9 @@ namespace Colin.Core.Collections
             var comp = EqualityComparer<T>.Default;
             for (var i = 0; i < length; ++i)
             {
-                if (comp.Equals( buffer[i], item ))
+                if (comp.Equals(buffer[i], item))
                 {
-                    RemoveAt( i );
+                    RemoveAt(i);
                     return;
                 }
             }
@@ -86,11 +86,11 @@ namespace Colin.Core.Collections
         /// </summary>
         public void RemoveAt(int index)
         {
-            Debug.Assert( index < length );
+            Debug.Assert(index < length);
 
             length--;
             if (index < length)
-                Array.Copy( buffer, index + 1, buffer, index, length - index );
+                Array.Copy(buffer, index + 1, buffer, index, length - index);
             buffer[length] = default;
         }
 
@@ -100,7 +100,7 @@ namespace Colin.Core.Collections
         /// <param name="index">索引.</param>
         public void RemoveAtWithSwap(int index)
         {
-            Debug.Assert( index < length );
+            Debug.Assert(index < length);
 
             buffer[index] = buffer[length - 1];
             buffer[length - 1] = default;
@@ -116,7 +116,7 @@ namespace Colin.Core.Collections
             var comp = EqualityComparer<T>.Default;
             for (var i = 0; i < length; ++i)
             {
-                if (comp.Equals( buffer[i], item ))
+                if (comp.Equals(buffer[i], item))
                     return true;
             }
             return false;
@@ -127,7 +127,7 @@ namespace Colin.Core.Collections
             var comp = EqualityComparer<Type>.Default;
             for (var i = 0; i < length; ++i)
             {
-                if (comp.Equals( buffer[i].GetType(), typeof( TType ) ))
+                if (comp.Equals(buffer[i].GetType(), typeof(TType)))
                     return buffer[i];
             }
             return default;
@@ -139,7 +139,7 @@ namespace Colin.Core.Collections
         public void EnsureCapacity(int additionalItemCount = 1)
         {
             if (length + additionalItemCount >= buffer.Length)
-                Array.Resize( ref buffer, Math.Max( buffer.Length << 1, length + additionalItemCount ) );
+                Array.Resize(ref buffer, Math.Max(buffer.Length << 1, length + additionalItemCount));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Colin.Core.Collections
         public void AddRange(IEnumerable<T> array)
         {
             foreach (var item in array)
-                Add( item );
+                Add(item);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Colin.Core.Collections
         /// </summary>
         public void Sort()
         {
-            Array.Sort( buffer, 0, length );
+            Array.Sort(buffer, 0, length);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Colin.Core.Collections
         /// </summary>
         public void Sort(IComparer comparer)
         {
-            Array.Sort( buffer, 0, length, comparer );
+            Array.Sort(buffer, 0, length, comparer);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Colin.Core.Collections
         /// </summary>
         public void Sort(IComparer<T> comparer)
         {
-            Array.Sort( buffer, 0, length, comparer );
+            Array.Sort(buffer, 0, length, comparer);
         }
     }
 }

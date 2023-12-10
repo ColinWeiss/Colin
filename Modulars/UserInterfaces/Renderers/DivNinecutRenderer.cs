@@ -14,7 +14,7 @@
                 Division.Layout.TotalLocation,
                 Division.Layout.Size,
                 Cut,
-                _sprite.Depth );
+                _sprite.Depth);
         }
         public DivNinecutRenderer Bind(Sprite sprite)
         {
@@ -23,7 +23,7 @@
         }
         public DivNinecutRenderer Bind(Texture2D texture)
         {
-            _sprite = new Sprite( texture );
+            _sprite = new Sprite(texture);
             return this;
         }
     }

@@ -12,7 +12,7 @@
             SurfaceFormat.Color,
             DepthFormat.None,
             0,
-            RenderTargetUsage.PreserveContents );
+            RenderTargetUsage.PreserveContents);
             return renderTarget;
         }
 
@@ -26,7 +26,7 @@
             SurfaceFormat.Color,
             DepthFormat.None,
             0,
-            RenderTargetUsage.PreserveContents );
+            RenderTargetUsage.PreserveContents);
             return renderTarget;
         }
         public static RenderTarget2D CreateWithDepth(int width, int height)
@@ -39,7 +39,7 @@
             SurfaceFormat.Vector4,
             DepthFormat.Depth24,
             0,
-            RenderTargetUsage.PreserveContents );
+            RenderTargetUsage.PreserveContents);
             return renderTarget;
         }
     }

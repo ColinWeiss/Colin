@@ -10,17 +10,17 @@
 
         public void LoadResource()
         {
-            if (!Directory.Exists( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Effects" ) ))
+            if (!Directory.Exists(Path.Combine(EngineInfo.Engine.Content.RootDirectory, "Effects")))
                 return;
             Effect _effect;
             string _fileName;
-            string[] _xnbFileNames = Directory.GetFiles( Path.Combine( EngineInfo.Engine.Content.RootDirectory, "Effects" ), "*.xnb*", SearchOption.AllDirectories );
+            string[] _xnbFileNames = Directory.GetFiles(Path.Combine(EngineInfo.Engine.Content.RootDirectory, "Effects"), "*.xnb*", SearchOption.AllDirectories);
             for (int count = 0; count < _xnbFileNames.Length; count++)
             {
                 Progress = count / _xnbFileNames.Length + 1 / _xnbFileNames.Length;
-                _fileName = IGameAsset.ArrangementPath( _xnbFileNames[count] );
-                _effect = EngineInfo.Engine.Content.Load<Effect>( _fileName );
-                Effects.Add( _fileName, _effect );
+                _fileName = IGameAsset.ArrangementPath(_xnbFileNames[count]);
+                _effect = EngineInfo.Engine.Content.Load<Effect>(_fileName);
+                Effects.Add(_fileName, _effect);
             }
         }
 
@@ -33,12 +33,12 @@
         public static Effect Get(string path)
         {
             Effect _texture;
-            if (Effects.TryGetValue( Path.Combine( "Effects", path ), out _texture ))
+            if (Effects.TryGetValue(Path.Combine("Effects", path), out _texture))
                 return _texture;
             else
             {
-                Effects.Add( Path.Combine( "Effects", path ), _texture );
-                _texture = EngineInfo.Engine.Content.Load<Effect>( Path.Combine( "Effects", path ) );
+                Effects.Add(Path.Combine("Effects", path), _texture);
+                _texture = EngineInfo.Engine.Content.Load<Effect>(Path.Combine("Effects", path));
                 return _texture;
             }
         }

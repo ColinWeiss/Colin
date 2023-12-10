@@ -36,16 +36,16 @@ namespace Colin.Core.Graphics
             _queues = new VSpanQueue[initCapacity];
             _queuesHandle = _queues.AsMemory().Pin();
             _queuesPtr = (VSpanQueue*)_queuesHandle.Pointer;
-            _textures = new Dictionary<int, Texture2D>( 10 );
-            AllocateBuffer( initCapacity );
+            _textures = new Dictionary<int, Texture2D>(10);
+            AllocateBuffer(initCapacity);
         }
         public void DrawQuad(Texture2D texture, T vul, T vur, T vdr, T vdl, int sortingKey = -1)
         {
-            int texKey = UnsafeObject.As( texture ).GetUmanagedField<int>( 72 );
+            int texKey = UnsafeObject.As(texture).GetUmanagedField<int>(72);
 
             if (_queuesCursor == 0 || !(texKey == _queuesPtr[_queuesCursor - 1].Texture && sortingKey == _queuesPtr[_queuesCursor - 1].SortingKey))
             {
-                if (_queuesCursor >= _queues.Length) ResizeQueueList( _queues.Length * 3 / 2 );
+                if (_queuesCursor >= _queues.Length) ResizeQueueList(_queues.Length * 3 / 2);
                 ((int*)(_queuesPtr + _queuesCursor))[0] = sortingKey;
                 ((int*)(_queuesPtr + _queuesCursor))[1] = texKey;
                 ((int*)(_queuesPtr + _queuesCursor))[2] = _primBufferCursor;
@@ -58,13 +58,13 @@ namespace Colin.Core.Graphics
             //ul---ur
             //|  \  |
             //dl---dr
-            if (_primBufferCursor + 4 > _primBuffer.Length) AllocateBuffer( _primBuffer.Length * 3 / 2 );
+            if (_primBufferCursor + 4 > _primBuffer.Length) AllocateBuffer(_primBuffer.Length * 3 / 2);
             _primBufferPtr[_primBufferCursor++] = vul;
             _primBufferPtr[_primBufferCursor++] = vur;
             _primBufferPtr[_primBufferCursor++] = vdr;
             _primBufferPtr[_primBufferCursor++] = vdl;
 
-            if (!_textures.ContainsKey( texKey )) _textures.Add( texKey, texture );
+            if (!_textures.ContainsKey(texKey)) _textures.Add(texKey, texture);
         }
         /// <summary>
         /// Sort DrawQueues by sortingKey.
@@ -72,27 +72,27 @@ namespace Colin.Core.Graphics
         public void Sort()
         {
             if (_queuesCursor == 0) return;
-            Array.Sort( _queues, 0, _queuesCursor, new QueueComparer() );
+            Array.Sort(_queues, 0, _queuesCursor, new QueueComparer());
         }
         public void Flush(EffectPass? pass, bool clear = true)
         {
             if (_queuesCursor == 0) return;
             pass?.Apply();
-            InternalFlush( clear );
+            InternalFlush(clear);
         }
         public void Flush(Effect effect, bool clear = true)
         {
             if (_queuesCursor == 0) return;
             foreach (var p in effect.CurrentTechnique.Passes) p.Apply();
-            InternalFlush( clear );
+            InternalFlush(clear);
         }
         private void InternalFlush(bool clear)
         {
             _graphicsDevice.Indices = _indexBuffer;
             var indexCount = BuildIndex();
-            _indexBuffer.SetData( _indexCache, 0, indexCount, SetDataOptions.None );
-            _graphicsDevice.SetVertexBuffer( _vertexBuffer );
-            _vertexBuffer.SetData( _primBuffer, 0, _primBufferCursor, SetDataOptions.Discard );
+            _indexBuffer.SetData(_indexCache, 0, indexCount, SetDataOptions.None);
+            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
+            _vertexBuffer.SetData(_primBuffer, 0, _primBufferCursor, SetDataOptions.Discard);
             DrawBatched();
             if (!clear) return;
             _queuesCursor = 0;
@@ -137,7 +137,7 @@ namespace Colin.Core.Graphics
                 if (texture != qptr->Texture)
                 {
                     _graphicsDevice.Textures[0] = _textures[texture];
-                    _graphicsDevice.DrawIndexedPrimitives( PrimitiveType.TriangleList, 0, indexCount - indexDelta, indexDelta / 3 );
+                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, indexCount - indexDelta, indexDelta / 3);
                     texture = qptr->Texture;
                     indexDelta = 0;
                 }
@@ -145,13 +145,13 @@ namespace Colin.Core.Graphics
                 indexDelta += (qptr->End - qptr->First) * 3 / 2;
             }
             _graphicsDevice.Textures[0] = _textures[texture];
-            _graphicsDevice.DrawIndexedPrimitives( PrimitiveType.TriangleList, 0, indexCount - indexDelta, indexDelta / 3 );
+            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, indexCount - indexDelta, indexDelta / 3);
 
         }
         private void ResizeQueueList(int size)
         {
             _queuesHandle.Dispose();
-            Array.Resize( ref _queues, size );
+            Array.Resize(ref _queues, size);
             _queuesHandle = _queues.AsMemory().Pin();
             _queuesPtr = (VSpanQueue*)_queuesHandle.Pointer;
         }
@@ -160,7 +160,7 @@ namespace Colin.Core.Graphics
             if (_primBuffer != null)
             {
                 _primBufferHandle.Dispose();
-                Array.Resize( ref _primBuffer, size );
+                Array.Resize(ref _primBuffer, size);
                 _primBufferHandle = _primBuffer.AsMemory().Pin();
                 _primBufferPtr = (T*)_primBufferHandle.Pointer;
 
@@ -171,8 +171,8 @@ namespace Colin.Core.Graphics
 
                 _vertexBuffer.Dispose();
                 _indexBuffer.Dispose();
-                _vertexBuffer = new DynamicVertexBuffer( _graphicsDevice, typeof( T ), size, BufferUsage.WriteOnly );
-                _indexBuffer = new DynamicIndexBuffer( _graphicsDevice, typeof( int ), size * 3 / 2, BufferUsage.WriteOnly );
+                _vertexBuffer = new DynamicVertexBuffer(_graphicsDevice, typeof(T), size, BufferUsage.WriteOnly);
+                _indexBuffer = new DynamicIndexBuffer(_graphicsDevice, typeof(int), size * 3 / 2, BufferUsage.WriteOnly);
             }
             else
             {
@@ -184,8 +184,8 @@ namespace Colin.Core.Graphics
                 _indexCacheHandle = _indexCache.AsMemory().Pin();
                 _indexCachePtr = (int*)_indexCacheHandle.Pointer;
 
-                _vertexBuffer = new DynamicVertexBuffer( _graphicsDevice, typeof( T ), size, BufferUsage.WriteOnly );
-                _indexBuffer = new DynamicIndexBuffer( _graphicsDevice, typeof( int ), size * 3 / 2, BufferUsage.WriteOnly );
+                _vertexBuffer = new DynamicVertexBuffer(_graphicsDevice, typeof(T), size, BufferUsage.WriteOnly);
+                _indexBuffer = new DynamicIndexBuffer(_graphicsDevice, typeof(int), size * 3 / 2, BufferUsage.WriteOnly);
             }
         }
         private struct VSpanQueue
@@ -223,12 +223,12 @@ namespace Colin.Core.Graphics
         }
         ~DrawBatcher2D()
         {
-            Dispose( disposing: false );
+            Dispose(disposing: false);
         }
         public void Dispose()
         {
-            Dispose( disposing: true );
-            GC.SuppressFinalize( this );
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
         private class QueueComparer : IComparer<VSpanQueue>
         {

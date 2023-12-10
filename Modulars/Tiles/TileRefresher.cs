@@ -28,9 +28,9 @@ namespace Colin.Core.Modulars.Tiles
         {
             while (!RefreshQueue.IsEmpty)
             {
-                RefreshQueue.TryDequeue( out Point3 coord );
+                RefreshQueue.TryDequeue(out Point3 coord);
                 ref TileInfo info = ref Tile[coord];
-                RefreshHandle( coord );
+                RefreshHandle(coord);
                 if (info.Empty)
                 {
                     info.Behavior = null;
@@ -43,7 +43,7 @@ namespace Colin.Core.Modulars.Tiles
         {
             for (int x = -radius; x <= radius; x++)
                 for (int y = -radius; y <= radius; y++)
-                    RefreshQueue.Enqueue( new Point3( coord.X + x, coord.Y + y, coord.Z ) );
+                    RefreshQueue.Enqueue(new Point3(coord.X + x, coord.Y + y, coord.Z));
         }
 
         public void RefreshHandle(Point3 coord)
@@ -51,20 +51,20 @@ namespace Colin.Core.Modulars.Tiles
             ref TileInfo info = ref Tile[coord];
             if (info.IsNull)
                 return;
-            if (Tile.TilePointers.TryGetValue( info.WorldCoord2, out Point coreCoord ))
+            if (Tile.TilePointers.TryGetValue(info.WorldCoord2, out Point coreCoord))
             {
-                info = ref Tile[new Point3( coreCoord.X, coreCoord.Y, coord.Z )];
-                info.Behavior?.OnRefresh( ref info );
+                info = ref Tile[new Point3(coreCoord.X, coreCoord.Y, coord.Z)];
+                info.Behavior?.OnRefresh(ref info);
                 foreach (var script in info.Scripts.Values)
                     script.OnRefresh();
             }
             else
             {
-                info.Behavior?.OnRefresh( ref info );
+                info.Behavior?.OnRefresh(ref info);
                 foreach (var script in info.Scripts.Values)
                     script.OnRefresh();
             }
-            RefreshEvent?.Invoke( coord );
+            RefreshEvent?.Invoke(coord);
         }
 
         public void Dispose()

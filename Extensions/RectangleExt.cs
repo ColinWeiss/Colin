@@ -7,7 +7,7 @@
         /// </summary>
         public static Vector2 GetLeftCenter(this Rectangle rect)
         {
-            return new Vector2( rect.Left, rect.Y + rect.Height / 2.0f );
+            return new Vector2(rect.Left, rect.Y + rect.Height / 2.0f);
         }
 
         /// <summary>
@@ -15,7 +15,7 @@
         /// </summary>
         public static Vector2 GetRightCenter(this Rectangle rect)
         {
-            return new Vector2( rect.Right, rect.Y + rect.Height / 2.0f );
+            return new Vector2(rect.Right, rect.Y + rect.Height / 2.0f);
         }
 
         /// <summary>
@@ -23,7 +23,7 @@
         /// </summary>
         public static Vector2 GetTopCenter(this Rectangle rect)
         {
-            return new Vector2( rect.X + rect.Width / 2.0f, rect.Top );
+            return new Vector2(rect.X + rect.Width / 2.0f, rect.Top);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@
         /// </summary>
         public static Vector2 GetBottomCenter(this Rectangle rect)
         {
-            return new Vector2( rect.X + rect.Width / 2.0f, rect.Bottom );
+            return new Vector2(rect.X + rect.Width / 2.0f, rect.Bottom);
         }
     }
 }

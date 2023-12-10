@@ -45,7 +45,7 @@ namespace Colin.Core
         {
             get
             {
-                return new Vector2( X, Y );
+                return new Vector2(X, Y);
             }
             set
             {
@@ -58,7 +58,7 @@ namespace Colin.Core
         {
             get
             {
-                return new Vector2( Width, Height );
+                return new Vector2(Width, Height);
             }
             set
             {
@@ -67,9 +67,9 @@ namespace Colin.Core
             }
         }
 
-        public Vector2 Center => new Vector2( X + Width / 2, Y + Height / 2 );
+        public Vector2 Center => new Vector2(X + Width / 2, Y + Height / 2);
 
-        public Vector2 Half => new Vector2( Width / 2, Height / 2 );
+        public Vector2 Half => new Vector2(Width / 2, Height / 2);
 
         internal string DebugDisplayString => X + "  " + Y + "  " + Width + "  " + Height;
 
@@ -153,23 +153,23 @@ namespace Colin.Core
 
         public static RectangleF Intersect(RectangleF value1, RectangleF value2)
         {
-            Intersect( ref value1, ref value2, out var result );
+            Intersect(ref value1, ref value2, out var result);
             return result;
         }
 
         public static void Intersect(ref RectangleF value1, ref RectangleF value2, out RectangleF result)
         {
-            if (value1.Intersects( value2 ))
+            if (value1.Intersects(value2))
             {
-                float num = Math.Min( value1.X + value1.Width, value2.X + value2.Width );
-                float num2 = Math.Max( value1.X, value2.X );
-                float num3 = Math.Max( value1.Y, value2.Y );
-                float num4 = Math.Min( value1.Y + value1.Height, value2.Y + value2.Height );
-                result = new RectangleF( num2, num3, num - num2, num4 - num3 );
+                float num = Math.Min(value1.X + value1.Width, value2.X + value2.Width);
+                float num2 = Math.Max(value1.X, value2.X);
+                float num3 = Math.Max(value1.Y, value2.Y);
+                float num4 = Math.Min(value1.Y + value1.Height, value2.Y + value2.Height);
+                result = new RectangleF(num2, num3, num - num2, num4 - num3);
             }
             else
             {
-                result = new RectangleF( 0, 0, 0, 0 );
+                result = new RectangleF(0, 0, 0, 0);
             }
         }
 
@@ -192,17 +192,17 @@ namespace Colin.Core
 
         public static RectangleF Union(RectangleF value1, RectangleF value2)
         {
-            float num = Math.Min( value1.X, value2.X );
-            float num2 = Math.Min( value1.Y, value2.Y );
-            return new RectangleF( num, num2, Math.Max( value1.Right, value2.Right ) - num, Math.Max( value1.Bottom, value2.Bottom ) - num2 );
+            float num = Math.Min(value1.X, value2.X);
+            float num2 = Math.Min(value1.Y, value2.Y);
+            return new RectangleF(num, num2, Math.Max(value1.Right, value2.Right) - num, Math.Max(value1.Bottom, value2.Bottom) - num2);
         }
 
         public static void Union(ref RectangleF value1, ref RectangleF value2, out RectangleF result)
         {
-            result.X = Math.Min( value1.X, value2.X );
-            result.Y = Math.Min( value1.Y, value2.Y );
-            result.Width = Math.Max( value1.Right, value2.Right ) - result.X;
-            result.Height = Math.Max( value1.Bottom, value2.Bottom ) - result.Y;
+            result.X = Math.Min(value1.X, value2.X);
+            result.Y = Math.Min(value1.Y, value2.Y);
+            result.Width = Math.Max(value1.Right, value2.Right) - result.X;
+            result.Height = Math.Max(value1.Bottom, value2.Bottom) - result.Y;
         }
 
         public void Deconstruct(out float x, out float y, out float width, out float height)

@@ -20,7 +20,7 @@ namespace Colin.Core.Graphics
             _graphicsDevice = graphicsDevice;
             _queues = new VQueues<T>[initCapacity];
             _cache = new T[initCapacity * 3 / 2];
-            _textures = new Dictionary<int, Texture2D>( 10 );
+            _textures = new Dictionary<int, Texture2D>(10);
         }
         /// <summary>
         /// vul---vur
@@ -30,9 +30,9 @@ namespace Colin.Core.Graphics
         /// <param name="sortingKey">Used by <see cref="Sort()"/></param>
         public void DrawQuad(Texture2D texture, T vul, T vur, T vdr, T vdl, int sortingKey = -1)
         {
-            EnsureCapacity( _cursor + 1 );
+            EnsureCapacity(_cursor + 1);
             //notice that &(texture._sortingKey) - &(texture) = 72
-            sortingKey = sortingKey == -1 ? UnsafeObject.As( texture ).GetUmanagedField<int>( 72 ) : sortingKey;
+            sortingKey = sortingKey == -1 ? UnsafeObject.As(texture).GetUmanagedField<int>(72) : sortingKey;
             //sortingKey = sortingKey == -1 ? UnsafeObject.As(texture).GetField<int>(typeof(Texture).GetField("_sortingKey", BindingFlags.NonPublic | BindingFlags.Instance)) : sortingKey;
             fixed (VQueues<T>* queuePtr = _queues)
             {
@@ -43,7 +43,7 @@ namespace Colin.Core.Graphics
                 ((T*)((int*)(queuePtr + _cursor) + 1))[3] = vdl;
             }
             //equals to _queues[_cursor] = new VQueues<T>(sortingKey, vul, vur, vdr, vdl);
-            if (!_textures.ContainsKey( sortingKey )) _textures.Add( sortingKey, texture );
+            if (!_textures.ContainsKey(sortingKey)) _textures.Add(sortingKey, texture);
             _cursor++;
         }
         /// <summary>
@@ -52,7 +52,7 @@ namespace Colin.Core.Graphics
         public void Sort()
         {
             if (_cursor == 0) return;
-            Array.Sort( _queues, 0, _cursor, new TexComparer<T>() );
+            Array.Sort(_queues, 0, _cursor, new TexComparer<T>());
         }
         /// <summary>
         /// Apply the provided pass and flush DrawQueues.
@@ -61,7 +61,7 @@ namespace Colin.Core.Graphics
         {
             if (_cursor == 0) return;
             pass?.Apply();
-            Flush( clear );
+            Flush(clear);
         }
         /// <summary>
         /// Apply the provided effect and flush DrawQueues.
@@ -70,7 +70,7 @@ namespace Colin.Core.Graphics
         {
             if (_cursor == 0) return;
             foreach (var p in effect.CurrentTechnique.Passes) p.Apply();
-            Flush( clear );
+            Flush(clear);
         }
         private void Flush(bool clear)
         {
@@ -86,7 +86,7 @@ namespace Colin.Core.Graphics
                         if (texture != queuePtr[i].Texture)
                         {
                             _graphicsDevice.Textures[0] = _textures[texture];
-                            _graphicsDevice.DrawUserPrimitives( PrimitiveType.TriangleList, _cache, 0, pCount / 3 );
+                            _graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _cache, 0, pCount / 3);
                             pCount = 0;
                             texture = queuePtr[i].Texture;
                         }
@@ -102,7 +102,7 @@ namespace Colin.Core.Graphics
                         pCount += 6;
                     }
                     _graphicsDevice.Textures[0] = _textures[texture];
-                    _graphicsDevice.DrawUserPrimitives( PrimitiveType.TriangleList, _cache, 0, pCount / 3 );
+                    _graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _cache, 0, pCount / 3);
                 }
             }
             if (clear) _cursor = 0;
@@ -114,7 +114,7 @@ namespace Colin.Core.Graphics
                 int l = _queues.Length * 3 / 2;
                 for (; l < target; l = l * 3 / 2) ;
                 var temp = new VQueues<T>[l];
-                Array.Copy( _queues, temp, _queues.Length );
+                Array.Copy(_queues, temp, _queues.Length);
                 _queues = temp;
             }
         }

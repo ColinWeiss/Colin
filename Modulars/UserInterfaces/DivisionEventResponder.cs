@@ -10,9 +10,9 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public DivisionEventResponder(Division division) => Div = division;
 
-        public MouseEventResponder Mouse = new MouseEventResponder( "MouseEvents" );
+        public MouseEventResponder Mouse = new MouseEventResponder("MouseEvents");
 
-        public KeysEventResponder Keys = new KeysEventResponder( "KeysEvents" );
+        public KeysEventResponder Keys = new KeysEventResponder("KeysEvents");
 
         public event Action HoverStart;
         public event Action Hover;
@@ -54,14 +54,14 @@ namespace Colin.Core.Modulars.UserInterfaces
                 {
                     if (Div.Interact.Interaction && !Div.Interact.InteractionLast)
                         HoverStart?.Invoke();
-                    Invoke( e, Hover );
+                    Invoke(e, Hover);
                     if (!Div.Interact.Interaction && Div.Interact.InteractionLast)
                         HoverOver?.Invoke();
                 };
             Mouse.LeftClickBefore += (s, e) =>
             {
-                Invoke( e, LeftClickBefore );
-                Invoke( e, () =>
+                Invoke(e, LeftClickBefore);
+                Invoke(e, () =>
                 {
                     if (!S)
                         S = true;
@@ -81,40 +81,40 @@ namespace Colin.Core.Modulars.UserInterfaces
                     {
                         _cachePos = MouseResponder.State.Position - Div.Layout.Location;
                     }
-                } );
+                });
             };
-            Mouse.LeftDown += (s, e) => Invoke( e, LeftDown );
+            Mouse.LeftDown += (s, e) => Invoke(e, LeftDown);
             Mouse.LeftClickAfter += (s, e) =>
             {
                 if (!S)
                     return;
                 S = false;
                 DragOver?.Invoke();
-                Invoke( e, LeftClickAfter );
+                Invoke(e, LeftClickAfter);
                 if (!Div.Interact.IsDraggable)
                     return;
                 DraggingState = false;
-                _cachePos = new Point( -1, -1 );
+                _cachePos = new Point(-1, -1);
             };
-            Mouse.LeftUp += (s, e) => Invoke( e, LeftUp );
+            Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
             Keys.ClickBefore += KeyClickBefore;
             Keys.Down += KeyDown;
             Keys.ClickAfter += KeyClickAfter;
         }
         private void Invoke(MouseEventArgs e, Action action)
         {
-            if (Div.IsVisible && Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
+            if (Div.IsVisible && Div.ContainsPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
             {
                 if (Div.Interact.IsBubbling)
                     e.Captured = true;
                 action?.Invoke();
             }
         }
-        private Point _cachePos = new Point( -1, -1 );
+        private Point _cachePos = new Point(-1, -1);
         public void DoUpdate()
         {
             Div.Interact.InteractionLast = Div.Interact.Interaction;
-            if (Div.ContainsPoint( MouseResponder.State.Position ) && Div.Interact.IsInteractive)
+            if (Div.ContainsPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
                 Div.Interact.Interaction = true;
             else
                 Div.Interact.Interaction = false;
@@ -137,8 +137,8 @@ namespace Colin.Core.Modulars.UserInterfaces
                 }
                 if (Div.Interact.IsDraggable && Div.Interact.DragLimit != Rectangle.Empty)
                 {
-                    Div.Layout.Left = Math.Clamp( Div.Layout.Left, 0, Div.Interact.DragLimit.Width - Div.Layout.Width );
-                    Div.Layout.Top = Math.Clamp( Div.Layout.Top, 0, Div.Interact.DragLimit.Height - Div.Layout.Height );
+                    Div.Layout.Left = Math.Clamp(Div.Layout.Left, 0, Div.Interact.DragLimit.Width - Div.Layout.Width);
+                    Div.Layout.Top = Math.Clamp(Div.Layout.Top, 0, Div.Interact.DragLimit.Height - Div.Layout.Height);
                 }
                 Dragging?.Invoke();
             }

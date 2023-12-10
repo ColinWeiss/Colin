@@ -28,11 +28,11 @@
         public static string ArrangementPath(string path)
         {
             string _result = path;
-            _result = _result.Replace( ".xnb", "" );
-            _result = _result.Replace( ".ttf", "" );
-            _result = _result.Replace( ".otf", "" );
-            _result = _result.Replace( string.Concat( EngineInfo.Engine.Content.RootDirectory, "/" ), "" );
-            _result = _result.Replace( string.Concat( EngineInfo.Engine.Content.RootDirectory, "\\" ), "" );
+            _result = _result.Replace(".xnb", "");
+            _result = _result.Replace(".ttf", "");
+            _result = _result.Replace(".otf", "");
+            _result = _result.Replace(string.Concat(EngineInfo.Engine.Content.RootDirectory, "/"), "");
+            _result = _result.Replace(string.Concat(EngineInfo.Engine.Content.RootDirectory, "\\"), "");
             return _result;
         }
     }

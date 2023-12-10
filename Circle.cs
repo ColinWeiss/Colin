@@ -31,7 +31,7 @@ namespace Colin.Core
         /// </summary>
         public bool Intersects(Circle circle)
         {
-            return Vector2.Distance( Center, circle.Center ) < Radius + circle.Radius;
+            return Vector2.Distance(Center, circle.Center) < Radius + circle.Radius;
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace Colin.Core
         public bool Intersects(Rectangle rectangle)
         {
             Vector2 v = new Vector2(
-                MathHelper.Clamp( Center.X, rectangle.Left, rectangle.Right ),
-                MathHelper.Clamp( Center.Y, rectangle.Top, rectangle.Bottom ) );
+                MathHelper.Clamp(Center.X, rectangle.Left, rectangle.Right),
+                MathHelper.Clamp(Center.Y, rectangle.Top, rectangle.Bottom));
             Vector2 direction = Center - v;
             float distanceSquared = direction.LengthSquared();
             return distanceSquared > 0 && distanceSquared < Radius * Radius;

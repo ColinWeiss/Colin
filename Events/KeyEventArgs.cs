@@ -6,6 +6,6 @@
         public bool ClickBefore;
         public bool Down;
         public bool ClickAfter;
-        public KeyEventArgs(string name) : base( name ) { }
+        public KeyEventArgs(string name) : base(name) { }
     }
 }

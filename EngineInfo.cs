@@ -52,7 +52,7 @@ namespace Colin.Core
             {
                 if (_engineName == string.Empty)
                 {
-                    _engineName = Assembly.GetExecutingAssembly().FullName.Split( ',' ).First();
+                    _engineName = Assembly.GetExecutingAssembly().FullName.Split(',').First();
                     return _engineName;
                 }
                 else
@@ -103,7 +103,7 @@ namespace Colin.Core
         {
             get
             {
-                return new Vector2( ViewWidth, ViewHeight );
+                return new Vector2(ViewWidth, ViewHeight);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Colin.Core
         {
             get
             {
-                return new Point( ViewWidth, ViewHeight );
+                return new Point(ViewWidth, ViewHeight);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Colin.Core
         {
             get
             {
-                return new Vector2( ViewWidth / 2, ViewHeight / 2 );
+                return new Vector2(ViewWidth / 2, ViewHeight / 2);
             }
         }
 
@@ -136,7 +136,7 @@ namespace Colin.Core
         {
             get
             {
-                return new Rectangle( 0, 0, ViewWidth, ViewHeight );
+                return new Rectangle(0, 0, ViewWidth, ViewHeight);
             }
         }
 
@@ -162,7 +162,7 @@ namespace Colin.Core
             Engine = engine;
             ModContent.DoInitialize();
 #if WINDOWS
-            IMEHandler = new WinFormsIMEHandler( Engine, true );
+            IMEHandler = new WinFormsIMEHandler(Engine, true);
 #elif DESKTOP
             IMEHandler = new SdlIMEHandler( Engine );
 #endif

@@ -22,19 +22,19 @@
         {
             if (!inited)
                 LoadTileSpriteSheets();
-            return TileSpriteRepository.GetValueOrDefault( key, null );
+            return TileSpriteRepository.GetValueOrDefault(key, null);
         }
 
         public static void LoadTileSpriteSheets()
         {
             // TODO: 通过加载配置文件初始化排版方式，目前这里硬编码几个用于测试
-            RegisterTileSpriteSheet( "NormalBlock", new Point( 112, 16 ), new Point( 64, 16 ), new Point( 16, 16 ), 48 );
+            RegisterTileSpriteSheet("NormalBlock", new Point(112, 16), new Point(64, 16), new Point(16, 16), 48);
             inited = true;
         }
 
         public static void RegisterTileSpriteSheet(string key, Point cornerOffset, Point borderOffset, Point solidOffset, int height)
         {
-            TileSpriteRepository.Add( key, new TileSpriteSheet( cornerOffset, borderOffset, solidOffset, height ) );
+            TileSpriteRepository.Add(key, new TileSpriteSheet(cornerOffset, borderOffset, solidOffset, height));
         }
 
         protected TileSpriteSheet(Point cornerOffset, Point borderOffset, Point solidOffset, int height)

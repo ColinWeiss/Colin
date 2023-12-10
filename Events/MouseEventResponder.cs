@@ -2,7 +2,7 @@
 {
     public class MouseEventResponder : EventResponder
     {
-        public MouseEventResponder(string name) : base( name ) { }
+        public MouseEventResponder(string name) : base(name) { }
         public EventHandler<MouseEventArgs> Hover;
         public EventHandler<MouseEventArgs> LeftClickBefore;
         public EventHandler<MouseEventArgs> LeftDown;
@@ -13,15 +13,15 @@
         {
             if (theEvent is MouseEventArgs mouseEvent)
             {
-                Hover?.Invoke( this, mouseEvent );
+                Hover?.Invoke(this, mouseEvent);
                 if (MouseResponder.LeftClickBefore)
-                    LeftClickBefore?.Invoke( this, mouseEvent );
+                    LeftClickBefore?.Invoke(this, mouseEvent);
                 if (MouseResponder.LeftDown)
-                    LeftDown?.Invoke( this, mouseEvent );
+                    LeftDown?.Invoke(this, mouseEvent);
                 if (MouseResponder.LeftClickAfter)
-                    LeftClickAfter?.Invoke( this, mouseEvent );
+                    LeftClickAfter?.Invoke(this, mouseEvent);
                 if (MouseResponder.LeftUp)
-                    LeftUp?.Invoke( this, mouseEvent );
+                    LeftUp?.Invoke(this, mouseEvent);
             }
         }
     }

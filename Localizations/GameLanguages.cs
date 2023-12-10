@@ -14,7 +14,7 @@
 
         public void ChangeLanguage(string language)
         {
-            if (Languages.TryGetValue( language, out GameLanguagePackage package ))
+            if (Languages.TryGetValue(language, out GameLanguagePackage package))
             {
                 _current = package;
                 OnLanguageChanged?.Invoke();

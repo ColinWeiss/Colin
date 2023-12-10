@@ -47,8 +47,8 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public void DoInitialize()
         {
-            _screenMap = TextureAssets.Get( "Pixel" );
-            LeftRightLoopEffect = EffectAssets.Get( "LeftRightLoopMapping" );
+            _screenMap = TextureAssets.Get("Pixel");
+            LeftRightLoopEffect = EffectAssets.Get("LeftRightLoopMapping");
         }
         public void Start()
         {
@@ -69,16 +69,16 @@ namespace Colin.Core.Modulars.Backgrounds
                 {
                     layer = CurrentStyle.Layers[count];
                     if (layer.IsFix)
-                        RenderFixBackground( layer );
+                        RenderFixBackground(layer);
                     if (layer.IsLoop && layer.LoopStyle == BackgroundLoopStyle.LeftRightConnect)
-                        RenderLeftRightLoopBackground( layer );
+                        RenderLeftRightLoopBackground(layer);
                 }
             }
         }
 
         public void RenderFixBackground(BackgroundLayer layer)
         {
-            EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp );
+            EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
             EngineInfo.SpriteBatch.Draw(
                 layer.Sprite.Source,
                 CurrentStyle.FixLayerOverallOffset,
@@ -95,26 +95,26 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public void RenderLeftRightLoopBackground(BackgroundLayer layer)
         {
-            Vector3 translateBody = new Vector3( -(Camera.Position - CurrentStyle.LoopLayerDrawPosition) * layer.Parallax, 0f );
-            Vector3 translateCenter = new Vector3( Camera.Translate, 0f );
-            Vector2 drawCount = new Vector2( (float)EngineInfo.ViewWidth / layer.Sprite.Width, (float)EngineInfo.ViewHeight / layer.Sprite.Height );
+            Vector3 translateBody = new Vector3(-(Camera.Position - CurrentStyle.LoopLayerDrawPosition) * layer.Parallax, 0f);
+            Vector3 translateCenter = new Vector3(Camera.Translate, 0f);
+            Vector2 drawCount = new Vector2((float)EngineInfo.ViewWidth / layer.Sprite.Width, (float)EngineInfo.ViewHeight / layer.Sprite.Height);
             Vector2 offset = Vector2.One / layer.Sprite.SizeF;
-            layer.Transform = Matrix.CreateTranslation( translateBody ) * Matrix.CreateTranslation( translateCenter );
-            offset *= new Vector2( -layer.Translation.X, -layer.Translation.Y );
+            layer.Transform = Matrix.CreateTranslation(translateBody) * Matrix.CreateTranslation(translateCenter);
+            offset *= new Vector2(-layer.Translation.X, -layer.Translation.Y);
             offset.X += CurrentStyle.LoopLayerOffset.X / layer.Sprite.Height;
             offset.Y += CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
 
-            EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null );
+            EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
-            LeftRightLoopEffect.Parameters["MappingTexture"].SetValue( layer.Sprite.Source );
-            LeftRightLoopEffect.Parameters["DrawCount"].SetValue( drawCount / Camera.Zoom );
-            LeftRightLoopEffect.Parameters["Offset"].SetValue( offset );
+            LeftRightLoopEffect.Parameters["MappingTexture"].SetValue(layer.Sprite.Source);
+            LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / Camera.Zoom);
+            LeftRightLoopEffect.Parameters["Offset"].SetValue(offset);
             LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
 
             //        DrawHelper.DrawRectSimply( EngineInfo.Graphics.GraphicsDevice, 0, 0, SceneRt.Width, SceneRt.Height
             //  , _screenMap, Color.White );
 
-            EngineInfo.SpriteBatch.Draw( _screenMap, new Rectangle( 0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight ), Color.White );
+            EngineInfo.SpriteBatch.Draw(_screenMap, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
             EngineInfo.SpriteBatch.End();
         }
 
@@ -134,13 +134,13 @@ namespace Colin.Core.Modulars.Backgrounds
 
         ~Background()
         {
-            Dispose( disposing: false );
+            Dispose(disposing: false);
         }
 
         public void Dispose()
         {
-            Dispose( disposing: true );
-            GC.SuppressFinalize( this );
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

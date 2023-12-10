@@ -27,9 +27,9 @@
         public async void Save(bool async)
         {
             if (async)
-                await File.WriteAllBytesAsync( path, bytes );
+                await File.WriteAllBytesAsync(path, bytes);
             else
-                File.WriteAllBytes( path, bytes );
+                File.WriteAllBytes(path, bytes);
         }
 
         public GameData(string path, byte[] bytes)
@@ -48,7 +48,7 @@
         {
             this.path = path;
             this.length = length;
-            bytes = File.ReadAllBytes( path );
+            bytes = File.ReadAllBytes(path);
         }
 
         /// <summary>

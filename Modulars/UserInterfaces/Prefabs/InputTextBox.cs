@@ -2,10 +2,10 @@
 {
     public class InputTextBox : Division
     {
-        public InputTextBox(string name, int limit = 16) : base( name )
+        public InputTextBox(string name, int limit = 16) : base(name)
         {
             Limit = limit;
-            Label = new Label( "Text" );
+            Label = new Label("Text");
         }
 
         public Label Label;
@@ -47,17 +47,17 @@
             Text = "";
             Layout.ScissorEnable = true;
             Label.Interact.IsInteractive = false;
-            Register( Label );
+            Register(Label);
 
             Events.GetFocus += () =>
             {
                 EngineInfo.IMEHandler.StartTextComposition();
-                EngineInfo.IMEHandler.SetTextInputRect( ref InputRect );
+                EngineInfo.IMEHandler.SetTextInputRect(ref InputRect);
             };
             Events.LoseFocus += () =>
             {
                 EngineInfo.IMEHandler.StopTextComposition();
-                Label.SetText( Text );
+                Label.SetText(Text);
             };
             EngineInfo.IMEHandler.TextInput += IMEHandler_TextInput;
             base.OnInit();
@@ -69,7 +69,7 @@
             {
                 if (e.Key == Keys.Back && CursorPosition > 0)
                 {
-                    Text = Text.Remove( CursorPosition - 1, 1 );
+                    Text = Text.Remove(CursorPosition - 1, 1);
                     CursorPosition--;
                 }
                 else if (e.Key == Keys.Enter && AllowBreaks)
@@ -77,11 +77,11 @@
                     Text += "\n";
                     CursorPosition++;
                 }
-                else if (!FunctionKeys.Contains( e.Key ))
+                else if (!FunctionKeys.Contains(e.Key))
                 {
                     if (e.Key == Keys.Space && CursorPosition <= 0 && !AllowStartedSpace)
                         return;
-                    Text = Text.Insert( CursorPosition, e.Character.ToString() );
+                    Text = Text.Insert(CursorPosition, e.Character.ToString());
                     CursorPosition += e.Character.ToString().Length;
                 }
             }
@@ -95,21 +95,21 @@
             InputRect.X += 16;
             if (Text != string.Empty && Editing)
             {
-                if (KeyboardResponder.IsKeyClickBefore( Keys.Left ))
-                    CursorPosition = Math.Clamp( CursorPosition - 1, 0, Text.Length );
-                if (KeyboardResponder.IsKeyClickBefore( Keys.Right ))
-                    CursorPosition = Math.Clamp( CursorPosition + 1, 0, Text.Length );
+                if (KeyboardResponder.IsKeyClickBefore(Keys.Left))
+                    CursorPosition = Math.Clamp(CursorPosition - 1, 0, Text.Length);
+                if (KeyboardResponder.IsKeyClickBefore(Keys.Right))
+                    CursorPosition = Math.Clamp(CursorPosition + 1, 0, Text.Length);
             }
             else
                 CursorPosition = Text.Length;
 
-            DisplayText = Text.Insert( CursorPosition, "|" );
+            DisplayText = Text.Insert(CursorPosition, "|");
             if (Editing)
-                Label.SetText( DisplayText );
+                Label.SetText(DisplayText);
             else
-                Label.SetText( Text );
+                Label.SetText(Text);
 
-            base.OnUpdate( time );
+            base.OnUpdate(time);
         }
     }
 }

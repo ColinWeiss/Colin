@@ -29,10 +29,10 @@
                             _currentValue = Timer / Time;
                             break;
                         case GradientStyle.EaseOutExpo:
-                            _currentValue = 1f - MathF.Pow( 2, -10 * Timer / Time );
+                            _currentValue = 1f - MathF.Pow(2, -10 * Timer / Time);
                             break;
                     };
-                    Current.Closer( Target, _currentValue, 1f );
+                    Current.Closer(Target, _currentValue, 1f);
                 }
             }
             if (Timer > Time)

@@ -8,16 +8,16 @@
         /// <param name="path"></param>
         public static string GetDirectory(params string[] path)
         {
-            var result = Path.Combine( path );
-            if (!Directory.Exists( result ))
-                Directory.CreateDirectory( result );
+            var result = Path.Combine(path);
+            if (!Directory.Exists(result))
+                Directory.CreateDirectory(result);
             return result;
         }
 
         public static DirectoryInfo[] GetDirectoryInfos(string directory)
-            => new DirectoryInfo( directory ).GetDirectories();
+            => new DirectoryInfo(directory).GetDirectories();
 
         public static FileInfo[] GetFileInfos(string directory, string searchPattern)
-            => new DirectoryInfo( directory ).GetFiles( searchPattern, SearchOption.AllDirectories );
+            => new DirectoryInfo(directory).GetFiles(searchPattern, SearchOption.AllDirectories);
     }
 }

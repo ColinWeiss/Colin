@@ -5,7 +5,7 @@ namespace Colin.Core.IO
 {
     public sealed class FileDropProcessor : GameComponent
     {
-        internal FileDropProcessor() : base( EngineInfo.Engine ) { }
+        internal FileDropProcessor() : base(EngineInfo.Engine) { }
         private static FileDropProcessor _instance;
         public static FileDropProcessor Instance
         {
@@ -25,9 +25,9 @@ namespace Colin.Core.IO
         {
             foreach (var item in Assembly.GetExecutingAssembly().GetTypes())
             {
-                if (!item.IsAbstract && item.GetInterfaces().Contains( typeof( IFileDropBehavior ) ))
+                if (!item.IsAbstract && item.GetInterfaces().Contains(typeof(IFileDropBehavior)))
                 {
-                    FileDropBehaviors.Add( (IFileDropBehavior)Activator.CreateInstance( item ) );
+                    FileDropBehaviors.Add((IFileDropBehavior)Activator.CreateInstance(item));
                 }
             }
             if (PlatformInfo.MonoGamePlatform == MonoGamePlatform.Windows || PlatformInfo.MonoGamePlatform == MonoGamePlatform.DesktopGL)
@@ -38,7 +38,7 @@ namespace Colin.Core.IO
                     for (int count = 0; count < FileDropBehaviors.Count; count++)
                     {
                         fileDropBehavior = FileDropBehaviors[count];
-                        fileDropBehavior.OnFileDrop( e.Files );
+                        fileDropBehavior.OnFileDrop(e.Files);
                     }
                 };
             }

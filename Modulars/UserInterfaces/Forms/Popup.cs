@@ -9,7 +9,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
     {
         private int _titleHeight;
 
-        public Popup(string name, int width, int height, int titleHeight) : base( name )
+        public Popup(string name, int width, int height, int titleHeight) : base(name)
         {
             Layout.Width = width;
             Layout.Height = height;
@@ -31,7 +31,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Design.Scale = Vector2.One;
             Design.Color = Color.White;
 
-            Controller = new DivGradientController( this );
+            Controller = new DivGradientController(this);
             Interact.IsDraggable = true;
             Interact.IsSelectable = false;
             Interact.IsInteractive = true;
@@ -39,46 +39,46 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.PaddingLeft = 4;
             Layout.PaddingTop = 4;
 
-            Substrate = new Division( "Substrate" );
+            Substrate = new Division("Substrate");
             Substrate.Interact.IsInteractive = false;
             Substrate.Layout.Left = -4;
             Substrate.Layout.Top = -4;
             Substrate.Layout.Width = Layout.Width + 8;
             Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
             DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
-            _substrateRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Substrate1" ) );
-            _substrateRenderer.Cut = new Point( 6, 6 );
-            base.Register( Substrate );
+            _substrateRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Substrate1"));
+            _substrateRenderer.Cut = new Point(6, 6);
+            base.Register(Substrate);
 
-            Block = new Division( "Behavior" );
+            Block = new Division("Behavior");
             Block.BindRenderer<DivPixelRenderer>();
-            Block.Design.Color = new Color( 17, 18, 20 );
+            Block.Design.Color = new Color(17, 18, 20);
             Block.Layout.Top = _titleHeight;
             Block.Layout.Width = Layout.Width;
             Block.Layout.Height = Layout.Height;
-            base.Register( Block );
+            base.Register(Block);
 
-            TitleColumn = new Division( "TitleColumn" );
+            TitleColumn = new Division("TitleColumn");
             DivNinecutRenderer _tileColumnRenderer = TitleColumn.BindRenderer<DivNinecutRenderer>();
-            _tileColumnRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/TitleColumn1" ) );
-            _tileColumnRenderer.Cut = new Point( 6, 6 );
+            _tileColumnRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/TitleColumn1"));
+            _tileColumnRenderer.Cut = new Point(6, 6);
             TitleColumn.Interact.IsInteractive = false;
             TitleColumn.Layout.Width = Layout.Width;
             TitleColumn.Layout.Height = _titleHeight;
             {
-                Icon = new Division( "Icon" );
+                Icon = new Division("Icon");
                 DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>();
-                _iconRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Icon1" ) );
+                _iconRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Icon1"));
                 Icon.Interact.IsInteractive = false;
                 Icon.Layout.Left = 4;
                 Icon.Layout.Top = 4;
                 Icon.Layout.Width = 8;
                 Icon.Layout.Height = 8;
-                TitleColumn.Register( Icon );
+                TitleColumn.Register(Icon);
 
-                CloseButton = new Division( "CloseButton" );
+                CloseButton = new Division("CloseButton");
                 DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>();
-                _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
+                _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
                 CloseButton.Interact.IsInteractive = true;
                 CloseButton.Layout.Left = TitleColumn.Layout.Width - 16;
                 CloseButton.Layout.Top = 2;
@@ -86,20 +86,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Layout.Height = 12;
                 CloseButton.Events.LeftClickBefore += () =>
                 {
-                    _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1_Off" ) );
+                    _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1_Off"));
                 };
                 CloseButton.Events.LeftClickAfter += () =>
                 {
-                    _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
+                    _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
                     Close();
                 };
                 CloseButton.Events.HoverOver += () =>
                 {
-                    _closeRenderer.Bind( TextureAssets.Get( "UserInterfaces/Forms/Close1" ) );
+                    _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
                 };
-                TitleColumn.Register( CloseButton );
+                TitleColumn.Register(CloseButton);
             }
-            base.Register( TitleColumn );
+            base.Register(TitleColumn);
 
             PopupInit();
 
@@ -117,7 +117,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             base.OnInit();
         }
         public virtual void PopupInit() { }
-        public override bool Register(Division division, bool doInit = false) => Block.Register( division, doInit );
+        public override bool Register(Division division, bool doInit = false) => Block.Register(division, doInit);
         public void Show() => (Controller as DivGradientController).Open();
         public void Close() => (Controller as DivGradientController).Close();
     }

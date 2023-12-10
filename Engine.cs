@@ -29,10 +29,10 @@ namespace Colin.Core
         public Form Form => _form;
         public void FormInitialize()
         {
-            _form = Control.FromHandle( Window.Handle ) as Form;
+            _form = Control.FromHandle(Window.Handle) as Form;
             _form.MinimizeBox = false;
             _form.MaximizeBox = false;
-            _form.MinimumSize = new System.Drawing.Size( 1280, 720 );
+            _form.MinimumSize = new System.Drawing.Size(1280, 720);
         }
     }
 #endif
@@ -60,16 +60,16 @@ namespace Colin.Core
         public int TargetFrame
         {
             get => _targetFrame;
-            set => SetTargetFrame( value );
+            set => SetTargetFrame(value);
         }
 
         public Engine()
         {
             Preparator.DoCheck();
-            EngineInfo.Init( this );
+            EngineInfo.Init(this);
             if (EngineInfo.Graphics == null)
             {
-                EngineInfo.Graphics = new GraphicsDeviceManager( this )
+                EngineInfo.Graphics = new GraphicsDeviceManager(this)
                 {
                     PreferHalfPixelOffset = false,
                     HardwareModeSwitch = false,
@@ -89,7 +89,7 @@ namespace Colin.Core
         public void SetTargetFrame(int frame)
         {
             _targetFrame = frame;
-            TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / frame ) );
+            TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
         }
 
         /// <summary>
@@ -105,28 +105,28 @@ namespace Colin.Core
                     Window.ClientSizeChanged -= CurrentScene.InitRenderTarget;
                     Window.OrientationChanged -= CurrentScene.InitRenderTarget;
                 }
-                Components.Remove( CurrentScene );
+                Components.Remove(CurrentScene);
             }
             CurrentScene?.SaveDatas();
             CurrentScene?.Dispose();
             Components.Clear();
-            Components.Add( Singleton<ControllerResponder>.Instance );
-            Components.Add( Singleton<MouseResponder>.Instance );
-            Components.Add( Singleton<KeyboardResponder>.Instance );
-            Components.Add( SpritePool.Instance );
-            Components.Add( scene );
+            Components.Add(Singleton<ControllerResponder>.Instance);
+            Components.Add(Singleton<MouseResponder>.Instance);
+            Components.Add(Singleton<KeyboardResponder>.Instance);
+            Components.Add(SpritePool.Instance);
+            Components.Add(scene);
             CurrentScene = scene;
             GC.Collect();
         }
 
         protected override sealed void Initialize()
         {
-            EngineInfo.SpriteBatch = new SpriteBatch( EngineInfo.Graphics.GraphicsDevice );
-            EngineInfo.DrawBatcherAlt = new( EngineInfo.Graphics.GraphicsDevice );
+            EngineInfo.SpriteBatch = new SpriteBatch(EngineInfo.Graphics.GraphicsDevice);
+            EngineInfo.DrawBatcherAlt = new(EngineInfo.Graphics.GraphicsDevice);
             EngineInfo.Config = new Config();
             EngineInfo.Config.Load();
-            TargetElapsedTime = new TimeSpan( 0, 0, 0, 0, (int)Math.Round( 1000f / TargetFrame ) );
-            Components.Add( FileDropProcessor.Instance );
+            TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
+            Components.Add(FileDropProcessor.Instance);
             DoInitialize();
             base.Initialize();
         }
@@ -151,7 +151,7 @@ namespace Colin.Core
         {
             if (!Enable)
                 return;
-            Time.Update( (float)gameTime.ElapsedGameTime.TotalSeconds );
+            Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             if (!Started)
             {
 #if WINDOWS
@@ -161,12 +161,12 @@ namespace Colin.Core
                         Screen.PrimaryScreen.Bounds.Height / 2 - Form.Height / 2
                         );
 #endif
-                SetScene( Preparator );
+                SetScene(Preparator);
                 Started = true;
             }
-            EngineInfo.GetInformationFromDevice( gameTime );
+            EngineInfo.GetInformationFromDevice(gameTime);
             DoUpdate();
-            base.Update( gameTime );
+            base.Update(gameTime);
         }
         public virtual void DoUpdate() { }
 
@@ -174,8 +174,8 @@ namespace Colin.Core
         {
             if (!Visiable)
                 return;
-            GraphicsDevice.Clear( Color.Black );
-            base.Draw( gameTime );
+            GraphicsDevice.Clear(Color.Black);
+            base.Draw(gameTime);
             DoRender();
         }
         public virtual void DoRender() { }
@@ -184,18 +184,18 @@ namespace Colin.Core
         {
             CurrentScene?.SaveDatas();
             EngineInfo.Config.Save();
-            base.OnExiting( sender, args );
+            base.OnExiting(sender, args);
         }
 
         protected override void OnActivated(object sender, EventArgs args)
         {
             //  Enable = true;
-            base.OnActivated( sender, args );
+            base.OnActivated(sender, args);
         }
         protected override void OnDeactivated(object sender, EventArgs args)
         {
             //  Enable = false;
-            base.OnDeactivated( sender, args );
+            base.OnDeactivated(sender, args);
         }
     }
 }

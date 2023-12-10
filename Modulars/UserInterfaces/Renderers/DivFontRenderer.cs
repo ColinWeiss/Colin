@@ -13,20 +13,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
             set
             {
                 _text = value;
-                Division.Layout.SizeF = Font.MeasureString( _text );
+                Division.Layout.SizeF = Font.MeasureString(_text);
                 Division.Design.Anchor = Division.Layout.HalfF;
             }
         }
         public override void RendererInit()
         {
             if (Font == null)
-                Font = FontAssets.Get( "Unifont" ).GetFont( 16 );
+                Font = FontAssets.Get("Unifont").GetFont(16);
         }
         public override void DoRender(SpriteBatch batch)
         {
-            batch.DrawString( Font, _text, Division.Layout.TotalLocationF + Division.Design.Anchor,
+            batch.DrawString(Font, _text, Division.Layout.TotalLocationF + Division.Design.Anchor,
                 Division.Design.Color, Division.Design.Rotation, Division.Design.Anchor, Division.Design.Scale,
-                1f, 0f, 0f, TextStyle.None, FontSystemEffect.Stroked, 1 );
+                1f, 0f, 0f, TextStyle.None, FontSystemEffect.Stroked, 1);
         }
     }
 }
