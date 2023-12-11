@@ -259,15 +259,13 @@
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(ParentCanvas.Canvas);
                 else
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Interface.SceneRt);
-
-                //     batch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
                 if (Parent.IsCanvas)
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform);
                 else if (ParentCanvas != null)
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas.Layout.CanvasTransform);
                 else
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-                batch.Draw(Canvas, Layout.TotalLocationF + Design.Anchor, null, Design.Color, 0f, Design.Anchor, Design.Scale, SpriteEffects.None, 0f);
+                batch.Draw(Canvas, Layout.TotalLocationF + Design.Anchor, null, Design.Color , 0f, Design.Anchor, Design.Scale, SpriteEffects.None, 0f);
             }
         }
         /// <summary>

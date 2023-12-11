@@ -8,7 +8,7 @@
         public Container(string name) : base(name) => _container = this;
         public override sealed void OnInit()
         {
-            Interact.IsInteractive = true;
+            Interact.IsInteractive = false;
             Interact.IsSelectable = false;
             Layout.Width = EngineInfo.ViewWidth;
             Layout.Height = EngineInfo.ViewHeight;

@@ -20,11 +20,17 @@
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSans.otf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansBook.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansMedium.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\MiSansNormal.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\Unifont.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Panel0.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Slider.png" />

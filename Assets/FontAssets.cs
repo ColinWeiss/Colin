@@ -11,6 +11,11 @@ namespace Colin.Core.Assets
         private static Dictionary<string, FontSystem> _fonts = new Dictionary<string, FontSystem>();
         public static Dictionary<string, FontSystem> Fonts => _fonts;
 
+        public static FontSystem MiSansNormal => Get("MiSansNormal");
+        public static FontSystem GlowSansBook => Get("GlowSansBook");
+        public static FontSystem GlowSansMedium => Get("GlowSansMedium");
+        public static FontSystem Unifont => Get("Unifont");
+
         public void LoadResource()
         {
             if (!Directory.Exists(string.Concat(EngineInfo.Engine.Content.RootDirectory, "/Fonts")))

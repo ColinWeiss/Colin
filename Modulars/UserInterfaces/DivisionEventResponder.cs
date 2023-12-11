@@ -1,4 +1,6 @@
 ﻿using Colin.Core.Events;
+using System;
+
 namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
@@ -46,7 +48,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// </summary>
         public bool DraggingState = false;
 
-        public bool S = false;
+        public bool DivLock = false;
 
         public void DoInitialize()
         {
@@ -60,13 +62,14 @@ namespace Colin.Core.Modulars.UserInterfaces
                 };
             Mouse.LeftClickBefore += (s, e) =>
             {
+                if (Div.IsVisible && Div.ContainsPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+                {
+                    if (!DivLock)
+                        DivLock = true;
+                }
                 Invoke(e, LeftClickBefore);
                 Invoke(e, () =>
                 {
-                    if (!S)
-                        S = true;
-                    else
-                        return;
                     Div.Interface.Focus = Div;
                     if (!Div.Interact.IsDraggable)
                         return;
@@ -83,18 +86,21 @@ namespace Colin.Core.Modulars.UserInterfaces
                     }
                 });
             };
-            Mouse.LeftDown += (s, e) => Invoke(e, LeftDown);
+            Mouse.LeftDown += (s, e) =>
+            {
+                Invoke(e, LeftDown);
+            };
             Mouse.LeftClickAfter += (s, e) =>
             {
-                if (!S)
-                    return;
-                S = false;
-                DragOver?.Invoke();
                 Invoke(e, LeftClickAfter);
-                if (!Div.Interact.IsDraggable)
-                    return;
-                DraggingState = false;
-                _cachePos = new Point(-1, -1);
+                if ( DivLock )
+                {
+                    DragOver?.Invoke();
+                    if (!Div.Interact.IsDraggable)
+                        return;
+                    DraggingState = false;
+                    _cachePos = new Point(-1, -1);
+                }
             };
             Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
             Keys.ClickBefore += KeyClickBefore;
@@ -103,7 +109,10 @@ namespace Colin.Core.Modulars.UserInterfaces
         }
         private void Invoke(MouseEventArgs e, Action action)
         {
-            if (Div.IsVisible && Div.ContainsPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+            if (Div.IsVisible &&
+                Div.ContainsPoint(MouseResponder.State.Position) &&
+                Div.Interact.IsInteractive &&
+                DivLock )
             {
                 if (Div.Interact.IsBubbling)
                     e.Captured = true;
@@ -118,11 +127,10 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Div.Interact.Interaction = true;
             else
                 Div.Interact.Interaction = false;
-            if (DraggingState && Div.Interact.IsDraggable)
+            if (DraggingState && Div.Interact.IsDraggable )
             {
                 if (!Div.Interact.IsDraggable)
                     return;
-                DraggingState = true;
                 if (Div.Parent != null)
                 {
                     Point _resultLocation = MouseResponder.State.Position - Div.Parent.Layout.Location - _cachePos;
@@ -143,9 +151,15 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Dragging?.Invoke();
             }
             if (Div.Interface.Focus == Div && Div.Interface.LastFocus != Div)
+            {
+                DivLock = true;
                 GetFocus?.Invoke();
+            }
             if (Div.Interface.Focus != Div && Div.Interface.LastFocus == Div)
+            {
+                DivLock = false;
                 LoseFocus?.Invoke();
+            }
         }
     }
 }
