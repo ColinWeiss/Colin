@@ -12,7 +12,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public Container Container => _contianer;
 
-        public RenderTarget2D SceneRt { get; set; }
+        public RenderTarget2D ModuleRt { get; set; }
 
         public bool Enable { get; set; }
 

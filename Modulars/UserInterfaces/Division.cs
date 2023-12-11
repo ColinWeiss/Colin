@@ -258,7 +258,7 @@
                 if (ParentCanvas != null)
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(ParentCanvas.Canvas);
                 else
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Interface.SceneRt);
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Interface.ModuleRt);
                 if (Parent.IsCanvas)
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform);
                 else if (ParentCanvas != null)

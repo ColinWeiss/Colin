@@ -109,7 +109,7 @@ namespace Colin.Core.Common
                 renderMode = Modules.RenderableComponents.Values.ElementAt(count);
                 if (renderMode.Visible)
                 {
-                    frameRenderLayer = renderMode.SceneRt;
+                    frameRenderLayer = renderMode.ModuleRt;
                     EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
                     EngineInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
                     renderMode.DoRender(EngineInfo.SpriteBatch);
@@ -121,7 +121,7 @@ namespace Colin.Core.Common
                 renderMode = Modules.RenderableComponents.Values.ElementAt(count);
                 if (renderMode.FinalPresentation)
                 {
-                    frameRenderLayer = renderMode.SceneRt;
+                    frameRenderLayer = renderMode.ModuleRt;
                     if (SceneShaders.Effects.TryGetValue(renderMode, out Effect e))
                         EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
                     else
@@ -182,7 +182,7 @@ namespace Colin.Core.Common
                     Modules.Components.Values.ElementAt(count).Dispose();
                 for (int count = 0; count < Modules.RenderableComponents.Count; count++)
                 {
-                    Modules.RenderableComponents.Values.ElementAt(count).SceneRt.Dispose();
+                    Modules.RenderableComponents.Values.ElementAt(count).ModuleRt.Dispose();
                     Modules.RenderableComponents.Values.ElementAt(count).Dispose();
                 }
                 Modules.Clear();

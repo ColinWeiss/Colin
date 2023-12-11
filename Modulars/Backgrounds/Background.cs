@@ -24,7 +24,7 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public SceneCamera Camera => Scene.SceneCamera;
 
-        public RenderTarget2D SceneRt { get; set; }
+        public RenderTarget2D ModuleRt { get; set; }
 
         public BackgroundStyle CurrentStyle { get; private set; }
 
