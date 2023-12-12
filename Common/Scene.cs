@@ -130,11 +130,13 @@ namespace Colin.Core.Common
                     EngineInfo.SpriteBatch.End();
                 }
             }
-            SceneRender();
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
             EngineInfo.SpriteBatch.Begin();
             EngineInfo.SpriteBatch.Draw(SceneRenderTarget, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
             EngineInfo.SpriteBatch.End();
+
+            SceneRender();
+
             base.Draw(gameTime);
         }
         public virtual void RenderPreset() { }

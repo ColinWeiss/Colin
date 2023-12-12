@@ -1,4 +1,4 @@
-﻿using Colin.Core.Graphics.Shaders;
+﻿/*using Colin.Core.Graphics.Shaders;
 using Colin.Core.IO;
 using System;
 using System.Collections.Generic;
@@ -32,6 +32,7 @@ namespace Colin.Core.Assets
         }
         public void LoadResource()
         {
+
 #if DEBUG
             CompileShaders();
 #endif
@@ -60,4 +61,4 @@ namespace Colin.Core.Assets
                 return null;
         }
     }
-}
+}*/
