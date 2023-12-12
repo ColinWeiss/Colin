@@ -21,5 +21,10 @@
         /// </summary>
         public static string DataDir => Path.Combine(ProgramDir, "Data");
 
+        /// <summary>
+        /// 指示缓存文件夹路径.
+        /// </summary>
+        public static string CacheDir => Path.Combine(ProgramDir, "Cache");
+
     }
 }

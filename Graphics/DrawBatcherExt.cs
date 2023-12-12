@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Graphics
 {
-    public static class DrawBatcherExpa
+    public static class DrawBatcherExt
     {
         public static void DrawRect(this IDrawBatcher<Vert2> batcher, Texture2D texture, float oX, float oY, float dX, float dY, Color color)
         {

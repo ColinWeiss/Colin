@@ -29,12 +29,13 @@ namespace Colin.Core.Audios
         /// 播放指定音效.
         /// </summary>
         /// <param name="soundEffect">音效.</param>
-        public void Play(SoundEffect soundEffect, bool useInstance = true)
+        public void Play(SoundEffect soundEffect, bool useInstance = false)
         {
             if (EngineInfo.Config.SoundEffect)
             {
                 if (useInstance)
                 {
+                    //TODO: 找到使用 SoundEffectInstance 不爆炸的办法.
                     SoundEffectInstance _instance = soundEffect?.CreateInstance();
                     if (_instance != null)
                     {

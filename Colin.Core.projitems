@@ -50,6 +50,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Slider.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\ShaderAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
@@ -70,7 +71,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ComputeShader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ShaderCompiler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Polygon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\Particle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleInstanceBasic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />
@@ -98,7 +104,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\ColorGradienter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcherExpa.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcherExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\IDrawBatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\MinDrawBatcher2D.cs" />
