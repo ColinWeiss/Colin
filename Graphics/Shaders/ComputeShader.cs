@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using D3D = SharpDX.Direct3D11;
+﻿using SharpDX.Direct3D11;
+using System.Reflection;
 using XNA = Microsoft.Xna.Framework;
 
 namespace Colin.Core.Graphics.Shaders
@@ -7,42 +7,42 @@ namespace Colin.Core.Graphics.Shaders
     public class ComputeShader
     {
         public GraphicsDevice GraphicsDevice { get; init; }
-        D3D.Device _d3dDevice;
-        D3D.DeviceContext _d3dContext;
-        D3D.ComputeShader _d3dShader;
+        public Device D3dDevice;
+        public DeviceContext D3dDeviceContext;
+        public SharpDX.Direct3D11.ComputeShader D3dComputeShader;
         public ComputeShader(GraphicsDevice graphicsDevice, byte[] data)
         {
             GraphicsDevice = graphicsDevice;
-            _d3dDevice = GraphicsDevice.GetType().GetField("_d3dDevice", BindingFlags.Instance | BindingFlags.NonPublic)
+            D3dDevice = GraphicsDevice.GetType().GetField("_d3dDevice", BindingFlags.Instance | BindingFlags.NonPublic)
                 .GetValue(GraphicsDevice)
-                as D3D.Device;
-            _d3dContext = GraphicsDevice.GetType().GetField("_d3dContext", BindingFlags.Instance | BindingFlags.NonPublic)
+                as Device;
+            D3dDeviceContext = GraphicsDevice.GetType().GetField("_d3dContext", BindingFlags.Instance | BindingFlags.NonPublic)
                 .GetValue(GraphicsDevice)
-                as D3D.DeviceContext;
-            _d3dShader = new(_d3dDevice, data);
+                as DeviceContext;
+            D3dComputeShader = new(D3dDevice, data);
         }
         public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
         {
-            _d3dContext.ComputeShader.Set(_d3dShader);
-            _d3dContext.Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+            D3dDeviceContext.ComputeShader.Set(D3dComputeShader);
+            D3dDeviceContext.Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
         }
         public void SetTexture(int slot, Texture texture)
         {
-            _d3dContext.ComputeShader.SetShaderResource(slot, texture.GetType()
+            D3dDeviceContext.ComputeShader.SetShaderResource(slot, texture.GetType()
                 .GetMethod("GetShaderResourceView", BindingFlags.Instance | BindingFlags.NonPublic)
-                .Invoke(texture, null) as D3D.ShaderResourceView);
+                .Invoke(texture, null) as ShaderResourceView);
         }
         public void SetUnorderedTexture(int slot, UnorderedAccessTexture2D texture)
         {
-            D3D.Texture2DDescription texDesc = texture.GetTexture2DDescriptionInternal();
-            D3D.UnorderedAccessViewDescription uavDesc = default;
+            Texture2DDescription texDesc = texture.GetTexture2DDescriptionInternal();
+            UnorderedAccessViewDescription uavDesc = default;
             uavDesc.Format = texDesc.Format;
-            uavDesc.Dimension = D3D.UnorderedAccessViewDimension.Texture2D;
+            uavDesc.Dimension = UnorderedAccessViewDimension.Texture2D;
             uavDesc.Texture2D.MipSlice = 0;
-            D3D.UnorderedAccessView uav = new(_d3dDevice, typeof(Texture)
+            UnorderedAccessView uav = new(D3dDevice, typeof(Texture)
                 .GetMethod("GetTexture", BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(texture, null) as D3D.Resource, uavDesc);
-            _d3dContext.ComputeShader.SetUnorderedAccessView(slot, uav);
+                .Invoke(texture, null) as Resource, uavDesc);
+            D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, uav);
         }
     }
 }
