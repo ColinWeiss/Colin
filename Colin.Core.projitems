@@ -20,6 +20,7 @@
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansBook.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -66,7 +67,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleSort.hlsl">
+    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleDataSort.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="$(MSBuildThisFileDirectory)Developments\Preparator.cs" />

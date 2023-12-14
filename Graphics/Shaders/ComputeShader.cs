@@ -28,6 +28,11 @@ namespace Colin.Core.Graphics.Shaders
         }
         public void SetTexture(int slot, Texture texture)
         {
+            if (texture == null)
+            {
+                D3dDeviceContext.ComputeShader.SetShaderResource(slot, null);
+                return;
+            }
             D3dDeviceContext.ComputeShader.SetShaderResource(slot, texture.GetType()
                 .GetMethod("GetShaderResourceView", BindingFlags.Instance | BindingFlags.NonPublic)
                 .Invoke(texture, null) as ShaderResourceView);
