@@ -32,7 +32,6 @@ namespace Colin.Core.Assets
         }
         public void LoadResource()
         {
-
 #if DEBUG
             CompileShaders();
 #endif

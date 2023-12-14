@@ -64,6 +64,29 @@ namespace Colin.Core.Modulars.Particles
             Bindings[1] = new VertexBufferBinding(ParticleBuffer, 0, 1);
         }
 
+        /*
+         
+            在C#部分, 我将使用一个实例绘制，在该Rt上进行粒子信息的写入
+            其中，顶点着色器将接受
+            本帧传输的粒子颜色、位置、速度、缩放、缩放速度、旋转、旋转速度、生命周期和是否活跃。
+            以及，本帧传输的粒子数量。
+            Csharp会记录本次传输的粒子数量，把它加到一个int上。
+            在下次使用时，传输数据的起点将会以该int进行偏移。
+
+        public int WritePointer = 0;
+        public void NewParticle( 
+            Color[] colors, 
+            Vector2[] position, Vector2[] velocity, 
+            Vector2[] scale, Vector2[] scaleVel,
+            float[] rotation, float[] rotationVel,
+            float activeTime, int active )
+        {
+            // TODO: 这里创建实例信息数组后
+            // 绑定到 ParticleDatasBuffer.
+            // 然后执行实例绘制将数据写入粒子信息 Rt 上.
+        }
+         */
+
         /// <summary>
         /// 在这一步, 将会创建一张 <see cref="RenderTarget2D"/> 用于存储粒子数据.
         /// <br>SurfaceFormat 为 <see cref="SurfaceFormat.Vector4"/>.</br>
