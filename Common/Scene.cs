@@ -91,13 +91,19 @@ namespace Colin.Core.Common
         public virtual void UpdatePreset() { }
         public virtual void SceneUpdate() { }
 
-        internal bool SkipRender = true;
+        private bool _skipRender = true;
+        private bool _renderStarted = false;
         public override sealed void Draw(GameTime gameTime)
         {
-            if (SkipRender is true)
+            if (_skipRender is true)
             {
-                SkipRender = false;
+                _skipRender = false;
                 return;
+            }
+            else if(_renderStarted is false)
+            {
+                RenderStart();
+                _renderStarted = true;
             }
             RenderPreset();
             IRenderableISceneModule renderMode;
@@ -130,15 +136,14 @@ namespace Colin.Core.Common
                     EngineInfo.SpriteBatch.End();
                 }
             }
+            SceneRender();
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
             EngineInfo.SpriteBatch.Begin();
             EngineInfo.SpriteBatch.Draw(SceneRenderTarget, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
             EngineInfo.SpriteBatch.End();
-
-            SceneRender();
-
             base.Draw(gameTime);
         }
+        public virtual void RenderStart() { }
         public virtual void RenderPreset() { }
         public virtual void SceneRender() { }
 

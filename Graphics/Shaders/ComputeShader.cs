@@ -34,6 +34,11 @@ namespace Colin.Core.Graphics.Shaders
         }
         public void SetUnorderedTexture(int slot, UnorderedAccessTexture2D texture)
         {
+            if( texture == null )
+            {
+                D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, null);
+                return;
+            }
             Texture2DDescription texDesc = texture.GetTexture2DDescriptionInternal();
             UnorderedAccessViewDescription uavDesc = default;
             uavDesc.Format = texDesc.Format;
