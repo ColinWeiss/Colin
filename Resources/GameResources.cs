@@ -1,9 +1,8 @@
 ﻿using Colin.Core.Modulars.Tiles;
-using DeltaMachine.Core.GameContents.Sections.Items;
 
 namespace Colin.Core.Resources
 {
-    public class GameResources
+ /*   public class GameResources
     {
         public static T GetItem<T>() where T : Item
         {
@@ -13,5 +12,5 @@ namespace Colin.Core.Resources
         {
             return CodeResources<TileBehavior>.Get<T>();
         }
-    }
+    }*/
 }

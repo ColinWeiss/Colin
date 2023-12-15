@@ -51,6 +51,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Slider.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\ShaderAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleDataSort.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -89,7 +91,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Resources\GameResources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResources.cs" />
-    <Compile Include="..\Colin\Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EventExt.cs" />
@@ -198,7 +199,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\FontAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\UnsafeObject.cs" />
-    <Compile Include="..\Colin\Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\TextureAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Structures\QuadTree.cs" />

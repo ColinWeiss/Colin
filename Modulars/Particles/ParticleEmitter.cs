@@ -1,7 +1,4 @@
-﻿using Colin.Core.Graphics.Shaders;
-using DeltaMachine.Core.Common;
-
-namespace Colin.Core.Modulars.Particles
+﻿namespace Colin.Core.Modulars.Particles
 {
     /// <summary>
     /// 粒子发射器.
@@ -150,22 +147,6 @@ namespace Colin.Core.Modulars.Particles
         }
         public void DoRender(SceneCamera camera)
         {
-            Perfmon.Start();
-
-            Device.SamplerStates[0] = SamplerState.PointClamp;
-            Device.RasterizerState = RasterizerState.CullNone;
-            Device.Indices = TemplateIndexBuffer;
-            Device.SetVertexBuffers(Bindings);
-
-            Device.Textures[0] = Texture;
-
-            Effect.Parameters["Transform"].SetValue(camera.Transform);
-            Effect.Parameters["SpriteTexture"].SetValue(Texture);
-            Effect.CurrentTechnique.Passes["P0"].Apply();
-
-            Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, 10000);
-            Perfmon.End("实例绘制");
-
         }
     }
 }
