@@ -1,5 +1,4 @@
 ﻿#if OPENGL
-#define SV_POSITION POSITION
 #define VS_SHADERMODEL vs_3_0
 #define PS_SHADERMODEL ps_3_0
 #else
@@ -25,7 +24,7 @@ struct VertexShaderInput
 
 struct VertexShaderOutput
 {
-    float4 Position : SV_POSITION;
+    float4 Position : POSITION0;
     float2 Coord : TEXCOORD0;
     float4 Color : COLOR0;
     float2 WorldPosition : POSITION1;
@@ -65,7 +64,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
     {
         return float4(input.Scale.x, input.Scale.y, input.Rotation, input.ActiveTime);
     }
-    return input.Color;
+    return float4( 2003 , 7 , 14 , 5 );
 }
 
 technique BasicColorDrawing
