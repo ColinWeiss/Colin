@@ -27,6 +27,12 @@
 /processorParam:Defines=DX11
 /build:Effects/LeftRightLoopMapping.fx
 
+#begin Effects/Particles/ParticleDataStream.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/Particles/ParticleDataStream.fx
+
 #begin Textures/Pixel.png
 /importer:TextureImporter
 /processor:TextureProcessor

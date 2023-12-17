@@ -1,6 +1,4 @@
-﻿using Rectangle = Microsoft.Xna.Framework.Rectangle;
-
-namespace Colin.Core
+﻿namespace Colin.Core
 {
     /// <summary>
     /// 标识一个圆.

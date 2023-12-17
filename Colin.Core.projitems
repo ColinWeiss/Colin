@@ -17,6 +17,7 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Gaussian.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\LeftRightLoopMapping.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Macros.fxh" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -59,6 +60,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Perfmon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEventResponder.cs" />
@@ -66,6 +68,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleSort.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="$(MSBuildThisFileDirectory)Developments\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
@@ -76,7 +81,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Polygon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\Particle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleInstanceBasic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleEmitter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />
@@ -113,7 +119,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\VectorGradienter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Vert2.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\VertexRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ControllerResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MouseResponder.cs" />

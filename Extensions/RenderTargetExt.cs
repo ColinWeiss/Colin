@@ -15,7 +15,6 @@
             RenderTargetUsage.PreserveContents);
             return renderTarget;
         }
-
         public static RenderTarget2D CreateDefault(int width, int height)
         {
             RenderTarget2D renderTarget = new RenderTarget2D(
