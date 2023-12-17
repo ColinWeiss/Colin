@@ -1,4 +1,7 @@
-﻿namespace Colin.Core.Modulars.Particles
+﻿using SharpDX;
+using Matrix = Microsoft.Xna.Framework.Matrix;
+
+namespace Colin.Core.Modulars.Particles
 {
     /// <summary>
     /// 粒子发射器.
@@ -50,16 +53,9 @@
         /// </summary>
         public RenderTarget2D ParticleInfosBuffer;
 
-        public void DoInitialize(Texture2D texture)
-        {
-            Effect = EffectAssets.Get("Instancing");
-            Texture = texture;
-            CreateTemplate();
-            GenerateInstanceInformation(10000);
-            Bindings = new VertexBufferBinding[2];
-            Bindings[0] = new VertexBufferBinding(TemplateBuffer);
-            Bindings[1] = new VertexBufferBinding(ParticleBuffer, 0, 1);
-        }
+        public Texture2D Sampler;
+
+        public int WritePointer = 0;
 
         /*
          
@@ -78,9 +74,14 @@
             float[] rotation, float[] rotationVel,
             float activeTime, int active )
         {
-            // TODO: 这里创建实例信息数组后
-            // 绑定到 ParticleDatasBuffer.
-            // 然后执行实例绘制将数据写入粒子信息 Rt 上.
+            ParticleDataStream = EffectAssets.Get("Particles/ParticleDataStream");
+            //  ParticleDataStream.Parameters["ParticleCountMax"].SetValue(ParticleCountMax);
+            CreateParticleInfoBuffer();
+            DataPixelBindings = new VertexBufferBinding[2];
+            DataPixelBindings[0] = new VertexBufferBinding(TemplateDataPixelVertexBuffer);
+
+            Sampler = TextureExt.Create(1, 4);
+            Sampler.SetData(new Color[] { Color.White, Color.White, Color.White, Color.White });
         }
          */
 
@@ -129,18 +130,44 @@
             {
                 0, 1, 2, 3
             };
-            TemplateIndexBuffer = new IndexBuffer(Device, IndexElementSize.ThirtyTwoBits, 4, BufferUsage.WriteOnly);
-            TemplateIndexBuffer.SetData(indices);
+            TemplateDataPixelIndexBuffer = new IndexBuffer(Device, IndexElementSize.ThirtyTwoBits, 4, BufferUsage.WriteOnly);
+            TemplateDataPixelIndexBuffer.SetData(indices);
+
         }
 
-        public void GenerateInstanceInformation(int count)
+        public Queue<ParticleData[]> DataBuffer = new Queue<ParticleData[]>();
+
+        public void DoRender()
+        {
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(DataPixelRt);
+            EngineInfo.SpriteBatch.Begin();
+            while (DataBuffer.Count > 0)
+            {
+                Matrix mvp = Matrix.CreateOrthographicOffCenter(0, EngineInfo.ViewWidth, EngineInfo.ViewHeight , 0, 0, 100f);
+                ParticleData[] datas = DataBuffer.Dequeue();
+                DataPixelVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
+                DataPixelVertexBuffer.SetData(datas);
+                DataPixelBindings[1] = new VertexBufferBinding(DataPixelVertexBuffer, 0, 1);
+
+                Device.SamplerStates[0] = SamplerState.PointClamp;
+                Device.RasterizerState = RasterizerState.CullNone;
+                Device.Indices = TemplateDataPixelIndexBuffer;
+                Device.SetVertexBuffers(DataPixelBindings);
+                Device.Textures[0] = Sampler;
+                ParticleDataStream.Parameters["Transform"].SetValue(mvp);
+                ParticleDataStream.CurrentTechnique.Passes["P0"].Apply();
+                Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, datas.Length);
+            }
+            EngineInfo.SpriteBatch.End();
+        }
+
+        public void NewParticle(ParticleData[] datas)
         {
             ParticleInfos = new ParticleInfo[count];
             Random rnd = new Random();
             for (int i = 0; i < count; i++)
             {
-                ParticleInfos[i].Position.X = rnd.Next(0, 1280);
-                ParticleInfos[i].Position.Y = rnd.Next(0, 720);
+                  datas[count].ID = WritePointer + count - 1;
             }
             ParticleBuffer = new VertexBuffer(Device, ParticleInfo.VertexDeclaration, count, BufferUsage.WriteOnly);
             ParticleBuffer.SetData(ParticleInfos);
