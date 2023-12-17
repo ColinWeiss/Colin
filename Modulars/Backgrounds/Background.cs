@@ -106,6 +106,7 @@ namespace Colin.Core.Modulars.Backgrounds
 
             EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
+            EngineInfo.Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             LeftRightLoopEffect.Parameters["MappingTexture"].SetValue(layer.Sprite.Source);
             LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / Camera.Zoom);
             LeftRightLoopEffect.Parameters["Offset"].SetValue(offset);

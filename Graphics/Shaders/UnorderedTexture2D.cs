@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using SharpDX.Direct3D11;
-using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +11,15 @@ namespace Colin.Core.Graphics.Shaders
 {
     public class UnorderedAccessTexture2D : RenderTarget2D
     {
-        public UnorderedAccessTexture2D(GraphicsDevice graphicsDevice, int width, int height)
-            : base(graphicsDevice, width, height) { }
-
+        private UnorderedAccessView _uav = null;
+        public UnorderedAccessTexture2D(int width, int height) :
+            base(EngineInfo.Graphics.GraphicsDevice, width, height)
+        {
+        }
+        public UnorderedAccessTexture2D(int width, int height, bool mipmap, SurfaceFormat format) :
+            base(EngineInfo.Graphics.GraphicsDevice, width, height, mipmap, format, default)
+        {
+        }
         public UnorderedAccessTexture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipMap, SurfaceFormat preferredFormat, DepthFormat preferredDepthFormat, int preferredMultiSampleCount, RenderTargetUsage usage, bool shared)
              : base(graphicsDevice, width, height, mipMap, preferredFormat, preferredDepthFormat, preferredMultiSampleCount, usage, shared, 1) { }
 
@@ -27,6 +32,22 @@ namespace Colin.Core.Graphics.Shaders
         public UnorderedAccessTexture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipMap, SurfaceFormat preferredFormat, DepthFormat preferredDepthFormat, int preferredMultiSampleCount, RenderTargetUsage usage, bool shared, int arraySize)
             : base(graphicsDevice, width, height, mipMap, preferredFormat, preferredDepthFormat, preferredMultiSampleCount, usage, shared, arraySize) { }
 
+        public UnorderedAccessView GetUAV(Device D3dDevice)
+        {
+            if (_uav is null)
+            {
+                Texture2DDescription texDesc = this.GetTexture2DDescriptionInternal();
+                UnorderedAccessViewDescription uavDesc = default;
+                uavDesc.Format = texDesc.Format;
+                uavDesc.Dimension = UnorderedAccessViewDimension.Texture2D;
+                uavDesc.Texture2D.MipSlice = 0;
+                UnorderedAccessView uav = new(D3dDevice, typeof(Texture)
+                    .GetMethod("GetTexture", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(this, null) as Resource, uavDesc);
+                _uav = uav;
+            }
+            return _uav;
+        }
         internal Texture2DDescription GetTexture2DDescriptionInternal()
         {
             return GetTexture2DDescription();
