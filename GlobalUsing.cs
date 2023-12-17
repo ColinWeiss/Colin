@@ -13,6 +13,7 @@ global using System.Linq;
 global using Keys = Microsoft.Xna.Framework.Input.Keys;
 global using Point = Microsoft.Xna.Framework.Point;
 global using Vector2 = Microsoft.Xna.Framework.Vector2;
+global using Vector3 = Microsoft.Xna.Framework.Vector3;
 global using RectangleF = Colin.Core.RectangleF;
 global using Rectangle = Microsoft.Xna.Framework.Rectangle;
 global using Color = Microsoft.Xna.Framework.Color;
