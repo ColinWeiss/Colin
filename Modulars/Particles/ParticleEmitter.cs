@@ -107,7 +107,7 @@ namespace Colin.Core.Modulars.Particles
             while (DataBuffer.Count > 0)
             {
                 ParticleData[] datas = DataBuffer.Dequeue();
-                DataPixelVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length , BufferUsage.WriteOnly );
+                DataPixelVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
                 DataPixelBindings[1] = new VertexBufferBinding(DataPixelVertexBuffer, 0, 1);
 
                 Device.SamplerStates[0] = SamplerState.PointClamp;
