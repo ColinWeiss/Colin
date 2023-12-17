@@ -1,8 +1,8 @@
 #ifdef DX11
 #define TECHNIQUE(name, psname ) \
-	technique name { pass { PixelShader = compile ps_4_0 psname(); } }
+	technique name { pass { PixelShader = compile ps_5_0 psname(); } }
 #define PASS(psname ) \
-	pass { PixelShader = compile ps_4_0 psname(); }
+	pass { PixelShader = compile ps_5_0 psname(); }
 #define DECLARE_TEXTURE(Name, index) \
     Texture2D<float4> Name : register(t##index); \
     sampler Name##Sampler : register(s##index)

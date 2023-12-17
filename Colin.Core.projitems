@@ -18,6 +18,7 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\LeftRightLoopMapping.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Macros.fxh" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleInstancing.fx" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +35,10 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\Unifont.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleUpdate.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Shaders\关于粒子行为.txt" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Panel0.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Slider.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Button.png" />
@@ -71,9 +76,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleDataSort.hlsl">
+    <Content Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleDataSort.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Compile Include="$(MSBuildThisFileDirectory)Developments\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />

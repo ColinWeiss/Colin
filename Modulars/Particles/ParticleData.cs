@@ -12,7 +12,7 @@ namespace Colin.Core.Modulars.Particles
         public Vector2 Scale;
         public float Rotation;
         public float ActiveTime;
-        public float ID;
+        internal float ID;
 
         public static readonly VertexDeclaration VertexDeclaration;
         static ParticleData()
