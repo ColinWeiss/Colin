@@ -37,7 +37,7 @@
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/processorParam:Defines=
+/processorParam:Defines=DX11
 /build:Effects/Particles/ParticleInstancing.fx
 
 #begin Textures/Pixel.png
