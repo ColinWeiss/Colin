@@ -11,6 +11,7 @@ namespace Colin.Core.Graphics.Shaders
 {
     public class UnorderedAccessTexture2D : Texture2D
     {
+        private UnorderedAccessView _uav = null;
         public UnorderedAccessTexture2D(int width, int height) :
             base(EngineInfo.Graphics.GraphicsDevice, width, height)
         {
@@ -26,6 +27,22 @@ namespace Colin.Core.Graphics.Shaders
         protected UnorderedAccessTexture2D(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared, int arraySize) :
             base(EngineInfo.Graphics.GraphicsDevice, width, height, mipmap, format, type, shared, arraySize)
         {
+        }
+        public UnorderedAccessView GetUAV(Device D3dDevice)
+        {
+            if (_uav is null)
+            {
+                Texture2DDescription texDesc = this.GetTexture2DDescriptionInternal();
+                UnorderedAccessViewDescription uavDesc = default;
+                uavDesc.Format = texDesc.Format;
+                uavDesc.Dimension = UnorderedAccessViewDimension.Texture2D;
+                uavDesc.Texture2D.MipSlice = 0;
+                UnorderedAccessView uav = new(D3dDevice, typeof(Texture)
+                    .GetMethod("GetTexture", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(this, null) as Resource, uavDesc);
+                _uav = uav;
+            }
+            return _uav;
         }
         internal Texture2DDescription GetTexture2DDescriptionInternal()
         {
