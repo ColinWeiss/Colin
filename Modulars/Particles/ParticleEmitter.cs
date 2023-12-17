@@ -53,7 +53,7 @@ namespace Colin.Core.Modulars.Particles
             DataPixelBindings = new VertexBufferBinding[2];
             DataPixelBindings[0] = new VertexBufferBinding(TemplateDataPixelVertexBuffer);
         }
-         */
+         
 
         /// <summary>
         /// 在这一步, 将会创建一张 <see cref="RenderTarget2D"/> 用于存储粒子数据.
@@ -106,6 +106,7 @@ namespace Colin.Core.Modulars.Particles
         {
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget( DataPixelRt );
             EngineInfo.SpriteBatch.Begin();
+            Matrix matrix = Matrix.CreateOrthographicOffCenter( EngineInfo.ViewRectangle , 0 , 100 );
             while (DataBuffer.Count > 0)
             {
                 ParticleData[] datas = DataBuffer.Dequeue();
@@ -117,6 +118,7 @@ namespace Colin.Core.Modulars.Particles
                 Device.Indices = TemplateDataPixelIndexBuffer;
                 Device.SetVertexBuffers(DataPixelBindings);
                 DataPixelVertexBuffer.SetData(datas);
+                ParticleDataStream.Parameters["Transform"].SetValue(matrix);
                 ParticleDataStream.CurrentTechnique.Passes["P0"].Apply();
                 Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, datas.Length );
             }
@@ -125,10 +127,16 @@ namespace Colin.Core.Modulars.Particles
 
         public void NewParticle( ParticleData[] datas )
         {
-            WritePointer += datas.Length;
+            if (WritePointer + datas.Length < ParticleCountMax)
+                WritePointer += datas.Length;
+            else
+            {
+                WritePointer = 0;
+                WritePointer += datas.Length;
+            }
             for (int count = 0; count < datas.Length; count++)
             {
-                datas[count].ID = (WritePointer + count - 1) / ParticleCountMax;
+                datas[count].ID = WritePointer + count - 1;
             }
             DataBuffer.Enqueue(datas);
         }
