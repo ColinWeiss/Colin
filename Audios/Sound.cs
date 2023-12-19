@@ -37,13 +37,13 @@ namespace Colin.Core.Audios
                 {
                     //TODO: 找到使用 SoundEffectInstance 不爆炸的办法.
                     SoundEffectInstance _instance = soundEffect?.CreateInstance();
-                    if (_instance != null)
+                    if (_instance != null && !soundEffect.IsDisposed && !_instance.IsDisposed )
                     {
                         _instance.Volume = EngineInfo.Config.SoundEffectVolume;
                         _instance.Play();
                     }
                 }
-                else
+                else if(!soundEffect.IsDisposed)
                     soundEffect?.Play();
             }
         }
@@ -63,7 +63,6 @@ namespace Colin.Core.Audios
 
         public void Dispose()
         {
-            Scene = null;
         }
     }
 }
