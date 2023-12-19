@@ -160,22 +160,27 @@ namespace Colin.Core.Modulars.Particles
         }
         public Matrix Transform;
 
-        public void DoRender( SceneCamera camera )
+        public void DoRender(SceneCamera camera)
         {
+            Perfmon.Start();
             DataWriteStep(camera.Scene);
             DoCompute();
             DoParticleRender(camera);
+            Perfmon.End( "GpuParticle" );
         }
         /// <summary>
         /// 在这一步, 发射器将读取 <see cref="DataBufferQueue"/> 的数据, 并将其全部写入 <see cref="DataRt"/>.
         /// </summary>
-        public void DataWriteStep( Scene scene )
+        public void DataWriteStep(Scene scene)
         {
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(DataRt);
             Transform = Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
             while (DataBufferQueue.Count > 0)
             {
                 ParticleData[] datas = DataBufferQueue.Dequeue();
+                EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate , BlendState.Opaque );
+                EngineInfo.SpriteBatch.DrawRectangle(datas[0].ID , 0 , datas.Length , 4 , Color.Transparent );
+                EngineInfo.SpriteBatch.End();
                 DataVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
                 DataVertexBuffer.SetData(datas);
                 DataBindings[1] = new VertexBufferBinding(DataVertexBuffer, 0, 1);
@@ -198,7 +203,7 @@ namespace Colin.Core.Modulars.Particles
         {
             ParticleUpdateCompute.SetTexture(0, DataRt);
             ParticleUpdateCompute.SetUnorderedTexture(0, DataResultRt);
-            ParticleUpdateCompute.Dispatch(128, 128, 1);
+            ParticleUpdateCompute.Dispatch(2048, 1, 1);
 
             ParticleUpdateCompute.SetTexture(0, null);
             ParticleUpdateCompute.SetUnorderedTexture(0, null);
@@ -208,37 +213,34 @@ namespace Colin.Core.Modulars.Particles
         /// </summary>
         public void DoParticleRender(SceneCamera camera)
         {
-          //  Transform = Matrix.Identity;//Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
-            Device.SamplerStates[0] = SamplerState.LinearWrap;
+            Device.SamplerStates[0] = SamplerState.PointClamp;
             Device.RasterizerState = RasterizerState.CullNone;
             Device.BlendState = BlendState.AlphaBlend;
             Device.Indices = TemplateParticleIndexBuffer;
             Device.SetVertexBuffers(ParticleBindings);
 
-            ParticleInstancing.CurrentTechnique.Passes["P0"].Apply();
+            ParticleInstancing.Parameters["ParticleCountMax"].SetValue(ParticleCountMax);
             ParticleInstancing.Parameters["Transform"].SetValue(camera.Transform);
-
-            //   ParticleInstancing.Parameters["DataTransform"].SetValue(Transform);
+            ParticleInstancing.CurrentTechnique.Passes["P0"].Apply();
             Device.Textures[0] = Sprite.Get("Items/Materials/RollingStone").Source;
-            Device.Textures[1] = Sprite.Get( "Pixel" ).Source;
+            Device.Textures[1] = DataResultRt;
+            Device.VertexTextures[1] = DataResultRt;
+
             Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, ParticleCountMax);
 
-            (DataRt, DataResultRt) = (DataResultRt,DataRt);
+            (DataRt, DataResultRt) = (DataResultRt, DataRt);
         }
-        public void NewParticle( ParticleData[] datas )
+        public void NewParticle(ParticleData[] datas)
         {
-            for (int count = 0; count < datas.Length; count++)
-            {
-                datas[count].ID = WritePointer + count - 1;
-            }
-            if (WritePointer + datas.Length < ParticleCountMax)
-                WritePointer += datas.Length;
-            else
+            if (WritePointer + datas.Length > ParticleCountMax)
             {
                 WritePointer = 0;
-                WritePointer += datas.Length;
             }
-
+            for (int count = 0; count < datas.Length; count++)
+            {
+                datas[count].ID = WritePointer + count;
+            }
+            WritePointer += datas.Length;
             DataBufferQueue.Enqueue(datas);
         }
     }

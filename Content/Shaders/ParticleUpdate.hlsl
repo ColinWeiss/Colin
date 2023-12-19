@@ -1,7 +1,7 @@
 ﻿Texture2D inTex : register(t0);
 RWTexture2D<float4> outTex : register(u0);
 
-[numthreads(16, 3, 1)]
+[numthreads(32, 3, 1)]
 void Main(uint3 DTid : SV_DispatchThreadID)
 {
     float2 pos = inTex[int2(DTid.x, 1)].rg;

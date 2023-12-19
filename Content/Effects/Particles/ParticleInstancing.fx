@@ -2,10 +2,10 @@
 sampler SpriteTextureSampler : register(s0);
 
 Texture2D<float4> Data : register(t1);
-sampler2D DataSampler : register(s1);
+sampler DataSampler : register(s1);
 
 float4x4 Transform;
-float4x4 DataTransform;
+float ParticleCountMax;
 
 struct VertexShaderInput
 {
@@ -25,8 +25,9 @@ struct VertexShaderOutput
 VertexShaderOutput MainVS(in VertexShaderInput input)
 {
     VertexShaderOutput output;
-    half4 pos = tex2Dlod(DataSampler, float4(0.5, 0.5, 0.0 ,0.0));
-    output.Position = mul(float4(input.Position + float3(input.ID * 28, pos.y, 0), 1), Transform);
+    float2 samplePos = float2(input.ID / ParticleCountMax, 0.5);
+    float4 pos = Data.SampleLevel(DataSampler, samplePos, 0);
+    output.Position = mul(float4(input.Position + float3(pos.rg , 0), 1), Transform);
     output.TexCoord = input.TexCoord;
     output.ID = input.ID;
     output.Color = pos;
@@ -35,7 +36,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    return float4(input.Color.r, input.Color.g, input.Color.b , 1);
+    return SpriteTexture.Sample(SpriteTextureSampler, input.TexCoord);
 }
 
 technique BasicColorDrawing

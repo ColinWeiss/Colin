@@ -24,13 +24,14 @@
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/processorParam:Defines=
+/processorParam:Defines=DX11
 /build:Effects/LeftRightLoopMapping.fx
 
 #begin Effects/Particles/ParticleDataStream.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
+/processorParam:Defines=DX11
 /build:Effects/Particles/ParticleDataStream.fx
 
 #begin Effects/Particles/ParticleInstancing.fx

@@ -105,16 +105,12 @@ namespace Colin.Core.Modulars.Backgrounds
             offset.Y += CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
 
             EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
-
-            EngineInfo.Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
-            LeftRightLoopEffect.Parameters["MappingTexture"].SetValue(layer.Sprite.Source);
+            EngineInfo.Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
             LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / Camera.Zoom);
             LeftRightLoopEffect.Parameters["Offset"].SetValue(offset);
             LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
-
-            //        DrawHelper.DrawRectSimply( EngineInfo.Graphics.GraphicsDevice, 0, 0, SceneRt.Width, SceneRt.Height
-            //  , _screenMap, Color.White );
-
+            EngineInfo.Graphics.GraphicsDevice.Textures[0] = _screenMap;
+            EngineInfo.Graphics.GraphicsDevice.Textures[1] = layer.Sprite.Source;
             EngineInfo.SpriteBatch.Draw(_screenMap, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
             EngineInfo.SpriteBatch.End();
         }
