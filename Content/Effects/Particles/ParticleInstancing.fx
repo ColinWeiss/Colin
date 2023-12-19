@@ -1,55 +1,48 @@
-﻿#if OPENGL
-	#define SV_POSITION POSITION
-	#define VS_SHADERMODEL vs_3_0
-	#define PS_SHADERMODEL ps_3_0
-#else
-	#define VS_SHADERMODEL vs_4_0
-	#define PS_SHADERMODEL ps_4_0
-#endif
+﻿Texture2D<float4> SpriteTexture : register(t0);
+sampler SpriteTextureSampler : register(s0);
 
-#include "../Macros.fxh"
-
-DECLARE_TEXTURE(Tex, 0);
-DECLARE_TEXTURE(Data, 1);
+Texture2D<float4> Data : register(t1);
+sampler2D DataSampler : register(s1);
 
 float4x4 Transform;
 float4x4 DataTransform;
 
 struct VertexShaderInput
 {
-    float4 Position : POSITION0;
-    float4 Color : COLOR0;
+    float3 Position : POSITION0;
     float2 TexCoord : TEXCOORD0;
-    float ID : POSITION1;
+    float ID : TEXCOORD1;
 };
 
 struct VertexShaderOutput
 {
     float4 Position : SV_POSITION;
-    float4 Color : COLOR0;
     float2 TexCoord : TEXCOORD0;
+    float ID : TEXCOORD1;
+    float4 Color : COLOR0;
 };
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
 {
     VertexShaderOutput output;
-    float4 pos = tex2Dlod(DataSampler, float4(mul(float4(input.ID, 0.25, 0, 0), DataTransform).xyz, 0));
-    output.Position = mul(input.Position + pos, Transform);
-    output.Color = input.Color;
+    half4 pos = tex2Dlod(DataSampler, float4(0.5, 0.5, 0.0 ,0.0));
+    output.Position = mul(float4(input.Position + float3(input.ID * 28, pos.y, 0), 1), Transform);
     output.TexCoord = input.TexCoord;
+    output.ID = input.ID;
+    output.Color = pos;
     return output;
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    return input.Color;
+    return float4(input.Color.r, input.Color.g, input.Color.b , 1);
 }
 
 technique BasicColorDrawing
 {
     pass P0
     {
-        VertexShader = compile VS_SHADERMODEL MainVS();
-        PixelShader = compile PS_SHADERMODEL MainPS();
+        VertexShader = compile vs_5_0 MainVS();
+        PixelShader = compile ps_5_0 MainPS();
     }
 };

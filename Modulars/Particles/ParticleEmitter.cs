@@ -1,5 +1,6 @@
 ﻿using Colin.Core.Graphics.Shaders;
 using SharpDX;
+using System.Data;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 
 namespace Colin.Core.Modulars.Particles
@@ -42,6 +43,12 @@ namespace Colin.Core.Modulars.Particles
         /// </summary>
         public Queue<ParticleData[]> DataBufferQueue = new Queue<ParticleData[]>();
 
+        public VertexBuffer TemplateParticleVertexBuffer;
+        public IndexBuffer TemplateParticleIndexBuffer;
+        public VertexBuffer ParticleVertexBuffer;
+        public VertexBufferBinding[] ParticleBindings;
+        public Effect ParticleInstancing;
+        public ParticleID[] ID;
         /// <summary>
         /// 用于存储粒子信息的渲染目标.
         /// <br>交由 ComputeShader 完成行为计算.</br>
@@ -63,20 +70,17 @@ namespace Colin.Core.Modulars.Particles
         /// </summary>
         public ComputeShader ParticleUpdateCompute;
 
-        public Effect ParticleInstancing;
-
         /// <summary>
         /// 初始化步骤.
         /// <br>在这一步, 将会创建一张 <see cref="RenderTarget2D"/> 用于存储粒子数据.</br>
         /// <br>SurfaceFormat 为 <see cref="SurfaceFormat.Vector4"/>.</br>
         /// <br>渲染目标的宽度为支持的粒子上限大小.</br>
-        /// <br>渲染目标的高度为 4.</br>
+        /// <br>渲染目标的高度为 3.</br>
         /// <para>
         /// 此处为渲染目标的行和列对应的存储数据:
-        /// <br>[1] 第一行存储粒子颜色.</br>
-        /// <br>[2] R, G 存储粒子位置, B, A 存储粒子速度.</br>
-        /// <br>[3] R, G 存储粒子缩放, B, A 存储粒子缩放速度.</br>
-        /// <br>[4] R 存储粒子旋转, G 存储粒子旋转速度, B 存储粒子生命周期, A 表示粒子是否活跃.</br>
+        /// <br>[0] 第一行存储粒子颜色.</br>
+        /// <br>[1] R, G 存储粒子位置, B, A 存储粒子速度.</br>
+        /// <br>[2] R, G 存储粒子缩放, B 存储粒子旋转角度, A 表示粒子是否活跃.</br>
         /// </para>
         /// </summary>
         public void DoInitialize()
@@ -84,16 +88,15 @@ namespace Colin.Core.Modulars.Particles
             ParticleDataStream = EffectAssets.Get("Particles/ParticleDataStream");
             ParticleUpdateCompute = ShaderAssets.Get("ParticleUpdate");
             ParticleInstancing = EffectAssets.Get("Particles/ParticleInstancing");
-            CreateParticleInfoBuffer();
-            DataBindings = new VertexBufferBinding[2];
-            DataBindings[0] = new VertexBufferBinding(TemplateDataVertexBuffer);
+            CreateDatasBuffer();
+            CreateParticlesBuffer();
         }
-        private void CreateParticleInfoBuffer()
+        private void CreateDatasBuffer()
         {
             DataRt = new UnorderedAccessTexture2D(
             EngineInfo.Graphics.GraphicsDevice,
             ParticleCountMax,
-            4,
+            3,
             false,
             SurfaceFormat.Vector4,
             DepthFormat.None,
@@ -103,23 +106,19 @@ namespace Colin.Core.Modulars.Particles
             DataResultRt = new UnorderedAccessTexture2D(
             EngineInfo.Graphics.GraphicsDevice,
             ParticleCountMax,
-            4,
+            3,
             false,
             SurfaceFormat.Vector4,
             DepthFormat.None,
             0,
             RenderTargetUsage.PreserveContents);
 
-            VertexPositionTexture[] vertices = new VertexPositionTexture[4];
+            VertexPosition[] vertices = new VertexPosition[4];
             vertices[0].Position = new Vector3(0, 0, 0);
-            vertices[0].TextureCoordinate = new Vector2(0, 0);
             vertices[1].Position = new Vector3(0, 4, 0);
-            vertices[1].TextureCoordinate = new Vector2(0, 1);
             vertices[2].Position = new Vector3(1, 0, 0);
-            vertices[2].TextureCoordinate = new Vector2(1, 0);
             vertices[3].Position = new Vector3(1, 4, 0);
-            vertices[3].TextureCoordinate = new Vector2(1, 1);
-            TemplateDataVertexBuffer = new VertexBuffer(Device, VertexPositionTexture.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            TemplateDataVertexBuffer = new VertexBuffer(Device, VertexPosition.VertexDeclaration, 4, BufferUsage.WriteOnly);
             TemplateDataVertexBuffer.SetData(vertices);
             int[] indices = new int[4]
             {
@@ -127,35 +126,69 @@ namespace Colin.Core.Modulars.Particles
             };
             TemplateDataIndexBuffer = new IndexBuffer(Device, IndexElementSize.ThirtyTwoBits, 4, BufferUsage.WriteOnly);
             TemplateDataIndexBuffer.SetData(indices);
+            DataBindings = new VertexBufferBinding[2];
+            DataBindings[0] = new VertexBufferBinding(TemplateDataVertexBuffer);
         }
-
-        public void DoRender()
+        private void CreateParticlesBuffer()
         {
-            DataWriteStep();
-            DoCompute();
+            VertexPositionTexture[] vertices = new VertexPositionTexture[4];
+            vertices[0].Position = new Vector3(0, 0, 0);
+            vertices[0].TextureCoordinate = new Vector2(0, 0);
+            vertices[1].Position = new Vector3(0, 28, 0);
+            vertices[1].TextureCoordinate = new Vector2(0, 1);
+            vertices[2].Position = new Vector3(28, 0, 0);
+            vertices[2].TextureCoordinate = new Vector2(1, 0);
+            vertices[3].Position = new Vector3(28, 28, 0);
+            vertices[3].TextureCoordinate = new Vector2(1, 1);
+            TemplateParticleVertexBuffer = new VertexBuffer(Device, VertexPositionTexture.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            TemplateParticleVertexBuffer.SetData(vertices);
+            int[] indices = new int[4]
+            {
+                0, 1, 2, 3
+            };
+            TemplateParticleIndexBuffer = new IndexBuffer(Device, IndexElementSize.ThirtyTwoBits, 4, BufferUsage.WriteOnly);
+            TemplateParticleIndexBuffer.SetData(indices);
+            ParticleBindings = new VertexBufferBinding[2];
+            ParticleBindings[0] = new VertexBufferBinding(TemplateParticleVertexBuffer);
 
+            ParticleVertexBuffer = new VertexBuffer(Device, ParticleID.VertexDeclaration, ParticleCountMax, BufferUsage.WriteOnly);
+            ID = new ParticleID[ParticleCountMax];
+            for (int count = 0; count < ParticleCountMax; count++)
+                ID[count].ID = count;
+            ParticleVertexBuffer.SetData(ID);
+            ParticleBindings[1] = new VertexBufferBinding(ParticleVertexBuffer, 0, 1);
+        }
+        public Matrix Transform;
+
+        public void DoRender( SceneCamera camera )
+        {
+            DataWriteStep(camera.Scene);
+            DoCompute();
+            DoParticleRender(camera);
         }
         /// <summary>
         /// 在这一步, 发射器将读取 <see cref="DataBufferQueue"/> 的数据, 并将其全部写入 <see cref="DataRt"/>.
         /// </summary>
-        public void DataWriteStep()
+        public void DataWriteStep( Scene scene )
         {
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(DataRt);
-            Matrix matrix = Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
+            Transform = Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
             while (DataBufferQueue.Count > 0)
             {
                 ParticleData[] datas = DataBufferQueue.Dequeue();
                 DataVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
+                DataVertexBuffer.SetData(datas);
                 DataBindings[1] = new VertexBufferBinding(DataVertexBuffer, 0, 1);
                 Device.SamplerStates[0] = SamplerState.PointClamp;
                 Device.RasterizerState = RasterizerState.CullNone;
+                Device.BlendState = BlendState.Opaque;
                 Device.Indices = TemplateDataIndexBuffer;
                 Device.SetVertexBuffers(DataBindings);
-                DataVertexBuffer.SetData(datas);
-                ParticleDataStream.Parameters["Transform"].SetValue(matrix);
+                ParticleDataStream.Parameters["Transform"].SetValue(Transform);
                 ParticleDataStream.CurrentTechnique.Passes["P0"].Apply();
                 Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, datas.Length);
             }
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(scene.SceneRenderTarget);
         }
         /// <summary>
         /// 使用 <see cref="ComputeShader"/> 对粒子执行行为和数据的更新.
@@ -166,16 +199,38 @@ namespace Colin.Core.Modulars.Particles
             ParticleUpdateCompute.SetTexture(0, DataRt);
             ParticleUpdateCompute.SetUnorderedTexture(0, DataResultRt);
             ParticleUpdateCompute.Dispatch(128, 128, 1);
+
+            ParticleUpdateCompute.SetTexture(0, null);
+            ParticleUpdateCompute.SetUnorderedTexture(0, null);
         }
         /// <summary>
         /// 使用 ParticleInstancing 对粒子进行实例绘制.
         /// </summary>
-        public void DoParticleRender()
+        public void DoParticleRender(SceneCamera camera)
         {
+          //  Transform = Matrix.Identity;//Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
+            Device.SamplerStates[0] = SamplerState.LinearWrap;
+            Device.RasterizerState = RasterizerState.CullNone;
+            Device.BlendState = BlendState.AlphaBlend;
+            Device.Indices = TemplateParticleIndexBuffer;
+            Device.SetVertexBuffers(ParticleBindings);
 
+            ParticleInstancing.CurrentTechnique.Passes["P0"].Apply();
+            ParticleInstancing.Parameters["Transform"].SetValue(camera.Transform);
+
+            //   ParticleInstancing.Parameters["DataTransform"].SetValue(Transform);
+            Device.Textures[0] = Sprite.Get("Items/Materials/RollingStone").Source;
+            Device.Textures[1] = Sprite.Get( "Pixel" ).Source;
+            Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, ParticleCountMax);
+
+            (DataRt, DataResultRt) = (DataResultRt,DataRt);
         }
         public void NewParticle( ParticleData[] datas )
         {
+            for (int count = 0; count < datas.Length; count++)
+            {
+                datas[count].ID = WritePointer + count - 1;
+            }
             if (WritePointer + datas.Length < ParticleCountMax)
                 WritePointer += datas.Length;
             else
@@ -183,10 +238,7 @@ namespace Colin.Core.Modulars.Particles
                 WritePointer = 0;
                 WritePointer += datas.Length;
             }
-            for (int count = 0; count < datas.Length; count++)
-            {
-                datas[count].ID = WritePointer + count - 1;
-            }
+
             DataBufferQueue.Enqueue(datas);
         }
     }

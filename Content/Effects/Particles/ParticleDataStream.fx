@@ -2,9 +2,11 @@
 #define VS_SHADERMODEL vs_3_0
 #define PS_SHADERMODEL ps_3_0
 #else
-#define VS_SHADERMODEL vs_4_0_level_9_1
-#define PS_SHADERMODEL ps_4_0_level_9_1
+#define VS_SHADERMODEL vs_4_0
+#define PS_SHADERMODEL ps_4_0
 #endif
+
+#include "../ColinMacros.fxh"
 
 float4x4 Transform;
 int ParticleCountMax;
@@ -12,7 +14,6 @@ int ParticleCountMax;
 struct VertexShaderInput
 {
     float3 Position : POSITION0; // 四个模板顶点的位置.
-    float2 Coord : TEXCOORD0;
     float4 Color : COLOR0;
     float2 WorldPosition : POSITION1;
     float2 Velocity : TEXCOORD1;
@@ -24,8 +25,7 @@ struct VertexShaderInput
 
 struct VertexShaderOutput
 {
-    float4 Position : POSITION0;
-    float2 Coord : TEXCOORD0;
+    float4 Position : SV_Position;
     float4 Color : COLOR0;
     float2 WorldPosition : POSITION1;
     float2 Velocity : TEXCOORD1;
@@ -39,7 +39,6 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 {
     VertexShaderOutput output;
     output.Position = mul(float4(input.Position + float3(input.ID, 0, 0), 1), Transform);
-    output.Coord = input.Coord;
     output.Color = input.Color;
     output.WorldPosition = input.WorldPosition;
     output.Velocity = input.Velocity;
@@ -52,19 +51,14 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    if (input.Coord.y < 0.34)
-    {
+    if (input.Position.y <= 1)
         return input.Color;
-    }
-    else if (input.Coord.y < 0.66)
-    {
+    else if (input.Position.y <= 2)
         return float4(input.WorldPosition.x, input.WorldPosition.y, input.Velocity.x, input.Velocity.y);
-    }
-    else if (input.Coord.y < 1)
-    {
+    else if (input.Position.y <= 3)
         return float4(input.Scale.x, input.Scale.y, input.Rotation, input.ActiveTime);
-    }
-    return float4( 2003 , 7 , 14 , 5 );
+    else
+        return float4( 0 , 0 , 0 , 0 );
 }
 
 technique BasicColorDrawing
