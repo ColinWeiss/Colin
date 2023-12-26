@@ -8,6 +8,6 @@
         internal Division _division;
         public Division Division => _division;
         public abstract void RendererInit();
-        public abstract void DoRender(SpriteBatch batch);
+        public abstract void DoRender( GraphicsDevice device, SpriteBatch batch);
     }
 }

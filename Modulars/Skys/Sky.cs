@@ -6,10 +6,10 @@
 
         public bool Enable { get; set; }
 
-        public RenderTarget2D ModuleRt { get; set; }
+        public RenderTarget2D RawRt { get; set; }
 
-        public bool Visible { get; set; }
-        public bool FinalPresentation { get; set; }
+        public bool RawRtVisible { get; set; }
+        public bool Presentation { get; set; }
 
         public SpriteSortMode SpriteSortMode { get; }
 
@@ -32,10 +32,11 @@
             CurrentSkyStyle?.DoUpdate(time);
         }
 
-        public void DoRender(SpriteBatch batch)
+        public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
         {
             CurrentSkyStyle?.DoRender();
         }
+        public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
         public void ChangeSkyStyle(SkyStyle skyStyle)
         {

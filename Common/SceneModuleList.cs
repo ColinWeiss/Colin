@@ -43,6 +43,41 @@
             }
         }
 
+        public void DoRender(SpriteBatch batch)
+        {
+            IRenderableISceneModule renderMode;
+            RenderTarget2D frameRenderLayer;
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+            EngineInfo.Graphics.GraphicsDevice.Clear(Color.Black);
+            for (int count = 0; count < RenderableComponents.Values.Count; count++)
+            {
+                renderMode = RenderableComponents.Values.ElementAt(count);
+                if (renderMode.RawRtVisible)
+                {
+                    frameRenderLayer = renderMode.RawRt;
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
+                    EngineInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
+                    renderMode.DoRawRender(EngineInfo.Graphics.GraphicsDevice, EngineInfo.SpriteBatch);
+                }
+            }
+            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+            for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
+            {
+                renderMode = RenderableComponents.Values.ElementAt(count);
+                if (renderMode.Presentation)
+                {
+                    frameRenderLayer = renderMode.RawRt;
+                    renderMode.DoRegenerateRender(EngineInfo.Graphics.GraphicsDevice, batch);
+                    if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
+                        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
+                    else
+                        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred);
+                    EngineInfo.SpriteBatch.Draw(frameRenderLayer, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
+                    EngineInfo.SpriteBatch.End();
+                }
+            }
+        }
+
         /// <summary>
         /// 根据指定类型获取场景组件.
         /// </summary>
@@ -71,8 +106,8 @@
             sceneMode.DoInitialize();
             if (sceneMode is IRenderableISceneModule dwMode)
             {
-                dwMode.Visible = true;
-                dwMode.FinalPresentation = true;
+                dwMode.RawRtVisible = true;
+                dwMode.Presentation = true;
                 RenderableComponents.Add(dwMode.GetType(), dwMode);
                 dwMode.InitRenderTarget();
                 Scene.Events.ClientSizeChanged += dwMode.OnClientSizeChanged;

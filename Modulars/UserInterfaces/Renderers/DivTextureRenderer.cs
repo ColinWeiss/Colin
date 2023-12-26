@@ -5,7 +5,7 @@
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
         public override void RendererInit() { }
-        public override void DoRender(SpriteBatch batch)
+        public override void DoRender(GraphicsDevice device, SpriteBatch batch)
         {
             if (_sprite is not null)
             {

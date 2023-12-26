@@ -34,7 +34,7 @@ namespace Colin.Core.Common
         /// </summary>
         public RenderTarget2D SceneRenderTarget;
 
-        public SceneShaderManager SceneShaders = new SceneShaderManager();
+        public ScreenReprocess ScreenReprocess = new ScreenReprocess();
 
         public SceneEventResponder Events;
 
@@ -105,37 +105,8 @@ namespace Colin.Core.Common
                 RenderStart();
                 _renderStarted = true;
             }
-            RenderPreset();
-            IRenderableISceneModule renderMode;
-            RenderTarget2D frameRenderLayer;
-            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(SceneRenderTarget);
-            EngineInfo.Graphics.GraphicsDevice.Clear(Color.Black);
-            for (int count = 0; count < Modules.RenderableComponents.Values.Count; count++)
-            {
-                renderMode = Modules.RenderableComponents.Values.ElementAt(count);
-                if (renderMode.Visible)
-                {
-                    frameRenderLayer = renderMode.ModuleRt;
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
-                    EngineInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-                    renderMode.DoRender(EngineInfo.SpriteBatch);
-                }
-            }
-            EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(SceneRenderTarget);
-            for (int count = Modules.RenderableComponents.Values.Count - 1; count >= 0; count--)
-            {
-                renderMode = Modules.RenderableComponents.Values.ElementAt(count);
-                if (renderMode.FinalPresentation)
-                {
-                    frameRenderLayer = renderMode.ModuleRt;
-                    if (SceneShaders.Effects.TryGetValue(renderMode, out Effect e))
-                        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
-                    else
-                        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred);
-                    EngineInfo.SpriteBatch.Draw(frameRenderLayer, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
-                    EngineInfo.SpriteBatch.End();
-                }
-            }
+            SceneRenderPreset();
+            Modules.DoRender(EngineInfo.SpriteBatch);
             SceneRender();
             EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
             EngineInfo.SpriteBatch.Begin();
@@ -144,7 +115,7 @@ namespace Colin.Core.Common
             base.Draw(gameTime);
         }
         public virtual void RenderStart() { }
-        public virtual void RenderPreset() { }
+        public virtual void SceneRenderPreset() { }
         public virtual void SceneRender() { }
 
         /// <summary>
@@ -189,7 +160,7 @@ namespace Colin.Core.Common
                     Modules.Components.Values.ElementAt(count).Dispose();
                 for (int count = 0; count < Modules.RenderableComponents.Count; count++)
                 {
-                    Modules.RenderableComponents.Values.ElementAt(count).ModuleRt.Dispose();
+                    Modules.RenderableComponents.Values.ElementAt(count).RawRt.Dispose();
                     Modules.RenderableComponents.Values.ElementAt(count).Dispose();
                 }
                 Modules.Clear();

@@ -6,7 +6,7 @@
         public Sprite Sprite => _sprite;
         public Point Cut;
         public override void RendererInit() { }
-        public override void DoRender(SpriteBatch batch)
+        public override void DoRender(GraphicsDevice device, SpriteBatch batch)
         {
             batch.DrawNineCut(
                 _sprite.Source,

@@ -216,16 +216,16 @@
         /// 执行划分元素的渲染.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public void DoRender(SpriteBatch batch)
+        public void DoRender(GraphicsDevice device, SpriteBatch batch)
         {
             if (!IsVisible && !IsHidden)
                 return;
             if (IsCanvas)
             {
                 batch.End();
-                EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Canvas);
+                device.SetRenderTarget(Canvas);
                 batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Layout.CanvasTransform);
-                EngineInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
+                device.Clear(Color.Transparent);
             }
             var rasterizerState = new RasterizerState
             {
@@ -235,7 +235,7 @@
             if (Layout.ScissorEnable)
             {
                 batch.End();
-                EngineInfo.Graphics.GraphicsDevice.ScissorRectangle = Layout.Scissor;
+                device.ScissorRectangle = Layout.Scissor;
                 if (IsCanvas)
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: Layout.CanvasTransform);
                 else if (ParentCanvas == null)
@@ -243,8 +243,8 @@
                 else
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: ParentCanvas?.Layout.CanvasTransform);
             }
-            _renderer?.DoRender(batch);//渲染器进行渲染.
-            RenderChildren(batch);
+            _renderer?.DoRender(device, batch);//渲染器进行渲染.
+            RenderChildren(device, batch);
             if (Layout.ScissorEnable)
             {
                 batch.End();
@@ -254,11 +254,11 @@
             {
                 batch.End();
                 if (Parent.IsCanvas)
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Parent.Canvas);
+                    device.SetRenderTarget(Parent.Canvas);
                 if (ParentCanvas != null)
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(ParentCanvas.Canvas);
+                    device.SetRenderTarget(ParentCanvas.Canvas);
                 else
-                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Interface.ModuleRt);
+                    device.SetRenderTarget(Interface.RawRt);
                 if (Parent.IsCanvas)
                     batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform);
                 else if (ParentCanvas != null)
@@ -272,11 +272,11 @@
         /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoRender"/>.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void RenderChildren(SpriteBatch spriteBatch)
+        public virtual void RenderChildren(GraphicsDevice device, SpriteBatch spriteBatch)
         {
             Children.ForEach(child =>
             {
-                child?.DoRender(spriteBatch);
+                child?.DoRender(device, spriteBatch);
             });
         }
 

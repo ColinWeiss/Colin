@@ -72,7 +72,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneShaderManager.cs" />
+    <Compile Include="..\Colin\Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />

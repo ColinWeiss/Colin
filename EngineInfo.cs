@@ -16,16 +16,17 @@ namespace Colin.Core
         /// <summary>
         ///用于初始化和控制图形设备的显示.
         /// </summary>
-        public static GraphicsDeviceManager Graphics { get; set; }
+        internal static GraphicsDeviceManager Graphics { get; set; }
 
         /// <summary>
         /// 纹理批管道.
         /// </summary>
-        public static SpriteBatch SpriteBatch { get; set; }
+        internal static SpriteBatch SpriteBatch { get; set; }
+
         /// <summary>
         /// 纹理批管道.
         /// </summary>
-        public static DrawBatcher2D<Vert2> DrawBatcherAlt { get; set; }
+        internal static DrawBatcher2D<Vert2> DrawBatcherAlt { get; set; }
 
         /// <summary>
         /// 游戏刻缓存.

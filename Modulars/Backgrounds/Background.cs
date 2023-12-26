@@ -18,13 +18,13 @@ namespace Colin.Core.Modulars.Backgrounds
 
         public bool Enable { get; set; }
 
-        public bool Visible { get; set; }
+        public bool RawRtVisible { get; set; }
 
-        public bool FinalPresentation { get; set; }
+        public bool Presentation { get; set; }
 
         public SceneCamera Camera => Scene.SceneCamera;
 
-        public RenderTarget2D ModuleRt { get; set; }
+        public RenderTarget2D RawRt { get; set; }
 
         public BackgroundStyle CurrentStyle { get; private set; }
 
@@ -60,7 +60,7 @@ namespace Colin.Core.Modulars.Backgrounds
             CurrentStyle?.UpdateStyle();
         }
 
-        public void DoRender(SpriteBatch batch)
+        public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
         {
             if (CurrentStyle != null)
             {
@@ -139,5 +139,7 @@ namespace Colin.Core.Modulars.Backgrounds
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
     }
 }
