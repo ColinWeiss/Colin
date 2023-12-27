@@ -35,7 +35,7 @@
         public bool AutoUpdateFrame = true;
 
         /// <summary>
-        /// 选取帧格.
+        /// 该纹理内置的帧格选取.
         /// </summary>
         public Frame Frame;
 

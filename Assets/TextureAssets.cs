@@ -50,5 +50,7 @@
                 return _texture;
             }
         }
+        public static Texture2D Get(params string[] paths)
+            => Get(Path.Combine(paths));
     }
 }
