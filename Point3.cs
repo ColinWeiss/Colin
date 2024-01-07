@@ -130,6 +130,8 @@ namespace Colin.Core
             result.Z = (int)MathHelper.CatmullRom(value1.Z, value2.Z, value3.Z, value4.Z, amount);
         }
 
+        public Point GetPoint() => new Point(X, Y);
+
         public void Ceiling()
         {
             X = (int)MathF.Ceiling(X);
