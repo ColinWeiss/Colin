@@ -68,6 +68,7 @@
                 {
                     frameRenderLayer = renderMode.RawRt;
                     renderMode.DoRegenerateRender(EngineInfo.Graphics.GraphicsDevice, batch);
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
                     if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
                         EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
                     else
