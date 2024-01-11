@@ -60,6 +60,27 @@
             return new Vector2(c * vec.X - s * vec.Y, s * vec.X + c * vec.Y) + center;
         }
         public static float GetRadian(this Vector2 v) => MathF.Atan2(v.Y, v.X);
+        public static Vector2 GetAngle(this float rad)
+        {
+            return new Vector2((float)Math.Cos((double)rad), (float)Math.Sin((double)rad));
+        }
+        public static Vector2 GetAngle( this int rad )
+        {
+            float v = rad * 3.141592f / 180;
+            return new Vector2((float)Math.Cos(v), (float)Math.Sin(v));
+        }
+        public static bool IsNaN(this Vector2 vec)
+        {
+            return float.IsNaN(vec.X) || float.IsNaN(vec.Y);
+        }
+        public static Vector2 SafeNormalize(this Vector2 v, Vector2 defaultValue)
+        {
+            if (v == Vector2.Zero || v.IsNaN())
+            {
+                return defaultValue;
+            }
+            return Vector2.Normalize(v);
+        }
         public static float Slop(this Vector2 vec)
         {
             return vec.Y / vec.X;
