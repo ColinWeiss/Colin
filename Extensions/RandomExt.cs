@@ -249,9 +249,8 @@ namespace Colin.Core.Extensions
         }
         public static Vector2 NextVectorUnit(this Random rand)
         {
-            float x = (float)(rand.NextBool() ? rand.NextDouble() : -rand.NextDouble());
-            float y = (float)(rand.NextBool() ? rand.NextDouble() : -rand.NextDouble());
-            return new Vector2(x, y);
+            float rad = rand.Next( 0 , 360 ) * 3.141592f / 180;
+            return rad.GetAngle();
         }
         public static Vector2 NextVectorRec(this Random rand, Point size)
         {

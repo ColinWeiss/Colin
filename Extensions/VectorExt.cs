@@ -66,20 +66,7 @@
         }
         public static Vector2 GetAngle( this int rad )
         {
-            float v = rad * 3.141592f / 180;
-            return new Vector2((float)Math.Cos(v), (float)Math.Sin(v));
-        }
-        public static bool IsNaN(this Vector2 vec)
-        {
-            return float.IsNaN(vec.X) || float.IsNaN(vec.Y);
-        }
-        public static Vector2 SafeNormalize(this Vector2 v, Vector2 defaultValue)
-        {
-            if (v == Vector2.Zero || v.IsNaN())
-            {
-                return defaultValue;
-            }
-            return Vector2.Normalize(v);
+            return new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
         }
         public static float Slop(this Vector2 vec)
         {

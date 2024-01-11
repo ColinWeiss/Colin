@@ -9,7 +9,7 @@ namespace Colin.Core
     /// </summary>
     public class EngineInfo
     {
-        public static Random Random => new Random();
+        public static Random Rand => new Random();
 
         public static string[] StartupParameter;
 
