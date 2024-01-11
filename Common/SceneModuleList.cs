@@ -3,7 +3,7 @@
     /// <summary>
     /// 场景模块集合.
     /// </summary>
-    public class SceneModuleList : IDisposable, ITraceable
+    public class SceneModuleList : IDisposable
     {
         private readonly Scene Scene;
 
