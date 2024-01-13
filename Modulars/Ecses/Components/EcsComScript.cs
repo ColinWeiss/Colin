@@ -14,8 +14,9 @@
         public T GetComponent<T>() where T : ISectionComponent => Section.GetComponent<T>();
         public bool HasComponent<T>() where T : ISectionComponent => Section.HasComponent<T>();
         public virtual void DoInitialize() { }
-        public virtual void Start() { }
         public virtual void Reset() { }
+        internal bool _updateStarted = false;
+        public virtual void UpdateStart() { }
         public virtual void DoUpdate() { }
         public virtual void DoRender( GraphicsDevice device, SpriteBatch batch ) { }
     }

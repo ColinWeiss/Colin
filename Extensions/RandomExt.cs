@@ -43,9 +43,9 @@ namespace Colin.Core.Extensions
         /// </summary>
         /// <returns>The float.</returns>
         /// <param name="max">Max.</param>
-        public static float NextFloat(float max)
+        public static float NextFloat(this Random rand, float max)
         {
-            return (float)Rand.NextDouble() * max;
+            return (float)new Random().NextDouble() * max;
         }
 
 
@@ -109,9 +109,9 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static float Range(float min, float max)
+        public static float Range(this Random rand , float min, float max)
         {
-            return min + NextFloat(max - min);
+            return min + rand.NextFloat(max - min);
         }
 
 
@@ -121,9 +121,9 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Vector2 Range(Vector2 min, Vector2 max)
+        public static Vector2 Range(this Random rand , Vector2 min, Vector2 max)
         {
-            return min + new Vector2(NextFloat(max.X - min.X), NextFloat(max.Y - min.Y));
+            return min + new Vector2(rand.NextFloat(max.X - min.X), rand.NextFloat(max.Y - min.Y));
         }
 
 
@@ -131,9 +131,9 @@ namespace Colin.Core.Extensions
         /// returns a random float between -1 and 1
         /// </summary>
         /// <returns>The one to one.</returns>
-        public static float MinusOneToOne()
+        public static float MinusOneToOne( this Random rand )
         {
-            return NextFloat(2f) - 1f;
+            return rand.NextFloat(2f) - 1f;
         }
 
 

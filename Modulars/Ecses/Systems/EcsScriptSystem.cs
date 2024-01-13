@@ -7,13 +7,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
     /// </summary>
     public class EcsScriptSystem : SectionSystem
     {
-        public override void Start()
-        {
-            foreach (ISectionComponent component in Current.Components.Values)
-                if (component is EcsComScript script)
-                    script.Start();
-            base.Start();
-        }
         public override void DoUpdate()
         {
             foreach (ISectionComponent component in Current.Components.Values)
@@ -21,7 +14,14 @@ namespace Colin.Core.Modulars.Ecses.Systems
                     script.Reset();
             foreach (ISectionComponent component in Current.Components.Values)
                 if (component is EcsComScript script)
+                {
+                    if( !script._updateStarted)
+                    {
+                        script.UpdateStart();
+                        script._updateStarted = true;
+                    }
                     script.DoUpdate();
+                }
             base.DoUpdate();
         }
     }
