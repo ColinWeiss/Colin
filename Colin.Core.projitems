@@ -71,6 +71,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAdvancedRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComCollision.cs" />
@@ -85,7 +86,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Ecs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entrance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EnvironmentalController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Section.cs" />

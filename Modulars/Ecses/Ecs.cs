@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using SharpDX.XInput;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -46,6 +47,7 @@ namespace Colin.Core.Modulars.Ecses
         public void DoInitialize()
         {
             Controller = new EnvironmentalController();
+            Controller.DoInitialize();
             KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
             Scene.Events.KeysEvent.Register(KeysEvent);
             Sections = new Section[2000];
@@ -76,6 +78,8 @@ namespace Colin.Core.Modulars.Ecses
         public void DoUpdate(GameTime time)
         {
             Perfmon.Start();
+            Controller.Reset();
+
             Section _section;
             SectionSystem _system;
             for (int count = 0; count < Sections.Length; count++)

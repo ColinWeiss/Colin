@@ -17,7 +17,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
             {
                 if (!comPhysic.IgnoreGravity)
                 {
-                    comTransform.Velocity += Controller.UniGravity * Time.DeltaTime;
+                    comTransform.Velocity += Controller.UniGravity.Value * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
                 }
             }
             if (comPhysic is not null && comTransform is not null)
@@ -27,7 +27,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
      //              comTransform.Velocity.Y += comMove.FallSpeedInc.Value * Time.DeltaTime;
                 }
                 comPhysic.PreviousPosition = comTransform.Position;
-                Vector2 _v = comTransform.Velocity;
+                Vector2 _v = comTransform.Velocity * Time.DeltaTime;
                 comPhysic.PreviousCollisionBottom = comPhysic.CollisionBottom;
                 if (_v.Length() > VelocityStep)
                 {
@@ -49,7 +49,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 }
                 else
                 {
-                    comTransform.Position += comTransform.Velocity;
+                    comTransform.Position += comTransform.Velocity * Time.DeltaTime;
                     HandleCollisions(Current, comTransform.Velocity);
                 }
                 if (comPhysic.CollisionLeft || comPhysic.CollisionRight)

@@ -3,7 +3,7 @@
     /// <summary>
     /// 行为脚本组件，提供更多相关接口，如允许访问 Section 与 Ecs.
     /// </summary>
-    public abstract class EcsComScript : ISectionComponent
+    public abstract class EcsComScript : ISectionComponent, IResetable
     {
         public Section Section { get; private set; }
         public Ecs Ecs => Section.Ecs;

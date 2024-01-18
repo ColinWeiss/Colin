@@ -51,7 +51,6 @@ namespace Colin.Core.Modulars.Ecses.Components
         /// </summary>
         public bool OnMove => OnHorizontalMove || OnLongitudinalMove;
 
-
         /// <summary>
         /// 获取切片当前横向方向的值.
         /// <br><see cref="Direction.Left"/> 和 <see cref="Direction.Right"/>.</br>
