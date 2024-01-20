@@ -74,6 +74,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAdvancedRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComBasic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComCollision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComControlCore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDeferredRender.cs" />
