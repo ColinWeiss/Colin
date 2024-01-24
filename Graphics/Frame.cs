@@ -99,7 +99,7 @@
             Timer += Time.DeltaTime;
             if (Timer > Interval)
             {
-                Timer = 0;
+                Timer = Timer - Interval;
                 if (Current < FrameMax + Start)
                     Current++;
                 else if (IsLoop)
