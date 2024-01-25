@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces.Prefabs
+﻿using System.Globalization;
+
+namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
     public class InputTextBox : Division
     {
@@ -30,7 +32,10 @@
         /// </summary>
         public bool AllowStartedSpace = false;
 
-        public bool AllowBreaks = false;
+        /// <summary>
+        /// 允许换行.
+        /// </summary>
+        public bool AllowLineFeed = false;
 
         public Keys[] FunctionKeys = new Keys[]
         {
@@ -72,16 +77,19 @@
                     Text = Text.Remove(CursorPosition - 1, 1);
                     CursorPosition--;
                 }
-                else if (e.Key == Keys.Enter && AllowBreaks)
+                else if (e.Key == Keys.Enter )
                 {
-                    Text += "\n";
-                    CursorPosition++;
+                    if(  AllowLineFeed)
+                    {
+                        Text += "\n";
+                        CursorPosition++;
+                    }
                 }
                 else if (!FunctionKeys.Contains(e.Key))
                 {
                     if (e.Key == Keys.Space && CursorPosition <= 0 && !AllowStartedSpace)
                         return;
-                    Text = Text.Insert(CursorPosition, e.Character.ToString());
+                    Text = Text.Insert(CursorPosition, Convert.ToString( e.Character, CultureInfo.InvariantCulture));
                     CursorPosition += e.Character.ToString().Length;
                 }
             }
@@ -111,5 +119,6 @@
 
             base.OnUpdate(time);
         }
+
     }
 }
