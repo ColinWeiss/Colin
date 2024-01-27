@@ -1,4 +1,5 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+﻿using Colin.Core.Resources;
+using Colin.Core.Modulars.Ecses.Components;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -44,8 +45,8 @@ namespace Colin.Core.Modulars.Ecses
 
         private EcsComTransform _comTransform;
         public EcsComTransform Transform => _comTransform;
-        public void SetSize(Vector2 size) => _comTransform.SetSize(size);
-        public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
+        public void SetSize(Vector2 size) => _comTransform.SetSize( size );
+        public void SetSize( int width , int height ) => _comTransform.SetSize( width , height );
 
         public void DoInitialize()
         {
