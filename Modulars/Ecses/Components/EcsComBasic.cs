@@ -1,4 +1,8 @@
-﻿namespace Colin.Core.Modulars.Ecses.Components
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Colin.Core.Modulars.Ecses.Components
 {
     /// <summary>
     /// 这是切片最基底的规则...

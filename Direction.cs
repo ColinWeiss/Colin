@@ -2,7 +2,7 @@
 {
     public static class DirectionConvert
     {
-        public static int GetHorizontal(this Direction dir)
+        public static int GetHorizontal( this Direction dir )
         {
             return (int)dir;
         }

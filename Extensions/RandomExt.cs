@@ -109,7 +109,7 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static float Range(this Random rand, float min, float max)
+        public static float Range(this Random rand , float min, float max)
         {
             return min + rand.NextFloat(max - min);
         }
@@ -121,7 +121,7 @@ namespace Colin.Core.Extensions
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Vector2 Range(this Random rand, Vector2 min, Vector2 max)
+        public static Vector2 Range(this Random rand , Vector2 min, Vector2 max)
         {
             return min + new Vector2(rand.NextFloat(max.X - min.X), rand.NextFloat(max.Y - min.Y));
         }
@@ -131,7 +131,7 @@ namespace Colin.Core.Extensions
         /// returns a random float between -1 and 1
         /// </summary>
         /// <returns>The one to one.</returns>
-        public static float MinusOneToOne(this Random rand)
+        public static float MinusOneToOne( this Random rand )
         {
             return rand.NextFloat(2f) - 1f;
         }
@@ -249,7 +249,7 @@ namespace Colin.Core.Extensions
         }
         public static Vector2 NextVectorUnit(this Random rand)
         {
-            float rad = rand.Next(0, 360) * 3.141592f / 180;
+            float rad = rand.Next( 0 , 360 ) * 3.141592f / 180;
             return rad.GetAngle();
         }
         public static Vector2 NextVectorRec(this Random rand, Point size)

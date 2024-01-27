@@ -3,7 +3,7 @@
     /// <summary>
     /// 场景模块集合.
     /// </summary>
-    public class SceneModuleList : IDisposable, ITraceable
+    public class SceneModuleList : IDisposable
     {
         private readonly Scene Scene;
 
@@ -68,6 +68,7 @@
                 {
                     frameRenderLayer = renderMode.RawRt;
                     renderMode.DoRegenerateRender(EngineInfo.Graphics.GraphicsDevice, batch);
+                    EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
                     if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
                         EngineInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
                     else

@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Ecses.Components
+﻿using System.Collections;
+
+namespace Colin.Core.Modulars.Ecses.Components
 {
     /// <summary>
     /// 切片文档.

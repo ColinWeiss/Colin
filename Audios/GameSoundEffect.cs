@@ -1,4 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Audio;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Colin.Core.Audios
 {
@@ -10,7 +14,7 @@ namespace Colin.Core.Audios
         public bool Stoped;
         public bool Gradually;
         public float GraduallyTime;
-        public float Volume;
+        public float  Volume;
 
         public void FromInstance(SoundEffectInstance soundEffectInstance) => SoundInstance = (T)soundEffectInstance;
 
@@ -23,7 +27,7 @@ namespace Colin.Core.Audios
                 Timer = Timer - Time;
             }
 
-            if (Stoped is true)
+            if( Stoped is true )
                 Volume -= Core.Time.DeltaTime / GraduallyTime;
             else
                 Volume += Core.Time.DeltaTime / GraduallyTime;

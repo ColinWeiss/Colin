@@ -64,7 +64,7 @@
         {
             return new Vector2((float)Math.Cos((double)rad), (float)Math.Sin((double)rad));
         }
-        public static Vector2 GetAngle(this int rad)
+        public static Vector2 GetAngle( this int rad )
         {
             return new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
         }

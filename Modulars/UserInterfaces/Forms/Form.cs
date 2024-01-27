@@ -70,7 +70,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             _substrateRenderer.Cut = new Point(4, 4);
             base.Register(Substrate);
 
-            Block = new Division("Behavior");
+            Block = new Division("Block");
             if (!IsTransparent)
                 Block.BindRenderer<DivPixelRenderer>();
             Block.Design.Color = new Color(24, 25, 28);

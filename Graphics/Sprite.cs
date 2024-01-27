@@ -105,6 +105,6 @@
             else
                 return new Sprite(TextureAssets.Get(realPath));
         }
-        public static Sprite Get(params string[] paths) => Get(Path.Combine(paths));
+        public static Sprite Get( params string[] paths ) => Get(Path.Combine(paths));
     }
 }

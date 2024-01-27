@@ -107,7 +107,6 @@ namespace Colin.Core
                 }
                 Components.Remove(CurrentScene);
             }
-            CurrentScene?.SaveDatas();
             CurrentScene?.Dispose();
             Components.Clear();
             Components.Add(Singleton<ControllerResponder>.Instance);
@@ -182,7 +181,6 @@ namespace Colin.Core
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            CurrentScene?.SaveDatas();
             EngineInfo.Config.Save();
             base.OnExiting(sender, args);
         }

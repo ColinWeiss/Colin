@@ -29,7 +29,6 @@ namespace Colin.Core.Developments
 
         public override async void SceneInit()
         {
-            DoCheck();
             await Task.Run(LoadGameAssets);
             await Task.Run(LoadCodeResource);
 

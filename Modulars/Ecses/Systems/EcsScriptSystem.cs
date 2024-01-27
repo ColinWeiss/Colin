@@ -10,12 +10,12 @@ namespace Colin.Core.Modulars.Ecses.Systems
         public override void DoUpdate()
         {
             foreach (ISectionComponent component in Current.Components.Values)
-                if (component is IResetable resetableCom)
+                if (component is IResetable resetableCom )
                     resetableCom.Reset();
             foreach (ISectionComponent component in Current.Components.Values)
                 if (component is EcsComScript script)
                 {
-                    if (!script._updateStarted)
+                    if( !script._updateStarted)
                     {
                         script.UpdateStart();
                         script._updateStarted = true;

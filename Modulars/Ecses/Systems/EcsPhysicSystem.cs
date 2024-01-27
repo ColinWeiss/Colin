@@ -1,5 +1,5 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
-using Colin.Core.Modulars.Tiles;
+﻿using Colin.Core.Modulars.Tiles;
+using Colin.Core.Modulars.Ecses.Components;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {
@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
     {
         public EcsComTransform comTransform => Current.GetComponent<EcsComTransform>();
         public EcsComPhysic comPhysic => Current.GetComponent<EcsComPhysic>();
-        //   public PlayerComMove comMove => Current.GetComponent<PlayerComMove>();
+     //   public PlayerComMove comMove => Current.GetComponent<PlayerComMove>();
         public EnvironmentalController Controller => Ecs.Controller;
         public const int VelocityStep = 16;
         public event Action<Section> OnVelocityStep;

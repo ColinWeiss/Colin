@@ -77,9 +77,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
                     Text = Text.Remove(CursorPosition - 1, 1);
                     CursorPosition--;
                 }
-                else if (e.Key == Keys.Enter)
+                else if (e.Key == Keys.Enter )
                 {
-                    if (AllowLineFeed)
+                    if(  AllowLineFeed)
                     {
                         Text += "\n";
                         CursorPosition++;
@@ -89,7 +89,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
                 {
                     if (e.Key == Keys.Space && CursorPosition <= 0 && !AllowStartedSpace)
                         return;
-                    Text = Text.Insert(CursorPosition, Convert.ToString(e.Character, CultureInfo.InvariantCulture));
+                    Text = Text.Insert(CursorPosition, Convert.ToString( e.Character, CultureInfo.InvariantCulture));
                     CursorPosition += e.Character.ToString().Length;
                 }
             }

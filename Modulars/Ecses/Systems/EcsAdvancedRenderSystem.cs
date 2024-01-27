@@ -17,7 +17,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                     renderer.DoRender(device, batch);
                 }
             }
-            batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.SceneCamera.View);
+            batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone,  transformMatrix: Ecs.Scene.SceneCamera.View);
             foreach (ISectionComponent component in Current.Components.Values)
             {
                 if (component is EcsComDeferredRender renderer)

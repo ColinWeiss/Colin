@@ -10,8 +10,8 @@
         public static Point TileSize => new Point(TileWidth, TileHeight);
         public static Vector2 TileSizeF => new Vector2(TileWidth, TileHeight);
 
-        public static readonly int ChunkWidth = 50;
-        public static readonly int ChunkHeight = 50;
+        public static readonly int ChunkWidth = 96;
+        public static readonly int ChunkHeight = 96;
         public static Point ChunkSize => new Point(ChunkWidth, ChunkHeight);
         public static Vector2 ChunkSizeF => new Vector2(ChunkWidth, ChunkHeight);
 

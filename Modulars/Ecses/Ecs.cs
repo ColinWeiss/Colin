@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using SharpDX.XInput;
 
 namespace Colin.Core.Modulars.Ecses
 {

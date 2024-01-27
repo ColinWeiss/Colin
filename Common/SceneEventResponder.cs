@@ -10,6 +10,7 @@ namespace Colin.Core.Common
 
         public event EventHandler ClientSizeChanged;
         public event EventHandler OrientationChanged;
+        public event EventHandler OnTextInput;
 
         public event Action Reset;
 
