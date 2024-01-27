@@ -100,7 +100,7 @@ namespace Colin.Core.Common
                 _skipRender = false;
                 return;
             }
-            else if(_renderStarted is false)
+            else if (_renderStarted is false)
             {
                 RenderStart();
                 _renderStarted = true;

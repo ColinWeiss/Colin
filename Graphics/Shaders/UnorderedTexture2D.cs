@@ -1,11 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using SharpDX.Direct3D11;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SharpDX.Direct3D11;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Texture2D = Microsoft.Xna.Framework.Graphics.Texture2D;
 namespace Colin.Core.Graphics.Shaders
 {

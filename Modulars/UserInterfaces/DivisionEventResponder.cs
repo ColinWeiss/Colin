@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using System;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -93,7 +92,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             Mouse.LeftClickAfter += (s, e) =>
             {
                 Invoke(e, LeftClickAfter);
-                if ( DivLock )
+                if (DivLock)
                 {
                     DragOver?.Invoke();
                     if (!Div.Interact.IsDraggable)
@@ -112,7 +111,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             if (Div.IsVisible &&
                 Div.ContainsPoint(MouseResponder.State.Position) &&
                 Div.Interact.IsInteractive &&
-                DivLock )
+                DivLock)
             {
                 if (Div.Interact.IsBubbling)
                     e.Captured = true;
@@ -127,7 +126,7 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Div.Interact.Interaction = true;
             else
                 Div.Interact.Interaction = false;
-            if (DraggingState && Div.Interact.IsDraggable )
+            if (DraggingState && Div.Interact.IsDraggable)
             {
                 if (!Div.Interact.IsDraggable)
                     return;

@@ -1,9 +1,5 @@
 ﻿using Colin.Core.Graphics.Shaders;
 using Colin.Core.IO;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 
 namespace Colin.Core.Assets
 {
@@ -48,7 +44,7 @@ namespace Colin.Core.Assets
                 if (File.Exists(_fileName) is false)
                     CompileShaders();
                 _effect = new ComputeShader(EngineInfo.Graphics.GraphicsDevice, File.ReadAllBytes(_fileName));
-                Shaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName) , null ), _effect);
+                Shaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName), null), _effect);
             }
         }
         public static ComputeShader Get(string path)

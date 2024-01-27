@@ -1,6 +1,4 @@
 ﻿using Colin.Core.Graphics.Shaders;
-using SharpDX;
-using System.Data;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 
 namespace Colin.Core.Modulars.Particles
@@ -166,7 +164,7 @@ namespace Colin.Core.Modulars.Particles
             DataWriteStep(camera.Scene);
             DoCompute();
             DoParticleRender(camera);
-            Perfmon.End( "GpuParticle" );
+            Perfmon.End("GpuParticle");
         }
         /// <summary>
         /// 在这一步, 发射器将读取 <see cref="DataBufferQueue"/> 的数据, 并将其全部写入 <see cref="DataRt"/>.
@@ -178,8 +176,8 @@ namespace Colin.Core.Modulars.Particles
             while (DataBufferQueue.Count > 0)
             {
                 ParticleData[] datas = DataBufferQueue.Dequeue();
-                EngineInfo.SpriteBatch.Begin( SpriteSortMode.Immediate , BlendState.Opaque );
-                EngineInfo.SpriteBatch.DrawRectangle(datas[0].ID , 0 , datas.Length , 4 , Color.Transparent );
+                EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
+                EngineInfo.SpriteBatch.DrawRectangle(datas[0].ID, 0, datas.Length, 4, Color.Transparent);
                 EngineInfo.SpriteBatch.End();
                 DataVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
                 DataVertexBuffer.SetData(datas);

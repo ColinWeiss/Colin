@@ -1,7 +1,5 @@
 ﻿using SharpDX.Direct3D11;
 using System.Reflection;
-using System.Text;
-using XNA = Microsoft.Xna.Framework;
 
 namespace Colin.Core.Graphics.Shaders
 {
@@ -84,7 +82,7 @@ namespace Colin.Core.Graphics.Shaders
 
                     case int x: writer.Write(x); break;
                     case Point p: writer.Write(p.X); writer.Write(p.Y); break;
-                    case ValueTuple<int, int, int, int> t: 
+                    case ValueTuple<int, int, int, int> t:
                         writer.Write(t.Item1); writer.Write(t.Item2); writer.Write(t.Item3); writer.Write(t.Item4); break;
                     default:
                         throw new NotImplementedException($"无法将{objects[i].GetType().Name}导入CBuffer中");

@@ -74,7 +74,9 @@ namespace Colin.Core.Graphics
             if (_queuesCursor == 0) return;
             Array.Sort(_queues, 0, _queuesCursor, new QueueComparer());
         }
+#pragma warning disable CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
         public void Flush(EffectPass? pass, bool clear = true)
+#pragma warning restore CS8632 // 只能在 "#nullable" 注释上下文内的代码中使用可为 null 的引用类型的注释。
         {
             if (_queuesCursor == 0) return;
             pass?.Apply();

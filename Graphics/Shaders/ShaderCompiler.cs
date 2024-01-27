@@ -1,7 +1,4 @@
 ﻿using SharpDX.D3DCompiler;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Graphics.Shaders
 {
@@ -35,7 +32,7 @@ namespace Colin.Core.Graphics.Shaders
                 if (!result.HasErrors)
                 {
                     FileStream fs = new FileStream(resultPath, FileMode.Create);
-                        result.Bytecode.Save(fs);
+                    result.Bytecode.Save(fs);
                     fs.Flush();
                     fs.Close();
                 }
