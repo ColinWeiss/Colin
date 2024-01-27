@@ -2,21 +2,21 @@
 
 namespace Colin.Core.Modulars.Ecses.Components
 {
+    /// <summary>
+    /// 切片文档.
+    /// </summary>
     public class EcsComDoc : ISectionComponent
     {
-        public string Name = "";
-        public string DisplayName = "";
+        /// <summary>
+        /// 指示切片的标识符.
+        /// <br>切片判断相等的依据之一.</br>
+        /// </summary>
+        public string Identifier = "";
         public string Description = "";
-        private List<string> tags;
-        public List<string> Tags
-        {
-            get
-            {
-                if (tags is null)
-                    tags = new List<string>();
-                return tags;
-            }
-        }
+        /// <summary>
+        /// 指示切片标签.
+        /// </summary>
+        public HashSet<string> Tags = new HashSet<string>();
 
         public void DoInitialize() { }
 
@@ -25,13 +25,8 @@ namespace Colin.Core.Modulars.Ecses.Components
             bool result = false;
             if (other is EcsComDoc doc)
             {
-                result =
-                    Name.Equals(doc.Name) &&
-                    DisplayName.Equals(doc.DisplayName) &&
-                    Description.Equals(doc.Description);
-                Tags.Sort();
-                doc.Tags.Sort();
-                return result && Tags.SequenceEqual(doc.Tags);
+                result = Identifier.Equals(doc.Identifier);
+                return result && Tags.SetEquals(doc.Tags);
             }
             return result;
         }

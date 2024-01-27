@@ -19,13 +19,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 {
                     comTransform.Velocity += Controller.UniGravity.Value * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
                 }
+                comTransform.Velocity -= comPhysic.AirResistance;
             }
             if (comPhysic is not null && comTransform is not null)
             {
-     //           if (comMove is not null)
-                {
-     //              comTransform.Velocity.Y += comMove.FallSpeedInc.Value * Time.DeltaTime;
-                }
                 comPhysic.PreviousPosition = comTransform.Position;
                 Vector2 _v = comTransform.Velocity * Time.DeltaTime;
                 comPhysic.PreviousCollisionBottom = comPhysic.CollisionBottom;

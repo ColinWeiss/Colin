@@ -40,9 +40,7 @@ namespace Colin.Core.Modulars.Ecses
         /// <summary>
         /// 事件: 于初始化时添加游戏系统.
         /// </summary>
-        public event Action AddSystems;
-
-        public event Action PlayerInitialize;
+        public event Action<Ecs> AddSystems;
 
         public void DoInitialize()
         {
@@ -53,7 +51,7 @@ namespace Colin.Core.Modulars.Ecses
             Sections = new Section[2000];
 
             _systems = new Dictionary<Type, SectionSystem>();
-            AddSystems?.Invoke();
+            AddSystems?.Invoke(this);
 
             //     _localPlayer.GetComponent<EcsComTransform>().Position = new Vector2( 500, 500 );
             //在此处添加切片系统.

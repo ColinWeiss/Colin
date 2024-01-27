@@ -21,5 +21,6 @@
             }
         }
         public bool Visible = true;
+        public virtual void DoRender( GraphicsDevice device , SpriteBatch batch ) { }
     }
 }

@@ -18,6 +18,5 @@
         internal bool _updateStarted = false;
         public virtual void UpdateStart() { }
         public virtual void DoUpdate() { }
-        public virtual void DoRender( GraphicsDevice device, SpriteBatch batch ) { }
     }
 }

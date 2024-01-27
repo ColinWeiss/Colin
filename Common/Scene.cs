@@ -145,13 +145,6 @@ namespace Colin.Core.Common
         /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
         public bool RemoveModule(ISceneModule module) => Modules.Remove(module);
 
-        /// <summary>
-        /// 我不在乎你加不加载, 但我希望玩家的电脑犯病的时候我们能把重要数据保存下来.
-        /// <br>这个方法将在 <see cref="Game.Exit"/> 执行时跟着执行执行.</br>
-        /// <br>你也可以把它写成能手动调用用来保存数据的样子.</br>
-        /// </summary>
-        public virtual void SaveDatas() { }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
