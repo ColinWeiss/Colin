@@ -7,11 +7,19 @@ namespace Colin.Core.Modulars.Ecses.Systems
     /// </summary>
     public class EcsScriptSystem : SectionSystem
     {
-        public override void DoUpdate()
+        public override void Reset()
         {
             foreach (ISectionComponent component in Current.Components.Values)
                 if (component is IResetable resetableCom )
-                    resetableCom.Reset();
+                {
+                    if ( resetableCom.ResetEnable)
+                        resetableCom.Reset();
+                    resetableCom.ResetEnable = true;
+                }
+            base.Reset();
+        }
+        public override void DoUpdate()
+        {
             foreach (ISectionComponent component in Current.Components.Values)
                 if (component is EcsComScript script)
                 {

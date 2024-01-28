@@ -7,6 +7,9 @@
     {
         public Section Section { get; private set; }
         public Ecs Ecs => Section.Ecs;
+
+        public bool ResetEnable { get; set; } = true;
+
         public void SetSection(Section section) { Section = section; }
         /// <summary>
         /// 通过  Script 访问同 <see cref="Section"/> 的其他 <see cref="ISectionComponent"/>.

@@ -272,11 +272,11 @@
         /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoRender"/>.
         /// </summary>
         /// <param name="time">游戏计时状态快照.</param>
-        public virtual void RenderChildren(GraphicsDevice device, SpriteBatch spriteBatch)
+        public virtual void RenderChildren(GraphicsDevice device, SpriteBatch batch)
         {
             Children.ForEach(child =>
             {
-                child?.DoRender(device, spriteBatch);
+                child?.DoRender(device, batch);
             });
         }
 

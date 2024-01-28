@@ -55,6 +55,8 @@ namespace Colin.Core.Modulars.Ecses.Components
 
         public bool IsCollision => CollisionLeft || CollisionRight || CollisionBottom || CollisionTop;
 
+        public bool ResetEnable { get; set; } = true;
+
         /// <summary>
         /// 用于 <see cref="EcsPhysicSystem"/> 计算的值之一.
         /// </summary>

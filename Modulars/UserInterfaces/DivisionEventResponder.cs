@@ -36,11 +36,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         public event Action GetFocus;
         public event Action LoseFocus;
 
-        public EventHandler<KeyEventArgs> KeyClickBefore;
+        public event EventHandler<KeyEventArgs> KeyClickBefore;
 
-        public EventHandler<KeyEventArgs> KeyDown;
+        public event EventHandler<KeyEventArgs> KeyDown;
 
-        public EventHandler<KeyEventArgs> KeyClickAfter;
+        public event EventHandler<KeyEventArgs> KeyClickAfter;
 
         /// <summary>
         /// 指示拖拽状态.
