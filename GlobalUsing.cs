@@ -7,6 +7,8 @@ global using Colin.Core.Inputs;
 global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
 global using System;
+global using System.Text;
+global using System.Collections;
 global using System.Collections.Generic;
 global using System.IO;
 global using System.Linq;
