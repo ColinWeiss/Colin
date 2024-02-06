@@ -78,7 +78,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComControlCore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDeferredRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDoc.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComIK.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComInteract.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\IEcsComIO.cs" />
