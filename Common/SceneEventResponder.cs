@@ -24,7 +24,6 @@ namespace Colin.Core.Common
         {
             Mouse = new MouseEventResponder("Scene.MouseEventResponder");
             KeysEvent = new KeysEventResponder("Scene.KeysEventResponder");
-            KeysEvent.Postorder = false;
         }
 
         public void DoUpdate(GameTime time)

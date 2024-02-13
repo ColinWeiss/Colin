@@ -8,8 +8,6 @@
 
         public List<EventResponder> Children;
 
-        public bool Postorder = true;
-
         public EventResponder(string name)
         {
             Name = name;
@@ -21,14 +19,20 @@
         public void Response(IEvent theEvent)
         {
             EventResponder child;
-            for (int count = Postorder ? Children.Count - 1 : 0; Postorder ? count >= 0 : count < Children.Count; count += Postorder ? -1 : 1)
+            for (int count = Children.Count - 1 ; count >= 0 ; count--)
             {
                 child = Children[count];
-                if (!theEvent.Captured)
+                if (!theEvent.Captured && theEvent.Postorder)
                     child.Response(theEvent);
             }
             if (!theEvent.Captured)
                 Handle(theEvent);
+            for (int count = 0; count < Children.Count; count++)
+            {
+                child = Children[count];
+                if (!theEvent.Captured )
+                    child.Response(theEvent);
+            }
         }
         public virtual void Handle(IEvent theEvent) { }
         public void Register(EventResponder responder)

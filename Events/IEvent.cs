@@ -13,5 +13,9 @@
         /// 指示该事件的名称.
         /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 指示该事件是否属于后序遍历事件.
+        /// </summary>
+        public bool Postorder { get; set; }
     }
 }

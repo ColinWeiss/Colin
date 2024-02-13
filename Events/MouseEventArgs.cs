@@ -8,12 +8,14 @@ namespace Colin.Core.Events
         public readonly MouseState Last;
         public bool Captured { get; set; }
         public string Name { get; set; }
+        public bool Postorder { get; set; }
 
         public MouseEventArgs(string name)
         {
             Name = name;
             State = MouseResponder.State;
             Last = MouseResponder.StateLast;
+            Postorder = true;
         }
     }
 }

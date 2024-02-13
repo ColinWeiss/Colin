@@ -33,6 +33,10 @@ namespace Colin.Core.Modulars.UserInterfaces
         public event Action Dragging;
         public event Action DragOver;
 
+        public event Action ScrollUp;
+        public event Action ScrollDown;
+
+
         public event Action GetFocus;
         public event Action LoseFocus;
 
@@ -102,16 +106,18 @@ namespace Colin.Core.Modulars.UserInterfaces
                 }
             };
             Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
+            Mouse.ScrollUp += (s, e) => Invoke(e, ScrollUp, true);
+            Mouse.ScrollDown += (s, e) => Invoke(e, ScrollDown, true);
             Keys.ClickBefore += KeyClickBefore;
             Keys.Down += KeyDown;
             Keys.ClickAfter += KeyClickAfter;
         }
-        private void Invoke(MouseEventArgs e, Action action)
+        private void Invoke(MouseEventArgs e, Action action, bool divLock = false)
         {
             if (Div.IsVisible &&
                 Div.ContainsPoint(MouseResponder.State.Position) &&
                 Div.Interact.IsInteractive &&
-                DivLock)
+                (DivLock || divLock))
             {
                 if (Div.Interact.IsBubbling)
                     e.Captured = true;

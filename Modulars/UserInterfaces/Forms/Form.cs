@@ -120,16 +120,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 CloseButton.Layout.Top = 6;
                 CloseButton.Layout.Width = 24;
                 CloseButton.Layout.Height = 24;
-                CloseButton.Events.LeftClickBefore += () =>
+                CloseButton.Events.LeftClickBefore += ( ) =>
                 {
                     _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0_Off"));
                 };
-                CloseButton.Events.LeftClickAfter += () =>
+                CloseButton.Events.LeftClickAfter += ( ) =>
                 {
                     _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0"));
                     Close();
                 };
-                CloseButton.Events.HoverOver += () =>
+                CloseButton.Events.HoverOver += ( ) =>
                 {
                     _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0"));
                 };
@@ -150,7 +150,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Layout.Width += 8;
             Layout.Height += _titleHeight + 8;
 
-            Events.LeftClickBefore += () => Interface.Container.SetTop(this);
+            Events.LeftClickBefore += ( ) => Interface.Container.SetTop(this);
             Events.KeyClickBefore += (object s, KeyEventArgs e) =>
             {
                 if (e.Key == Keys.Escape && IsVisible)

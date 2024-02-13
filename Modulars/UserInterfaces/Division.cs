@@ -1,4 +1,7 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+﻿using DeltaMachine.Core.GameContents.Sections.Projectiles;
+using System.Windows.Forms;
+
+namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 指代用户交互界面中的一个划分元素.
@@ -288,7 +291,9 @@
             if (IsCanvas)
                 division.ParentCanvas = this;
             if (doInit)
+            {
                 IHierarchicalElement.DoElementInitialize(division);
+            }
             Add(division);
             return true;
         }
@@ -333,7 +338,14 @@
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
 		public virtual bool ContainsPoint(Point point)
         {
-            return Layout.TotalHitBox.Contains(point);
+            if (Parent is not null && Parent.Layout.ScissorEnable )
+            {
+                return Parent.ContainsPoint(point) && Layout.TotalHitBox.Contains(point);
+            }
+      //       if (Layout.Size != Point.Zero)
+                return Layout.TotalHitBox.Contains(point);
+    //        else
+       //        return true;
         }
 
         private bool disposedValue;

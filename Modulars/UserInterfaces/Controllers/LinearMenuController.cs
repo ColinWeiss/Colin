@@ -29,7 +29,7 @@
                 Division.ForEach(Portrait);
             else if (Direction == Direction.Transverse)
                 Division.ForEach(Transverse);
-            layout.Size = TotalSize;
+            //layout.Size = TotalSize;
             lastDiv = null;
             base.Layout(ref layout);
         }
@@ -65,19 +65,19 @@
                 }
             }
             else if (Toward == Direction.Up)
-                division.Layout.Top = TotalSize.Y - division.Layout.Height;
+                division.Layout.Top = (int)Scroll.Y + TotalSize.Y - division.Layout.Height;
             else if (Toward == Direction.Down)
-                division.Layout.Top = 0;
+                division.Layout.Top = (int)Scroll.Y;
             switch (Alignment)
             {
                 case Direction.Left:
                     division.Layout.Left = (int)Scroll.X;
                     break;
                 case Direction.Right:
-                    division.Layout.Left = division.Parent.Layout.Width - division.Layout.Width;
+                    division.Layout.Left = (int)Scroll.X + division.Parent.Layout.Width - division.Layout.Width;
                     break;
                 case Direction.Center:
-                    division.Layout.Left = TotalSize.X / 2 - division.Layout.Width / 2;
+                    division.Layout.Left = (int)Scroll.X + TotalSize.X / 2 - division.Layout.Width / 2;
                     break;
             }
             lastDiv = division;
@@ -97,17 +97,17 @@
                 }
             }
             else if (Toward == Direction.Left)
-                division.Layout.Left = Division.Layout.Width - division.Layout.Width;
+                division.Layout.Left = (int)Scroll.X + Division.Layout.Width - division.Layout.Width;
             switch (Alignment)
             {
                 case Direction.Up:
                     division.Layout.Top = (int)Scroll.Y;
                     break;
                 case Direction.Down:
-                    division.Layout.Top = division.Parent.Layout.Height - division.Layout.Height;
+                    division.Layout.Top = (int)Scroll.Y + division.Parent.Layout.Height - division.Layout.Height;
                     break;
                 case Direction.Center:
-                    division.Layout.Top = Division.Layout.Height / 2 - division.Layout.Height / 2;
+                    division.Layout.Top = (int)Scroll.Y + Division.Layout.Height / 2 - division.Layout.Height / 2;
                     break;
             }
             lastDiv = division;
