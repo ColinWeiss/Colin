@@ -49,13 +49,13 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void Register(Container container) => Container?.Register(container);
 
-        public void Remove(Container container, bool dispose) => Container?.Remove(container);
+        public void Remove(Container container, bool dispose) => Container?.RemoveDiv(container);
 
         public void SetContainer(Container container)
         {
             container._interface = this;
             _contianer = container;
-            container.DoInitialize();
+            IHierarchicalElement.DoElementInitialize( container );
             Events.Register(container.Events.Mouse);
             Events.Register(container.Events.Keys);
         }

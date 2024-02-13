@@ -9,7 +9,7 @@
         public EventHandler<MouseEventArgs> LeftClickAfter;
         public EventHandler<MouseEventArgs> LeftUp;
 
-        public override void Handle(BasicEventArgs theEvent)
+        public override void Handle(IEvent theEvent)
         {
             if (theEvent is MouseEventArgs mouseEvent)
             {

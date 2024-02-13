@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using TextInputEventArgs = MonoGame.IMEHelper.TextInputEventArgs;
 
 namespace Colin.Core.Common
 {
@@ -10,7 +11,7 @@ namespace Colin.Core.Common
 
         public event EventHandler ClientSizeChanged;
         public event EventHandler OrientationChanged;
-        public event EventHandler OnTextInput;
+        public event EventHandler<TextInputEventArgs> TextInput;
 
         public event Action Reset;
 
@@ -25,6 +26,7 @@ namespace Colin.Core.Common
             KeysEvent = new KeysEventResponder("Scene.KeysEventResponder");
             KeysEvent.Postorder = false;
         }
+
         public void DoUpdate(GameTime time)
         {
             Reset?.Invoke();
@@ -33,31 +35,34 @@ namespace Colin.Core.Common
             Keys[] lasts = KeyboardResponder.StateLast.GetPressedKeys();
             Keys[] current = KeyboardResponder.State.GetPressedKeys();
             KeyEventArgs keysEvent;
-            foreach (var key in lasts)
+            if( EngineInfo.IMEHandler.Enabled is false )
             {
-                if (!current.Contains(key))
+                foreach (var key in lasts)
                 {
-                    keysEvent = new KeyEventArgs("KeyEvent");
-                    keysEvent.Key = key;
-                    keysEvent.ClickAfter = true;
-                    KeysEvent.Response(keysEvent);
+                    if (!current.Contains(key))
+                    {
+                        keysEvent = new KeyEventArgs("KeyEvent");
+                        keysEvent.Key = key;
+                        keysEvent.ClickAfter = true;
+                        KeysEvent.Response(keysEvent);
+                    }
                 }
-            }
-            foreach (var key in current)
-            {
-                if (!lasts.Contains(key))
+                foreach (var key in current)
                 {
-                    keysEvent = new KeyEventArgs("KeyEvent");
-                    keysEvent.Key = key;
-                    keysEvent.ClickBefore = true;
-                    KeysEvent.Response(keysEvent);
-                }
-                if (lasts.Contains(key))
-                {
-                    keysEvent = new KeyEventArgs("KeyEvent");
-                    keysEvent.Key = key;
-                    keysEvent.Down = true;
-                    KeysEvent.Response(keysEvent);
+                    if (!lasts.Contains(key))
+                    {
+                        keysEvent = new KeyEventArgs("KeyEvent");
+                        keysEvent.Key = key;
+                        keysEvent.ClickBefore = true;
+                        KeysEvent.Response(keysEvent);
+                    }
+                    if (lasts.Contains(key))
+                    {
+                        keysEvent = new KeyEventArgs("KeyEvent");
+                        keysEvent.Key = key;
+                        keysEvent.Down = true;
+                        KeysEvent.Response(keysEvent);
+                    }
                 }
             }
         }
@@ -66,6 +71,11 @@ namespace Colin.Core.Common
             ClientSizeChanged?.Invoke(this, e);
             OrientationChanged?.Invoke(this, e);
         }
+        public void OnTextInput(object sender, TextInputEventArgs e)
+        {
+            TextInput?.Invoke( sender, e );
+        }
+
         public void Dispose() { }
     }
 }

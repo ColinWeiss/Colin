@@ -19,5 +19,23 @@ namespace Colin.Core.Inputs
             Keys.D9,
             Keys.D0,
         };
+
+        public static bool LegalInput(string text)
+        {
+            foreach (var item in text)
+            {
+                if (IsChinese(item) || char.IsLetterOrDigit(item))
+                    continue;
+                else
+                    return false;
+            }
+            return true;
+        }
+        public static bool IsChinese( char theChar )
+        {
+            if (theChar >= 0x4e00 && theChar <= 0x9fbb)
+                return true;
+            return false;
+        }
     }
 }

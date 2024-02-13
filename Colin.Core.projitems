@@ -65,6 +65,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
+    <Compile Include="..\Colin\Common\IHierarchicalElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Perfmon.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\TextInputEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAdvancedRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComBasic.cs" />
@@ -166,7 +168,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\BasicEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\IEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\EventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseEventResponder.cs" />

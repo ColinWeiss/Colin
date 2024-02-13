@@ -2,12 +2,16 @@
 
 namespace Colin.Core.Events
 {
-    public class MouseEventArgs : BasicEventArgs
+    public class MouseEventArgs : IEvent
     {
         public readonly MouseState State;
         public readonly MouseState Last;
-        public MouseEventArgs(string name) : base(name)
+        public bool Captured { get; set; }
+        public string Name { get; set; }
+
+        public MouseEventArgs(string name)
         {
+            Name = name;
             State = MouseResponder.State;
             Last = MouseResponder.StateLast;
         }

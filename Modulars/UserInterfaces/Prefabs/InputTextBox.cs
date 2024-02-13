@@ -33,19 +33,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         public bool AllowStartedSpace = false;
 
         /// <summary>
+        /// 允许空格输入.
+        /// </summary>
+        public bool AllowSpace = false;
+
+        /// <summary>
         /// 允许换行.
         /// </summary>
         public bool AllowLineFeed = false;
-
-        public Keys[] FunctionKeys = new Keys[]
-        {
-            Keys.Back,
-            Keys.LeftShift,
-            Keys.RightShift,
-            Keys.LeftAlt,
-            Keys.RightAlt,
-            Keys.Tab
-        };
 
         public override void OnInit()
         {
@@ -64,11 +59,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
                 EngineInfo.IMEHandler.StopTextComposition();
                 Label.SetText(Text);
             };
-            EngineInfo.IMEHandler.TextInput += IMEHandler_TextInput;
+            Interface.Scene.Events.TextInput += IMEHandler_TextInput;
             base.OnInit();
         }
 
-        private void IMEHandler_TextInput(object sender, MonoGame.IMEHelper.TextInputEventArgs e)
+        private void IMEHandler_TextInput( object sender, MonoGame.IMEHelper.TextInputEventArgs e)
         {
             if (Editing)
             {
@@ -79,18 +74,22 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
                 }
                 else if (e.Key == Keys.Enter )
                 {
-                    if(  AllowLineFeed)
+                    if( AllowLineFeed )
                     {
                         Text += "\n";
                         CursorPosition++;
                     }
                 }
-                else if (!FunctionKeys.Contains(e.Key))
+                else
                 {
                     if (e.Key == Keys.Space && CursorPosition <= 0 && !AllowStartedSpace)
                         return;
-                    Text = Text.Insert(CursorPosition, Convert.ToString( e.Character, CultureInfo.InvariantCulture));
-                    CursorPosition += e.Character.ToString().Length;
+                    string result = e.Character.ToString();
+                    if( Input.LegalInput( result ))
+                    {
+                        Text = Text.Insert(CursorPosition, Convert.ToString(e.Character, CultureInfo.InvariantCulture));
+                        CursorPosition += e.Character.ToString().Length;
+                    }
                 }
             }
         }

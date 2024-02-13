@@ -18,7 +18,7 @@
         /// <summary>
         /// 令其与其的子元素响应事件.
         /// </summary>
-        public void Response(BasicEventArgs theEvent)
+        public void Response(IEvent theEvent)
         {
             EventResponder child;
             for (int count = Postorder ? Children.Count - 1 : 0; Postorder ? count >= 0 : count < Children.Count; count += Postorder ? -1 : 1)
@@ -30,7 +30,7 @@
             if (!theEvent.Captured)
                 Handle(theEvent);
         }
-        public virtual void Handle(BasicEventArgs theEvent) { }
+        public virtual void Handle(IEvent theEvent) { }
         public void Register(EventResponder responder)
         {
             responder.Parent = this;

@@ -58,6 +58,7 @@ namespace Colin.Core.Common
                 SceneInit();
                 Game.Window.ClientSizeChanged += Events.InvokeSizeChange;
                 Game.Window.OrientationChanged += Events.InvokeSizeChange;
+                EngineInfo.IMEHandler.TextInput += Events.OnTextInput;
             }
             base.Initialize();
         }
@@ -162,8 +163,10 @@ namespace Colin.Core.Common
             {
                 Game.Window.ClientSizeChanged -= Events.InvokeSizeChange;
                 Game.Window.OrientationChanged -= Events.InvokeSizeChange;
+                EngineInfo.IMEHandler.TextInput -= Events.OnTextInput;
             }
             base.Dispose(disposing);
         }
+
     }
 }

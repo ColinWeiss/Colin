@@ -3,16 +3,15 @@
     /// <summary>
     /// <br>事件冒泡系统中的事件对象.</br>
     /// </summary>
-    public class BasicEventArgs : EventArgs
+    public interface IEvent
     {
-        public readonly string Name;
         /// <summary>
         /// 指示该事件是否被捕获.
         /// </summary>
-        public bool Captured;
-        public BasicEventArgs(string name)
-        {
-            Name = name;
-        }
+        public bool Captured { get; set; }
+        /// <summary>
+        /// 指示该事件的名称.
+        /// </summary>
+        public string Name { get; set; }
     }
 }

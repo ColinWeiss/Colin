@@ -3,7 +3,7 @@
     /// <summary>
     /// 指代用户交互界面中的一个划分元素.
     /// </summary>
-    public class Division : IDisposable
+    public class Division : List<Division>, IHierarchicalElement, IDisposable
     {
         /// <summary>
         /// 划分元素的名称.
@@ -91,11 +91,6 @@
         /// </summary>
         public Division ParentCanvas;
 
-        /// <summary>
-        /// 划分元素的子元素列表.
-        /// </summary>
-        public List<Division> Children;
-
         public RenderTarget2D Canvas;
 
         internal UserInterface _interface;
@@ -121,13 +116,9 @@
             Interact.IsBubbling = true;
             Design.Color = Color.White;
             Design.Scale = Vector2.One;
-            Children = new List<Division>();
             Controller = new DivisionController(this);
         }
 
-        /// <summary>
-        /// 执行划分元素的初始化内容.
-        /// </summary>
         public void DoInitialize()
         {
             if (InitializationCompleted)
@@ -142,10 +133,10 @@
             _renderer?.RendererInit();
             if (Parent != null)
                 LayoutStyle.Calculation(this); //刷新一下.
-            ForEach(child => child.DoInitialize());
             Events.DoInitialize();
             InitializationCompleted = true;
         }
+
         /// <summary>
         /// 发生于划分元素执行 <see cref="DoInitialize"/> 时, 可于此自定义初始化操作.
         /// </summary>
@@ -203,7 +194,7 @@
         /// <param name="time">游戏计时状态快照.</param>
         public virtual void UpdateChildren(GameTime time)
         {
-            Children.ForEach(child =>
+            ForEach(child =>
             {
                 if (Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects(Layout.TotalHitBox))
                     child?.DoUpdate(time);
@@ -274,7 +265,7 @@
         /// <param name="time">游戏计时状态快照.</param>
         public virtual void RenderChildren(GraphicsDevice device, SpriteBatch batch)
         {
-            Children.ForEach(child =>
+            ForEach(child =>
             {
                 child?.DoRender(device, batch);
             });
@@ -290,15 +281,15 @@
         {
             division.Parent = this;
             division.ParentCanvas = ParentCanvas;
+            division._interface = _interface;
+            division._container = _container;
             Events.Mouse.Register(division.Events.Mouse);
             Events.Keys.Register(division.Events.Keys);
             if (IsCanvas)
                 division.ParentCanvas = this;
             if (doInit)
-                division.DoInitialize();
-            division._interface = _interface;
-            division._container = _container;
-            Children.Add(division);
+                IHierarchicalElement.DoElementInitialize(division);
+            Add(division);
             return true;
         }
 
@@ -307,43 +298,30 @@
 		/// </summary>
 		/// <param name="division">需要移除的划分元素.</param>
 		/// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-		public virtual bool Remove(Division division)
+		public virtual bool RemoveDiv(Division division)
         {
             division.Parent = null;
             division.ParentCanvas = null;
             division._container = null;
             division._interface = null;
-            return Children.Remove(division);
+            return Remove(division);
         }
 
         /// <summary>
         /// 移除所有子元素.
         /// </summary>
-        public virtual void Clear(bool dispose = false)
+        public virtual void Clear(bool dispose = true)
         {
             Division _div;
-            for (int count = 0; count < Children.Count; count++)
+            for (int count = 0; count < Count; count++)
             {
-                _div = Children[count];
-                Remove(_div);
+                _div = this[count];
+                RemoveDiv(_div);
                 if (dispose)
                     _div.Dispose();
+                count--;
             }
-            Children.Clear();
-        }
-
-        /// <summary>
-		/// 遍历划分元素, 并执行传入方法.
-		/// </summary>
-		/// <param name="action">要执行的方法.</param>
-		public void ForEach(Action<Division> action)
-        {
-            Division _div;
-            for (int count = 0; count < Children.Count; count++)
-            {
-                _div = Children[count];
-                action.Invoke(_div);
-            }
+            //Clear();
         }
 
         public void Do(Action<Division> action) => action(this);
@@ -366,8 +344,8 @@
                 if (disposing)
                 {
                     Canvas?.Dispose();
-                    for (int count = 0; count < Children.Count; count++)
-                        Children[count].Dispose();
+                    for (int count = 0; count < Count; count++)
+                        this[count].Dispose();
                     OnDispose?.Invoke();
                 }
                 _renderer = null;

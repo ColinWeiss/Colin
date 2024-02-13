@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Events
+﻿using TextInputEventArgs = MonoGame.IMEHelper.TextInputEventArgs;
+
+namespace Colin.Core.Events
 {
     public class KeysEventResponder : EventResponder
     {
@@ -7,7 +9,7 @@
         public event EventHandler<KeyEventArgs> Down;
         public event EventHandler<KeyEventArgs> ClickAfter;
 
-        public override void Handle(BasicEventArgs theEvent)
+        public override void Handle(IEvent theEvent)
         {
             if (theEvent is KeyEventArgs keysEvent)
             {
