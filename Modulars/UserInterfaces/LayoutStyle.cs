@@ -154,7 +154,7 @@
             }
         }
 
-        public void SetScissorSize(Point size) => _scissor = new Rectangle( _scissor.X , _scissor.Y , size.X , size.Y );
+        public void SetScissorSize(Point size) => _scissor = new Rectangle(_scissor.X, _scissor.Y, size.X, size.Y);
 
         public bool IsCanvas { get; internal set; }
 
@@ -186,8 +186,6 @@
                     div.Layout._scissor = div.Layout.HitBox;
                 if (div.ParentCanvas is not null)
                     div.Layout._scissor = GetForParentCanvasHitBox(div);
-                else
-                    div.Layout._scissor = Rectangle.Empty;
             }
             if (div.Layout.IsCanvas)
             {
@@ -195,6 +193,12 @@
                 div.Layout._scissor.Y = 0;
             }
         }
-        public static Rectangle GetForParentCanvasHitBox(Division div) => new Rectangle(div.Layout.TotalLocation - div.ParentCanvas.Layout.TotalLocation, div.Layout.Size);
+        public static Rectangle GetForParentCanvasHitBox(Division div)
+        {
+            if (div.ParentCanvas is null)
+                return Rectangle.Empty;
+            else
+                return new Rectangle(div.Layout.TotalLocation - div.ParentCanvas.Layout.TotalLocation, div.Layout.Size);
+        }
     }
 }

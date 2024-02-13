@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using TextInputEventArgs = MonoGame.IMEHelper.TextInputEventArgs;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
@@ -42,6 +43,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         /// </summary>
         public bool AllowLineFeed = false;
 
+        public event EventHandler<TextInputEventArgs> TextInput;
+
         public override void OnInit()
         {
             Text = "";
@@ -67,6 +70,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         {
             if (Editing)
             {
+                TextInput?.Invoke( sender , e  );
                 if (e.Key == Keys.Back && CursorPosition > 0)
                 {
                     Text = Text.Remove(CursorPosition - 1, 1);

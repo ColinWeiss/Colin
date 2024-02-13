@@ -24,7 +24,7 @@ namespace Colin.Core.Inputs
         {
             foreach (var item in text)
             {
-                if (IsChinese(item) || char.IsLetterOrDigit(item))
+                if (IsChinese(item) || char.IsLetterOrDigit(item) || text == " " || text == "/" || text == "." )
                     continue;
                 else
                     return false;
