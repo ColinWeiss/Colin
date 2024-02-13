@@ -270,7 +270,13 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             ForEach(child =>
             {
-                child?.DoRender(device, batch);
+                if ( Layout.Size != Point.Zero && child.Layout.Size != Point.Zero )
+                {
+                    if( child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ) )
+                        child?.DoRender(device, batch);
+                }
+                else
+                    child?.DoRender(device, batch);
             });
         }
 
