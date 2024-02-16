@@ -1,7 +1,7 @@
 ﻿using Colin.Core.IO;
 using System.Reflection;
 
-namespace Colin.Core.Developments
+namespace Colin.Core.Common
 {
     internal sealed class DirectoryChecker : IProgramChecker
     {

@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Developments
+﻿namespace Colin.Core.Common
 {
     /// <summary>
     /// 标识一个用于程序检查的对象.

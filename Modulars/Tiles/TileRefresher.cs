@@ -2,19 +2,31 @@
 
 namespace Colin.Core.Modulars.Tiles
 {
+    /// <summary>
+    /// 物块刷新器.
+    /// </summary>
     public class TileRefresher : ISceneModule
     {
         public Scene Scene { get; set; }
         public bool Enable { get; set; }
 
-        public Tile Tile => Scene.GetModule<Tile>();
+        private Tile _tile;
+        public Tile Tile
+        {
+            get
+            {
+                if( _tile is null )
+                    _tile = Scene.GetModule<Tile>();
+                return _tile;
+            }
+        }
 
         public ConcurrentQueue<Point3> RefreshQueue = new();
 
         /// <summary>
-        /// 用于模块之间的联动事件，如渲染器的刷新
+        /// 在物块刷新时发生; 用于模块之间的联动事件.
         /// </summary>
-        public Action<Point3> RefreshEvent = null;
+        public event Action<Point3> OnTileRefresh = null;
 
         public void DoInitialize()
         {
@@ -26,10 +38,11 @@ namespace Colin.Core.Modulars.Tiles
 
         public void DoUpdate(GameTime time)
         {
+            ref TileInfo info = ref Tile[0,0,0];
             while (!RefreshQueue.IsEmpty)
             {
                 RefreshQueue.TryDequeue(out Point3 coord);
-                ref TileInfo info = ref Tile[coord];
+                info = ref Tile[coord];
                 RefreshHandle(coord);
                 if (info.Empty)
                 {
@@ -41,9 +54,15 @@ namespace Colin.Core.Modulars.Tiles
 
         public void RefreshMark(Point3 coord, int radius = 0)
         {
+            Point3 refresh;
             for (int x = -radius; x <= radius; x++)
+            {
                 for (int y = -radius; y <= radius; y++)
-                    RefreshQueue.Enqueue(new Point3(coord.X + x, coord.Y + y, coord.Z));
+                {
+                    refresh = new Point3(coord.X + x, coord.Y + y, coord.Z);
+                    RefreshQueue.Enqueue(refresh);
+                }
+            }
         }
 
         public void RefreshHandle(Point3 coord)
@@ -64,12 +83,12 @@ namespace Colin.Core.Modulars.Tiles
                 foreach (var script in info.Scripts.Values)
                     script.OnRefresh();
             }
-            RefreshEvent?.Invoke(coord);
+            OnTileRefresh?.Invoke(coord);
         }
 
         public void Dispose()
         {
-            RefreshEvent = null;
+            OnTileRefresh = null;
         }
     }
 }

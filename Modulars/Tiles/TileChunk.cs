@@ -11,12 +11,18 @@ namespace Colin.Core.Modulars.Tiles
         /// <summary>
         /// 获取物块区块所属的世界物块模块.
         /// </summary>
-        public Tile Tile { get; internal set; } = null;
+        public readonly Tile Tile;
 
         /// <summary>
         /// 获取物块区块所属的物块刷新模块.
         /// </summary>
-        public TileRefresher TileRefresher => Tile.Scene.GetModule<TileRefresher>();
+        public readonly TileRefresher TileRefresher;
+
+        /// <summary>
+        /// 获取区块的深度.
+        /// <br>它与 <see cref="Tile.Depth"/> 的值相等.</br>
+        /// </summary>
+        public readonly int Depth;
 
         /// <summary>
         /// 获取区块的宽度.
@@ -29,12 +35,6 @@ namespace Colin.Core.Modulars.Tiles
         /// <br>它与 <see cref="TileOption.ChunkHeight"/> 的值相等.</br>
         /// </summary>
         public int Height => TileOption.ChunkHeight;
-
-        /// <summary>
-        /// 获取区块的深度.
-        /// <br>它与 <see cref="Tile.Depth"/> 的值相等.</br>
-        /// </summary>
-        public int Depth => Tile.Depth;
 
         /// <summary>
         /// 指示区块的横坐标.
@@ -133,8 +133,11 @@ namespace Colin.Core.Modulars.Tiles
             }
         }
 
-        public TileChunk()
+        public TileChunk( Tile tile )
         {
+            Tile = tile;
+            TileRefresher = tile.Scene.GetModule<TileRefresher>();
+            Depth = tile.Depth;
             CoordX = 0;
             CoordY = 0;
             Infos = new TileInfo[1];

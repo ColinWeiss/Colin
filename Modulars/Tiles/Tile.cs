@@ -176,11 +176,10 @@
         /// </summary>
         public void CreateEmptyChunk(int x, int y, int? quantumLayer = null)
         {
-            TileChunk chunk = new TileChunk();
+            TileChunk chunk = new TileChunk( this );
             chunk.CoordX = x;
             chunk.CoordY = y;
             chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
-            chunk.Tile = this;
             chunk.DoInitialize();
             Chunks.Add(chunk.Coord, chunk);
         }
@@ -192,8 +191,7 @@
         {
             if (File.Exists(path))
             {
-                TileChunk chunk = new TileChunk();
-                chunk.Tile = this;
+                TileChunk chunk = new TileChunk( this);
                 chunk.LoadChunk(path);
                 chunk.CoordX = x;
                 chunk.CoordY = y;

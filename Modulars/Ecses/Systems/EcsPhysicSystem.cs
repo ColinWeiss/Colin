@@ -5,27 +5,29 @@ namespace Colin.Core.Modulars.Ecses.Systems
 {
     public class EcsPhysicSystem : SectionSystem
     {
-        public EcsComTransform comTransform => Current.GetComponent<EcsComTransform>();
-        public EcsComPhysic comPhysic => Current.GetComponent<EcsComPhysic>();
-     //   public PlayerComMove comMove => Current.GetComponent<PlayerComMove>();
         public EnvironmentalController Controller => Ecs.Controller;
+
+        public EcsComTransform ComTransform;
+        public EcsComPhysic ComPhysic;
+
         public const int VelocityStep = 16;
-        public event Action<Section> OnVelocityStep;
+
         public override void DoUpdate()
         {
-            if (comPhysic is not null)
+            ComTransform = Current.GetComponent<EcsComTransform>();
+            ComPhysic = Current.GetComponent<EcsComPhysic>();
+
+            if (ComPhysic is not null)
             {
-                if (!comPhysic.IgnoreGravity)
-                {
-                    comTransform.Velocity += Controller.UniGravity.Value * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
-                }
-                comTransform.Velocity -= comPhysic.AirResistance;
+                if (!ComPhysic.IgnoreGravity)
+                    ComTransform.Velocity += Controller.UniGravity.Value * Time.DeltaTime / ComPhysic.UniGravitySpeedAttTime;
+                ComTransform.Velocity -= ComPhysic.AirResistance;
             }
-            if (comPhysic is not null && comTransform is not null)
+            if (ComPhysic is not null && ComTransform is not null)
             {
-                comPhysic.PreviousPosition = comTransform.Position;
-                Vector2 _v = comTransform.Velocity * Time.DeltaTime;
-                comPhysic.PreviousCollisionBottom = comPhysic.CollisionBottom;
+                ComPhysic.PreviousPosition = ComTransform.Position;
+                Vector2 _v = ComTransform.Velocity * Time.DeltaTime;
+                ComPhysic.PreviousCollisionBottom = ComPhysic.CollisionBottom;
                 if (_v.Length() > VelocityStep)
                 {
                     int _vCount = (int)(_v.Length() / VelocityStep);
@@ -34,25 +36,24 @@ namespace Colin.Core.Modulars.Ecses.Systems
                     _v *= VelocityStep;
                     while (_vCount - 1 >= 0)
                     {
-                        comTransform.Position += _v;
-                        OnVelocityStep?.Invoke(Current);
+                        ComTransform.Position += _v;
                         HandleCollisions(Current, _v);
                         _vCount--;
                     }
                     _v.Normalize();
                     _v *= _vRem;
-                    comTransform.Position += _v;
+                    ComTransform.Position += _v;
                     HandleCollisions(Current, _v);
                 }
                 else
                 {
-                    comTransform.Position += comTransform.Velocity * Time.DeltaTime;
-                    HandleCollisions(Current, comTransform.Velocity);
+                    ComTransform.Position += ComTransform.Velocity * Time.DeltaTime;
+                    HandleCollisions(Current, ComTransform.Velocity);
                 }
-                if (comPhysic.CollisionLeft || comPhysic.CollisionRight)
-                    comTransform.Velocity.X = 0;
-                if (comPhysic.CollisionTop || comPhysic.CollisionBottom)
-                    comTransform.Velocity.Y = 0;
+                if (ComPhysic.CollisionLeft || ComPhysic.CollisionRight)
+                    ComTransform.Velocity.X = 0;
+                if (ComPhysic.CollisionTop || ComPhysic.CollisionBottom)
+                    ComTransform.Velocity.Y = 0;
             }
             base.DoUpdate();
         }
@@ -99,21 +100,27 @@ namespace Colin.Core.Modulars.Ecses.Systems
             comPhysic.CollisionRight = false;
             comPhysic.CollisionBottom = false;
             comPhysic.CollisionTop = false;
+
+            Vector2 depth;
+            Vector2 v;
+            Vector2 absV;
+            TileInfo info;
             for (int x = positiveX ? leftTile : rightTile; positiveX ? x <= rightTile : x >= leftTile; x += positiveX ? 1 : -1)
             {
                 for (int y = positiveY ? topTile : bottomTile; positiveY ? y <= bottomTile : y >= topTile; y += positiveY ? 1 : -1)
                 {
-                    if (tile[x, y, comPhysic.Layer].Collision != TileCollision.Passable)
+                    info = tile[x, y, comPhysic.Layer];
+                    if (info.Collision != TileCollision.Passable)
                     {
-                        if (bounds.Intersects(tile[x, y, comPhysic.Layer].HitBox) &&
-                          !previousBounds.Intersects(tile[x, y, comPhysic.Layer].HitBox))
+                        if (bounds.Intersects(info.HitBox) &&
+                          !previousBounds.Intersects(info.HitBox))
                         {
-                            Vector2 depth = GetEmbed(bounds, tile[x, y, comPhysic.Layer].HitBox, comTransform.Velocity);
-                            Vector2 v = depth / comTransform.Velocity;
+                            depth = GetEmbed(bounds, info.HitBox, comTransform.Velocity);
+                            v = depth / comTransform.Velocity;
                             v.X = comTransform.Velocity.X == 0 ? -float.MaxValue : v.X;
                             v.Y = comTransform.Velocity.Y == 0 ? -float.MaxValue : v.Y;
-                            Vector2 absV = -v;
-                            if (absV.X < absV.Y && tile[x, y, comPhysic.Layer].Collision != TileCollision.Platform)
+                            absV = -v;
+                            if (absV.X < absV.Y && info.Collision != TileCollision.Platform)
                             {
                                 if (comTransform.Velocity.X < 0)
                                     comPhysic.CollisionLeft = true;
@@ -127,7 +134,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                             {
                                 if (comTransform.Velocity.Y > 0)
                                     comPhysic.CollisionBottom = true;
-                                if (comTransform.Velocity.Y < 0)
+                                if (comTransform.Velocity.Y < 0 && info.Collision != TileCollision.Platform)
                                     comPhysic.CollisionTop = true;
                                 if (comPhysic.CollisionTop || comPhysic.CollisionBottom)
                                     comTransform.Position.Y += depth.Y * 1.0001f;

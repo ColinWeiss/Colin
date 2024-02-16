@@ -38,32 +38,66 @@
         /// </summary>
         public int CoordZ => Index / (TileOption.ChunkWidth * TileOption.ChunkHeight);
 
+        private Point _chunkCoord2;
         /// <summary>
         /// 指示物块在所属区块中的坐标.
         /// </summary>
-        public Point ChunkCoord2 => new Point(CoordX, CoordY);
+        public Point ChunkCoord2
+        {
+            get
+            {
+                if (_chunkCoord2 == Point.Zero)
+                    _chunkCoord2 = new Point(CoordX, CoordY);
+                return _chunkCoord2;
+            }
+        }
 
+        private Point3 _chunkCoord3;
         /// <summary>
         /// 指示物块在所属区块中的坐标.
         /// </summary>
-        public Point3 ChunkCoord3 => new Point3(CoordX, CoordY, CoordZ);
+        public Point3 ChunkCoord3
+        {
+            get
+            {
+                if (_chunkCoord3 == Point3.Zero )
+                    _chunkCoord3 = new Point3(CoordX, CoordY, CoordZ);
+                return _chunkCoord3;
+            }
+        }
 
+        private Point _worldCoord2;
         /// <summary>
         /// 指示物块在世界内的坐标.
         /// </summary>
-        public Point WorldCoord2 =>
-            new Point(
-                Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
-                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y);
+        public Point WorldCoord2
+        {
+            get
+            {
+                if( _worldCoord2 == Point.Zero )
+                    _worldCoord2 = new Point( Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X, Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y);
+                return _worldCoord2;
+            }
+        }
 
+        private Point3 _worldCoord3;
         /// <summary>
         /// 指示物块在世界内的坐标.
         /// </summary>
-        public Point3 WorldCoord3 =>
-            new Point3(
-                Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
-                Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y,
-                CoordZ);
+        public Point3 WorldCoord3
+        {
+            get
+            {
+                if( _worldCoord3 == Point3.Zero )
+                {
+                    _worldCoord3 = new Point3(
+                        Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
+                        Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y,
+                        CoordZ);
+                }
+                return _worldCoord3;
+            }
+        }
 
         /// <summary>
         /// 指示物块纹理帧格.
@@ -174,9 +208,18 @@
 
         public TileBehavior Behavior = null;
 
-        public RectangleF HitBox => new RectangleF(WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF);
+        private RectangleF _hitBox;
+        public RectangleF HitBox
+        {
+            get
+            {
+                if( _hitBox.X == 0 && _hitBox.Y == 0 && _hitBox.Width == 0 && _hitBox.Height == 0 )
+                    _hitBox = new RectangleF(WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF);
+                return _hitBox;
+            }
+        }
 
-        public TileInfo()
+        public TileInfo( )
         {
             Index = 0;
             Empty = true;
@@ -207,9 +250,19 @@
             }
         }
 
-        internal static TileInfo _null = new TileInfo();
+        internal static TileInfo _null = new TileInfo()
+        {
+            _isNull = true
+        };
         public static ref TileInfo Null => ref _null;
 
-        public bool IsNull => Equals(Null);
+        private bool _isNull = false;
+        public bool IsNull
+        {
+            get
+            {
+                return _isNull;
+            }
+        }
     }
 }

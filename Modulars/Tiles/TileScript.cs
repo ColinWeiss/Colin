@@ -11,11 +11,47 @@
         public TileChunk Chunk { get; internal set; }
         public int Index { get; internal set; }
         public ref TileInfo Info => ref Chunk[Index];
-        public int CoordX => Info.CoordX;
-        public int CoordY => Info.CoordY;
-        public int CoordZ => Info.CoordZ;
+        private int? _coordX;
+        public int CoordX
+        {
+            get
+            {
+                if( _coordX is null )
+                    _coordX = Info.CoordX;
+                return _coordX.Value;
+            }
+        }
+        private int? _coordY;
+        public int CoordY
+        {
+            get
+            {
+                if (_coordY is null)
+                    _coordY = Info.CoordY;
+                return _coordY.Value;
+            }
+        }
+        private int? _coordZ;
+        public int CoordZ
+        {
+            get
+            {
+                if (_coordZ is null)
+                    _coordZ = Info.CoordZ;
+                return _coordZ.Value;
+            }
+        }
         public Vector2 Coord => new Vector2(CoordX, CoordY);
-        public Point WorldCoord => Info.WorldCoord2;
+        private Point? _worldCoord;
+        public Point WorldCoord2
+        {
+            get
+            {
+                if (_worldCoord is null)
+                    _worldCoord = Info.WorldCoord2;
+                return _worldCoord.Value;
+            }
+        }
 
         /// <summary>
         /// 判断是否允许放置.
@@ -49,7 +85,7 @@
         /// <returns></returns>
         public bool IsSame(int dx, int dy)
         {
-            TileInfo info = Tile[WorldCoord.X + dx, WorldCoord.Y + dy, CoordZ];
+            TileInfo info = Tile[WorldCoord2.X + dx, WorldCoord2.Y + dy, CoordZ];
             if (info.Behavior is null || Info.Behavior is null)
                 return false;
             else

@@ -65,6 +65,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Preliminary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResourceManager.cs" />
     <Compile Include="..\Colin\Common\IHierarchicalElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
@@ -101,7 +103,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleID.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Developments\Preparator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
@@ -117,7 +119,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Point3.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Resources\GameResources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventResponder.cs" />
@@ -134,7 +135,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\SpriteBatchExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TextureExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\VectorExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Developments\DirectoryChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\DirectoryChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\ColorGradienter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcher.cs" />
@@ -156,7 +157,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\GameData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\GameDataFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFileDropBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Developments\IProgramChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IProgramChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Line.cs" />

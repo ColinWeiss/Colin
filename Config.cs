@@ -41,7 +41,7 @@ namespace Colin.Core
         public float SoundEffectVolume { get; set; } = 1f;
 
         /// <summary>
-        /// 指示目标音效.
+        /// 指示程序目标帧率.
         /// </summary>
         public int TargetFrame
         {
@@ -51,7 +51,7 @@ namespace Colin.Core
             }
             set
             {
-                EngineInfo.Engine.SetTargetFrame(value);
+                EngineInfo.Engine.TargetFrame = value;
             }
         }
 

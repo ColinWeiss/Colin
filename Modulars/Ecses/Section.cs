@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Ecses
     /// <summary>
     /// 切片.
     /// </summary>
-    public class Section
+    public class Section : ICodeResource
     {
         internal Dictionary<Type, ISectionComponent> _components;
         /// <summary>
@@ -55,9 +55,9 @@ namespace Colin.Core.Modulars.Ecses
             SetDefaults();
             for (int count = 0; count < _components.Count; count++)
                 _components.Values.ElementAt(count).DoInitialize();
-            OnInitializeComplete();
+            SetDefaultsComplete();
         }
         public virtual void SetDefaults() { }
-        public virtual void OnInitializeComplete() { }
+        public virtual void SetDefaultsComplete() { }
     }
 }

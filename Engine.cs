@@ -12,30 +12,13 @@ using Colin.Core.ModLoaders;
 */
 using Colin.Core.IO;
 using Colin.Core.ModLoaders;
-using Colin.Core.Developments;
+using System.Reflection;
 #if WINDOWS
 using System.Windows.Forms;
 #endif
 
 namespace Colin.Core
 {
-#if WINDOWS
-    public partial class Engine
-    {
-        private Form _form;
-        /// <summary>
-        /// 获取本程序在 Windows 平台下的窗体对象.
-        /// </summary>
-        public Form Form => _form;
-        public void FormInitialize()
-        {
-            _form = Control.FromHandle(Window.Handle) as Form;
-            _form.MinimizeBox = false;
-            _form.MaximizeBox = false;
-            _form.MinimumSize = new System.Drawing.Size(1280, 720);
-        }
-    }
-#endif
     public partial class Engine : Game, IMod
     {
         public string Name => "Colin.Core.Engine";
@@ -62,10 +45,24 @@ namespace Colin.Core
             get => _targetFrame;
             set => SetTargetFrame(value);
         }
+        private void SetTargetFrame(int frame)
+        {
+            _targetFrame = frame;
+            TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
+        }
 
         public Engine()
         {
-            Preparator.DoCheck();
+            //执行程序检查程序.
+            IProgramChecker checker;
+            foreach (Type item in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (!item.IsAbstract && item.GetInterfaces().Contains(typeof(IProgramChecker)))
+                {
+                    checker = (IProgramChecker)Activator.CreateInstance(item);
+                    checker.Check();
+                }
+            }
             EngineInfo.Init(this);
             if (EngineInfo.Graphics == null)
             {
@@ -81,15 +78,6 @@ namespace Colin.Core
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
             IsFixedTimeStep = true;
-#if WINDOWS
-            FormInitialize();
-#endif
-        }
-
-        public void SetTargetFrame(int frame)
-        {
-            _targetFrame = frame;
-            TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
         }
 
         /// <summary>
@@ -153,13 +141,6 @@ namespace Colin.Core
             Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             if (!Started)
             {
-#if WINDOWS
-                Form.Location =
-                    new System.Drawing.Point(
-                        Screen.PrimaryScreen.Bounds.Width / 2 - Form.Width / 2,
-                        Screen.PrimaryScreen.Bounds.Height / 2 - Form.Height / 2
-                        );
-#endif
                 SetScene(Preparator);
                 Started = true;
             }
