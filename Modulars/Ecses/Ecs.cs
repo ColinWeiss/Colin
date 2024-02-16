@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Ecses
             Controller.DoInitialize();
             KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
             Scene.Events.KeysEvent.Register(KeysEvent);
-            Sections = new Section[2000];
+            Sections = new Section[5000];
 
             _systems = new Dictionary<Type, SectionSystem>();
             AddSystems?.Invoke(this);
@@ -73,11 +73,11 @@ namespace Colin.Core.Modulars.Ecses
                 }
             }
         }
+
         public void DoUpdate(GameTime time)
         {
             Perfmon.Start();
             Controller.Reset();
-
             Section _section;
             SectionSystem _system;
             for (int count = 0; count < Sections.Length; count++)

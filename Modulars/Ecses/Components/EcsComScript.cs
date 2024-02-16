@@ -6,7 +6,16 @@
     public abstract class EcsComScript : ISectionComponent, IResetable
     {
         public Section Section { get; private set; }
-        public Ecs Ecs => Section.Ecs;
+        private Ecs _ecs;
+        public Ecs Ecs
+        {
+            get
+            {
+                if( _ecs is null )
+                    _ecs = Section.Ecs;
+                return _ecs;
+            }
+        }
 
         public bool ResetEnable { get; set; } = true;
 
