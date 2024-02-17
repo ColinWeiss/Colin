@@ -20,7 +20,7 @@
         {
             if (_start)
             {
-                Timer += Colin.Core.Time.UnscaledDeltaTime;
+                Timer += Core.Time.UnscaledDeltaTime;
                 if (Timer <= Time)
                 {
                     switch (GradientStyle)
@@ -29,7 +29,7 @@
                             _currentValue = Timer / Time;
                             break;
                         case GradientStyle.EaseOutExpo:
-                            _currentValue = 1f - MathF.Pow(2, -10 * Timer / Time);
+                            _currentValue = Easing.EaseOutExpo( Timer / Time );
                             break;
                     };
                     Current.Closer(Target, _currentValue, 1f);
