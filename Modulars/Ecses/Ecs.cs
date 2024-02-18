@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Ecses
             Controller.DoInitialize();
             KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
             Scene.Events.KeysEvent.Register(KeysEvent);
-            Sections = new Section[5000];
+            Sections = new Section[2000];
 
             _systems = new Dictionary<Type, SectionSystem>();
             AddSystems?.Invoke(this);
@@ -74,6 +74,7 @@ namespace Colin.Core.Modulars.Ecses
             }
         }
 
+        int C = 0;
         public void DoUpdate(GameTime time)
         {
             Perfmon.Start();
@@ -85,7 +86,7 @@ namespace Colin.Core.Modulars.Ecses
                 _section = Sections[count];
                 if (_section is null)
                     continue;
-                if (Sections[count].NeedClear)
+                if (_section.NeedClear)
                 {
                     Sections[count] = null;
                     continue;
@@ -102,7 +103,11 @@ namespace Colin.Core.Modulars.Ecses
                     _system._current = _section;
                     _system.DoUpdate();
                 }
+                if (_section is not null)
+                    C++;
             }
+            Perfmon.SetItem( "Ecs.ActiveCount: ", C );
+            C = 0;
             Perfmon.End("Ecs.DoUpdate");
         }
         public void DoRawRender(GraphicsDevice device, SpriteBatch batch)

@@ -1,12 +1,13 @@
 ﻿using Colin.Core.Resources;
 using Colin.Core.Modulars.Ecses.Components;
+using DeltaMachine.Core.Common;
 
 namespace Colin.Core.Modulars.Ecses
 {
     /// <summary>
     /// 切片.
     /// </summary>
-    public class Section : ICodeResource
+    public class Section : IGameContent<Section>, ICodeResource
     {
         internal Dictionary<Type, ISectionComponent> _components;
         /// <summary>
@@ -45,8 +46,15 @@ namespace Colin.Core.Modulars.Ecses
 
         private EcsComTransform _comTransform;
         public EcsComTransform Transform => _comTransform;
-        public void SetSize(Vector2 size) => _comTransform.SetSize( size);
-        public void SetSize( int width , int height ) => _comTransform.SetSize( width, height );
+
+        private EcsComAdvancedRender _comAdvancedRender;
+        public EcsComAdvancedRender ComAdvancedRender => _comAdvancedRender;
+
+        private EcsComDeferredRender _comDeferredRender;
+        public EcsComDeferredRender ComDeferredRender => _comDeferredRender;
+
+        public void SetSize(Vector2 size) => _comTransform.SetSize(size);
+        public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
         public void DoInitialize()
         {
             _components = new Dictionary<Type, ISectionComponent>();
@@ -59,5 +67,6 @@ namespace Colin.Core.Modulars.Ecses
         }
         public virtual void SetDefaults() { }
         public virtual void SetDefaultsComplete() { }
+
     }
 }
