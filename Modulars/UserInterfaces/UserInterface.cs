@@ -55,7 +55,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             container._interface = this;
             _contianer = container;
-            IHierarchicalElement.DoElementInitialize( container );
+            container.DoInitialize();
             Events.Register(container.Events.Mouse);
             Events.Register(container.Events.Keys);
         }

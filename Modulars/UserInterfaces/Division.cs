@@ -1,12 +1,13 @@
 ﻿using DeltaMachine.Core.GameContents.Sections.Projectiles;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
     /// <summary>
     /// 指代用户交互界面中的一个划分元素.
     /// </summary>
-    public class Division : List<Division>, IHierarchicalElement, IDisposable
+    public class Division : IDisposable
     {
         /// <summary>
         /// 划分元素的名称.
@@ -37,6 +38,8 @@ namespace Colin.Core.Modulars.UserInterfaces
                 isHidden = value;
             }
         }
+
+        public Dictionary<string, Division> Children;
 
         /// <summary>
         /// 划分元素的布局样式
@@ -114,6 +117,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         public Division(string name)
         {
             Name = name;
+            Children = new Dictionary<string, Division>();
             Events = new DivisionEventResponder(this);
             Interact.IsInteractive = true;
             Interact.IsBubbling = true;
@@ -136,6 +140,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             _renderer?.RendererInit();
             if (Parent != null)
                 LayoutStyle.Calculation(this); //刷新一下.
+            ForEach(child => child?.DoInitialize());
             Events.DoInitialize();
             InitializationCompleted = true;
         }
@@ -280,6 +285,16 @@ namespace Colin.Core.Modulars.UserInterfaces
             });
         }
 
+        public void ForEach( Action<Division> action )
+        {
+            Division _div;
+            for (int count = 0; count < Children.Count; count++)
+            {
+                _div = Children.Values.ElementAt(count);
+                action.Invoke(_div);
+            }
+        }
+
         /// <summary>
 		/// 添加子元素.
 		/// </summary>
@@ -297,10 +312,8 @@ namespace Colin.Core.Modulars.UserInterfaces
             if (IsCanvas)
                 division.ParentCanvas = this;
             if (doInit)
-            {
-                IHierarchicalElement.DoElementInitialize(division);
-            }
-            Add(division);
+                division.DoInitialize();
+            Children.Add(division.Name, division);
             return true;
         }
 
@@ -315,7 +328,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             division.ParentCanvas = null;
             division._container = null;
             division._interface = null;
-            return Remove(division);
+            return Children.Remove(division.Name);
         }
 
         /// <summary>
@@ -324,9 +337,9 @@ namespace Colin.Core.Modulars.UserInterfaces
         public virtual void Clear(bool dispose = true)
         {
             Division _div;
-            for (int count = 0; count < Count; count++)
+            for (int count = 0; count < Children.Count; count++)
             {
-                _div = this[count];
+                _div = Children.Values.ElementAt(count);
                 RemoveDiv(_div);
                 if (dispose)
                     _div.Dispose();
@@ -362,8 +375,8 @@ namespace Colin.Core.Modulars.UserInterfaces
                 if (disposing)
                 {
                     Canvas?.Dispose();
-                    for (int count = 0; count < Count; count++)
-                        this[count].Dispose();
+                    for (int count = 0; count < Children.Count; count++)
+                        Children.Values.ElementAt(count).Dispose();
                     OnDispose?.Invoke();
                 }
                 _renderer = null;

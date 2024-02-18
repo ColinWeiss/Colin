@@ -68,7 +68,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Preliminary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResourceManager.cs" />
-    <Compile Include="..\Colin\Common\IHierarchicalElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Perfmon.cs" />

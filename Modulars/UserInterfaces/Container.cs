@@ -29,9 +29,9 @@
         public virtual void ContainerInitialize() { }
         public void SetTop(Division division)
         {
-            if (Contains(division))
+            if (Children.ContainsKey(division.Name))
             {
-                Remove(division);
+                Children.Remove(division.Name);
                 Register(division);
             }
         }
