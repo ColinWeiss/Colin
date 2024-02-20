@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Particles
 {
-    public struct ParticleData
+    public struct GpuParticleData
     {
         public Color Color;
         public Vector2 Position;
@@ -11,7 +11,7 @@
         internal float ID;
 
         public static readonly VertexDeclaration VertexDeclaration;
-        static ParticleData()
+        static GpuParticleData()
         {
             VertexElement[] instanceStreamElements = new VertexElement[7]
             {

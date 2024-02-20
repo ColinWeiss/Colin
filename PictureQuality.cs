@@ -16,7 +16,6 @@
         /// <summary>
         /// 高画质.
         /// </summary>
-        High,
-
+        High
     }
 }

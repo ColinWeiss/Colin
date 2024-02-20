@@ -6,10 +6,10 @@ namespace Colin.Core.Modulars.Particles
     /// <summary>
     /// 粒子发射器.
     /// </summary>
-    public class ParticleEmitter
+    public class GpuParticleEmitter
     {
         public readonly int ParticleCountMax;
-        public ParticleEmitter(int particleCountMax) => ParticleCountMax = particleCountMax;
+        public GpuParticleEmitter(int particleCountMax) => ParticleCountMax = particleCountMax;
 
         /// <summary>
         /// 图形设备.
@@ -39,14 +39,14 @@ namespace Colin.Core.Modulars.Particles
         /// 粒子数据数组缓冲区队列.
         /// <br>用于 <see cref="DataWriteStep"/>.</br>
         /// </summary>
-        public Queue<ParticleData[]> DataBufferQueue = new Queue<ParticleData[]>();
+        public Queue<GpuParticleData[]> DataBufferQueue = new Queue<GpuParticleData[]>();
 
         public VertexBuffer TemplateParticleVertexBuffer;
         public IndexBuffer TemplateParticleIndexBuffer;
         public VertexBuffer ParticleVertexBuffer;
         public VertexBufferBinding[] ParticleBindings;
         public Effect ParticleInstancing;
-        public ParticleID[] ID;
+        public GpuParticleID[] ID;
         /// <summary>
         /// 用于存储粒子信息的渲染目标.
         /// <br>交由 ComputeShader 完成行为计算.</br>
@@ -149,8 +149,8 @@ namespace Colin.Core.Modulars.Particles
             ParticleBindings = new VertexBufferBinding[2];
             ParticleBindings[0] = new VertexBufferBinding(TemplateParticleVertexBuffer);
 
-            ParticleVertexBuffer = new VertexBuffer(Device, ParticleID.VertexDeclaration, ParticleCountMax, BufferUsage.WriteOnly);
-            ID = new ParticleID[ParticleCountMax];
+            ParticleVertexBuffer = new VertexBuffer(Device, GpuParticleID.VertexDeclaration, ParticleCountMax, BufferUsage.WriteOnly);
+            ID = new GpuParticleID[ParticleCountMax];
             for (int count = 0; count < ParticleCountMax; count++)
                 ID[count].ID = count;
             ParticleVertexBuffer.SetData(ID);
@@ -175,11 +175,11 @@ namespace Colin.Core.Modulars.Particles
             Transform = Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
             while (DataBufferQueue.Count > 0)
             {
-                ParticleData[] datas = DataBufferQueue.Dequeue();
+                GpuParticleData[] datas = DataBufferQueue.Dequeue();
                 EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
                 EngineInfo.SpriteBatch.DrawRectangle(datas[0].ID, 0, datas.Length, 4, Color.Transparent);
                 EngineInfo.SpriteBatch.End();
-                DataVertexBuffer = new VertexBuffer(Device, ParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
+                DataVertexBuffer = new VertexBuffer(Device, GpuParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
                 DataVertexBuffer.SetData(datas);
                 DataBindings[1] = new VertexBufferBinding(DataVertexBuffer, 0, 1);
                 Device.SamplerStates[0] = SamplerState.PointClamp;
@@ -228,7 +228,7 @@ namespace Colin.Core.Modulars.Particles
 
             (DataRt, DataResultRt) = (DataResultRt, DataRt);
         }
-        public void NewParticle(ParticleData[] datas)
+        public void NewParticle(GpuParticleData[] datas)
         {
             if (WritePointer + datas.Length > ParticleCountMax)
             {

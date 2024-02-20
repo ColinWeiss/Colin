@@ -1,10 +1,10 @@
 ﻿namespace Colin.Core.Modulars.Particles
 {
-    public struct ParticleID
+    public struct GpuParticleID
     {
         public float ID;
         public static readonly VertexDeclaration VertexDeclaration;
-        static ParticleID()
+        static GpuParticleID()
         {
             VertexElement[] instanceStreamElements = new VertexElement[1]
             {

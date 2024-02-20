@@ -102,7 +102,7 @@
     <Compile Include="..\Colin\Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleID.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
@@ -112,9 +112,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ShaderCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Polygon.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\Particle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\ParticleEmitter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleEmitter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />

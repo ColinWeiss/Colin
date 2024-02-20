@@ -59,15 +59,22 @@
             float s = (float)Math.Sin(radian);
             return new Vector2(c * vec.X - s * vec.Y, s * vec.X + c * vec.Y) + center;
         }
-        public static float GetRadian(this Vector2 v) => MathF.Atan2(v.Y, v.X);
+
         public static Vector2 GetAngle(this float rad)
         {
             return new Vector2((float)Math.Cos((double)rad), (float)Math.Sin((double)rad));
         }
-        public static Vector2 GetAngle( this int rad )
+        public static Vector2 GetAngle(this int rad)
         {
             return new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
         }
+        public static float GetRadian(this Vector2 v) => MathF.Atan2(v.Y, v.X);
+        public static float GetDegrees( this float v )
+        {
+            Vector2 angle = new Vector2((float)Math.Cos( v * 3.1415926f / 180f ), (float)Math.Sin(v * 3.1415926f / 180f ));
+            return MathF.Atan2(angle.Y, angle.X);
+        }
+
         public static float Slop(this Vector2 vec)
         {
             return vec.Y / vec.X;
