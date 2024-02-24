@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 else
                 {
                     ComTransform.Position += ComTransform.Velocity * Time.DeltaTime;
-                    HandleCollisions(Current, ComTransform.Velocity);
+                    HandleCollisions(Current, ComTransform.Velocity * Time.DeltaTime);
                 }
                 if (ComPhysic.CollisionLeft || ComPhysic.CollisionRight)
                     ComTransform.Velocity.X = 0;
@@ -115,8 +115,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
                         if (bounds.Intersects(info.HitBox) &&
                           !previousBounds.Intersects(info.HitBox))
                         {
-                            depth = GetEmbed(bounds, info.HitBox, comTransform.Velocity);
-                            v = depth / comTransform.Velocity;
+                            depth = GetEmbed(bounds, info.HitBox, comTransform.Velocity * Time.DeltaTime);
+                            v = depth / comTransform.Velocity * Time.DeltaTime;
                             v.X = comTransform.Velocity.X == 0 ? -float.MaxValue : v.X;
                             v.Y = comTransform.Velocity.Y == 0 ? -float.MaxValue : v.Y;
                             absV = -v;
