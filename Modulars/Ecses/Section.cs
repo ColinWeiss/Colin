@@ -59,6 +59,7 @@ namespace Colin.Core.Modulars.Ecses
         {
             _components = new Dictionary<Type, ISectionComponent>();
             _comDoc = RegisterCom<EcsComDoc>();
+            _comDoc.Section = this;
             _comTransform = RegisterCom<EcsComTransform>();
             SetDefaults();
             for (int count = 0; count < _components.Count; count++)

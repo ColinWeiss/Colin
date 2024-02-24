@@ -120,7 +120,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                             v.X = comTransform.Velocity.X == 0 ? -float.MaxValue : v.X;
                             v.Y = comTransform.Velocity.Y == 0 ? -float.MaxValue : v.Y;
                             absV = -v;
-                            if (absV.X < absV.Y && info.Collision != TileCollision.Platform)
+                            if (absV.X < absV.Y )
                             {
                                 if (comTransform.Velocity.X < 0)
                                     comPhysic.CollisionLeft = true;
@@ -134,7 +134,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                             {
                                 if (comTransform.Velocity.Y > 0)
                                     comPhysic.CollisionBottom = true;
-                                if (comTransform.Velocity.Y < 0 && info.Collision != TileCollision.Platform)
+                                if (comTransform.Velocity.Y < 0 )
                                     comPhysic.CollisionTop = true;
                                 if (comPhysic.CollisionTop || comPhysic.CollisionBottom)
                                     comTransform.Position.Y += depth.Y * 1.0001f;
