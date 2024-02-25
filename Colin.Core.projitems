@@ -99,6 +99,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsPhysicSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transform2D.cs" />
     <Compile Include="..\Colin\Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />

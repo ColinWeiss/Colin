@@ -126,7 +126,7 @@
             float l = (float)Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y);
             return vec / l;
         }
-        public static Vector2 XY(this Vector3 vec)
+        public static Vector2 GetVector2(this Vector3 vec)
         {
             return new Vector2(vec.X, vec.Y);
         }
