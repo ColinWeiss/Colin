@@ -89,7 +89,7 @@ namespace Colin.Core.Modulars.Ecses.Components
 
         /// <summary>
         /// 指示基础碰撞盒.
-        /// <br>其中, X、Y 用作针对 <see cref="EcsComTransform.Position"/> 的偏移.</br>
+        /// <br>其中, X、Y 用作针对 <see cref="EcsComTransform.Translation"/> 的偏移.</br>
         /// <br>Width、Height用作针对 <see cref="EcsComTransform.Size"/> 的增减.</br>
         /// </summary>
         public RectangleF Hitbox;

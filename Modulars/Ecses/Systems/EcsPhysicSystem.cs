@@ -25,7 +25,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
             }
             if (ComPhysic is not null && ComTransform is not null)
             {
-                ComPhysic.PreviousPosition = ComTransform.Position;
+                ComPhysic.PreviousPosition = ComTransform.Translation;
                 Vector2 _v = ComTransform.Velocity * Time.DeltaTime;
                 ComPhysic.PreviousCollisionBottom = ComPhysic.CollisionBottom;
                 if (_v.Length() > VelocityStep)
@@ -36,18 +36,18 @@ namespace Colin.Core.Modulars.Ecses.Systems
                     _v *= VelocityStep;
                     while (_vCount - 1 >= 0)
                     {
-                        ComTransform.Position += _v;
+                        ComTransform.Translation += _v;
                         HandleCollisions(Current, _v);
                         _vCount--;
                     }
                     _v.Normalize();
                     _v *= _vRem;
-                    ComTransform.Position += _v;
+                    ComTransform.Translation += _v;
                     HandleCollisions(Current, _v);
                 }
                 else
                 {
-                    ComTransform.Position += ComTransform.Velocity * Time.DeltaTime;
+                    ComTransform.Translation += ComTransform.Velocity * Time.DeltaTime;
                     HandleCollisions(Current, ComTransform.Velocity * Time.DeltaTime);
                 }
                 if (ComPhysic.CollisionLeft || ComPhysic.CollisionRight)
@@ -127,7 +127,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                                 if (comTransform.Velocity.X > 0)
                                     comPhysic.CollisionRight = true;
                                 if (comPhysic.CollisionRight || comPhysic.CollisionLeft)
-                                    comTransform.Position.X += depth.X * 1.0001f;
+                                    comTransform.Translation.X += depth.X * 1.0001f;
                                 bounds = GetHitBox(section);
                             }
                             else if (absV.X > absV.Y)
@@ -137,7 +137,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                                 if (comTransform.Velocity.Y < 0 )
                                     comPhysic.CollisionTop = true;
                                 if (comPhysic.CollisionTop || comPhysic.CollisionBottom)
-                                    comTransform.Position.Y += depth.Y * 1.0001f;
+                                    comTransform.Translation.Y += depth.Y * 1.0001f;
                                 bounds = GetHitBox(section);
                             }
                         }
@@ -156,8 +156,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
             if (comTransform is not null && comPhysic is not null)
             {
                 return new RectangleF(
-                    comTransform.Position.X + comPhysic.Hitbox.X,
-                    comTransform.Position.Y + comPhysic.Hitbox.Y,
+                    comTransform.Translation.X + comPhysic.Hitbox.X,
+                    comTransform.Translation.Y + comPhysic.Hitbox.Y,
                     comTransform.Size.X + comPhysic.Hitbox.Width,
                     comTransform.Size.Y + comPhysic.Hitbox.Height
                     );
