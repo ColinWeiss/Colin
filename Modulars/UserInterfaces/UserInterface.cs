@@ -2,15 +2,19 @@
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
+    /// <summary>
+    /// 场景模块: 用户交互界面.
+    /// <br>用以构建应用程序中的用户交互界面.</br>
+    /// </summary>
     public class UserInterface : ISceneModule, IRenderableISceneModule
     {
-        public Division Focus;
+        public Div Focus;
 
-        public Division LastFocus;
+        public Div LastFocus;
 
-        private Container _contianer = new Container("NomalContainer");
+        private DivThreshold _contianer = new DivThreshold("NomalContainer");
 
-        public Container Container => _contianer;
+        public DivThreshold Container => _contianer;
 
         public RenderTarget2D RawRt { get; set; }
 
@@ -41,19 +45,24 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
         {
-            batch.Begin();
+            NormalBatchBegin( batch );
             Container?.DoRender(device, batch);
             batch.End();
         }
         public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
-        public void Register(Container container) => Container?.Register(container);
-
-        public void Remove(Container container, bool dispose) => Container?.RemoveDiv(container);
-
-        public void SetContainer(Container container)
+        public static void NormalBatchBegin( SpriteBatch batch )
         {
-            container._interface = this;
+            batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+        }
+
+        public void Register(DivThreshold container) => Container?.Register(container);
+
+        public void Remove(DivThreshold container, bool dispose) => Container?.RemoveDiv(container);
+
+        public void SetContainer(DivThreshold container)
+        {
+            container.userInterface = this;
             _contianer = container;
             container.DoInitialize();
             Events.Register(container.Events.Mouse);

@@ -169,6 +169,21 @@
         /// <param name="size"></param>
         /// <param name="cut"></param>
         /// <param name="depth"></param>
+        public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, Vector2 pos, Vector2 size, Point cut, float depth)
+        {
+            batch.DrawNineCut(texture, color, (int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, cut, depth);
+        }
+
+        /// <summary>
+        /// 九宫绘制.
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="texture"></param>
+        /// <param name="color"></param>
+        /// <param name="pos"></param>
+        /// <param name="size"></param>
+        /// <param name="cut"></param>
+        /// <param name="depth"></param>
         public static void DrawNineCut(this SpriteBatch batch, Texture2D texture, Color color, Point pos, Point size, Point cut, float depth)
         {
             batch.DrawNineCut(texture, color, pos.X, pos.Y, size.X, size.Y, cut, depth);

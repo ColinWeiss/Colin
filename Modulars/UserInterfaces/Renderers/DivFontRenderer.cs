@@ -13,19 +13,26 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
             set
             {
                 _text = value;
-                Division.Layout.SizeF = Font.MeasureString(_text);
-                Division.Design.Anchor = Division.Layout.HalfF;
+                Div.Layout.SetSize(Font.MeasureString(_text));
+                Div.Layout.Anchor = Div.Layout.Half;
             }
         }
-        public override void RendererInit()
+        public override void OnBinded()
         {
             if (Font == null)
                 Font = FontAssets.Get("Unifont").GetFont(16);
+            base.OnBinded();
         }
         public override void DoRender(GraphicsDevice device, SpriteBatch batch)
         {
-            batch.DrawString(Font, _text, Division.Layout.TotalLocationF + Division.Design.Anchor,
-                Division.Design.Color, Division.Design.Rotation, Division.Design.Anchor, Division.Design.Scale,
+            batch.DrawString(
+                Font, 
+                _text, 
+                Div.Layout.RenderTargetLocation + Div.Layout.Anchor,
+                Div.Design.Color, 
+                Div.Layout.Rotation, 
+                Div.Layout.Anchor, 
+                Div.Layout.Scale,
                 1f, 0f, 0f, TextStyle.None, FontSystemEffect.Stroked, 1);
         }
     }

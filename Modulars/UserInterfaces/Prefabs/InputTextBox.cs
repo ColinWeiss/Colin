@@ -3,7 +3,7 @@ using TextInputEventArgs = MonoGame.IMEHelper.TextInputEventArgs;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
-    public class InputTextBox : Division
+    public class InputTextBox : Div
     {
         public InputTextBox(string name, int limit = 16) : base(name)
         {
@@ -45,10 +45,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
         public event EventHandler<TextInputEventArgs> TextInput;
 
-        public override void OnInit()
+        public override void DivInit()
         {
             Text = "";
-            Layout.ScissorEnable = true;
             Label.Interact.IsInteractive = false;
             Register(Label);
 
@@ -62,8 +61,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
                 EngineInfo.IMEHandler.StopTextComposition();
                 Label.SetText(Text);
             };
-            Interface.Scene.Events.TextInput += IMEHandler_TextInput;
-            base.OnInit();
+            UserInterface.Scene.Events.TextInput += IMEHandler_TextInput;
+            base.DivInit();
         }
 
         private void IMEHandler_TextInput( object sender, MonoGame.IMEHelper.TextInputEventArgs e)
@@ -100,8 +99,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
         public override void OnUpdate(GameTime time)
         {
-            Editing = Interface.Focus == this;
-            InputRect = Layout.TotalHitBox;
+            Editing = UserInterface.Focus == this;
+            InputRect = Layout.RenderTargetBounds;
             InputRect.Y += 16;
             InputRect.X += 16;
             if (Text != string.Empty && Editing)

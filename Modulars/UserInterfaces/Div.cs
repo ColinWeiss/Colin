@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 指代用户交互界面中的一个划分元素.
     /// </summary>
-    public class Division : IDisposable
+    public class Div : IDisposable
     {
         /// <summary>
         /// 划分元素的名称.
@@ -39,12 +39,15 @@ namespace Colin.Core.Modulars.UserInterfaces
             }
         }
 
-        public Dictionary<string, Division> Children;
+        /// <summary>
+        /// 用于存放该划分元素的子元素.
+        /// </summary>
+        public Dictionary<string, Div> Children;
 
         /// <summary>
-        /// 划分元素的布局样式
+        /// 指示划分元素的布局样式
         /// </summary>
-        public LayoutStyle Layout;
+        public DivFrontLayout Layout;
 
         /// <summary>
         /// 划分元素的交互样式.
@@ -61,51 +64,98 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// </summary>
         public DivisionEventResponder Events;
 
-        private DivisionRenderer _renderer;
+        private DivisionRenderer renderer;
         /// <summary>
-        /// 划分元素的渲染器.
+        /// 获取划分元素的渲染器实例对象.
         /// </summary>
-        public DivisionRenderer Renderer => _renderer;
+        public DivisionRenderer Renderer => renderer;
         public T BindRenderer<T>() where T : DivisionRenderer, new()
         {
-            _renderer = new T();
-            _renderer._division = this;
-            _renderer.RendererInit();
-            return _renderer as T;
+            renderer = new T();
+            renderer.div = this;
+            renderer.OnBinded();
+            return renderer as T;
         }
         public T GetRenderer<T>() where T : DivisionRenderer
         {
-            if (_renderer is T)
-                return _renderer as T;
+            if (renderer is T)
+                return renderer as T;
             else
                 return null;
         }
-        public void ClearRenderer() => _renderer = null;
+        public void ClearRenderer() => renderer = null;
+
+        private DivisionController controller;
+        /// <summary>
+        /// 获取划分元素的控制器实例对象.
+        /// </summary>
+        public DivisionController Controller => controller;
+        public T BindController<T>() where T : DivisionController, new()
+        {
+            controller = new T();
+            controller.div = this;
+            controller.OnBinded();
+            return controller as T;
+        }
+        public T GetController<T>() where T : DivisionController
+        {
+            if (controller is T)
+                return controller as T;
+            else
+                return null;
+        }
+
+        private Div parent;
+        /// <summary>
+        /// 指示划分元素的父元素.
+        /// </summary>
+        public Div Parent => parent;
+
+        private Div upperCanvas;
+        /// <summary>
+        /// 获取划分元素可溯到的最近的上一层画布元素.
+        /// </summary>
+        public Div UpperCanvas
+        {
+            get
+            {
+                if (parent is null)
+                    return null;
+                if (upperCanvas is null)
+                {
+                    Div result;
+                    if (Parent.IsCanvas)
+                        result = Parent;
+                    else
+                        result = Parent.UpperCanvas;
+                    upperCanvas = result;
+                }
+                return upperCanvas;
+            }
+        }
 
         /// <summary>
-        /// 划分元素控制器.
+        /// 若<see cref="IsCanvas"/> 为 <see langword="true"/>, 则该对象用于分配其渲染目标. 
+        /// <br>否则为 <see langword="null"/>.</br>
         /// </summary>
-        public DivisionController Controller;
-
-        /// <summary>
-        /// 划分元素的父元素.
-        /// </summary>
-        public Division Parent;
-
-        /// <summary>
-        /// 划分元素可溯到的最近的 Canvas 元素.
-        /// </summary>
-        public Division ParentCanvas;
-
         public RenderTarget2D Canvas;
 
-        internal UserInterface _interface;
-        public UserInterface Interface => _interface;
+        internal UserInterface userInterface;
+        /// <summary>
+        /// 获取划分元素所属的用户交互界面.
+        /// </summary>
+        public UserInterface UserInterface => userInterface;
+        
+        internal DivThreshold threshold;
+        /// <summary>
+        /// 获取划分元素之「阈点」.
+        /// </summary>
+        public DivThreshold Threshold => threshold;
 
-        internal Container _container;
-        public Container Container => _container;
-
-        public virtual bool IsCanvas => false;
+        /// <summary>
+        /// 指示该划分元素是否为可作为渲染目标的画布元素.
+        /// </summary>
+        public readonly bool IsCanvas;
 
         public bool InitializationCompleted = false;
 
@@ -114,32 +164,26 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <br>[!] 虽然此处的名称可重复, 但该名称的作用是利于调试, 故建议使用不同的、可辨识的名称加以区分.</br>
         /// </summary>
         /// <param name="name">划分元素的名称.</param>
-        public Division(string name)
+        public Div(string name, bool isCanvas = false )
         {
             Name = name;
-            Children = new Dictionary<string, Division>();
+            Children = new Dictionary<string, Div>();
             Events = new DivisionEventResponder(this);
+            Layout.Scale = Vector2.One;
             Interact.IsInteractive = true;
             Interact.IsBubbling = true;
             Design.Color = Color.White;
-            Design.Scale = Vector2.One;
-            Controller = new DivisionController(this);
+            IsCanvas = isCanvas;
         }
 
         public void DoInitialize()
         {
             if (InitializationCompleted)
                 return;
-            if (!(this is Container))
-            {
-                _interface = Parent?._interface;
-                _container = Parent?._container;
-            }
-            OnInit();
-            Controller?.OnInit();
-            _renderer?.RendererInit();
-            if (Parent != null)
-                LayoutStyle.Calculation(this); //刷新一下.
+            DivInit();
+            controller?.OnDivInitialize();
+            renderer?.OnDivInitialize();
+            DivFrontLayout.Calculate(this);
             ForEach(child => child?.DoInitialize());
             Events.DoInitialize();
             InitializationCompleted = true;
@@ -148,7 +192,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <summary>
         /// 发生于划分元素执行 <see cref="DoInitialize"/> 时, 可于此自定义初始化操作.
         /// </summary>
-        public virtual void OnInit() { }
+        public virtual void DivInit() { }
 
         private bool _started = false;
 
@@ -161,10 +205,10 @@ namespace Colin.Core.Modulars.UserInterfaces
             PreUpdate(time);
             if (!IsVisible)
                 return;
-            if (this is Container is false)
+            if (this is DivThreshold is false)
             {
-                _interface = Parent?._interface;
-                _container = Parent?._container;
+                userInterface = Parent?.userInterface;
+                threshold = Parent?.threshold;
             }
             if (!_started)
             {
@@ -172,10 +216,9 @@ namespace Colin.Core.Modulars.UserInterfaces
                 _started = true;
             }
             Controller?.Layout(ref Layout);
-            if (Parent != null)
-                LayoutStyle.Calculation(this);
             Controller?.Interact(ref Interact);
             Controller?.Design(ref Design);
+            DivFrontLayout.Calculate(this);
             Events.DoUpdate();
             OnUpdate(time);
             UpdateChildren(time);
@@ -204,7 +247,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             ForEach(child =>
             {
-                if (Layout.ScissorEnable && child.Layout.TotalHitBox.Intersects(Layout.TotalHitBox))
+                if (child.Layout.RenderTargetBounds.Intersects(Layout.RenderTargetBounds))
                     child?.DoUpdate(time);
                 else
                     child?.DoUpdate(time);
@@ -219,54 +262,27 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             if (!IsVisible && !IsHidden)
                 return;
-            if (IsCanvas)
+      /*      if (IsCanvas)
             {
                 batch.End();
                 device.SetRenderTarget(Canvas);
-                batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Layout.CanvasTransform);
+                batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
                 device.Clear(Color.Transparent);
-            }
-            var rasterizerState = new RasterizerState
-            {
-                CullMode = CullMode.None,
-                ScissorTestEnable = true
-            };
-            if (Layout.ScissorEnable)
-            {
-                batch.End();
-                device.ScissorRectangle = Layout.Scissor;
-                if (IsCanvas)
-                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: Layout.CanvasTransform);
-                else if (ParentCanvas == null)
-                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState);
-                else
-                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: rasterizerState, transformMatrix: ParentCanvas?.Layout.CanvasTransform);
-            }
-            _renderer?.DoRender(device, batch);//渲染器进行渲染.
+            }*/
+            renderer?.DoRender(device, batch);//渲染器进行渲染.
             RenderChildren(device, batch);
-            if (Layout.ScissorEnable)
+      /*      if (IsCanvas)
             {
                 batch.End();
-                batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas?.Layout.CanvasTransform);
-            }
-            if (IsCanvas)
-            {
-                batch.End();
-                if (Parent.IsCanvas)
-                    device.SetRenderTarget(Parent.Canvas);
-                if (ParentCanvas != null)
-                    device.SetRenderTarget(ParentCanvas.Canvas);
+                if (UpperCanvas is not null)
+                    device.SetRenderTarget(UpperCanvas.Canvas);
                 else
-                    device.SetRenderTarget(Interface.RawRt);
-                if (Parent.IsCanvas)
-                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: Parent.Layout.CanvasTransform);
-                else if (ParentCanvas != null)
-                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: ParentCanvas.Layout.CanvasTransform);
-                else
-                    batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-                batch.Draw(Canvas, Layout.TotalLocationF + Design.Anchor, null, Design.Color, 0f, Design.Anchor, Design.Scale, SpriteEffects.None, 0f);
-            }
+                    device.SetRenderTarget(UserInterface.RawRt);
+                UserInterface.NormalBatchBegin(batch);
+                batch.Draw(Canvas, Layout.ViewportBounds.Location.ToVector2() + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
+            }*/
         }
+
         /// <summary>
         /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoRender"/>.
         /// </summary>
@@ -275,9 +291,9 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             ForEach(child =>
             {
-                if ( Layout.Size != Point.Zero && child.Layout.Size != Point.Zero )
+                if ( Layout.Size != Vector2.Zero && child.Layout.Size != Vector2.Zero )
                 {
-                    if( child.Layout.TotalHitBox.Intersects( Layout.TotalHitBox ) )
+                    if( child.Layout.RenderTargetBounds.Intersects( Layout.RenderTargetBounds) )
                         child?.DoRender(device, batch);
                 }
                 else
@@ -285,9 +301,9 @@ namespace Colin.Core.Modulars.UserInterfaces
             });
         }
 
-        public void ForEach( Action<Division> action )
+        public void ForEach( Action<Div> action )
         {
-            Division _div;
+            Div _div;
             for (int count = 0; count < Children.Count; count++)
             {
                 _div = Children.Values.ElementAt(count);
@@ -301,16 +317,13 @@ namespace Colin.Core.Modulars.UserInterfaces
 		/// <param name="division">需要添加的划分元素.</param>
 		/// <param name="doInit">执行添加划分元素的初始化.</param>
 		/// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-		public virtual bool Register(Division division, bool doInit = false)
+		public virtual bool Register(Div division, bool doInit = false)
         {
-            division.Parent = this;
-            division.ParentCanvas = ParentCanvas;
-            division._interface = _interface;
-            division._container = _container;
-            Events.Mouse.Register(division.Events.Mouse);
+            division.parent = this;
+            division.userInterface = userInterface;
+            division.threshold = threshold;
+            Events.Mouse.Register(division.Events.Mouse); // !
             Events.Keys.Register(division.Events.Keys);
-            if (IsCanvas)
-                division.ParentCanvas = this;
             if (doInit)
                 division.DoInitialize();
             Children.Add(division.Name, division);
@@ -322,12 +335,11 @@ namespace Colin.Core.Modulars.UserInterfaces
 		/// </summary>
 		/// <param name="division">需要移除的划分元素.</param>
 		/// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-		public virtual bool RemoveDiv(Division division)
+		public virtual bool RemoveDiv(Div division)
         {
-            division.Parent = null;
-            division.ParentCanvas = null;
-            division._container = null;
-            division._interface = null;
+            division.parent = null;
+            division.threshold = null;
+            division.userInterface = null;
             return Children.Remove(division.Name);
         }
 
@@ -336,7 +348,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// </summary>
         public virtual void Clear(bool dispose = true)
         {
-            Division _div;
+            Div _div;
             for (int count = 0; count < Children.Count; count++)
             {
                 _div = Children.Values.ElementAt(count);
@@ -348,23 +360,16 @@ namespace Colin.Core.Modulars.UserInterfaces
             //Clear();
         }
 
-        public void Do(Action<Division> action) => action(this);
+        public void Do(Action<Div> action) => action(this);
 
         /// <summary>
 		/// 判断该划分元素是否包含指定点.
 		/// </summary>
 		/// <param name="point">输入的点.</param>
 		/// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
-		public virtual bool ContainsPoint(Point point)
+		public virtual bool ContainsViewportPoint(Point point)
         {
-            if (Parent is not null && Parent.Layout.ScissorEnable )
-            {
-                return Parent.ContainsPoint(point) && Layout.TotalHitBox.Contains(point);
-            }
-      //       if (Layout.Size != Point.Zero)
-                return Layout.TotalHitBox.Contains(point);
-    //        else
-       //        return true;
+            return Layout.ViewportBounds.Contains(point);
         }
 
         private bool disposedValue;
@@ -379,12 +384,12 @@ namespace Colin.Core.Modulars.UserInterfaces
                         Children.Values.ElementAt(count).Dispose();
                     OnDispose?.Invoke();
                 }
-                _renderer = null;
+                renderer = null;
                 disposedValue = true;
             }
         }
         public event Action OnDispose;
-        ~Division()
+        ~Div()
         {
             Dispose(disposing: false);
         }

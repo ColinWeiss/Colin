@@ -7,9 +7,9 @@
     {
         public string Name;
 
-        public Division Division;
+        public Div Division;
 
-        public DivisionEvent(Division container)
+        public DivisionEvent(Div container)
         {
             Division = container;
         }

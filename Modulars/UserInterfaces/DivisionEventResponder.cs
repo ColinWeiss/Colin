@@ -7,9 +7,9 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public class DivisionEventResponder
     {
-        public Division Div;
+        public Div Div;
 
-        public DivisionEventResponder(Division division) => Div = division;
+        public DivisionEventResponder(Div division) => Div = division;
 
         public MouseEventResponder Mouse = new MouseEventResponder("MouseEvents");
 
@@ -65,7 +65,7 @@ namespace Colin.Core.Modulars.UserInterfaces
                 };
             Mouse.LeftClickBefore += (s, e) =>
             {
-                if (Div.IsVisible && Div.ContainsPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+                if (Div.IsVisible && Div.ContainsViewportPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
                 {
                     if (!DivLock)
                         DivLock = true;
@@ -73,19 +73,19 @@ namespace Colin.Core.Modulars.UserInterfaces
                 Invoke(e, LeftClickBefore);
                 Invoke(e, () =>
                 {
-                    Div.Interface.Focus = Div;
+                    Div.UserInterface.Focus = Div;
                     if (!Div.Interact.IsDraggable)
                         return;
                     DragStart?.Invoke();
                     DraggingState = true;
                     if (Div.Parent != null)
                     {
-                        Point mouseForParentLocation = MouseResponder.State.Position - Div.Parent.Layout.Location;
+                        Vector2 mouseForParentLocation = MouseResponder.Position - Div.Parent.Layout.Location;
                         _cachePos = mouseForParentLocation - Div.Layout.Location;
                     }
                     else
                     {
-                        _cachePos = MouseResponder.State.Position - Div.Layout.Location;
+                        _cachePos = MouseResponder.Position - Div.Layout.Location;
                     }
                 });
             };
@@ -102,7 +102,7 @@ namespace Colin.Core.Modulars.UserInterfaces
                     if (!Div.Interact.IsDraggable)
                         return;
                     DraggingState = false;
-                    _cachePos = new Point(-1, -1);
+                    _cachePos = new Vector2(-1, -1);
                 }
             };
             Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
@@ -115,7 +115,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         private void Invoke(MouseEventArgs e, Action action, bool divLock = false)
         {
             if (Div.IsVisible &&
-                Div.ContainsPoint(MouseResponder.State.Position) &&
+                Div.ContainsViewportPoint(MouseResponder.State.Position) &&
                 Div.Interact.IsInteractive &&
                 (DivLock || divLock))
             {
@@ -124,11 +124,11 @@ namespace Colin.Core.Modulars.UserInterfaces
                 action?.Invoke();
             }
         }
-        private Point _cachePos = new Point(-1, -1);
+        private Vector2 _cachePos = new Vector2(-1, -1);
         public void DoUpdate()
         {
             Div.Interact.InteractionLast = Div.Interact.Interaction;
-            if (Div.ContainsPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+            if (Div.ContainsViewportPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
                 Div.Interact.Interaction = true;
             else
                 Div.Interact.Interaction = false;
@@ -138,13 +138,13 @@ namespace Colin.Core.Modulars.UserInterfaces
                     return;
                 if (Div.Parent != null)
                 {
-                    Point _resultLocation = MouseResponder.State.Position - Div.Parent.Layout.Location - _cachePos;
+                    Vector2 _resultLocation = MouseResponder.Position - Div.Parent.Layout.Location - _cachePos;
                     Div.Layout.Left = _resultLocation.X;
                     Div.Layout.Top = _resultLocation.Y;
                 }
                 else
                 {
-                    Point _resultLocation = MouseResponder.State.Position - _cachePos;
+                    Vector2 _resultLocation = MouseResponder.Position - _cachePos;
                     Div.Layout.Left = _resultLocation.X;
                     Div.Layout.Top = _resultLocation.Y;
                 }
@@ -155,12 +155,12 @@ namespace Colin.Core.Modulars.UserInterfaces
                 }
                 Dragging?.Invoke();
             }
-            if (Div.Interface.Focus == Div && Div.Interface.LastFocus != Div)
+            if (Div.UserInterface.Focus == Div && Div.UserInterface.LastFocus != Div)
             {
                 DivLock = true;
                 GetFocus?.Invoke();
             }
-            if (Div.Interface.Focus != Div && Div.Interface.LastFocus == Div)
+            if (Div.UserInterface.Focus != Div && Div.UserInterface.LastFocus == Div)
             {
                 DivLock = false;
                 LoseFocus?.Invoke();

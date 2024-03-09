@@ -16,30 +16,27 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             _titleHeight = titleHeight;
         }
 
-        public Division Substrate;
+        public Div Substrate;
 
-        public Division TitleColumn;
+        public Div TitleColumn;
 
-        public Division Icon;
+        public Div Icon;
 
-        public Division CloseButton;
+        public Div CloseButton;
 
-        public Division Block;
+        public Div Block;
 
-        public override sealed void OnInit()
+        public override sealed void DivInit()
         {
-            Design.Scale = Vector2.One;
+            Layout.Scale = Vector2.One;
             Design.Color = Color.White;
 
-            Controller = new DivGradientController(this);
+            BindController<DivGradientController>();
             Interact.IsDraggable = true;
             Interact.IsSelectable = false;
             Interact.IsInteractive = true;
 
-            Layout.PaddingLeft = 4;
-            Layout.PaddingTop = 4;
-
-            Substrate = new Division("Substrate");
+            Substrate = new Div("Substrate");
             Substrate.Interact.IsInteractive = false;
             Substrate.Layout.Left = -4;
             Substrate.Layout.Top = -4;
@@ -50,7 +47,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             _substrateRenderer.Cut = new Point(6, 6);
             base.Register(Substrate);
 
-            Block = new Division("Behavior");
+            Block = new Div("Behavior");
             Block.BindRenderer<DivPixelRenderer>();
             Block.Design.Color = new Color(17, 18, 20);
             Block.Layout.Top = _titleHeight;
@@ -58,7 +55,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             Block.Layout.Height = Layout.Height;
             base.Register(Block);
 
-            TitleColumn = new Division("TitleColumn");
+            TitleColumn = new Div("TitleColumn");
             DivNinecutRenderer _tileColumnRenderer = TitleColumn.BindRenderer<DivNinecutRenderer>();
             _tileColumnRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/TitleColumn1"));
             _tileColumnRenderer.Cut = new Point(6, 6);
@@ -66,7 +63,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             TitleColumn.Layout.Width = Layout.Width;
             TitleColumn.Layout.Height = _titleHeight;
             {
-                Icon = new Division("Icon");
+                Icon = new Div("Icon");
                 DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>();
                 _iconRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Icon1"));
                 Icon.Interact.IsInteractive = false;
@@ -76,7 +73,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                 Icon.Layout.Height = 8;
                 TitleColumn.Register(Icon);
 
-                CloseButton = new Division("CloseButton");
+                CloseButton = new Div("CloseButton");
                 DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>();
                 _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
                 CloseButton.Interact.IsInteractive = true;
@@ -114,10 +111,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
                     Close();
                 }
             };
-            base.OnInit();
+            base.DivInit();
         }
         public virtual void PopupInit() { }
-        public override bool Register(Division division, bool doInit = false) => Block.Register(division, doInit);
+        public override bool Register(Div division, bool doInit = false) => Block.Register(division, doInit);
         public void Show() => (Controller as DivGradientController).Open();
         public void Close() => (Controller as DivGradientController).Close();
     }

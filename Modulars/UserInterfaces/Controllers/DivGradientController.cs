@@ -2,8 +2,6 @@
 {
     public class DivGradientController : DivisionController
     {
-        public DivGradientController(Division div) : base(div) { }
-
         private bool _openState = false;
         private bool _closeState = false;
 
@@ -15,7 +13,7 @@
 
         public event Action OnClosed;
 
-        public override void OnInit()
+        public override void OnBinded()
         {
             OpenColor = new ColorGradienter();
             OpenColor.Set(Color.Transparent);
@@ -38,23 +36,31 @@
             CloseScale.Set(Vector2.One);
             CloseScale.Target = Vector2.One * 0.7f;
             CloseScale.Time = 2f;
+            base.OnBinded();
+        }
+        public override void OnDivInitialize()
+        {
 
-            base.OnInit();
+            base.OnDivInitialize();
+        }
+        public override void Layout(ref DivFrontLayout layout)
+        {
+            if (_openState)
+                layout.Scale = OpenScale.Update();
+            if (_closeState)
+                layout.Scale = CloseScale.Update();
+            base.Layout(ref layout);
         }
         public override void Design(ref DesignStyle design)
         {
             if (_openState)
-            {
                 design.Color = OpenColor.Update();
-                design.Scale = OpenScale.Update();
-            }
             if (_closeState)
             {
                 design.Color = CloseColor.Update();
-                design.Scale = CloseScale.Update();
                 if (design.Color.A <= 0)
                 {
-                    Division.IsVisible = false;
+                    Div.IsVisible = false;
                     OnClosed?.Invoke();
                 }
             }
@@ -62,13 +68,13 @@
         }
         public void Open()
         {
-            if (!Division.IsVisible)
+            if (!Div.IsVisible)
             {
                 OpenColor.Start();
                 OpenScale.Start();
                 _openState = true;
                 _closeState = false;
-                Division.IsVisible = true;
+                Div.IsVisible = true;
             }
         }
         public void Close()

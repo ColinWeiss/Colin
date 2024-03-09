@@ -1,13 +1,13 @@
 ﻿namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
-    public class ProgressBar : Division
+    public class ProgressBar : Div
     {
         public ProgressBar(string name) : base(name)
         {
-            Fill = new Division("Fill");
+            Fill = new Div("Fill");
         }
 
-        public Division Fill;
+        public Div Fill;
 
         public float Percentage;
 
@@ -17,10 +17,10 @@
 
         public Point FillOffset;
 
-        public override void OnInit()
+        public override void DivInit()
         {
             Register(Fill);
-            base.OnInit();
+            base.DivInit();
         }
         public override void OnUpdate(GameTime time)
         {
@@ -30,7 +30,7 @@
                 Fill.Do(Transverse);
             base.OnUpdate(time);
         }
-        private void Portrait(Division division)
+        private void Portrait(Div division)
         {
             if (Toward == Direction.Down)
                 division.Layout.Height = (int)(Percentage * Layout.Height);
@@ -40,7 +40,7 @@
                 division.Layout.Height = (int)(Percentage * Layout.Height);
             }
         }
-        private void Transverse(Division division)
+        private void Transverse(Div division)
         {
             if (Toward == Direction.Right)
                 division.Layout.Width = (int)(Percentage * Layout.Width);

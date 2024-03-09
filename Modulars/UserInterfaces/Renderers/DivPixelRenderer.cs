@@ -12,7 +12,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     public class DivPixelRenderer : DivisionRenderer
     {
         private Sprite _pixel;
-        public override void RendererInit()
+        public override void OnDivInitialize()
         {
             _pixel = Sprite.Get("Pixel");
         }
@@ -21,23 +21,23 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
             if (_pixel != null)
                 batch.Draw(
                   _pixel.Source,
-                  Division.Layout.TotalLocationF + Division.Design.Anchor,
-                  Division.Layout.TotalHitBox,
-                  Division.Design.Color,
-                  Division.Design.Rotation,
-                  Division.Design.Anchor,
-                  Division.Design.Scale,
+                  Div.Layout.RenderTargetLocation + Div.Layout.Anchor,
+                  Div.Layout.RenderTargetBounds,
+                  Div.Design.Color,
+                  Div.Layout.Rotation,
+                  Div.Layout.Anchor,
+                  Div.Layout.Scale,
                   SpriteEffects.None,
                   _pixel.Depth);
         }
         public DivPixelRenderer SetDesignColor(Color color)
         {
-            Division.Design.Color = color;
+            Div.Design.Color = color;
             return this;
         }
         public DivPixelRenderer SetDesignColor(Color color, int a = 255)
         {
-            Division.Design.Color = new Color(color, a);
+            Div.Design.Color = new Color(color, a);
             return this;
         }
         public DivPixelRenderer SetDesignColor(int r, int g, int b, int a = 255)

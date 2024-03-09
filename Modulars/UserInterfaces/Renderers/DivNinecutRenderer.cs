@@ -5,14 +5,14 @@
         private Sprite _sprite;
         public Sprite Sprite => _sprite;
         public Point Cut;
-        public override void RendererInit() { }
+        public override void OnDivInitialize() { }
         public override void DoRender(GraphicsDevice device, SpriteBatch batch)
         {
             batch.DrawNineCut(
                 _sprite.Source,
-                Division.Design.Color,
-                Division.Layout.TotalLocation,
-                Division.Layout.Size,
+                Div.Design.Color,
+                Div.Layout.RenderTargetLocation,
+                Div.Layout.Size,
                 Cut,
                 _sprite.Depth);
         }

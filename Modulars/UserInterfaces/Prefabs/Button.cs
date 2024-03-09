@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
-    public class Button : Division
+    public class Button : Div
     {
         public Label Label;
         public Button(string name, string text = "") : base(name)
@@ -14,11 +14,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             Label.Interact.IsInteractive = false;
             Label.SetText(text);
         }
-        public override void OnInit()
+        public override void DivInit()
         {
             BindRenderer<DivNinecutRenderer>().Bind(Sprite.Get("UserInterfaces/Forms/Button")).Cut = new Point(8, 8);
             Register(Label);
-            base.OnInit();
+            base.DivInit();
         }
         public override void OnUpdate(GameTime time)
         {

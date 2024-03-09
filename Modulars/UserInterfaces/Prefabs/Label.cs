@@ -2,15 +2,15 @@
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
-    public class Label : Division
+    public class Label : Div
     {
         public Label(string name) : base(name) { }
         public DivFontRenderer FontRenderer;
-        public override void OnInit()
+        public override void DivInit()
         {
             if (FontRenderer == null)
                 FontRenderer = BindRenderer<DivFontRenderer>();
-            base.OnInit();
+            base.DivInit();
         }
         public void SetText(string text)
         {

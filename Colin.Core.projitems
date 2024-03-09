@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Preliminary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionFindableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivFrontLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResourceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
@@ -189,11 +190,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Container.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivThreshold.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\LinearMenuController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DesignStyle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Division.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Div.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionEventResponder.cs" />
@@ -202,7 +203,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\PopupInputTextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\InteractStyle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\LayoutStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Canvas.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\InputTextBox.cs" />

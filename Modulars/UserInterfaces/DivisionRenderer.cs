@@ -3,11 +3,12 @@
     /// <summary>
     /// 划分元素渲染器.
     /// </summary>
-    public abstract class DivisionRenderer
+    public class DivisionRenderer
     {
-        internal Division _division;
-        public Division Division => _division;
-        public abstract void RendererInit();
-        public abstract void DoRender(GraphicsDevice device, SpriteBatch batch);
+        internal Div div;
+        public Div Div => div;
+        public virtual void OnBinded() { }
+        public virtual void OnDivInitialize() { }
+        public virtual void DoRender(GraphicsDevice device, SpriteBatch batch) { }
     }
 }

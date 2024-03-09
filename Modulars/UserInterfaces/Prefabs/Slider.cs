@@ -2,11 +2,11 @@
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
-    public class Slider : Division
+    public class Slider : Div
     {
         public Slider(string name) : base(name) { }
 
-        public Division Block;
+        public Div Block;
 
         /// <summary>
         /// 指示滑动条的方向.
@@ -16,10 +16,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
         public Vector2 Precent;
 
-        private Division Content;
-        private Division ContentContainer;
-        private Division Response;
-        public void Bind(Division content, Division contentContainer, Division response)
+        private Div Content;
+        private Div ContentContainer;
+        private Div Response;
+        public void Bind(Div content, Div contentContainer, Div response)
         {
             if (Response is not null)
                 Response.Events.Hover -= WheelEvent;
@@ -35,11 +35,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             else if (MouseResponder.ScrollUp)
                 Block.Layout.Top += 2;
         }
-        public override void OnInit()
+        public override void DivInit()
         {
             if (Block is null)
             {
-                Block = new Division("Block");
+                Block = new Div("Block");
                 Block.BindRenderer<DivPixelRenderer>();
                 Block.Design.Color = new Color(255, 223, 135);
                 if (Direction is Direction.Portrait)
@@ -60,14 +60,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             }
             Block.Interact.IsDraggable = true;
             Register(Block);
-            base.OnInit();
+            base.DivInit();
         }
         public override void OnUpdate(GameTime time)
         {
             Block.Layout.Left = Math.Clamp(Block.Layout.Left, 0, Layout.Width - Block.Layout.Width);
             Block.Layout.Top = Math.Clamp(Block.Layout.Top, 0, Layout.Height - Block.Layout.Height);
 
-            Precent = Block.Layout.LocationF / (Layout.SizeF - Block.Layout.SizeF);
+            Precent = Block.Layout.Location / (Layout.Size - Block.Layout.Size);
 
             if (Content is not null && ContentContainer is not null)
             {
