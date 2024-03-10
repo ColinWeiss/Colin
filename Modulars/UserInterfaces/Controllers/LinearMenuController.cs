@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.UserInterfaces.Controllers
 {
-    public class LinearMenuController : DivisionController
+    public class LinearMenuController : DivController
     {
         /// <summary>
         /// 指示项间隔.
@@ -20,7 +20,7 @@
         public Direction Toward = Direction.Down;
         public Vector2 Scroll;
         public Vector2 TotalSize;
-        public override void Layout(ref DivFrontLayout layout)
+        public override void Layout(ref DivLayout layout)
         {
             TotalSize = Vector2.Zero;
             Div.ForEach(CalculateLayout);
@@ -96,6 +96,8 @@
             }
             else if (Toward == Direction.Left)
                 division.Layout.Left = (int)Scroll.X + Div.Layout.Width - division.Layout.Width;
+            else if (Toward == Direction.Right)
+                division.Layout.Left = (int)Scroll.X ;
             switch (Alignment)
             {
                 case Direction.Up:

@@ -40,5 +40,10 @@
             responder.Parent = this;
             Children.Add(responder);
         }
+        public void Remove(EventResponder responder)
+        {
+            responder.Parent = null;
+            Children.Remove(responder);
+        }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class Canvas : Div
     {
-        public Canvas(string name) : base(name, false) { }
+        public Canvas(string name) : base(name, true) { }
         public override void DivInit()
         {
             SetCanvas(Layout.Width, Layout.Height);
@@ -12,7 +12,7 @@
         {
             Layout.Width = width;
             Layout.Height = height;
-            Layout.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
+            Design.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
             Canvas?.Dispose();
             Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
         }

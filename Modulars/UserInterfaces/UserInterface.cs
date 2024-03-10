@@ -58,7 +58,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
         public void Register(DivThreshold container) => Container?.Register(container);
 
-        public void Remove(DivThreshold container, bool dispose) => Container?.RemoveDiv(container);
+        public void Remove(DivThreshold container, bool dispose) => Container?.Remove(container);
 
         public void SetContainer(DivThreshold container)
         {

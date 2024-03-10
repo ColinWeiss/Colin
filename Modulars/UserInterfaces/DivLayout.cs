@@ -9,7 +9,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 划分元素的布局信息.
     /// </summary>
-    public struct DivFrontLayout
+    public struct DivLayout
     {
         private float left;
         /// <summary>
@@ -31,6 +31,26 @@ namespace Colin.Core.Modulars.UserInterfaces
         {
             get => top;
             set => location.Y = top = value;
+        }
+
+        private float paddingLeft;
+        /// <summary>
+        /// 指示划分元素的左侧填充值.
+        /// </summary>
+        public float PaddingLeft
+        {
+            get => paddingLeft;
+            set => paddingLeft = value;
+        }
+
+        private float paddingTop;
+        /// <summary>
+        /// 指示划分元素的顶部填充值.
+        /// </summary>
+        public float PaddingTop
+        {
+            get => paddingTop;
+            set => paddingTop = value;
         }
 
         private Vector2 location;
@@ -109,51 +129,6 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// </summary>
         /// <param name="size">大小.</param>
         public void SetSize(Vector2 size) => SetSize((int)size.X, (int)size.Y);
-    
-        private float anchorX;
-        /// <summary>
-        /// 指示划分元素的锚点 X 值.
-        /// </summary>
-        public float AnchorX
-        {
-            get => anchorX;
-            set => anchor.X = anchorX = value;
-        }
-
-        private float anchorY;
-        /// <summary>
-        /// 指示划分元素的锚点 Y 值.
-        /// </summary>
-        public float AnchorY
-        {
-            get => anchorY;
-            set => anchor.Y = anchorY = value;
-        }
-
-        private Vector2 anchor;
-        /// <summary>
-        /// 指示划分元素的锚点坐标.
-        /// </summary>
-        public Vector2 Anchor
-        {
-            get => anchor;
-            set => SetAnchor(value);
-        }
-        /// <summary>
-        /// 设置划分元素的锚点坐标.
-        /// </summary>
-        /// <param name="anchorX">锚点 X 值.</param>
-        /// <param name="anchorY">锚点 Y 值.</param>
-        public void SetAnchor(float anchorX, float anchorY )
-        {
-            anchor.X = this.anchorX = anchorX;
-            anchor.Y = this.anchorY = anchorY;
-        }
-        /// <summary>
-        /// 设置划分元素的锚点坐标.
-        /// </summary>
-        /// <param name="anchor">锚点坐标.</param>
-        public void SetAnchor(Vector2 anchor) => SetAnchor(anchor.X, anchor.Y);
 
         private float rotation;
         /// <summary>
@@ -168,7 +143,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// 顺时针旋转指定的弧度.
         /// </summary>
         /// <param name="radian">弧度</param>
-        public void ClockwiseRad( float radian ) => rotation += radian;
+        public void ClockwiseRad(float radian) => rotation += radian;
         /// <summary>
         /// 逆时针旋转指定的弧度.
         /// </summary>
@@ -227,8 +202,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <param name="scale">缩放值.</param>
         public void SetScale(Point scale) => SetScale(scale.X, scale.Y);
 
-        public Matrix transform;
-        public Matrix Transform => transform;
+        public Matrix renderTargetTransform;
+        public Matrix RenderTargetTransform => renderTargetTransform;
 
         private int renderTargetLeft;
         /// <summary>
@@ -253,46 +228,63 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// </summary>
         public Rectangle RenderTargetBounds => renderTargetBounds;
 
-        private int viewportLeft;
+        private int screenLeft;
         /// <summary>
         /// 获取划分元素相对于屏幕起点的左侧坐标.
         /// </summary>
-        public int ViewportLeft => viewportLeft;
+        public int ScreenLeft => screenLeft;
 
-        private int viewportTop;
+        private int screenTop;
         /// <summary>
         /// 获取划分元素相对于屏幕起点的顶部坐标.
         /// </summary>
-        public int ViewportTop => viewportTop;
+        public int ScreenTop => screenTop;
 
-        private Rectangle viewportBounds;
+        /// <summary>
+        /// 获取划分元素相对于屏幕起点的坐标.
+        /// </summary>
+        public Vector2 ScreenLocation => new Vector2(screenLeft, screenTop);
+
+        public Matrix screenTransform;
+        public Matrix ScreenTransform => screenTransform;
+
+        private Rectangle bounds;
         /// <summary>
         /// 获取划分元素于屏幕上的包围盒.
         /// </summary>
-        public Rectangle ViewportBounds => viewportBounds;
+        public Rectangle Bounds => bounds;
 
-        public static void Calculate( Div div )
+        /// <summary>
+        /// 更新计算指定划分元素的布局信息.
+        /// </summary>
+        /// <param name="div">要进行计算布局信息的划分元素.</param>
+        public static void Calculate(Div div)
         {
-            div.Layout.transform =
-                Matrix.CreateTranslation(-div.Layout.anchorX, -div.Layout.anchorY, 0) *
-                Matrix.CreateScale(div.Layout.scaleX, div.Layout.scaleY, 0) *
+            div.Layout.renderTargetTransform =
+                Matrix.CreateScale(1 , 1 , 0) *
                 Matrix.CreateRotationZ(div.Layout.rotation) *
                 Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
             if (div.Parent is not null)
-                div.Layout.transform *= div.Parent.Layout.transform;
+                div.Layout.renderTargetTransform *= div.Parent.Layout.renderTargetTransform;
 
-            div.Layout.viewportBounds.X = div.Layout.viewportLeft = (int)div.Layout.transform.Translation.X;
-            div.Layout.viewportBounds.Y = div.Layout.viewportTop = (int)div.Layout.transform.Translation.Y;
-            div.Layout.viewportBounds.Width = (int)div.Layout.width;
-            div.Layout.viewportBounds.Height = (int)div.Layout.height;
+            if (div.Parent is not null && div.Parent.IsCanvas)
+                div.Layout.renderTargetTransform.Translation = new Vector3(div.Layout.left, div.Layout.top, 0);
 
-            if ( div.Parent is not null && div.Parent.IsCanvas)
-                div.Layout.transform.Translation = Vector3.Zero;
-
-            div.Layout.renderTargetBounds.X = div.Layout.renderTargetLeft = (int)div.Layout.transform.Translation.X;
-            div.Layout.renderTargetBounds.Y = div.Layout.renderTargetTop = (int)div.Layout.transform.Translation.Y;
+            div.Layout.renderTargetBounds.X = div.Layout.renderTargetLeft = (int)div.Layout.renderTargetTransform.Translation.X;
+            div.Layout.renderTargetBounds.Y = div.Layout.renderTargetTop = (int)div.Layout.renderTargetTransform.Translation.Y;
             div.Layout.renderTargetBounds.Width = (int)div.Layout.width;
             div.Layout.renderTargetBounds.Height = (int)div.Layout.height;
+
+            div.Layout.screenTransform =
+                Matrix.CreateScale(1, 1 , 0) *
+                Matrix.CreateRotationZ(div.Layout.rotation) *
+                Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
+            if (div.Parent is not null)
+                div.Layout.screenTransform *= div.Parent.Layout.screenTransform;
+            div.Layout.bounds.X = div.Layout.screenLeft = (int)div.Layout.screenTransform.Translation.X;
+            div.Layout.bounds.Y = div.Layout.screenTop = (int)div.Layout.screenTransform.Translation.Y;
+            div.Layout.bounds.Width = (int)div.Layout.width;
+            div.Layout.bounds.Height = (int)div.Layout.height;
         }
     }
 }

@@ -58,8 +58,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 
             Substrate = new Div("Substrate");
             Substrate.Interact.IsInteractive = false;
-            Substrate.Layout.Left = 0 ;
-            Substrate.Layout.Top = 0;
             Substrate.Layout.Width = Layout.Width + 8;
             Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
             DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
@@ -71,7 +69,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             if (!IsTransparent)
                 Block.BindRenderer<DivPixelRenderer>();
             Block.Design.Color = new Color(24, 25, 28);
-            Block.Layout.Top = _titleHeight;
+            Block.Layout.Top = _titleHeight + 4;
+            Block.Layout.Left = 4;
             Block.Layout.Width = Layout.Width;
             Block.Layout.Height = Layout.Height;
             base.Register(Block);
@@ -80,6 +79,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
             TitleColumn.BindRenderer<DivPixelRenderer>();
             TitleColumn.Interact.IsInteractive = false;
             TitleColumn.Design.Color = new Color(20, 22, 25);
+            TitleColumn.Layout.Location = new Vector2( 4 , 4 );
             TitleColumn.Layout.Width = Layout.Width;
             TitleColumn.Layout.Height = _titleHeight;
             {
@@ -166,6 +166,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 
         public event Action OnClose;
 
+        public override void OnUpdate(GameTime time)
+        {
+            base.OnUpdate(time);
+        }
         private bool _firstShow = false;
         public void Show()
         {

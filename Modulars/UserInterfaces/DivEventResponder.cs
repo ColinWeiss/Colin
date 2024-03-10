@@ -5,15 +5,27 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 划分元素事件响应器.
     /// </summary>
-    public class DivisionEventResponder
+    public class DivEventResponder
     {
         public Div Div;
 
-        public DivisionEventResponder(Div division) => Div = division;
+        public DivEventResponder(Div division) => Div = division;
 
         public MouseEventResponder Mouse = new MouseEventResponder("MouseEvents");
 
         public KeysEventResponder Keys = new KeysEventResponder("KeysEvents");
+
+        public void Register( Div div )
+        {
+            Mouse.Register( div.Events.Mouse );
+            Keys.Register(div.Events.Keys);
+        }
+
+        public void Remove( Div div )
+        {
+            Mouse.Remove(div.Events.Mouse);
+            Keys.Remove(div.Events.Keys);
+        }
 
         public event Action HoverStart;
         public event Action Hover;
@@ -65,7 +77,7 @@ namespace Colin.Core.Modulars.UserInterfaces
                 };
             Mouse.LeftClickBefore += (s, e) =>
             {
-                if (Div.IsVisible && Div.ContainsViewportPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+                if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
                 {
                     if (!DivLock)
                         DivLock = true;
@@ -115,7 +127,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         private void Invoke(MouseEventArgs e, Action action, bool divLock = false)
         {
             if (Div.IsVisible &&
-                Div.ContainsViewportPoint(MouseResponder.State.Position) &&
+                Div.ContainsScreenPoint(MouseResponder.State.Position) &&
                 Div.Interact.IsInteractive &&
                 (DivLock || divLock))
             {
@@ -128,7 +140,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         public void DoUpdate()
         {
             Div.Interact.InteractionLast = Div.Interact.Interaction;
-            if (Div.ContainsViewportPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+            if (Div.ContainsScreenPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
                 Div.Interact.Interaction = true;
             else
                 Div.Interact.Interaction = false;

@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.UserInterfaces.Controllers
 {
-    public class DivGradientController : DivisionController
+    public class DivGradientController : DivController
     {
         private bool _openState = false;
         private bool _closeState = false;
@@ -43,7 +43,7 @@
 
             base.OnDivInitialize();
         }
-        public override void Layout(ref DivFrontLayout layout)
+        public override void Layout(ref DivLayout layout)
         {
             if (_openState)
                 layout.Scale = OpenScale.Update();
@@ -51,7 +51,7 @@
                 layout.Scale = CloseScale.Update();
             base.Layout(ref layout);
         }
-        public override void Design(ref DesignStyle design)
+        public override void Design(ref DivDesign design)
         {
             if (_openState)
                 design.Color = OpenColor.Update();

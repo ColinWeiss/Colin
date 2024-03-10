@@ -68,7 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Preliminary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionFindableComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivFrontLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResourceManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
@@ -193,11 +193,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivThreshold.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\LinearMenuController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DesignStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivDesign.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Div.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionEventResponder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />

@@ -29,11 +29,8 @@
         public virtual void ContainerInitialize() { }
         public void SetTop(Div division)
         {
-            if (Children.ContainsKey(division.Name))
-            {
-                Children.Remove(division.Name);
-                Register(division);
-            }
+            Remove(division);
+            Register(division, true);
         }
         public override bool Register(Div division, bool doInit = false)
         {
