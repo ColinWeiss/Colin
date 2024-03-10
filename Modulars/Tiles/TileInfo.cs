@@ -227,6 +227,11 @@
             Chunk = null;
             Texture = new TileFrame(-1, -1);
             Collision = TileCollision.Passable;
+            _chunkCoord2 = Point.Zero;
+            _chunkCoord3 = Point3.Zero;
+            _worldCoord2 = Point.Zero;
+            _worldCoord3 = Point3.Zero;
+            _hitBox = RectangleF.Empty;
             Scripts = new Dictionary<Type, TileScript>();
         }
 

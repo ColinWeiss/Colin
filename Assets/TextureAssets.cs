@@ -19,11 +19,11 @@
                 return;
             Texture2D _texture;
             string _fileName;
-            string[] TextureFileNames = Directory.GetFiles(Path.Combine(EngineInfo.Engine.Content.RootDirectory, "Textures"), "*.xnb*", SearchOption.AllDirectories);
-            for (int count = 0; count < TextureFileNames.Length; count++)
+            string[] _textureFileNames = Directory.GetFiles(Path.Combine(EngineInfo.Engine.Content.RootDirectory, "Textures"), "*.xnb*", SearchOption.AllDirectories);
+            for (int count = 0; count < _textureFileNames.Length; count++)
             {
-                Progress = count / (float)TextureFileNames.Length + 1 / TextureFileNames.Length;
-                _fileName = IGameAsset.ArrangementPath(TextureFileNames[count]);
+                Progress = count / (float)_textureFileNames.Length + 1 / _textureFileNames.Length;
+                _fileName = IGameAsset.ArrangementPath(_textureFileNames[count]);
                 _texture = EngineInfo.Engine.Content.Load<Texture2D>(_fileName);
                 _textures.Add(_fileName, _texture);
                 Sprite.New(_texture);

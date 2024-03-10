@@ -54,6 +54,9 @@
 
         public DivDesign()
         {
+            anchorX = 0;
+            anchorY = 0;
+            anchor = Vector2.Zero;
             Color = Color.White;
         }
     }
