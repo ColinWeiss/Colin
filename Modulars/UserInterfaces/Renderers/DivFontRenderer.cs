@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class DivFontRenderer : DivisionRenderer
+    public class DivFontRenderer : DivRenderer
     {
         public DynamicSpriteFont Font;
 

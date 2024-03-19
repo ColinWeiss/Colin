@@ -3,7 +3,7 @@
     /// <summary>
     /// 划分元素渲染器.
     /// </summary>
-    public class DivisionRenderer
+    public class DivRenderer
     {
         internal Div div;
         public Div Div => div;

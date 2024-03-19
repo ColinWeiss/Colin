@@ -67,6 +67,15 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// 设置划分元素相对于父元素的坐标.
         /// <br>若划分元素没有父元素 (即其属于DivView), 则指示其为相对于屏幕起点的偏移.</br>
         /// </summary>
+        public void SetLocation(float leftAndTop)
+        {
+            location.X = left = leftAndTop;
+            location.Y = top = leftAndTop;
+        }
+        /// <summary>
+        /// 设置划分元素相对于父元素的坐标.
+        /// <br>若划分元素没有父元素 (即其属于DivView), 则指示其为相对于屏幕起点的偏移.</br>
+        /// </summary>
         /// <param name="left">左侧坐标.</param>
         /// <param name="top">顶部坐标.</param>
         public void SetLocation(float left, float top)

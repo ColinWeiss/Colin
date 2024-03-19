@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class DivNinecutRenderer : DivisionRenderer
+    public class DivNinecutRenderer : DivRenderer
     {
         private Sprite _sprite;
         public Sprite Sprite => _sprite;

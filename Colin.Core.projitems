@@ -197,7 +197,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Div.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivEventResponder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivisionRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\PopupInputTextBox.cs" />

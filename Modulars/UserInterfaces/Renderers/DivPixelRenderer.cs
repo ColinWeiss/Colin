@@ -9,7 +9,7 @@ using Colin.Core.Graphics;
 */
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class DivPixelRenderer : DivisionRenderer
+    public class DivPixelRenderer : DivRenderer
     {
         private Sprite _pixel;
         public override void OnDivInitialize()

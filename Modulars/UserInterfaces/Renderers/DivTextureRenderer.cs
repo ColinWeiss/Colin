@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class DivTextureRenderer : DivisionRenderer
+    public class DivTextureRenderer : DivRenderer
     {
         private Sprite _sprite;
         public Sprite Sprite => _sprite;

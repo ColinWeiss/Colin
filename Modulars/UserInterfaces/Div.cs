@@ -38,7 +38,7 @@
         /// <summary>
         /// 用于存放该划分元素的子元素.
         /// </summary>
-        public Dictionary<string, Div> Children;
+        public List<Div> Children;
 
         /// <summary>
         /// 指示划分元素的布局样式
@@ -60,19 +60,19 @@
         /// </summary>
         public DivEventResponder Events;
 
-        private DivisionRenderer renderer;
+        private DivRenderer renderer;
         /// <summary>
         /// 获取划分元素的渲染器实例对象.
         /// </summary>
-        public DivisionRenderer Renderer => renderer;
-        public T BindRenderer<T>() where T : DivisionRenderer, new()
+        public DivRenderer Renderer => renderer;
+        public T BindRenderer<T>() where T : DivRenderer, new()
         {
             renderer = new T();
             renderer.div = this;
             renderer.OnBinded();
             return renderer as T;
         }
-        public T GetRenderer<T>() where T : DivisionRenderer
+        public T GetRenderer<T>() where T : DivRenderer
         {
             if (renderer is T)
                 return renderer as T;
@@ -163,7 +163,7 @@
         public Div(string name, bool isCanvas = false )
         {
             Name = name;
-            Children = new Dictionary<string, Div>();
+            Children = new List<Div>();
             Events = new DivEventResponder(this);
             Layout.Scale = Vector2.One;
             Interact.IsInteractive = true;
@@ -296,7 +296,7 @@
             Div _div;
             for (int count = 0; count < Children.Count; count++)
             {
-                _div = Children.Values.ElementAt(count);
+                _div = Children[count];
                 action.Invoke(_div);
             }
         }
@@ -315,7 +315,7 @@
             Events.Register(div);
             if (doInit)
                 div.DoInitialize();
-            Children.Add(div.Name, div);
+            Children.Add(div);
             return true;
         }
 
@@ -330,7 +330,7 @@
             div.threshold = null;
             div.userInterface = null;
             Events.Remove( div );
-            return Children.Remove(div.Name);
+            return Children.Remove(div);
         }
 
         /// <summary>
@@ -341,7 +341,7 @@
             Div _div;
             for (int count = 0; count < Children.Count; count++)
             {
-                _div = Children.Values.ElementAt(count);
+                _div = Children[count];
                 Remove(_div);
                 if (dispose)
                     _div.Dispose();
@@ -371,7 +371,7 @@
                 {
                     Canvas?.Dispose();
                     for (int count = 0; count < Children.Count; count++)
-                        Children.Values.ElementAt(count).Dispose();
+                        Children[count].Dispose();
                     OnDispose?.Invoke();
                 }
                 renderer = null;

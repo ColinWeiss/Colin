@@ -127,7 +127,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                                 if (comTransform.Velocity.X > 0)
                                     comPhysic.CollisionRight = true;
                                 if (comPhysic.CollisionRight || comPhysic.CollisionLeft)
-                                    comTransform.Translation.X += depth.X * 1.0001f;
+                                    comTransform.Translation.X += depth.X * 1.001f;
                                 bounds = GetHitBox(section);
                             }
                             else if (absV.X > absV.Y)
@@ -137,7 +137,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                                 if (comTransform.Velocity.Y < 0 )
                                     comPhysic.CollisionTop = true;
                                 if (comPhysic.CollisionTop || comPhysic.CollisionBottom)
-                                    comTransform.Translation.Y += depth.Y * 1.0001f;
+                                    comTransform.Translation.Y += depth.Y * 1.001f;
                                 bounds = GetHitBox(section);
                             }
                         }
