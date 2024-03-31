@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using System.Text.Json;
+
+namespace Colin.Core.Modulars.Tiles
 {
     public class Tile : ISceneModule
     {

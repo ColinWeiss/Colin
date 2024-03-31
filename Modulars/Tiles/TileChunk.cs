@@ -216,34 +216,30 @@ namespace Colin.Core.Modulars.Tiles
         public bool Place<T>(int index, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
         {
             ref TileInfo info = ref this[index];
-            if (!Tile.TilePointers.ContainsKey(info.WorldCoord2))
+            if (!Tile.TilePointers.ContainsKey(info.WorldCoord2) && info.Empty)
             {
-                if (info.Empty)
+                info.Scripts.Clear();
+                info.Empty = false;
+                Set<T>(index);
+                if (doEvent)
                 {
-                    info.Scripts.Clear();
-                    info.Empty = false;
-                    Set<T>(index);
-                    if (doEvent)
+                    foreach (var script in info.Scripts.Values)
                     {
-                        foreach (var script in info.Scripts.Values)
+                        if (script.CanPlace() is false)
                         {
-                            if (script.CanPlace() is false)
-                            {
-                                info.Scripts.Clear();
-                                return false;
-                            }
+                            info.Scripts.Clear();
+                            return false;
                         }
-                        info.Behavior.OnPlace(ref info);
-                        foreach (var script in info.Scripts.Values)
-                            script.OnPlace();
                     }
-                    if (doRefresh)
-                    {
-                        TileRefresher.RefreshMark(info.WorldCoord3, 1);
-                    }
-                    return true;
+                    info.Behavior.OnPlace(ref info);
+                    foreach (var script in info.Scripts.Values)
+                        script.OnPlace();
                 }
-                else return false;
+                if (doRefresh)
+                {
+                    TileRefresher.RefreshMark(info.WorldCoord3, 1);
+                }
+                return true;
             }
             else return false;
         }
