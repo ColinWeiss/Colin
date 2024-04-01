@@ -12,6 +12,7 @@ using Colin.Core.ModLoaders;
 */
 using Colin.Core.IO;
 using Colin.Core.ModLoaders;
+using Colin.Core.Preparation;
 using System.Reflection;
 #if WINDOWS
 using System.Windows.Forms;

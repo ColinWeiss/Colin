@@ -20,7 +20,6 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Macros.fxh" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleInstancing.fx" />
-    <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
@@ -65,7 +64,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\Preliminary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Preparation\IPreExecution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionFindableComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
@@ -105,7 +104,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleID.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\Preparator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Preparation\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
@@ -224,5 +223,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Preparation\" />
   </ItemGroup>
 </Project>

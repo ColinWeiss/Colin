@@ -2,17 +2,14 @@
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Colin.Core.Common
+namespace Colin.Core.Preparation
 {
-    /// <summary>
-    /// 程序预备器.
-    /// </summary>
     public sealed class Preparator : Scene
     {
         public event Action OnLoadComplete;
 
-        private List<Preliminary> _preparatoryTasks = new List<Preliminary>();
-        public void RegisterPreparatoryTask<T>() where T : Preliminary, new()
+        private List<IPreExecution> _preparatoryTasks = new List<IPreExecution>();
+        public void RegisterPreparatoryTask<T>() where T : IPreExecution, new()
         {
             T t = new T();
             _preparatoryTasks.Add(t);
@@ -21,7 +18,7 @@ namespace Colin.Core.Common
         public override async void SceneInit()
         {
             await Task.Run(LoadGameAssets);
-            Preliminary theTask;
+            IPreExecution theTask;
             for (int count = 0; count < _preparatoryTasks.Count; count++)
             {
                 theTask = _preparatoryTasks[count];

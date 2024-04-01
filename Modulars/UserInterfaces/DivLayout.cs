@@ -159,6 +159,33 @@ namespace Colin.Core.Modulars.UserInterfaces
         /// <param name="radian">弧度</param>
         public void AntiClockwiseRad(float radian) => rotation -= radian;
 
+        private float anchorX;
+        public float AnchorX
+        {
+            get => anchorX;
+            set => anchor.X = anchorX = value;
+        }
+        private float anchorY;
+        public float AnchorY
+        {
+            get => anchorY;
+            set => anchor.Y = anchorY = value;
+        }
+
+        private Vector2 anchor;
+        public Vector2 Anchor
+        {
+            get => anchor;
+            set
+            {
+                if (anchor != value)
+                {
+                    anchor.X = anchorX = value.X;
+                    anchor.Y = anchorY = value.Y;
+                }
+            }
+        }
+
         private float scaleX;
         /// <summary>
         /// 指示划分元素的横向缩放.
@@ -270,6 +297,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         public static void Calculate(Div div)
         {
             div.Layout.renderTargetTransform =
+                Matrix.CreateTranslation(div.Layout.anchor.X , div.Layout.anchor.Y , 0) *
                 Matrix.CreateScale(1 , 1 , 0) *
                 Matrix.CreateRotationZ(div.Layout.rotation) *
                 Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
@@ -285,6 +313,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             div.Layout.renderTargetBounds.Height = (int)div.Layout.height;
 
             div.Layout.screenTransform =
+                Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
                 Matrix.CreateScale(1, 1 , 0) *
                 Matrix.CreateRotationZ(div.Layout.rotation) *
                 Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
