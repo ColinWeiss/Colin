@@ -5,33 +5,33 @@
         private bool _openState = false;
         private bool _closeState = false;
 
-        public ColorGradienter OpenColor;
-        public ColorGradienter CloseColor;
+        public ColorTween OpenColor;
+        public ColorTween CloseColor;
 
-        public VectorGradienter OpenScale;
-        public VectorGradienter CloseScale;
+        public VectorTween OpenScale;
+        public VectorTween CloseScale;
 
         public event Action OnClosed;
 
         public override void OnBinded()
         {
-            OpenColor = new ColorGradienter();
+            OpenColor = new ColorTween();
             OpenColor.Set(Color.Transparent);
             OpenColor.Target = new Color(255, 255, 255, 255);
             OpenColor.Time = 0.08f;
 
-            CloseColor = new ColorGradienter();
+            CloseColor = new ColorTween();
             CloseColor.Set(Color.White);
             CloseColor.Target = Color.Transparent;
             CloseColor.Time = 0.12f;
 
-            OpenScale = new VectorGradienter();
+            OpenScale = new VectorTween();
             OpenScale.GradientStyle = GradientStyle.EaseOutExpo;
             OpenScale.Set(Vector2.One * 0.7f);
             OpenScale.Target = Vector2.One;
             OpenScale.Time = 0.4f;
 
-            CloseScale = new VectorGradienter();
+            CloseScale = new VectorTween();
             CloseScale.GradientStyle = GradientStyle.EaseOutExpo;
             CloseScale.Set(Vector2.One);
             CloseScale.Target = Vector2.One * 0.7f;

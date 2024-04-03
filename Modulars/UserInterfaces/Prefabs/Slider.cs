@@ -55,8 +55,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             }
             if (Renderer is null)
             {
-                BindRenderer<DivNinecutRenderer>().
-                    Bind(Sprite.Get("UserInterfaces/Deltas/Slider")).Cut = new Point(2, 8);
+                BindRenderer<DivPixelRenderer>();
             }
             Block.Interact.IsDraggable = true;
             Register(Block);

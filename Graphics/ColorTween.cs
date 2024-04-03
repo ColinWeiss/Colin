@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Graphics
 {
-    public class ColorGradienter
+    public class ColorTween
     {
         public Color Default;
         public Color Current;
@@ -12,7 +12,7 @@
             Target = color;
         }
         public float Time;
-        public float Timer;
+        private float _timer;
         private bool _start;
         private float _currentValue;
         public GradientStyle GradientStyle = GradientStyle.Linear;
@@ -20,39 +20,39 @@
         {
             if (_start)
             {
-                Timer += Colin.Core.Time.UnscaledDeltaTime;
-                if (Timer <= Time)
+                _timer += Core.Time.UnscaledDeltaTime;
+                if (_timer <= Time)
                 {
                     switch (GradientStyle)
                     {
                         case GradientStyle.Linear:
-                            _currentValue = Timer / Time;
+                            _currentValue = _timer / Time;
                             break;
                         case GradientStyle.EaseOutExpo:
-                            _currentValue = 1f - MathF.Pow(2, -10 * Timer / Time);
+                            _currentValue = 1f - MathF.Pow(2, -10 * _timer / Time);
                             break;
                     };
                     Current.Closer(Target, _currentValue, 1f);
                 }
             }
-            if (Timer > Time)
+            if (_timer > Time)
             {
                 Current = Target;
                 _start = false;
-                Timer = 0;
+                _timer = 0;
             }
             return Current;
         }
         public void Start()
         {
             Current = Default;
-            Timer = 0;
+            _timer = 0;
             _start = true;
         }
         public void Stop()
         {
             _start = false;
-            Timer = 0;
+            _timer = 0;
         }
     }
 }

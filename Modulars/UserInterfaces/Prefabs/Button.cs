@@ -10,13 +10,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             Label = new Label("ButtonText");
             Label.FontRenderer = Label.BindRenderer<DivFontRenderer>();
             Label.FontRenderer.Font = FontAssets.Get("GlowSansMedium").GetFont(20);
-            Label.Design.Color = new Color(255, 223, 135);
+            Label.Design.Color = Color.Black;
             Label.Interact.IsInteractive = false;
             Label.SetText(text);
         }
         public override void DivInit()
         {
-            BindRenderer<DivNinecutRenderer>().Bind(Sprite.Get("UserInterfaces/Forms/Button")).Cut = new Point(8, 8);
+            BindRenderer<DivPixelRenderer>();
             Register(Label);
             base.DivInit();
         }
