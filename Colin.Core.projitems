@@ -56,6 +56,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Slider.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\ShaderAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
