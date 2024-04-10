@@ -99,11 +99,10 @@
 
     public static Sprite Get(string path)
     {
-      string realPath = path.Replace('/', Path.DirectorySeparatorChar);
-      if (SpritePool.Instance.TryGetValue(Path.Combine("Textures", realPath), out Sprite sprite))
+      if (SpritePool.Instance.TryGetValue(path, out Sprite sprite))
         return sprite;
       else
-        return new Sprite(TextureAssets.Get(realPath));
+        return new Sprite(Asset.GetTexture(path));
     }
     public static Sprite Get(params string[] paths) => Get(Path.Combine(paths));
   }

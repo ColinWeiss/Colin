@@ -5,9 +5,9 @@
     public static RenderTarget2D CreateDefault()
     {
       RenderTarget2D renderTarget = new RenderTarget2D(
-      EngineInfo.Graphics.GraphicsDevice,
-      EngineInfo.ViewWidth,
-      EngineInfo.ViewHeight,
+      CoreInfo.Graphics.GraphicsDevice,
+      CoreInfo.ViewWidth,
+      CoreInfo.ViewHeight,
       false,
       SurfaceFormat.Color,
       DepthFormat.None,
@@ -18,7 +18,7 @@
     public static RenderTarget2D CreateDefault(int width, int height)
     {
       RenderTarget2D renderTarget = new RenderTarget2D(
-      EngineInfo.Graphics.GraphicsDevice,
+      CoreInfo.Graphics.GraphicsDevice,
       width,
       height,
       false,
@@ -31,7 +31,7 @@
     public static RenderTarget2D CreateWithDepth(int width, int height)
     {
       RenderTarget2D renderTarget = new RenderTarget2D(
-      EngineInfo.Graphics.GraphicsDevice,
+      CoreInfo.Graphics.GraphicsDevice,
       width,
       height,
       false,

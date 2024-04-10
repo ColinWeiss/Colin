@@ -9,7 +9,7 @@
         Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Personal),
             "My Games",
-            EngineInfo.EngineName);
+            CoreInfo.EngineName);
 
     /// <summary>
     /// 指示存档文件夹路径.

@@ -73,7 +73,10 @@
       origin.Y *= scale;
       position.X -= origin.X;
       position.Y -= origin.Y;
-      if (effects == SpriteEffects.None) ;
+      if (effects == SpriteEffects.None)
+      {
+
+      }
       else if (effects == SpriteEffects.FlipHorizontally)
       {
         sourceDX = -sourceDX;

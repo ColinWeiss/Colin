@@ -1,29 +1,15 @@
-﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
-在此之前:
-using Colin.Core.Inputs;
-using Colin.Core.IO;
-using Colin.Core.Assets;
-using MonoGame.Framework.Utilities;
-在此之后:
-using Colin.Core.Common;
-using Colin.Core.Inputs;
-using Colin.Core.IO;
-using Colin.Core.ModLoaders;
-*/
-using Colin.Core.IO;
+﻿using Colin.Core.IO;
 using Colin.Core.ModLoaders;
 using Colin.Core.Preparation;
 using System.Reflection;
-#if WINDOWS
-#endif
 
 namespace Colin.Core
 {
-  public partial class Engine : Game, IMod
+  public class Core : Game, IMod
   {
     public string Name => "Colin.Core.Engine";
 
-    public EngineInfo Info;
+    public CoreInfo Info;
 
     public bool Enable { get; set; } = true;
 
@@ -35,7 +21,6 @@ namespace Colin.Core
     public Scene CurrentScene { get; internal set; }
 
     public Preparator Preparator { get; private set; }
-
 
     private int _targetFrame = 60;
     /// <summary>
@@ -52,7 +37,7 @@ namespace Colin.Core
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
     }
 
-    public Engine()
+    public Core()
     {
       //执行程序检查程序.
       IProgramChecker checker;
@@ -64,10 +49,10 @@ namespace Colin.Core
           checker.Check();
         }
       }
-      EngineInfo.Init(this);
-      if (EngineInfo.Graphics == null)
+      CoreInfo.Init(this);
+      if (CoreInfo.Graphics == null)
       {
-        EngineInfo.Graphics = new GraphicsDeviceManager(this)
+        CoreInfo.Graphics = new GraphicsDeviceManager(this)
         {
           PreferHalfPixelOffset = false,
           HardwareModeSwitch = false,
@@ -126,10 +111,10 @@ namespace Colin.Core
 
     protected override sealed void Initialize()
     {
-      EngineInfo.SpriteBatch = new SpriteBatch(EngineInfo.Graphics.GraphicsDevice);
-      EngineInfo.DrawBatcherAlt = new(EngineInfo.Graphics.GraphicsDevice);
-      EngineInfo.Config = new Config();
-      EngineInfo.Config.Load();
+      CoreInfo.SpriteBatch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
+      CoreInfo.DrawBatcherAlt = new(CoreInfo.Graphics.GraphicsDevice);
+      CoreInfo.Config = new Config();
+      CoreInfo.Config.Load();
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
       Components.Add(FileDropProcessor.Instance);
       DoInitialize();
@@ -162,7 +147,7 @@ namespace Colin.Core
         SetScene(Preparator);
         Started = true;
       }
-      EngineInfo.GetInformationFromDevice(gameTime);
+      CoreInfo.GetInformationFromDevice(gameTime);
       DoUpdate();
       base.Update(gameTime);
     }
@@ -180,7 +165,7 @@ namespace Colin.Core
 
     protected override void OnExiting(object sender, EventArgs args)
     {
-      EngineInfo.Config.Save();
+      CoreInfo.Config.Save();
       base.OnExiting(sender, args);
     }
 

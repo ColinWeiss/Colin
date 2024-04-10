@@ -41,7 +41,7 @@ namespace Colin.Core.Graphics.Shaders
       {
         if (result.HasErrors)
         {
-          EngineConsole.WriteLine(ConsoleTextType.Error, result.HasErrors);
+          Console.WriteLine(ConsoleTextType.Error, result.HasErrors);
         }
       }
     }

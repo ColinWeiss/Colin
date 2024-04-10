@@ -16,7 +16,7 @@ namespace Colin.Core.Audios
 
     public void DoUpdate()
     {
-      Timer += Core.Time.DeltaTime;
+      Timer += Colin.Core.Time.DeltaTime;
       if (Timer >= Time && Stoped is false)
       {
         SoundInstance.Play();
@@ -24,9 +24,9 @@ namespace Colin.Core.Audios
       }
 
       if (Stoped is true)
-        Volume -= Core.Time.DeltaTime / GraduallyTime;
+        Volume -= Colin.Core.Time.DeltaTime / GraduallyTime;
       else
-        Volume += Core.Time.DeltaTime / GraduallyTime;
+        Volume += Colin.Core.Time.DeltaTime / GraduallyTime;
 
       Volume = Math.Clamp(Volume, 0, 1);
       SoundInstance.Volume = Volume;

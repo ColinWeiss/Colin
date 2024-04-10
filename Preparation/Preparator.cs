@@ -17,6 +17,7 @@ namespace Colin.Core.Preparation
 
     public override async void SceneInit()
     {
+      Asset.LoadAssets();
       await Task.Run(LoadGameAssets);
       IPreExecution theTask;
       for (int count = 0; count < _preparatoryTasks.Count; count++)
@@ -25,7 +26,7 @@ namespace Colin.Core.Preparation
         await Task.Run(theTask.Prepare);
       }
       await Task.Run(CodeResourceManager.LoadCodeResource);
-      EngineConsole.WriteLine(ConsoleTextType.Remind, "初始化加载完成.");
+      Console.WriteLine(ConsoleTextType.Remind, "初始化加载完成.");
       OnLoadComplete?.Invoke();
       base.SceneInit();
     }
@@ -39,14 +40,14 @@ namespace Colin.Core.Preparation
         {
           asset = (IGameAsset)Activator.CreateInstance(item);
           asset.LoadResource();
-          EngineConsole.WriteLine(ConsoleTextType.Remind, string.Concat("正在加载 ", asset.Name));
+          Console.WriteLine(ConsoleTextType.Remind, string.Concat("正在加载 ", asset.Name));
         }
       }
     }
 
     public override void SceneRender()
     {
-      EngineInfo.Graphics.GraphicsDevice.Clear(Color.Gray);
+      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Gray);
       base.SceneRender();
     }
   }

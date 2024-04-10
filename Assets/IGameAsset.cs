@@ -31,10 +31,8 @@
       _result = _result.Replace(".xnb", "");
       _result = _result.Replace(".ttf", "");
       _result = _result.Replace(".otf", "");
-      _result = _result.Replace(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, EngineInfo.Engine.Content.RootDirectory), "");
-      _result = _result.Replace(string.Concat(EngineInfo.Engine.Content.RootDirectory, "/"), "");
-      _result = _result.Replace(string.Concat(EngineInfo.Engine.Content.RootDirectory, "\\"), "");
-
+      _result = _result.Replace(string.Concat(CoreInfo.Engine.Content.RootDirectory, "/"), "");
+      _result = _result.Replace(string.Concat(CoreInfo.Engine.Content.RootDirectory, "\\"), "");
       return _result;
     }
   }

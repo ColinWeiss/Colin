@@ -30,7 +30,7 @@
   /// <summary>
   /// 你看它名字你就知道这是什么了.
   /// </summary>
-  public class EngineConsole
+  public class Console
   {
     /// <summary>  
     /// 向控制台输出信息.
@@ -49,12 +49,18 @@
     /// <param name="output">输出内容.</param>  
     public static void WriteLine(ConsoleTextType informationType, string output)
     {
-#if WINDOWS
-      Console.ForegroundColor = GetConsoleColor(informationType);
-#endif
+      System.Console.ForegroundColor = GetConsoleColor(informationType);
       string NowTime = string.Concat("[", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "]");
-      string outPutText = string.Concat(NowTime, "\n =>", "[", EngineInfo.EngineName, "] ", output);
-      Console.WriteLine(outPutText);
+      string outPutText = string.Concat(NowTime, "\n =>", "[", CoreInfo.EngineName, "] ", output);
+      System.Console.WriteLine(outPutText);
+    }
+
+    /// <summary>  
+    /// 向控制台输出信息.
+    /// </summary>  
+    public static void WriteLine(string output)
+    {
+      WriteLine(ConsoleTextType.Remind, output);
     }
 
     /// <summary>  

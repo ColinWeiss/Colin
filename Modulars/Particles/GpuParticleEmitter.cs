@@ -14,7 +14,7 @@ namespace Colin.Core.Modulars.Particles
     /// <summary>
     /// 图形设备.
     /// </summary>
-    public GraphicsDevice Device => EngineInfo.Graphics.GraphicsDevice;
+    public GraphicsDevice Device => CoreInfo.Graphics.GraphicsDevice;
     /// <summary>
     /// 数据像素模板的顶点缓冲区.
     /// </summary>
@@ -92,7 +92,7 @@ namespace Colin.Core.Modulars.Particles
     private void CreateDatasBuffer()
     {
       DataRt = new UnorderedAccessTexture2D(
-      EngineInfo.Graphics.GraphicsDevice,
+      CoreInfo.Graphics.GraphicsDevice,
       ParticleCountMax,
       3,
       false,
@@ -102,7 +102,7 @@ namespace Colin.Core.Modulars.Particles
       RenderTargetUsage.PreserveContents);
 
       DataResultRt = new UnorderedAccessTexture2D(
-      EngineInfo.Graphics.GraphicsDevice,
+      CoreInfo.Graphics.GraphicsDevice,
       ParticleCountMax,
       3,
       false,
@@ -171,14 +171,14 @@ namespace Colin.Core.Modulars.Particles
     /// </summary>
     public void DataWriteStep(Scene scene)
     {
-      EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(DataRt);
-      Transform = Matrix.CreateOrthographicOffCenter(EngineInfo.ViewRectangle, 0, 100);
+      CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(DataRt);
+      Transform = Matrix.CreateOrthographicOffCenter(CoreInfo.ViewRectangle, 0, 100);
       while (DataBufferQueue.Count > 0)
       {
         GpuParticleData[] datas = DataBufferQueue.Dequeue();
-        EngineInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-        EngineInfo.SpriteBatch.DrawRectangle(datas[0].ID, 0, datas.Length, 4, Color.Transparent);
-        EngineInfo.SpriteBatch.End();
+        CoreInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
+        CoreInfo.SpriteBatch.DrawRectangle(datas[0].ID, 0, datas.Length, 4, Color.Transparent);
+        CoreInfo.SpriteBatch.End();
         DataVertexBuffer = new VertexBuffer(Device, GpuParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
         DataVertexBuffer.SetData(datas);
         DataBindings[1] = new VertexBufferBinding(DataVertexBuffer, 0, 1);
@@ -191,7 +191,7 @@ namespace Colin.Core.Modulars.Particles
         ParticleDataStream.CurrentTechnique.Passes["P0"].Apply();
         Device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, datas.Length);
       }
-      EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(scene.SceneRenderTarget);
+      CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(scene.SceneRenderTarget);
     }
     /// <summary>
     /// 使用 <see cref="ComputeShader"/> 对粒子执行行为和数据的更新.

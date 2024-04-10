@@ -90,7 +90,7 @@
     /// </summary>
     public static void DrawRectangle(this SpriteBatch batch, Rectangle rect, Color color)
     {
-      batch.Draw(TextureAssets.Get("Pixel"), rect, color);
+      batch.Draw(Asset.GetTexture("Pixel"), rect, color);
     }
 
     /// <summary>

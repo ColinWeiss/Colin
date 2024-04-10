@@ -47,7 +47,7 @@
       _height = height;
       Projection = Matrix.CreateOrthographicOffCenter(0f, width, height, 0f, 0f, 1f);
       View = Matrix.Identity;
-      Translate = EngineInfo.ViewCenter;
+      Translate = CoreInfo.ViewCenter;
       Zoom = Vector2.One;
       TargetZoom = Vector2.One;
       ResetCamera();
@@ -106,14 +106,14 @@
     public Vector2 ConvertScreenToWorld(Vector2 location)
     {
       Vector3 t = new Vector3(location, 0);
-      t = EngineInfo.Graphics.GraphicsDevice.Viewport.Unproject(t, Projection, View, Matrix.Identity);
+      t = CoreInfo.Graphics.GraphicsDevice.Viewport.Unproject(t, Projection, View, Matrix.Identity);
       return new Vector2(t.X, t.Y);
     }
 
     public Vector2 ConvertWorldToScreen(Vector2 location)
     {
       Vector3 t = new Vector3(location, 0);
-      t = EngineInfo.Graphics.GraphicsDevice.Viewport.Project(t, Projection, View, Matrix.Identity);
+      t = CoreInfo.Graphics.GraphicsDevice.Viewport.Project(t, Projection, View, Matrix.Identity);
       return new Vector2(t.X, t.Y);
     }
   }

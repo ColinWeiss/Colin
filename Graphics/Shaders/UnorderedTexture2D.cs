@@ -7,11 +7,11 @@ namespace Colin.Core.Graphics.Shaders
   {
     private UnorderedAccessView _uav = null;
     public UnorderedAccessTexture2D(int width, int height) :
-        base(EngineInfo.Graphics.GraphicsDevice, width, height)
+        base(CoreInfo.Graphics.GraphicsDevice, width, height)
     {
     }
     public UnorderedAccessTexture2D(int width, int height, bool mipmap, SurfaceFormat format) :
-        base(EngineInfo.Graphics.GraphicsDevice, width, height, mipmap, format, default)
+        base(CoreInfo.Graphics.GraphicsDevice, width, height, mipmap, format, default)
     {
     }
     public UnorderedAccessTexture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipMap, SurfaceFormat preferredFormat, DepthFormat preferredDepthFormat, int preferredMultiSampleCount, RenderTargetUsage usage, bool shared)

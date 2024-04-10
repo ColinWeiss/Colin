@@ -53,12 +53,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
       Events.GetFocus += () =>
       {
-        EngineInfo.IMEHandler.StartTextComposition();
-        EngineInfo.IMEHandler.SetTextInputRect(ref InputRect);
+        CoreInfo.IMEHandler.StartTextComposition();
+        CoreInfo.IMEHandler.SetTextInputRect(ref InputRect);
       };
       Events.LoseFocus += () =>
       {
-        EngineInfo.IMEHandler.StopTextComposition();
+        CoreInfo.IMEHandler.StopTextComposition();
         Label.SetText(Text);
       };
       UserInterface.Scene.Events.TextInput += IMEHandler_TextInput;

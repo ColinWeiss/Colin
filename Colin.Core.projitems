@@ -38,25 +38,9 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleUpdate.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Panel0.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Deltas\Slider.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Button.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close0_Off.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close1.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Close1_Off.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Decoration.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Icon0.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Icon1.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Substrate0.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\Substrate1.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Forms\TitleColumn1.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\ControllerCursor.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\Pixel.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Textures\UserInterfaces\Slider.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\Asset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\ShaderAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
@@ -107,9 +91,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Engine.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EngineConsole.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EngineInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Console.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ComputeShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ShaderCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
@@ -217,9 +201,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\FontAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\UnsafeObject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\TextureAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />

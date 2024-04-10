@@ -21,12 +21,12 @@ namespace Colin.Core
     {
       get
       {
-        return EngineInfo.Graphics.IsFullScreen;
+        return CoreInfo.Graphics.IsFullScreen;
       }
       set
       {
-        EngineInfo.Graphics.IsFullScreen = value;
-        EngineInfo.Graphics.ApplyChanges();
+        CoreInfo.Graphics.IsFullScreen = value;
+        CoreInfo.Graphics.ApplyChanges();
       }
     }
 
@@ -47,11 +47,11 @@ namespace Colin.Core
     {
       get
       {
-        return EngineInfo.Engine.TargetFrame;
+        return CoreInfo.Engine.TargetFrame;
       }
       set
       {
-        EngineInfo.Engine.TargetFrame = value;
+        CoreInfo.Engine.TargetFrame = value;
       }
     }
 
@@ -67,11 +67,11 @@ namespace Colin.Core
     {
       get
       {
-        return EngineInfo.Engine.IsMouseVisible;
+        return CoreInfo.Engine.IsMouseVisible;
       }
       set
       {
-        EngineInfo.Engine.IsMouseVisible = value;
+        CoreInfo.Engine.IsMouseVisible = value;
       }
     }
 

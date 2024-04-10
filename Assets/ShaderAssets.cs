@@ -15,7 +15,7 @@ namespace Colin.Core.Assets
       string _fileName;
       string[] _csoFileNames =
           Directory.GetFiles(
-              Path.Combine(AppDomain.CurrentDomain.BaseDirectory, EngineInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
+              Path.Combine(CoreInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
               SearchOption.AllDirectories);
       for (int count = 0; count < _csoFileNames.Length; count++)
       {
@@ -33,7 +33,7 @@ namespace Colin.Core.Assets
       string _fileName;
       string[] _csoFileNames =
           Directory.GetFiles(
-              Path.Combine(AppDomain.CurrentDomain.BaseDirectory, EngineInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
+              Path.Combine(CoreInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
               SearchOption.AllDirectories);
 
       for (int count = 0; count < _csoFileNames.Length; count++)
@@ -42,14 +42,14 @@ namespace Colin.Core.Assets
         _fileName = Path.ChangeExtension(_csoFileNames[count], ".cso");
         if (File.Exists(_fileName) is false)
           CompileShaders();
-        _effect = new ComputeShader(EngineInfo.Graphics.GraphicsDevice, File.ReadAllBytes(_fileName));
+        _effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(_fileName));
         Shaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName), null), _effect);
       }
     }
     public static ComputeShader Get(string path)
     {
       ComputeShader shader;
-      if (Shaders.TryGetValue(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, EngineInfo.Engine.Content.RootDirectory, "Shaders", path), out shader))
+      if (Shaders.TryGetValue(Path.Combine("Shaders", path), out shader))
         return shader;
       else
         return null;

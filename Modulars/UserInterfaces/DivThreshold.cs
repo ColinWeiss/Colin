@@ -11,16 +11,16 @@
     {
       Interact.IsInteractive = false;
       Interact.IsSelectable = false;
-      Layout.Width = EngineInfo.ViewWidth;
-      Layout.Height = EngineInfo.ViewHeight;
+      Layout.Width = CoreInfo.ViewWidth;
+      Layout.Height = CoreInfo.ViewHeight;
       ContainerInitialize();
       UserInterface.Scene.Events.ClientSizeChanged += Events_ClientSizeChanged;
       base.DivInit();
     }
     private void Events_ClientSizeChanged(object sender, EventArgs e)
     {
-      Layout.Width = EngineInfo.ViewWidth;
-      Layout.Height = EngineInfo.ViewHeight;
+      Layout.Width = CoreInfo.ViewWidth;
+      Layout.Height = CoreInfo.ViewHeight;
     }
 
     /// <summary>

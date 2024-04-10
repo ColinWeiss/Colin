@@ -199,7 +199,7 @@
         Chunks.Add(chunk.Coord, chunk);
       }
       else
-        EngineConsole.WriteLine(ConsoleTextType.Error, string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
+        Console.WriteLine(ConsoleTextType.Error, string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
     }
     /// <summary>
     /// 保存指定坐标的区块至指定路径.
@@ -210,7 +210,7 @@
       if (chunk is not null)
         chunk.SaveChunk(path);
       else
-        EngineConsole.WriteLine(ConsoleTextType.Error, string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
+        Console.WriteLine(ConsoleTextType.Error, string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
     }
   }
 }

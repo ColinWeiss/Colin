@@ -21,7 +21,7 @@ namespace Colin.Core.Graphics
     {
       if (LoadComplete is false)
       {
-        EngineConsole.WriteLine(ConsoleTextType.Remind, "纹理缓存初始化完毕.");
+        Console.WriteLine(ConsoleTextType.Remind, "纹理缓存初始化完毕.");
         LoadComplete = true;
       }
     }

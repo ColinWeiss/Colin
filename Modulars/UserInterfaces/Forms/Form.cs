@@ -2,6 +2,7 @@
 using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
@@ -60,9 +61,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Substrate.Interact.IsInteractive = false;
       Substrate.Layout.Width = Layout.Width + 8;
       Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
-      DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
-      _substrateRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Substrate0"));
-      _substrateRenderer.Cut = new Point(4, 4);
       base.Register(Substrate);
 
       Block = new Div("Block");
@@ -84,17 +82,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       TitleColumn.Layout.Height = _titleHeight;
       {
         _titleColumnDec = new Div("TitleColumn.Decoration");
-        DivNinecutRenderer _decRenderer = _titleColumnDec.BindRenderer<DivNinecutRenderer>();
-        _decRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Decoration"));
-        _decRenderer.Cut = new Point(8, 8);
+        _titleColumnDec.BindRenderer<DivPixelRenderer>();
         _titleColumnDec.Interact.IsInteractive = false;
         _titleColumnDec.Layout.Width = TitleColumn.Layout.Width;
         _titleColumnDec.Layout.Height = TitleColumn.Layout.Height;
         TitleColumn.Register(_titleColumnDec);
 
         Icon = new Div("Icon");
-        DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>();
-        _iconRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Icon0"));
+        Icon.BindRenderer<DivPixelRenderer>();
         Icon.Interact.IsInteractive = true;
         Icon.Layout.Left = 8;
         Icon.Layout.Top = 6;
@@ -105,31 +100,17 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         TitleLabel = new Label("TitleLabel");
         TitleLabel.SetText("标题");
         TitleLabel.Layout.Left = Icon.Layout.Left + Icon.Layout.Width + 8;
-        TitleLabel.FontRenderer.Font = FontAssets.MiSansNormal.GetFont(32);
+        TitleLabel.FontRenderer.Font = Asset.GetFont("MiSansNormal").GetFont(32);
         TitleLabel.Design.Color = new Color(255, 223, 135);
         TitleColumn.Register(TitleLabel);
 
         CloseButton = new Div("CloseButton");
-        DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>();
-        _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0"));
+        CloseButton.BindRenderer<DivPixelRenderer>();
         CloseButton.Interact.IsInteractive = true;
         CloseButton.Layout.Left = TitleColumn.Layout.Width - 32;
         CloseButton.Layout.Top = 6;
         CloseButton.Layout.Width = 24;
         CloseButton.Layout.Height = 24;
-        CloseButton.Events.LeftClickBefore += () =>
-        {
-          _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0_Off"));
-        };
-        CloseButton.Events.LeftClickAfter += () =>
-        {
-          _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0"));
-          Close();
-        };
-        CloseButton.Events.HoverOver += () =>
-        {
-          _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close0"));
-        };
         TitleColumn.Register(CloseButton);
       }
 

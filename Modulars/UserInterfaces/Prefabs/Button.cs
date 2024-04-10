@@ -9,7 +9,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     {
       Label = new Label("ButtonText");
       Label.FontRenderer = Label.BindRenderer<DivFontRenderer>();
-      Label.FontRenderer.Font = FontAssets.Get("GlowSansMedium").GetFont(20);
+      Label.FontRenderer.Font = Asset.GetFont("GlowSansMedium").GetFont(20);
       Label.Design.Color = Color.Black;
       Label.Interact.IsInteractive = false;
       Label.SetText(text);

@@ -42,9 +42,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Substrate.Layout.Top = -4;
       Substrate.Layout.Width = Layout.Width + 8;
       Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
-      DivNinecutRenderer _substrateRenderer = Substrate.BindRenderer<DivNinecutRenderer>();
-      _substrateRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Substrate1"));
-      _substrateRenderer.Cut = new Point(6, 6);
       base.Register(Substrate);
 
       Block = new Div("Behavior");
@@ -56,16 +53,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       base.Register(Block);
 
       TitleColumn = new Div("TitleColumn");
-      DivNinecutRenderer _tileColumnRenderer = TitleColumn.BindRenderer<DivNinecutRenderer>();
-      _tileColumnRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/TitleColumn1"));
-      _tileColumnRenderer.Cut = new Point(6, 6);
       TitleColumn.Interact.IsInteractive = false;
       TitleColumn.Layout.Width = Layout.Width;
       TitleColumn.Layout.Height = _titleHeight;
       {
         Icon = new Div("Icon");
-        DivTextureRenderer _iconRenderer = Icon.BindRenderer<DivTextureRenderer>();
-        _iconRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Icon1"));
         Icon.Interact.IsInteractive = false;
         Icon.Layout.Left = 4;
         Icon.Layout.Top = 4;
@@ -74,26 +66,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         TitleColumn.Register(Icon);
 
         CloseButton = new Div("CloseButton");
-        DivTextureRenderer _closeRenderer = CloseButton.BindRenderer<DivTextureRenderer>();
-        _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
         CloseButton.Interact.IsInteractive = true;
         CloseButton.Layout.Left = TitleColumn.Layout.Width - 16;
         CloseButton.Layout.Top = 2;
         CloseButton.Layout.Width = 14;
         CloseButton.Layout.Height = 12;
-        CloseButton.Events.LeftClickBefore += () =>
-        {
-          _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1_Off"));
-        };
-        CloseButton.Events.LeftClickAfter += () =>
-        {
-          _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
-          Close();
-        };
-        CloseButton.Events.HoverOver += () =>
-        {
-          _closeRenderer.Bind(TextureAssets.Get("UserInterfaces/Forms/Close1"));
-        };
         TitleColumn.Register(CloseButton);
       }
       base.Register(TitleColumn);

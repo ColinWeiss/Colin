@@ -38,7 +38,7 @@ namespace Colin.Core.Common
 
     public SceneEventResponder Events;
 
-    public Scene() : base(EngineInfo.Engine)
+    public Scene() : base(CoreInfo.Engine)
     {
       Events = new SceneEventResponder();
       // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
@@ -58,7 +58,7 @@ namespace Colin.Core.Common
         SceneInit();
         Game.Window.ClientSizeChanged += Events.InvokeSizeChange;
         Game.Window.OrientationChanged += Events.InvokeSizeChange;
-        EngineInfo.IMEHandler.TextInput += Events.OnTextInput;
+        CoreInfo.IMEHandler.TextInput += Events.OnTextInput;
       }
       base.Initialize();
     }
@@ -107,12 +107,12 @@ namespace Colin.Core.Common
         _renderStarted = true;
       }
       SceneRenderPreset();
-      Modules.DoRender(EngineInfo.SpriteBatch);
+      Modules.DoRender(CoreInfo.SpriteBatch);
       SceneRender();
-      EngineInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
-      EngineInfo.SpriteBatch.Begin();
-      EngineInfo.SpriteBatch.Draw(SceneRenderTarget, new Rectangle(0, 0, EngineInfo.ViewWidth, EngineInfo.ViewHeight), Color.White);
-      EngineInfo.SpriteBatch.End();
+      CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
+      CoreInfo.SpriteBatch.Begin();
+      CoreInfo.SpriteBatch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+      CoreInfo.SpriteBatch.End();
       base.Draw(gameTime);
     }
     public virtual void RenderStart() { }
@@ -163,7 +163,7 @@ namespace Colin.Core.Common
       {
         Game.Window.ClientSizeChanged -= Events.InvokeSizeChange;
         Game.Window.OrientationChanged -= Events.InvokeSizeChange;
-        EngineInfo.IMEHandler.TextInput -= Events.OnTextInput;
+        CoreInfo.IMEHandler.TextInput -= Events.OnTextInput;
       }
       base.Dispose(disposing);
     }

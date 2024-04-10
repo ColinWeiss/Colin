@@ -31,7 +31,7 @@ namespace Colin.Core.Audios
     /// <param name="soundEffect">音效.</param>
     public void Play(SoundEffect soundEffect, bool useInstance = false)
     {
-      if (EngineInfo.Config.SoundEffect)
+      if (CoreInfo.Config.SoundEffect)
       {
         if (useInstance)
         {
@@ -39,7 +39,7 @@ namespace Colin.Core.Audios
           SoundEffectInstance _instance = soundEffect?.CreateInstance();
           if (_instance != null && !soundEffect.IsDisposed && !_instance.IsDisposed)
           {
-            _instance.Volume = EngineInfo.Config.SoundEffectVolume;
+            _instance.Volume = CoreInfo.Config.SoundEffectVolume;
             _instance.Play();
           }
         }
@@ -54,9 +54,9 @@ namespace Colin.Core.Audios
     /// <param name="soundEffect">音效.</param>
     public void PlayInstance(SoundEffectInstance instance)
     {
-      if (EngineInfo.Config.SoundEffect)
+      if (CoreInfo.Config.SoundEffect)
       {
-        instance.Volume = EngineInfo.Config.SoundEffectVolume;
+        instance.Volume = CoreInfo.Config.SoundEffectVolume;
         instance.Play();
       }
     }

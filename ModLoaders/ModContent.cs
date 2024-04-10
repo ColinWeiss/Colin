@@ -23,8 +23,8 @@ namespace Colin.Core.ModLoaders
 
     internal static void DoInitialize()
     {
-      Mods.Add(EngineInfo.Engine.Name, EngineInfo.Engine);
-      ModCodes.Add(EngineInfo.Engine, Assembly.GetExecutingAssembly());
+      Mods.Add(CoreInfo.Engine.Name, CoreInfo.Engine);
+      ModCodes.Add(CoreInfo.Engine, Assembly.GetExecutingAssembly());
     }
 
     public static string GetModDomain(IMod mod) => string.Concat(mod.Name, ": ");

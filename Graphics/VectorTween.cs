@@ -20,7 +20,7 @@
     {
       if (_start)
       {
-        _timer += Core.Time.UnscaledDeltaTime;
+        _timer += Colin.Core.Time.UnscaledDeltaTime;
         if (_timer <= Time)
         {
           switch (GradientStyle)

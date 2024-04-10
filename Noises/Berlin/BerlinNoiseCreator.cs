@@ -99,7 +99,7 @@
     {
       if (Pixel == null)
       {
-        Pixel = new Texture2D(EngineInfo.Graphics.GraphicsDevice, 1, 1);
+        Pixel = new Texture2D(CoreInfo.Graphics.GraphicsDevice, 1, 1);
         Pixel.SetData(new Color[] { Color.White });
       }
       if (Info.Single)

@@ -7,7 +7,7 @@ namespace Colin.Core
   /// <summary>
   /// 从设备获取信息.
   /// </summary>
-  public class EngineInfo
+  public class CoreInfo
   {
     public static Random Rand => new Random();
 
@@ -36,7 +36,7 @@ namespace Colin.Core
     /// <summary>
     /// 指示当前 <see cref="Colin.Engine"/> 对象.
     /// </summary>
-    public static Engine Engine { get; set; }
+    public static Core Engine { get; set; }
 
     /// <summary>
     /// 指示当前程序设置.
@@ -158,7 +158,7 @@ namespace Colin.Core
     /// </summary>
     public static IMEHandler IMEHandler;
 
-    internal static void Init(Engine engine)
+    internal static void Init(Core engine)
     {
       Engine = engine;
       ModContent.DoInitialize();
