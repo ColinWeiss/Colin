@@ -1,7 +1,7 @@
 ﻿namespace Colin.Core.ModLoaders
 {
-    public interface IModType
-    {
-        public IMod Mod { get; set; }
-    }
+  public interface IModType
+  {
+    public IMod Mod { get; set; }
+  }
 }

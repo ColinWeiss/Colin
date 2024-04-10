@@ -9,41 +9,41 @@ using Colin.Core.Graphics;
 */
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
-    public class DivPixelRenderer : DivRenderer
+  public class DivPixelRenderer : DivRenderer
+  {
+    private Sprite _pixel;
+    public override void OnDivInitialize()
     {
-        private Sprite _pixel;
-        public override void OnDivInitialize()
-        {
-            _pixel = Sprite.Get("Pixel");
-        }
-        public override void DoRender(GraphicsDevice device, SpriteBatch batch)
-        {
-            if (_pixel != null)
-                batch.Draw(
-                  _pixel.Source,
-                  Div.Layout.RenderTargetLocation + Div.Design.Anchor,
-                  new Rectangle( 0 , 0 , (int)div.Layout.Width , (int)div.Layout.Height ),
-                  Div.Design.Color,
-                  Div.Layout.Rotation,
-                  Div.Design.Anchor,
-                  Div.Layout.Scale,
-                  SpriteEffects.None,
-                  _pixel.Depth);
-        }
-        public DivPixelRenderer SetDesignColor(Color color)
-        {
-            Div.Design.Color = color;
-            return this;
-        }
-        public DivPixelRenderer SetDesignColor(Color color, int a = 255)
-        {
-            Div.Design.Color = new Color(color, a);
-            return this;
-        }
-        public DivPixelRenderer SetDesignColor(int r, int g, int b, int a = 255)
-        {
-            SetDesignColor(new Color(r, g, b, a));
-            return this;
-        }
+      _pixel = Sprite.Get("Pixel");
     }
+    public override void DoRender(GraphicsDevice device, SpriteBatch batch)
+    {
+      if (_pixel != null)
+        batch.Draw(
+          _pixel.Source,
+          Div.Layout.RenderTargetLocation + Div.Design.Anchor,
+          new Rectangle(0, 0, (int)div.Layout.Width, (int)div.Layout.Height),
+          Div.Design.Color,
+          Div.Layout.Rotation,
+          Div.Design.Anchor,
+          Div.Layout.Scale,
+          SpriteEffects.None,
+          _pixel.Depth);
+    }
+    public DivPixelRenderer SetDesignColor(Color color)
+    {
+      Div.Design.Color = color;
+      return this;
+    }
+    public DivPixelRenderer SetDesignColor(Color color, int a = 255)
+    {
+      Div.Design.Color = new Color(color, a);
+      return this;
+    }
+    public DivPixelRenderer SetDesignColor(int r, int g, int b, int a = 255)
+    {
+      SetDesignColor(new Color(r, g, b, a));
+      return this;
+    }
+  }
 }
