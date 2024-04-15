@@ -107,12 +107,12 @@ namespace Colin.Core.Common
         _renderStarted = true;
       }
       SceneRenderPreset();
-      Modules.DoRender(CoreInfo.SpriteBatch);
+      Modules.DoRender(CoreInfo.Batch);
       SceneRender();
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
-      CoreInfo.SpriteBatch.Begin();
-      CoreInfo.SpriteBatch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-      CoreInfo.SpriteBatch.End();
+      CoreInfo.Batch.Begin();
+      CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+      CoreInfo.Batch.End();
       base.Draw(gameTime);
     }
     public virtual void RenderStart() { }

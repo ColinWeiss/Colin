@@ -116,5 +116,12 @@
       t = CoreInfo.Graphics.GraphicsDevice.Viewport.Project(t, Projection, View, Matrix.Identity);
       return new Vector2(t.X, t.Y);
     }
+
+    public RectangleF ViewBound
+      =>
+      new RectangleF(
+        ConvertScreenToWorld(Vector2.Zero),
+        ConvertScreenToWorld(CoreInfo.ViewSizeF)
+        );
   }
 }

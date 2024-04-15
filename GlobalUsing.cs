@@ -19,6 +19,7 @@ global using Vector3 = Microsoft.Xna.Framework.Vector3;
 global using RectangleF = Colin.Core.RectangleF;
 global using Rectangle = Microsoft.Xna.Framework.Rectangle;
 global using Color = Microsoft.Xna.Framework.Color;
+global using Console = Colin.Core.Console;
 #if WINDOWS
 global using MonoGame.IMEHelper;
 #endif

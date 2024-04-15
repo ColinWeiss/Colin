@@ -57,7 +57,7 @@
           frameRenderLayer = renderMode.RawRt;
           CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
           CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-          renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.SpriteBatch);
+          renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
         }
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
@@ -70,11 +70,11 @@
           renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
           CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
           if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
-            CoreInfo.SpriteBatch.Begin(SpriteSortMode.Deferred, effect: e);
+            CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
           else
-            CoreInfo.SpriteBatch.Begin(SpriteSortMode.Deferred);
-          CoreInfo.SpriteBatch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-          CoreInfo.SpriteBatch.End();
+            CoreInfo.Batch.Begin(SpriteSortMode.Deferred);
+          CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+          CoreInfo.Batch.End();
         }
       }
     }

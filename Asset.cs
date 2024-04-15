@@ -81,7 +81,6 @@ namespace Colin.Core
         target = new FontSystem();
         target.AddFont(File.ReadAllBytes(fileName));
         fileName = OrganizePath(fileName);
-        Console.WriteLine(fileName);
         _fonts.Add(fileName, target);
       }
     }

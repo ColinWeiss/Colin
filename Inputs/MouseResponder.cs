@@ -11,42 +11,50 @@ namespace Colin.Core.Inputs
     public MouseResponder() : base(CoreInfo.Engine) { }
 
     public static bool LeftClickBefore =>
-        State.LeftButton == ButtonState.Pressed &&
-        StateLast.LeftButton == ButtonState.Released;
+      State.LeftButton == ButtonState.Pressed &&
+      StateLast.LeftButton == ButtonState.Released;
 
     public static bool LeftDown =>
-        State.LeftButton == ButtonState.Pressed &&
-        StateLast.LeftButton == ButtonState.Pressed;
+      State.LeftButton == ButtonState.Pressed &&
+      StateLast.LeftButton == ButtonState.Pressed;
 
     public static bool LeftUp =>
-        State.LeftButton == ButtonState.Released &&
-        StateLast.LeftButton == ButtonState.Released;
+      State.LeftButton == ButtonState.Released &&
+      StateLast.LeftButton == ButtonState.Released;
 
     public static bool LeftClickAfter =>
-       State.LeftButton == ButtonState.Released &&
-        StateLast.LeftButton == ButtonState.Pressed;
+      State.LeftButton == ButtonState.Released &&
+      StateLast.LeftButton == ButtonState.Pressed;
 
     public static bool RightClickBefore =>
-        State.RightButton == ButtonState.Pressed &&
-        StateLast.RightButton == ButtonState.Released;
+      State.RightButton == ButtonState.Pressed &&
+      StateLast.RightButton == ButtonState.Released;
 
     public static bool RightDown =>
-        State.RightButton == ButtonState.Pressed &&
-        StateLast.RightButton == ButtonState.Pressed;
+      State.RightButton == ButtonState.Pressed &&
+      StateLast.RightButton == ButtonState.Pressed;
 
     public static bool RightUp =>
-         State.RightButton == ButtonState.Released &&
-         StateLast.RightButton == ButtonState.Released;
+      State.RightButton == ButtonState.Released &&
+      StateLast.RightButton == ButtonState.Released;
 
     public static bool RightClickAfter =>
-        State.RightButton == ButtonState.Released &&
-        StateLast.RightButton == ButtonState.Pressed;
+      State.RightButton == ButtonState.Released &&
+      StateLast.RightButton == ButtonState.Pressed;
 
     public static bool ScrollUp =>
-        State.ScrollWheelValue < StateLast.ScrollWheelValue;
+      State.ScrollWheelValue < StateLast.ScrollWheelValue;
 
     public static bool ScrollDown =>
-        State.ScrollWheelValue > StateLast.ScrollWheelValue;
+      State.ScrollWheelValue > StateLast.ScrollWheelValue;
+
+    public static bool ScrollClickAfter =>
+      State.MiddleButton == ButtonState.Released &&
+      StateLast.MiddleButton == ButtonState.Pressed;
+
+    public static bool ScrollClickBefore =>
+      State.MiddleButton == ButtonState.Pressed &&
+      StateLast.MiddleButton == ButtonState.Released;
 
     public bool Enable { get; set; }
 

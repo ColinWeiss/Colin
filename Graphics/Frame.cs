@@ -100,7 +100,7 @@
       if (Timer > Interval)
       {
         Timer = Timer - Interval;
-        if (Current < FrameMax + Start)
+        if (Current < (FrameMax - 1) + Start)
           Current++;
         else if (IsLoop)
           Current = Start;

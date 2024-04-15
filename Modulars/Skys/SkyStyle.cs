@@ -21,7 +21,7 @@
     public void DoRender()
     {
       if (SkySprite != null)
-        CoreInfo.SpriteBatch.Draw(SkySprite.Source, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, SkySprite.Depth);
+        CoreInfo.Batch.Draw(SkySprite.Source, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, SkySprite.Depth);
       RenderSky();
     }
     public virtual void RenderSky()

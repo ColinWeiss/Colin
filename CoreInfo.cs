@@ -21,7 +21,7 @@ namespace Colin.Core
     /// <summary>
     /// 纹理批管道.
     /// </summary>
-    internal static SpriteBatch SpriteBatch { get; set; }
+    internal static SpriteBatch Batch { get; set; }
 
     /// <summary>
     /// 纹理批管道.

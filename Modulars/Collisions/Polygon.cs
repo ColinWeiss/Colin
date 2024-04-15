@@ -33,7 +33,7 @@ namespace Colin.Core.Modulars.Collisions
       }
       for (int count = 0; count < Edges.Length; count++)
       {
-        CoreInfo.SpriteBatch.DrawLine(Edges[count], Color.OrangeRed);
+        CoreInfo.Batch.DrawLine(Edges[count], Color.OrangeRed);
       }
     }
 

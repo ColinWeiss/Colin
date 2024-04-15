@@ -78,8 +78,8 @@ namespace Colin.Core.Modulars.Backgrounds
 
     public void RenderFixBackground(BackgroundLayer layer)
     {
-      CoreInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
-      CoreInfo.SpriteBatch.Draw(
+      CoreInfo.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+      CoreInfo.Batch.Draw(
           layer.Sprite.Source,
           CurrentStyle.FixLayerOverallOffset,
           null,
@@ -90,7 +90,7 @@ namespace Colin.Core.Modulars.Backgrounds
           SpriteEffects.None,
           layer.Sprite.Depth
           );
-      CoreInfo.SpriteBatch.End();
+      CoreInfo.Batch.End();
     }
 
     public void RenderLeftRightLoopBackground(BackgroundLayer layer)
@@ -104,15 +104,15 @@ namespace Colin.Core.Modulars.Backgrounds
       offset.X += CurrentStyle.LoopLayerOffset.X / layer.Sprite.Height;
       offset.Y += CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
 
-      CoreInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+      CoreInfo.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
       CoreInfo.Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
       LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / Camera.Zoom);
       LeftRightLoopEffect.Parameters["Offset"].SetValue(offset);
       LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
       CoreInfo.Graphics.GraphicsDevice.Textures[0] = _screenMap;
       CoreInfo.Graphics.GraphicsDevice.Textures[1] = layer.Sprite.Source;
-      CoreInfo.SpriteBatch.Draw(_screenMap, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-      CoreInfo.SpriteBatch.End();
+      CoreInfo.Batch.Draw(_screenMap, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+      CoreInfo.Batch.End();
     }
 
     private bool disposedValue;

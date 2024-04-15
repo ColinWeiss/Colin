@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.SectionSystem>;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -52,8 +53,6 @@ namespace Colin.Core.Modulars.Ecses
       _systems = new Dictionary<Type, SectionSystem>();
       AddSystems?.Invoke(this);
 
-      //     _localPlayer.GetComponent<EcsComTransform>().Position = new Vector2( 500, 500 );
-      //在此处添加切片系统.
     }
     public void Start()
     {
@@ -73,16 +72,19 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
-    int C = 0;
+    public int C = 0;
     public void DoUpdate(GameTime time)
     {
+      C = 0;
       Perfmon.Start();
       Controller.Reset();
       Section _section;
       SectionSystem _system;
+      ValueCollection values;
       for (int count = 0; count < Sections.Length; count++)
       {
         _section = Sections[count];
+        values = _systems.Values;
         if (_section is null)
           continue;
         if (_section.NeedClear)
@@ -90,15 +92,15 @@ namespace Colin.Core.Modulars.Ecses
           Sections[count] = null;
           continue;
         }
-        for (int rCount = 0; rCount < _systems.Values.Count; rCount++)
+        for (int rCount = 0; rCount < values.Count; rCount++)
         {
-          _system = _systems.Values.ElementAt(rCount);
+          _system = values.ElementAt(rCount);
           _system._current = _section;
           _system.Reset();
         }
-        for (int uCount = 0; uCount < _systems.Values.Count; uCount++)
+        for (int uCount = 0; uCount < values.Count; uCount++)
         {
-          _system = _systems.Values.ElementAt(uCount);
+          _system = values.ElementAt(uCount);
           _system._current = _section;
           _system.DoUpdate();
         }
@@ -106,7 +108,7 @@ namespace Colin.Core.Modulars.Ecses
           C++;
       }
       Perfmon.SetItem("Ecs.ActiveCount: ", C);
-      C = 0;
+     // C = 0;
       Perfmon.End("Ecs.DoUpdate");
     }
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
@@ -175,9 +177,6 @@ namespace Colin.Core.Modulars.Ecses
 
     public void Dispose()
     {
-      Scene = null;
-      _systems = null;
-      Sections = null;
     }
   }
 }

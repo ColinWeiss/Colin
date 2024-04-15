@@ -56,7 +56,7 @@ namespace Colin.Core
         {
           PreferHalfPixelOffset = false,
           HardwareModeSwitch = false,
-          SynchronizeWithVerticalRetrace = true,
+          SynchronizeWithVerticalRetrace = false,
           PreferMultiSampling = true,
           GraphicsProfile = GraphicsProfile.HiDef
         };
@@ -111,7 +111,7 @@ namespace Colin.Core
 
     protected override sealed void Initialize()
     {
-      CoreInfo.SpriteBatch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
+      CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.DrawBatcherAlt = new(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();

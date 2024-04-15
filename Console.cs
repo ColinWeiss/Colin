@@ -64,6 +64,15 @@
     }
 
     /// <summary>  
+    /// 向控制台输出信息.
+    /// </summary>  
+    public static void WriteLine(object output)
+    {
+      WriteLine(ConsoleTextType.Remind, output);
+    }
+
+
+    /// <summary>  
     /// 根据输出文本选择控制台文字颜色.
     /// </summary>  
     /// <param name="informationType">信息类型.</param>  

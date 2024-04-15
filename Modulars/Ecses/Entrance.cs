@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Ecses
+﻿using System.Numerics;
+
+namespace Colin.Core.Modulars.Ecses
 {
   /// <summary>
   /// 表示一个词条.

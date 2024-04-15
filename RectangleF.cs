@@ -212,5 +212,10 @@ namespace Colin.Core
       width = Width;
       height = Height;
     }
+
+    public Rectangle ToRectangle()
+    {
+      return new Rectangle((int)X, (int)Y, (int)Width, (int)Height);
+    }
   }
 }

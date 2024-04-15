@@ -176,9 +176,9 @@ namespace Colin.Core.Modulars.Particles
       while (DataBufferQueue.Count > 0)
       {
         GpuParticleData[] datas = DataBufferQueue.Dequeue();
-        CoreInfo.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-        CoreInfo.SpriteBatch.DrawRectangle(datas[0].ID, 0, datas.Length, 4, Color.Transparent);
-        CoreInfo.SpriteBatch.End();
+        CoreInfo.Batch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
+        CoreInfo.Batch.DrawRectangle(datas[0].ID, 0, datas.Length, 4, Color.Transparent);
+        CoreInfo.Batch.End();
         DataVertexBuffer = new VertexBuffer(Device, GpuParticleData.VertexDeclaration, datas.Length, BufferUsage.WriteOnly);
         DataVertexBuffer.SetData(datas);
         DataBindings[1] = new VertexBufferBinding(DataVertexBuffer, 0, 1);

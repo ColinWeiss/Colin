@@ -28,11 +28,15 @@
         Div.ForEach(Portrait);
       else if (Direction == Direction.Transverse)
         Div.ForEach(Transverse);
+      if (Direction == Direction.Portrait)
+        TotalSize.Y -= DivInterval;
+      else if (Direction == Direction.Transverse)
+        TotalSize.X -= DivInterval;
       lastDiv = null;
       base.Layout(ref layout);
     }
     private Div lastDiv;
-    private void CalculateLayout(Div division)
+    public void CalculateLayout(Div division)
     {
       switch (Direction)
       {

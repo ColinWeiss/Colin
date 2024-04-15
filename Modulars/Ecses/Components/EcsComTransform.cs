@@ -27,12 +27,12 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// <summary>
     /// 获取 <see cref="Translation"/> + <see cref="Half"/>.
     /// </summary>
-    public Vector2 Center => Translation + Half;
+    public Vector2 Center => Location + Half;
 
     /// <summary>
     /// 获取由 <see cref="Translation"/> 和 <see cref="Size"/> 计算得出的默认矩形.
     /// </summary>
-    public RectangleF LocalBound => new RectangleF(Translation, Size);
+    public RectangleF LocalBound => new RectangleF(Location, Size);
 
     public EcsComTransform SetSize(Vector2 size)
     {

@@ -39,6 +39,20 @@ namespace Colin.Core.Modulars.Ecses
     /// </summary>
     public bool NeedClear;
 
+    /// <summary>
+    /// 指示该切片是否还存在于 Ecs系统的 对象池 中.
+    /// </summary>
+    public bool Active
+    {
+      get
+      {
+        if (Ecs.Sections[ID] is not null)
+          return Ecs.Sections[ID].Equals(this);
+        else
+          return false;
+      }
+    }
+
     public EcsComDoc _comDoc;
     public EcsComDoc Document => _comDoc;
     public void AddTag(string tag) => _comDoc.Tags.Add(tag);
@@ -67,6 +81,5 @@ namespace Colin.Core.Modulars.Ecses
     }
     public virtual void SetDefaults() { }
     public virtual void SetDefaultsComplete() { }
-
   }
 }
