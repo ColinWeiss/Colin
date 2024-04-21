@@ -82,9 +82,9 @@ namespace Colin.Core.Modulars.Ecses.Systems
       previousBounds.Offset(-deltaPosition);
 
       int leftTile = (int)Math.Floor((float)bounds.Left / TileOption.TileSize.X);
-      int rightTile = (int)Math.Floor(((float)bounds.Right / TileOption.TileSize.X)) + 1;
+      int rightTile = (int)Math.Floor(((float)bounds.Right / TileOption.TileSize.X));
       int topTile = (int)Math.Floor((float)bounds.Top / TileOption.TileSize.Y);
-      int bottomTile = (int)Math.Floor((float)bounds.Bottom / TileOption.TileSizeF.Y) + 1;
+      int bottomTile = (int)Math.Floor((float)bounds.Bottom / TileOption.TileSizeF.Y);
 
       bool positiveX = ComTransform.Velocity.X > 0;
       bool positiveY = ComTransform.Velocity.Y > 0;

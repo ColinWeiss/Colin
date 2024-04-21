@@ -51,6 +51,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\DefaultForm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\FormBorder.cs" />
     <Compile Include="..\Colin\Modulars\Ecses\ISectionBindableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
@@ -185,7 +187,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\PopupInputTextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\InteractStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Canvas.cs" />
