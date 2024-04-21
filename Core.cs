@@ -56,7 +56,7 @@ namespace Colin.Core
         {
           PreferHalfPixelOffset = false,
           HardwareModeSwitch = false,
-          SynchronizeWithVerticalRetrace = false,
+          SynchronizeWithVerticalRetrace = true,
           PreferMultiSampling = true,
           GraphicsProfile = GraphicsProfile.HiDef
         };

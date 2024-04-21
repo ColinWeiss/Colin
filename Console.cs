@@ -51,7 +51,7 @@
     {
       System.Console.ForegroundColor = GetConsoleColor(informationType);
       string NowTime = string.Concat("[", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "]");
-      string outPutText = string.Concat(NowTime, "\n =>", "[", CoreInfo.EngineName, "] ", output);
+      string outPutText = string.Concat("=>", "[", CoreInfo.EngineName, "] ", output);
       System.Console.WriteLine(outPutText);
     }
 

@@ -23,9 +23,9 @@ namespace Colin.Core.Graphics
       _textures = new Dictionary<int, Texture2D>(10);
     }
     /// <summary>
-    /// vul---vur
-    ///  |  \  |
-    /// vdl---vdr
+    /// <br>vul---vur</br>
+    /// <br> | \  |</br>
+    /// <br>vdl---vdr</br>
     /// </summary>
     /// <param name="sortingKey">Used by <see cref="Sort()"/></param>
     public void DrawQuad(Texture2D texture, T vul, T vur, T vdr, T vdl, int sortingKey = -1)

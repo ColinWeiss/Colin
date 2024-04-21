@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// 物理组件.
   /// <br>它将被 <see cref="EcsPhysicSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComPhysic : ISectionComponent, IResetable
+  public class EcsComPhysic : ISectionCom, IResetable
   {
     /// <summary>
     /// 指示是否忽略重力的值.
@@ -89,7 +89,7 @@ namespace Colin.Core.Modulars.Ecses.Components
 
     /// <summary>
     /// 指示基础碰撞盒.
-    /// <br>其中, X、Y 用作针对 <see cref="EcsComTransform.Translation"/> 的偏移.</br>
+    /// <br>其中, X、Y 用作针对 <see cref="Transform2D.Translation"/> 的偏移.</br>
     /// <br>Width、Height用作针对 <see cref="EcsComTransform.Size"/> 的增减.</br>
     /// </summary>
     public RectangleF Hitbox;

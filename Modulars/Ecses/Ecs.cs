@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using SharpDX.MediaFoundation;
 using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.SectionSystem>;
 
 namespace Colin.Core.Modulars.Ecses
@@ -25,22 +26,27 @@ namespace Colin.Core.Modulars.Ecses
 
     private Dictionary<Type, SectionSystem> _systems;
     public Dictionary<Type, SectionSystem> Systems => _systems;
+
+    [Obsolete()]
     public void AddSystem(SectionSystem system)
     {
       system._ecs = this;
       system.DoInitialize();
       _systems.Add(system.GetType(), system);
     }
+    public T RegisterSystem<T>() where T : SectionSystem, new()
+    {
+      T system = new T();
+      system._ecs = this;
+      system.DoInitialize();
+      _systems.Add(typeof(T), system);
+      return system;
+    }
     public T GetSystem<T>() where T : SectionSystem => (T)_systems.GetValueOrDefault(typeof(T));
 
     public Section[] Sections;
 
     public KeysEventResponder KeysEvent;
-
-    /// <summary>
-    /// 事件: 于初始化时添加游戏系统.
-    /// </summary>
-    public event Action<Ecs> AddSystems;
 
     public void DoInitialize()
     {
@@ -49,42 +55,37 @@ namespace Colin.Core.Modulars.Ecses
       KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
       Scene.Events.KeysEvent.Register(KeysEvent);
       Sections = new Section[2000];
-
       _systems = new Dictionary<Type, SectionSystem>();
-      AddSystems?.Invoke(this);
-
     }
     public void Start()
     {
-      Section _section;
       SectionSystem _system;
-      for (int count = 0; count < Sections.Length; count++)
+      for (int sCount = 0; sCount < _systems.Values.Count; sCount++)
       {
-        _section = Sections[count];
-        if (_section is null)
-          continue;
-        for (int sCount = 0; sCount < _systems.Values.Count; sCount++)
-        {
-          _system = _systems.Values.ElementAt(sCount);
-          _system._current = _section;
-          _system.Start();
-        }
+        _system = _systems.Values.ElementAt(sCount);
+        _system.Start();
       }
     }
 
-    public int C = 0;
     public void DoUpdate(GameTime time)
     {
-      C = 0;
       Perfmon.Start();
       Controller.Reset();
       Section _section;
-      SectionSystem _system;
-      ValueCollection values;
+      SectionSystem _currentSystem;
+      for (int count = 0; count < Systems.Count; count++)
+      {
+        _currentSystem = Systems.ElementAt(count).Value;
+        _currentSystem.Reset();
+      }
+      for (int count = 0; count < Systems.Count; count++)
+      {
+        _currentSystem = Systems.ElementAt(count).Value;
+        _currentSystem.DoUpdate();
+      }
       for (int count = 0; count < Sections.Length; count++)
       {
         _section = Sections[count];
-        values = _systems.Values;
         if (_section is null)
           continue;
         if (_section.NeedClear)
@@ -92,41 +93,17 @@ namespace Colin.Core.Modulars.Ecses
           Sections[count] = null;
           continue;
         }
-        for (int rCount = 0; rCount < values.Count; rCount++)
-        {
-          _system = values.ElementAt(rCount);
-          _system._current = _section;
-          _system.Reset();
-        }
-        for (int uCount = 0; uCount < values.Count; uCount++)
-        {
-          _system = values.ElementAt(uCount);
-          _system._current = _section;
-          _system.DoUpdate();
-        }
-        if (_section is not null)
-          C++;
       }
-      Perfmon.SetItem("Ecs.ActiveCount: ", C);
-     // C = 0;
       Perfmon.End("Ecs.DoUpdate");
     }
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
       Perfmon.Start();
-      Section _section;
       SectionSystem _system;
-      for (int count = 0; count < Sections.Length; count++)
+      for (int count = 0; count < _systems.Values.Count; count++)
       {
-        _section = Sections[count];
-        if (_section is null)
-          continue;
-        for (int rCount = 0; rCount < _systems.Values.Count; rCount++)
-        {
-          _system = _systems.Values.ElementAt(rCount);
-          _system._current = _section;
-          _system.DoRender(device, batch);
-        }
+        _system = _systems.Values.ElementAt(count);
+        _system.DoRender(device, batch);
       }
       Perfmon.End("Ecs.DoRender");
     }
@@ -138,9 +115,9 @@ namespace Colin.Core.Modulars.Ecses
     /// <param name="index"></param>
     public void SetNull(int index)
     {
-      Sections[index] = null;
+      Sections[index].NeedClear = true;
     }
-    public T Create<T>() where T : Section, new()
+    public T CreateSection<T>() where T : Section, new()
     {
       T result;
       Section section;

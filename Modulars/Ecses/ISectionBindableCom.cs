@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
-  public interface ISectionFindableComponent : ISectionComponent
+  public interface ISectionBindableCom : ISectionCom
   {
     public Section Section { get; set; }
   }

@@ -51,7 +51,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionFindableComponent.cs" />
+    <Compile Include="..\Colin\Modulars\Ecses\ISectionBindableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\IPreExecution.cs" />
@@ -80,7 +81,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Ecs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entrance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EnvironmentalController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Section.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\SectionSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />

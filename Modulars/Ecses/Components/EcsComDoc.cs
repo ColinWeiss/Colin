@@ -3,7 +3,7 @@
   /// <summary>
   /// 切片文档.
   /// </summary>
-  public class EcsComDoc : ISectionFindableComponent
+  public class EcsComDoc : ISectionBindableCom
   {
     public Section Section { get; set; }
 
@@ -30,7 +30,7 @@
 
     public void DoInitialize() { }
 
-    public bool Equals(ISectionComponent other)
+    public bool Equals(ISectionCom other)
     {
       bool result = false;
       if (other is EcsComDoc doc)

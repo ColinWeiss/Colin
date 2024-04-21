@@ -8,16 +8,16 @@ namespace Colin.Core.Modulars.Ecses
   /// </summary>
   public class Section : IGameContent<Section>, ICodeResource
   {
-    internal Dictionary<Type, ISectionComponent> _components;
+    internal Dictionary<Type, ISectionCom> _components;
     /// <summary>
     /// 切片组件列表.
     /// </summary>
-    public Dictionary<Type, ISectionComponent> Components => _components;
-    public bool HasComponent<T>() where T : ISectionComponent => _components.ContainsKey(typeof(T));
-    public T GetComponent<T>() where T : ISectionComponent => (T)_components.GetValueOrDefault(typeof(T), null);
-    public T RegisterCom<T>() where T : class, ISectionComponent, new() => Register(new T()) as T;
-    public bool RemoveComponent<T>() where T : ISectionComponent => _components.Remove(typeof(T));
-    public ISectionComponent Register(ISectionComponent component)
+    public Dictionary<Type, ISectionCom> Components => _components;
+    public bool HasComponent<T>() where T : ISectionCom => _components.ContainsKey(typeof(T));
+    public T GetComponent<T>() where T : ISectionCom => (T)_components.GetValueOrDefault(typeof(T), null);
+    public T RegisterCom<T>() where T : class, ISectionCom, new() => Register(new T()) as T;
+    public bool RemoveComponent<T>() where T : ISectionCom => _components.Remove(typeof(T));
+    public ISectionCom Register(ISectionCom component)
     {
       if (component is EcsComScript script)
       {
@@ -70,7 +70,7 @@ namespace Colin.Core.Modulars.Ecses
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
     public void DoInitialize()
     {
-      _components = new Dictionary<Type, ISectionComponent>();
+      _components = new Dictionary<Type, ISectionCom>();
       _comDoc = RegisterCom<EcsComDoc>();
       _comDoc.Section = this;
       _comTransform = RegisterCom<EcsComTransform>();

@@ -10,22 +10,28 @@ namespace Colin.Core.Modulars.Ecses.Systems
   {
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      foreach (ISectionComponent component in Current.Components.Values)
+      Section _current;
+      batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.SceneCamera.View);
+      for (int count = 0; count < Ecs.Sections.Length; count++)
       {
-        if (component is EcsComAdvancedRender renderer && component is not EcsComDeferredRender)
-        {
-          renderer.DoRender(device, batch);
-        }
-      }
-      batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.SceneCamera.View);
-      foreach (ISectionComponent component in Current.Components.Values)
-      {
-        if (component is EcsComDeferredRender renderer)
-        {
-          renderer.DoRender(device, batch);
-        }
+        _current = Ecs.Sections[count];
+        if (_current is null)
+          continue;
+        foreach (ISectionCom component in _current.Components.Values)
+          if (component is EcsComDeferredRender renderer && renderer.Visible)
+            renderer.DoRender(device, batch);
       }
       batch.End();
+
+      for (int count = 0; count < Ecs.Sections.Length; count++)
+      {
+        _current = Ecs.Sections[count];
+        if (_current is null)
+          continue;
+        foreach (ISectionCom component in _current.Components.Values)
+          if (component is EcsComAdvancedRender renderer && component is not EcsComDeferredRender && renderer.Visible)
+            renderer.DoRender(device, batch);
+      }
       base.DoRender(device, batch);
     }
   }

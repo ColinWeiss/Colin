@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// <br>提供关于位置/速度/旋转/缩放的字段.</br>
   /// <br>它将被 <see cref="EcsPhysicSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComTransform : Transform2D, ISectionComponent
+  public class EcsComTransform : Transform2D, ISectionCom
   {
     /// <summary>
     /// 指示切片的大小.
@@ -27,12 +27,12 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// <summary>
     /// 获取 <see cref="Translation"/> + <see cref="Half"/>.
     /// </summary>
-    public Vector2 Center => Location + Half;
+    public Vector2 Center => Translation + Half;
 
     /// <summary>
     /// 获取由 <see cref="Translation"/> 和 <see cref="Size"/> 计算得出的默认矩形.
     /// </summary>
-    public RectangleF LocalBound => new RectangleF(Location, Size);
+    public RectangleF LocalBound => new RectangleF(Translation, Size);
 
     public EcsComTransform SetSize(Vector2 size)
     {

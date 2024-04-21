@@ -23,7 +23,7 @@
     /// <summary>
     /// 指示该变换的原点相对于父元素的偏移量.
     /// </summary>
-    public Vector2 Location;
+    public Vector2 Translation;
 
     /// <summary>
     /// 指示该变换的旋转.
@@ -46,7 +46,7 @@
         Matrix.CreateScale(Anchor.X, Anchor.Y, 0f) *
         Matrix.CreateScale(Scale.X, Scale.Y, 0f) * 
         Matrix.CreateRotationZ(Rotation) * 
-        Matrix.CreateTranslation(Location.X, Location.Y, 0);
+        Matrix.CreateTranslation(Translation.X, Translation.Y, 0);
       if (Parent is not null)
         _transform *= Parent.Transform;
     }
