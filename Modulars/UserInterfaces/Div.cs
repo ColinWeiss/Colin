@@ -275,7 +275,7 @@
         else
           device.SetRenderTarget(UserInterface.RawRt);
         UserInterface.NormalBatchBegin(batch);
-        batch.Draw(Canvas, Layout.ScreenLocation + Design.Anchor, null, Design.Color, 0f, Design.Anchor, Layout.Scale, SpriteEffects.None, 0f);
+        batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
       }
     }
 

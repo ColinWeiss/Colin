@@ -24,11 +24,11 @@
     /// <summary>
     /// 纵向.
     /// </summary>
-    Portrait,
+    Vertical,
     /// <summary>
-    /// 横向.
+    /// 水平的.
     /// </summary>
-    Transverse,
+    Horizontal,
     /// <summary>
     /// 朝上.
     /// </summary>

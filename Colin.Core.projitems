@@ -51,8 +51,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\DefaultForm.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\FormBorder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
     <Compile Include="..\Colin\Modulars\Ecses\ISectionBindableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\VectorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\DirectoryChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\ColorTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcherExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
@@ -134,7 +134,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Frame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\VectorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Vert2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ControllerResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
@@ -185,7 +184,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Form.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\ColinForm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\InteractStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Button.cs" />

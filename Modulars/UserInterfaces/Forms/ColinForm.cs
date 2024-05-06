@@ -6,7 +6,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
-  public class Form : Canvas
+  public class ColinForm : Canvas
   {
     public Div Substrate;
 
@@ -41,7 +41,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       }
     }
 
-    public Form(string name, int width, int height, int titleHeight) : base(name)
+    public ColinForm(string name, int width, int height, int titleHeight) : base(name)
     {
       Layout.Width = width;
       Layout.Height = height;
@@ -128,7 +128,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.LeftClickBefore += () => UserInterface.Container.SetTop(this);
+      Events.LeftClickBefore += (e) => UserInterface.Container.SetTop(this);
       Events.KeyClickBefore += (object s, KeyEventArgs e) =>
       {
         if (e.Key == Keys.Escape && IsVisible)

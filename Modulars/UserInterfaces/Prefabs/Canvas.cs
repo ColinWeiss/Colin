@@ -12,7 +12,7 @@
     {
       Layout.Width = width;
       Layout.Height = height;
-      Design.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
+      Layout.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
       Canvas?.Dispose();
       Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
     }

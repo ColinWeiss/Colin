@@ -3,6 +3,7 @@ using FontStashSharp;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using System;
+using System.Diagnostics;
 
 namespace Colin.Core
 {
@@ -11,7 +12,7 @@ namespace Colin.Core
   /// </summary>
   public class Asset
   {
-    private static string _dir = "Assets";
+    private static string _dir = "";
     public static string Dir
     {
       get => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _dir);
@@ -32,6 +33,13 @@ namespace Colin.Core
       set => _fontDir = value;
     }
 
+    private static string _effectDir = "Effects";
+    public static string EffectDir
+    {
+      get => Path.Combine(Dir, "Sources", _effectDir);
+      set => _fontDir = value;
+    }
+
     public static bool UseMgcbEditor = false;
 
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
@@ -45,6 +53,7 @@ namespace Colin.Core
     {
       LoadTextures();
       LoadFonts();
+      LoadEffects();
     }
     public static void LoadTextures()
     {
@@ -84,6 +93,44 @@ namespace Colin.Core
         _fonts.Add(fileName, target);
       }
     }
+    public static void LoadEffects()
+    {
+      if (Directory.Exists(EffectDir) is false)
+      {
+        Console.WriteLine(ConsoleTextType.Error, "未检查到着色器文件夹.");
+        return;
+      }
+      string[] fileFullName = Directory.GetFiles(EffectDir, "*.fx*", SearchOption.AllDirectories);
+      string fileName;
+      string sourceFile;
+      string targetFile;
+      List<string> cmdLine = new List<string>();
+      for (int count = 0; count < fileFullName.Length; count++)
+      {
+        fileName = fileFullName[count];
+        sourceFile = Path.Combine(EffectDir, fileName);
+        targetFile = Path.ChangeExtension(Path.Combine(EffectDir, fileName), ".rShader");
+        if (Path.GetExtension(sourceFile) is not ".fx" || File.Exists(targetFile))
+          continue;
+        cmdLine.Add($"mgfxc {sourceFile} {targetFile} /Profile:DirectX_11");
+      }
+      Console.Execute(cmdLine);
+
+      Effect rShader;
+      fileFullName = Directory.GetFiles(EffectDir, "*.rShader", SearchOption.AllDirectories);
+      for (int count = 0; count < fileFullName.Length; count++)
+      {
+        fileName = fileFullName[count];
+        targetFile = Path.Combine(EffectDir, fileName);
+        if (Path.GetExtension(targetFile) is ".rShader")
+        {
+          rShader = new Effect(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(targetFile));
+          fileName = OrganizePath(fileName);
+          Console.WriteLine(fileName);
+          _effects.Add(fileName, rShader);
+        }
+      }
+    }
 
     public static Texture2D GetTexture(string path)
     {
@@ -112,6 +159,7 @@ namespace Colin.Core
       StringBuilder sb = new StringBuilder(path);
       sb.Replace(string.Concat(TextureDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(FontDir, Path.DirectorySeparatorChar), "");
+      sb.Replace(string.Concat(EffectDir, Path.DirectorySeparatorChar), "");
       sb.Replace(Path.GetExtension(sb.ToString()), "");
       return sb.ToString();
     }

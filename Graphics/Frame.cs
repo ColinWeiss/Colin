@@ -81,9 +81,9 @@
     {
       switch (Direction)
       {
-        case Direction.Portrait:
+        case Direction.Vertical:
           return new Rectangle(X * Width, Current * Height, Width, Height);
-        case Direction.Transverse:
+        case Direction.Horizontal:
           return new Rectangle(Current * Width, Y * Height, Width, Height);
       };
       return Rectangle.Empty;

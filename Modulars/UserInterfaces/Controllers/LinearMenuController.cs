@@ -9,7 +9,7 @@
     /// <summary>
     /// 方向.
     /// </summary>
-    public Direction Direction = Direction.Portrait;
+    public Direction Direction = Direction.Vertical;
     /// <summary>
     /// 对齐方式.
     /// </summary>
@@ -20,32 +20,33 @@
     public Direction Toward = Direction.Down;
     public Vector2 Scroll;
     public Vector2 TotalSize;
+    private Div lastDiv;
+
     public override void Layout(ref DivLayout layout)
     {
       TotalSize = Vector2.Zero;
       Div.ForEach(CalculateLayout);
-      if (Direction == Direction.Portrait)
+      if (Direction == Direction.Vertical)
         Div.ForEach(Portrait);
-      else if (Direction == Direction.Transverse)
+      else if (Direction == Direction.Horizontal)
         Div.ForEach(Transverse);
-      if (Direction == Direction.Portrait)
+      if (Direction == Direction.Vertical)
         TotalSize.Y -= DivInterval;
-      else if (Direction == Direction.Transverse)
+      else if (Direction == Direction.Horizontal)
         TotalSize.X -= DivInterval;
       lastDiv = null;
       base.Layout(ref layout);
     }
-    private Div lastDiv;
     public void CalculateLayout(Div division)
     {
       switch (Direction)
       {
-        case Direction.Portrait:
+        case Direction.Vertical:
           if (TotalSize.X < division.Layout.Width)
             TotalSize.X = division.Layout.Width;
           TotalSize.Y += division.Layout.Height + DivInterval;
           break;
-        case Direction.Transverse:
+        case Direction.Horizontal:
           if (TotalSize.Y < division.Layout.Height)
             TotalSize.Y = division.Layout.Height;
           TotalSize.X += division.Layout.Width + DivInterval;

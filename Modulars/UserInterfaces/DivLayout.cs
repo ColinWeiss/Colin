@@ -307,7 +307,6 @@
       div.Layout.renderTargetBounds.Height = (int)div.Layout.height;
 
       div.Layout.screenTransform =
-          Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
           Matrix.CreateScale(1, 1, 0) *
           Matrix.CreateRotationZ(div.Layout.rotation) *
           Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);

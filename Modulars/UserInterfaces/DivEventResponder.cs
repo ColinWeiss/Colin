@@ -11,14 +11,19 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public DivEventResponder(Div division) => Div = division;
 
-    public MouseEventResponder Mouse = new MouseEventResponder("MouseEvents");
+    private MouseEventResponder Mouse = new MouseEventResponder("MouseEvents");
 
-    public KeysEventResponder Keys = new KeysEventResponder("KeysEvents");
+    private KeysEventResponder Keys = new KeysEventResponder("KeysEvents");
 
     public void Register(Div div)
     {
       Mouse.Register(div.Events.Mouse);
       Keys.Register(div.Events.Keys);
+    }
+    public void RegisterTo( EventResponder eventResponder )
+    {
+      eventResponder.Register(Mouse);
+      eventResponder.Register(Keys);
     }
 
     public void Remove(Div div)
@@ -27,26 +32,26 @@ namespace Colin.Core.Modulars.UserInterfaces
       Keys.Remove(div.Events.Keys);
     }
 
-    public event Action HoverStart;
-    public event Action Hover;
-    public event Action HoverOver;
+    public event Action<MouseEventArgs> HoverStart;
+    public event Action<MouseEventArgs> Hover;
+    public event Action<MouseEventArgs> HoverOver;
 
-    public event Action LeftClickBefore;
-    public event Action LeftDown;
-    public event Action LeftClickAfter;
-    public event Action LeftUp;
+    public event Action<MouseEventArgs> LeftClickBefore;
+    public event Action<MouseEventArgs> LeftDown;
+    public event Action<MouseEventArgs> LeftClickAfter;
+    public event Action<MouseEventArgs> LeftUp;
 
-    public event Action RightClickBefore;
-    public event Action RightDown;
-    public event Action RightClickAfter;
-    public event Action RightUp;
+    public event Action<MouseEventArgs> RightClickBefore;
+    public event Action<MouseEventArgs> RightDown;
+    public event Action<MouseEventArgs> RightClickAfter;
+    public event Action<MouseEventArgs> RightUp;
 
     public event Action DragStart;
     public event Action Dragging;
     public event Action DragOver;
 
-    public event Action ScrollUp;
-    public event Action ScrollDown;
+    public event Action<MouseEventArgs> ScrollUp;
+    public event Action<MouseEventArgs> ScrollDown;
 
 
     public event Action GetFocus;
@@ -70,10 +75,10 @@ namespace Colin.Core.Modulars.UserInterfaces
       Mouse.Hover += (s, e) =>
           {
             if (Div.Interact.Interaction && !Div.Interact.InteractionLast)
-              HoverStart?.Invoke();
+              HoverStart?.Invoke(e);
             Invoke(e, Hover);
             if (!Div.Interact.Interaction && Div.Interact.InteractionLast)
-              HoverOver?.Invoke();
+              HoverOver?.Invoke(e);
           };
       Mouse.LeftClickBefore += (s, e) =>
       {
@@ -83,7 +88,7 @@ namespace Colin.Core.Modulars.UserInterfaces
             DivLock = true;
         }
         Invoke(e, LeftClickBefore);
-        Invoke(e, () =>
+        Invoke(e, (e) =>
               {
                 Div.UserInterface.Focus = Div;
                 if (!Div.Interact.IsDraggable)
@@ -118,13 +123,17 @@ namespace Colin.Core.Modulars.UserInterfaces
         }
       };
       Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
+      Mouse.RightClickBefore += (s,e) => Invoke(e, RightClickBefore);
+      Mouse.RightDown += (s, e) => Invoke(e, RightDown);
+      Mouse.RightClickAfter += (s, e) => Invoke(e, RightClickAfter);
+      Mouse.RightUp += (s, e) => Invoke(e, RightUp);
       Mouse.ScrollUp += (s, e) => Invoke(e, ScrollUp, true);
       Mouse.ScrollDown += (s, e) => Invoke(e, ScrollDown, true);
       Keys.ClickBefore += KeyClickBefore;
       Keys.Down += KeyDown;
       Keys.ClickAfter += KeyClickAfter;
     }
-    private void Invoke(MouseEventArgs e, Action action, bool divLock = false)
+    private void Invoke(MouseEventArgs e, Action<MouseEventArgs> action, bool divLock = false)
     {
       if (Div.IsVisible &&
           Div.ContainsScreenPoint(MouseResponder.State.Position) &&
@@ -133,7 +142,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       {
         if (Div.Interact.IsBubbling)
           e.Captured = true;
-        action?.Invoke();
+        action?.Invoke(e);
       }
     }
     private Vector2 _cachePos = new Vector2(-1, -1);

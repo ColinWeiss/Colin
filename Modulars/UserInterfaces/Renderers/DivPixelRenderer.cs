@@ -21,11 +21,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       if (_pixel != null)
         batch.Draw(
           _pixel.Source,
-          Div.Layout.RenderTargetLocation + Div.Design.Anchor,
+          Div.Layout.RenderTargetLocation,
           new Rectangle(0, 0, (int)div.Layout.Width, (int)div.Layout.Height),
           Div.Design.Color,
           Div.Layout.Rotation,
-          Div.Design.Anchor,
+          div.Layout.Anchor,
           Div.Layout.Scale,
           SpriteEffects.None,
           _pixel.Depth);

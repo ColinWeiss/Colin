@@ -70,11 +70,11 @@
       Source = texture;
       Frame.Width = texture.Width;
       Frame.Height = texture.Height;
-      Frame.Direction = Direction.Portrait;
+      Frame.Direction = Direction.Vertical;
       AddThisToGraphicCoreSpritePool();
     }
 
-    public Sprite(Texture2D texture, int frameMax = 1, bool isLoop = true, bool isPlay = true, Direction direction = Direction.Portrait)
+    public Sprite(Texture2D texture, int frameMax = 1, bool isLoop = true, bool isPlay = true, Direction direction = Direction.Vertical)
     {
       Source = texture;
       Frame.Width = texture.Width;
@@ -82,9 +82,9 @@
       Frame.IsLoop = isLoop;
       Frame.IsPlay = isPlay;
       Frame.Direction = direction;
-      if (Frame.Direction is Direction.Portrait)
+      if (Frame.Direction is Direction.Vertical)
         Frame.Height = texture.Height / frameMax;
-      if (Frame.Direction is Direction.Transverse)
+      if (Frame.Direction is Direction.Horizontal)
         Frame.Width = texture.Width / frameMax;
       AddThisToGraphicCoreSpritePool();
     }

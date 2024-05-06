@@ -14,7 +14,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       {
         _text = value;
         Div.Layout.SetSize(Font.MeasureString(_text));
-        Div.Design.Anchor = Div.Layout.Half;
+        Div.Layout.Anchor = Div.Layout.Half;
       }
     }
     public override void OnBinded()
@@ -28,10 +28,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       batch.DrawString(
           Font,
           _text,
-          Div.Layout.RenderTargetLocation + Div.Design.Anchor,
+          Div.Layout.RenderTargetLocation,
           Div.Design.Color,
           Div.Layout.Rotation,
-          Div.Design.Anchor,
+          Div.Layout.Anchor,
           Div.Layout.Scale,
           1f, 0f, 0f, TextStyle.None, FontSystemEffect.Stroked, 1);
     }

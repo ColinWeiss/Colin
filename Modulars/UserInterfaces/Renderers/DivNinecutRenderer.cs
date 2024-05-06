@@ -26,5 +26,13 @@
       _sprite = new Sprite(texture);
       return this;
     }
+    public void SetCut(int x , int y)
+    {
+      Cut = new Point(x, y);
+    }
+    public void SetCut(int size)
+    {
+      Cut = new Point(size);
+    }
   }
 }

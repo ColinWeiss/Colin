@@ -65,8 +65,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       container.userInterface = this;
       _contianer = container;
       container.DoInitialize();
-      Events.Register(container.Events.Mouse);
-      Events.Register(container.Events.Keys);
+      container.Events.RegisterTo(Events);
     }
 
     public void Dispose()

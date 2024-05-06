@@ -24,9 +24,9 @@
     }
     public override void OnUpdate(GameTime time)
     {
-      if (Direction == Direction.Portrait)
+      if (Direction == Direction.Vertical)
         Fill.Do(Portrait);
-      else if (Direction == Direction.Transverse)
+      else if (Direction == Direction.Horizontal)
         Fill.Do(Transverse);
       base.OnUpdate(time);
     }

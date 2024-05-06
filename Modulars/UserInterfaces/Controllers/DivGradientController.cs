@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces.Controllers
+﻿using Colin.Core.Graphics.Tweens;
+
+namespace Colin.Core.Modulars.UserInterfaces.Controllers
 {
   public class DivGradientController : DivController
   {
@@ -46,18 +48,18 @@
     public override void Layout(ref DivLayout layout)
     {
       if (_openState)
-        layout.Scale = OpenScale.Update();
+        layout.Scale = OpenScale.DoUpdate();
       if (_closeState)
-        layout.Scale = CloseScale.Update();
+        layout.Scale = CloseScale.DoUpdate();
       base.Layout(ref layout);
     }
     public override void Design(ref DivDesign design)
     {
       if (_openState)
-        design.Color = OpenColor.Update();
+        design.Color = OpenColor.DoUpdate();
       if (_closeState)
       {
-        design.Color = CloseColor.Update();
+        design.Color = CloseColor.DoUpdate();
         if (design.Color.A <= 0)
         {
           Div.IsVisible = false;
@@ -70,8 +72,8 @@
     {
       if (!Div.IsVisible)
       {
-        OpenColor.Start();
-        OpenScale.Start();
+        OpenColor.Play();
+        OpenScale.Play();
         _openState = true;
         _closeState = false;
         Div.IsVisible = true;
@@ -79,8 +81,8 @@
     }
     public void Close()
     {
-      CloseColor.Start();
-      CloseScale.Start();
+      CloseColor.Play();
+      CloseScale.Play();
       _closeState = true;
       _openState = false;
     }

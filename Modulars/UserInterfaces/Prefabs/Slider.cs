@@ -1,4 +1,5 @@
-﻿using Colin.Core.Modulars.UserInterfaces.Renderers;
+﻿using Colin.Core.Events;
+using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
@@ -10,9 +11,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     /// <summary>
     /// 指示滑动条的方向.
-    /// <br>仅判断 <see cref="Direction.Transverse"/> 与 <see cref="Direction.Portrait"/>.</br>
+    /// <br>仅判断 <see cref="Direction.Horizontal"/> 与 <see cref="Direction.Vertical"/>.</br>
     /// </summary>
-    public Direction Direction = Direction.Portrait;
+    public Direction Direction = Direction.Vertical;
 
     public Vector2 Precent;
 
@@ -28,7 +29,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       Response = response;
       Response.Events.Hover += WheelEvent;
     }
-    private void WheelEvent()
+    private void WheelEvent(MouseEventArgs args)
     {
       if (MouseResponder.ScrollDown)
         Block.Layout.Top -= 2;
@@ -42,12 +43,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         Block = new Div("Block");
         Block.BindRenderer<DivPixelRenderer>();
         Block.Design.Color = new Color(255, 223, 135);
-        if (Direction is Direction.Portrait)
+        if (Direction is Direction.Vertical)
         {
           Block.Layout.Width = Layout.Width;
           Block.Layout.Height = 24;
         }
-        if (Direction is Direction.Transverse)
+        if (Direction is Direction.Horizontal)
         {
           Block.Layout.Width = 24;
           Block.Layout.Height = Layout.Height;
