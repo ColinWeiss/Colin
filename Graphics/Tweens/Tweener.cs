@@ -25,12 +25,14 @@ namespace Colin.Core.Graphics.Tweens
     private float _percentage;
     public float Percentage => _percentage;
 
+    public bool TimeAffected = false;
+
     public GradientStyle GradientStyle = GradientStyle.Linear;
     public T DoUpdate()
     {
       if (_isPlay)
       {
-        _timer += Colin.Core.Time.UnscaledDeltaTime;
+        _timer += TimeAffected ? Colin.Core.Time.DeltaTime : Colin.Core.Time.UnscaledDeltaTime;
       }
       switch (GradientStyle)
       {

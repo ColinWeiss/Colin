@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using System.Collections.Concurrent;
+
+namespace Colin.Core.Modulars.Tiles
 {
   public class Tile : ISceneModule
   {
@@ -24,7 +26,7 @@
     /// <br>键: 区块坐标.</br>
     /// <br>值: 区块.</br>
     /// </summary>
-    public Dictionary<Point, TileChunk> Chunks = new Dictionary<Point, TileChunk>();
+    public ConcurrentDictionary<Point, TileChunk> Chunks = new ConcurrentDictionary<Point, TileChunk>();
 
     /// <summary>
     /// 物块指针字典, 允许你通过某个物块访问其他物块.
@@ -170,6 +172,8 @@
         return false;
     }
 
+    public void CreateEmptyChunk(Point coord, int? quantumLayer = null) => CreateEmptyChunk(coord.X, coord.Y , quantumLayer);
+
     /// <summary>
     /// 在指定坐标新创建一个空区块.
     /// <br>[!] 这个行为会强制覆盖指定坐标的区块, 无论它是否已经加载.</br>
@@ -181,7 +185,7 @@
       chunk.CoordY = y;
       chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
       chunk.DoInitialize();
-      Chunks.Add(chunk.Coord, chunk);
+      Chunks[chunk.Coord] = chunk;
     }
 
     /// <summary>
@@ -196,7 +200,7 @@
         chunk.CoordX = x;
         chunk.CoordY = y;
         chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
-        Chunks.Add(chunk.Coord, chunk);
+        Chunks.TryAdd(chunk.Coord, chunk);
       }
       else
         Console.WriteLine(ConsoleTextType.Error, string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));

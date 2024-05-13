@@ -1,5 +1,5 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"D:/Codes/DeltaMachine/Colin/Content/Effects/Gaussian.fx","D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Effects/Gaussian.xnb","EffectProcessor","CompiledEffectContent",1152,1972,0.5368547
+"D:/Codes/DeltaMachine/Colin/Content/Effects/Gaussian.fx","D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Effects/Gaussian.xnb","EffectProcessor","CompiledEffectContent",1152,2276,0.6553525
 "D:/Codes/DeltaMachine/Colin/Content/Effects/LeftRightLoopMapping.fx","D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Effects/LeftRightLoopMapping.xnb","EffectProcessor","CompiledEffectContent",1022,1147,0.3805388
 "D:/Codes/DeltaMachine/Colin/Content/Effects/Particles/ParticleDataStream.fx","D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Effects/Particles/ParticleDataStream.xnb","EffectProcessor","CompiledEffectContent",1942,2210,0.3881659
 "D:/Codes/DeltaMachine/Colin/Content/Effects/Particles/ParticleInstancing.fx","D:/Codes/DeltaMachine/Colin/Content/bin/Windows/Content/Effects/Particles/ParticleInstancing.xnb","EffectProcessor","CompiledEffectContent",1227,1611,0.4073346

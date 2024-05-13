@@ -201,7 +201,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\EffectAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\UnsafeObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />

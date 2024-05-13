@@ -40,8 +40,6 @@ namespace Colin.Core
       set => _fontDir = value;
     }
 
-    public static bool UseMgcbEditor = false;
-
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
     private static Dictionary<string, FontSystem> _fonts = new Dictionary<string, FontSystem>();
     private static Dictionary<string, Effect> _effects = new Dictionary<string, Effect>();
@@ -131,6 +129,24 @@ namespace Colin.Core
         }
       }
     }
+    public static void LoadComputeShaders()
+    {
+
+    }
+    private void CompileShaders()
+    {
+      string _fileName;
+      string[] _csoFileNames =
+          Directory.GetFiles(
+              Path.Combine(CoreInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
+              SearchOption.AllDirectories);
+      for (int count = 0; count < _csoFileNames.Length; count++)
+      {
+        _fileName = _csoFileNames[count];
+        ShaderCompiler.Compile(_fileName, ShaderCompiler.CompileProfile.Compute);
+      }
+    }
+
 
     public static Texture2D GetTexture(string path)
     {
@@ -143,6 +159,15 @@ namespace Colin.Core
     public static Texture2D GetTexture(params string[] path)
     {
       return GetTexture(Path.Combine(path));
+    }
+
+    public static Effect GetEffect(string path)
+    {
+      path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
+      if (_effects.TryGetValue(path, out Effect result))
+        return result;
+      else
+        return null;
     }
 
     public static FontSystem GetFont(string path)

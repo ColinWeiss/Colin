@@ -1,5 +1,6 @@
 ﻿using Colin.Core.Resources;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Colin.Core.Preparation
@@ -15,19 +16,23 @@ namespace Colin.Core.Preparation
       _preparatoryTasks.Add(t);
     }
 
-    public override async void SceneInit()
+    public override void SceneInit()
     {
       Asset.LoadAssets();
-      await Task.Run(LoadGameAssets);
-      IPreExecution theTask;
-      for (int count = 0; count < _preparatoryTasks.Count; count++)
-      {
-        theTask = _preparatoryTasks[count];
-        await Task.Run(theTask.Prepare);
-      }
-      await Task.Run(CodeResourceManager.LoadCodeResource);
-      Console.WriteLine(ConsoleTextType.Remind, "初始化加载完成.");
-      OnLoadComplete?.Invoke();
+      Task.Run(
+        () =>
+        {
+          LoadGameAssets();
+          IPreExecution theTask;
+          for (int count = 0; count < _preparatoryTasks.Count; count++)
+          {
+            theTask = _preparatoryTasks[count];
+            theTask.Prepare();
+          }
+          CodeResourceManager.LoadCodeResource();
+          Console.WriteLine(ConsoleTextType.Remind, "初始化加载完成.");
+          OnLoadComplete?.Invoke();
+        });
       base.SceneInit();
     }
 
@@ -44,7 +49,6 @@ namespace Colin.Core.Preparation
         }
       }
     }
-
     public override void SceneRender()
     {
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Gray);

@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Resources;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.Tiles
@@ -336,48 +337,55 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadChunk(string path)
     {
-      using (FileStream fileStream = new FileStream(path, FileMode.Open))
+      Task.Run(() =>
       {
-        using (BinaryReader reader = new BinaryReader(fileStream))
+        using (FileStream fileStream = new FileStream(path, FileMode.Open))
         {
-          DoInitialize();
-          for (int count = 0; count < Infos.Length; count++)
+          using (BinaryReader reader = new BinaryReader(fileStream))
           {
-            Infos[count].LoadStep(reader);
-            if (!Infos[count].Empty)
-              if (CodeResources<TileBehavior>.HashMap.TryGetValue(reader.ReadInt32(), out string value))
-              {
-                Set(CodeResources<TileBehavior>.Get(value), count);
-                TileRefresher.RefreshMark(Infos[count].WorldCoord3, 0);
-              }
+            DoInitialize();
+            for (int count = 0; count < Infos.Length; count++)
+            {
+              if (count % TileOption.ChunkWidth == 0)
+                Thread.Sleep(10);
+              Infos[count].LoadStep(reader);
+              if (!Infos[count].Empty)
+                if (CodeResources<TileBehavior>.HashMap.TryGetValue(reader.ReadInt32(), out string value))
+                {
+                  Set(CodeResources<TileBehavior>.Get(value), count);
+                  TileRefresher.RefreshMark(Infos[count].WorldCoord3, 0);
+                }
+            }
           }
         }
-      }
+      });
     }
-    public async Task LoadChunkAsync(string path)
-        => await Task.Run(() => LoadChunk(path));
-
     public void SaveChunk(string path)
     {
-      using (FileStream fileStream = new FileStream(path, FileMode.Create))
+      try
       {
-        using (BinaryWriter writer = new BinaryWriter(fileStream))
+        using (FileStream fileStream = new FileStream(path, FileMode.Create))
         {
-          TileBehavior behavior;
-          for (int count = 0; count < Infos.Length; count++)
+          using (BinaryWriter writer = new BinaryWriter(fileStream))
           {
-            behavior = Infos[count].Behavior;
-            Infos[count].SaveStep(writer);
-            if (!Infos[count].Empty && behavior is not null)
-              if (CodeResources<TileBehavior>.SerializeTable.TryGetValue(behavior.Identifier, out int value))
-              {
-                writer.Write(value);
-              }
+            TileBehavior behavior;
+            for (int count = 0; count < Infos.Length; count++)
+            {
+              behavior = Infos[count].Behavior;
+              Infos[count].SaveStep(writer);
+              if (!Infos[count].Empty && behavior is not null)
+                if (CodeResources<TileBehavior>.SerializeTable.TryGetValue(behavior.Identifier, out int value))
+                {
+                  writer.Write(value);
+                }
+            }
           }
         }
       }
+      catch
+      {
+
+      }
     }
-    public async void SaveChunkAsync(string path)
-        => await Task.Run(() => SaveChunk(path));
   }
 }

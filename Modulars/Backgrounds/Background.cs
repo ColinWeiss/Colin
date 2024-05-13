@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Backgrounds
     public void DoInitialize()
     {
       _screenMap = Asset.GetTexture("Pixel");
-      LeftRightLoopEffect = EffectAssets.Get("LeftRightLoopMapping");
+      LeftRightLoopEffect = Asset.GetEffect("LeftRightLoopMapping");
     }
     public void Start()
     {
