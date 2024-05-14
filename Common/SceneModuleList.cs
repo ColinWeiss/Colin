@@ -64,11 +64,11 @@
       for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
       {
         renderMode = RenderableComponents.Values.ElementAt(count);
+        frameRenderLayer = renderMode.RawRt;
+        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
         if (renderMode.Presentation)
         {
-          frameRenderLayer = renderMode.RawRt;
           renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
-          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
           if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
             CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
           else
@@ -104,14 +104,20 @@
     {
       sceneMode.Scene = Scene;
       sceneMode.Enable = true;
-      sceneMode.DoInitialize();
       if (sceneMode is IRenderableISceneModule dwMode)
       {
         dwMode.RawRtVisible = true;
         dwMode.Presentation = true;
         RenderableComponents.Add(dwMode.GetType(), dwMode);
-        dwMode.InitRenderTarget();
-        Scene.Events.ClientSizeChanged += dwMode.OnClientSizeChanged;
+      }
+      sceneMode.DoInitialize();
+      if (sceneMode is IRenderableISceneModule dwMode2)
+      {
+        if (dwMode2.RawRt is null)
+        {
+          dwMode2.InitRenderTarget();
+          Scene.Events.ClientSizeChanged += dwMode2.OnClientSizeChanged;
+        }
       }
       Components.Add(sceneMode.GetType(), sceneMode);
     }

@@ -26,6 +26,16 @@
       _sprite = new Sprite(texture);
       return this;
     }
+    public DivNinecutRenderer Bind(string path)
+    {
+      _sprite = Sprite.Get(path);
+      return this;
+    }
+    public DivNinecutRenderer Bind(params string[] path)
+    {
+      _sprite = Sprite.Get(path);
+      return this;
+    }
     public void SetCut(int x , int y)
     {
       Cut = new Point(x, y);

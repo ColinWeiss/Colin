@@ -15,16 +15,7 @@ namespace Colin.Core.Graphics
     private static SpritePool _instance = new SpritePool();
     public static SpritePool Instance => _instance;
     public static float DepthSteps = 10000000f;
-    public bool LoadComplete { get; private set; } = false;
-
-    public void Initialize()
-    {
-      if (LoadComplete is false)
-      {
-        Console.WriteLine(ConsoleTextType.Remind, "纹理缓存初始化完毕.");
-        LoadComplete = true;
-      }
-    }
+    public void Initialize() { }
     public void Add(string key, Sprite value)
     {
       if (!ContainsKey(key))

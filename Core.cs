@@ -169,14 +169,16 @@ namespace Colin.Core
       base.OnExiting(sender, args);
     }
 
+    public static bool OnActive = true;
+
     protected override void OnActivated(object sender, EventArgs args)
     {
-      //  Enable = true;
+      OnActive = true;
       base.OnActivated(sender, args);
     }
     protected override void OnDeactivated(object sender, EventArgs args)
     {
-      //  Enable = false;
+      OnActive = false;
       base.OnDeactivated(sender, args);
     }
   }

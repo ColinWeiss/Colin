@@ -158,14 +158,18 @@ namespace Colin.Core
     /// </summary>
     public static IMEHandler IMEHandler;
 
+    /// <summary>
+    /// 指示当前程序是否处于调试模式.
+    /// </summary>
+    public static bool DebugEnable = false;
+
     internal static void Init(Core engine)
     {
       Engine = engine;
       ModContent.DoInitialize();
-#if WINDOWS
       IMEHandler = new WinFormsIMEHandler(Engine, true);
-#elif DESKTOP
-            IMEHandler = new SdlIMEHandler( Engine );
+#if DEBUG
+      DebugEnable = true;
 #endif
     }
 

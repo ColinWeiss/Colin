@@ -32,5 +32,15 @@
       _sprite = new Sprite(texture);
       return this;
     }
+    public DivTextureRenderer Bind(string path)
+    {
+      _sprite = Sprite.Get(path);
+      return this;
+    }
+    public DivTextureRenderer Bind(params string[] path)
+    {
+      _sprite = Sprite.Get(path);
+      return this;
+    }
   }
 }

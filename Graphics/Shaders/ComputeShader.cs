@@ -5,6 +5,8 @@ namespace Colin.Core.Graphics.Shaders
 {
   public class ComputeShader
   {
+    public const string FileExtension = ".cso";
+
     public GraphicsDevice GraphicsDevice { get; init; }
     public Device D3dDevice;
     public DeviceContext D3dDeviceContext;

@@ -203,7 +203,7 @@ namespace Colin.Core.Modulars.Tiles
         Chunks.TryAdd(chunk.Coord, chunk);
       }
       else
-        Console.WriteLine(ConsoleTextType.Error, string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
+        Console.WriteLine("Error", string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
     }
     /// <summary>
     /// 保存指定坐标的区块至指定路径.
@@ -214,7 +214,7 @@ namespace Colin.Core.Modulars.Tiles
       if (chunk is not null)
         chunk.SaveChunk(path);
       else
-        Console.WriteLine(ConsoleTextType.Error, string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
+        Console.WriteLine("Error", string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
     }
   }
 }

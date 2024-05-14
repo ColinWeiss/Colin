@@ -37,8 +37,16 @@ namespace Colin.Core
     public static string EffectDir
     {
       get => Path.Combine(Dir, "Sources", _effectDir);
-      set => _fontDir = value;
+      set => _effectDir = value;
     }
+
+    private static string _shaderDir = "Shaders";
+    public static string ShaderDir
+    {
+      get => Path.Combine(Dir, "Sources", _shaderDir);
+      set => _shaderDir = value;
+    }
+
 
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
     private static Dictionary<string, FontSystem> _fonts = new Dictionary<string, FontSystem>();
@@ -57,7 +65,7 @@ namespace Colin.Core
     {
       if (Directory.Exists(TextureDir) is false)
       {
-        Console.WriteLine(ConsoleTextType.Error, "未检查到纹理文件夹.");
+        Console.WriteLine("Error", "未检查到纹理文件夹.");
         return;
       }
       string[] fileFullName = Directory.GetFiles(TextureDir, "*.png*", SearchOption.AllDirectories);
@@ -76,7 +84,7 @@ namespace Colin.Core
     {
       if (Directory.Exists(FontDir) is false)
       {
-        Console.WriteLine(ConsoleTextType.Error, "未检查到字体文件夹.");
+        Console.WriteLine("Error", "未检查到字体文件夹.");
         return;
       }
       string[] fileFullName = Directory.GetFiles(FontDir, "*.ttf*", SearchOption.AllDirectories);
@@ -95,7 +103,7 @@ namespace Colin.Core
     {
       if (Directory.Exists(EffectDir) is false)
       {
-        Console.WriteLine(ConsoleTextType.Error, "未检查到着色器文件夹.");
+        Console.WriteLine("Error", "未检查到着色器文件夹.");
         return;
       }
       string[] fileFullName = Directory.GetFiles(EffectDir, "*.fx*", SearchOption.AllDirectories);
@@ -113,7 +121,6 @@ namespace Colin.Core
         cmdLine.Add($"mgfxc {sourceFile} {targetFile} /Profile:DirectX_11");
       }
       Console.Execute(cmdLine);
-
       Effect rShader;
       fileFullName = Directory.GetFiles(EffectDir, "*.rShader", SearchOption.AllDirectories);
       for (int count = 0; count < fileFullName.Length; count++)
@@ -124,29 +131,43 @@ namespace Colin.Core
         {
           rShader = new Effect(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(targetFile));
           fileName = OrganizePath(fileName);
-          Console.WriteLine(fileName);
           _effects.Add(fileName, rShader);
         }
       }
     }
     public static void LoadComputeShaders()
     {
-
-    }
-    private void CompileShaders()
-    {
+#if DEBUG
+      CompileShaders();
+#endif
+      ComputeShader _effect;
       string _fileName;
-      string[] _csoFileNames =
-          Directory.GetFiles(
-              Path.Combine(CoreInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
-              SearchOption.AllDirectories);
-      for (int count = 0; count < _csoFileNames.Length; count++)
+      string[] fileFullName = Directory.GetFiles(ShaderDir, "*.hlsl*", SearchOption.AllDirectories);
+
+      for (int count = 0; count < fileFullName.Length; count++)
       {
-        _fileName = _csoFileNames[count];
-        ShaderCompiler.Compile(_fileName, ShaderCompiler.CompileProfile.Compute);
+        _fileName = Path.ChangeExtension(fileFullName[count], ComputeShader.FileExtension);
+        if (File.Exists(_fileName) is false)
+          CompileShaders();
+        _effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(_fileName));
+        _computeShaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName), null), _effect);
       }
     }
-
+    private static void CompileShaders()
+    {
+      if (Directory.Exists(EffectDir) is false)
+      {
+        Console.WriteLine("Error", "未检查到着色器文件夹.");
+        return;
+      }
+      string[] fileFullName = Directory.GetFiles(ShaderDir, "*.hlsl*", SearchOption.AllDirectories);
+      string fileName;
+      for (int count = 0; count < fileFullName.Length; count++)
+      {
+        fileName = fileFullName[count];
+        ShaderCompiler.Compile(fileName, ShaderCompiler.CompileProfile.Compute);
+      }
+    }
 
     public static Texture2D GetTexture(string path)
     {

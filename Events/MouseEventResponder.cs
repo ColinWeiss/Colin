@@ -19,6 +19,8 @@
 
     public override void Handle(IEvent theEvent)
     {
+      if (Core.OnActive is false)
+        return;
       if (theEvent is MouseEventArgs mouseEvent)
       {
         Hover?.Invoke(this, mouseEvent);

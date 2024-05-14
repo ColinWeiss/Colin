@@ -26,16 +26,15 @@ namespace Colin.Core.Assets
     }
     public void LoadResource()
     {
-#if DEBUG
-      CompileShaders();
-#endif
+      if (CoreInfo.DebugEnable)
+        CompileShaders();
       ComputeShader _effect;
       string _fileName;
       string[] _csoFileNames =
           Directory.GetFiles(
               Path.Combine(CoreInfo.Engine.Content.RootDirectory, "Shaders"), "*.hlsl*",
               SearchOption.AllDirectories);
-      
+
       for (int count = 0; count < _csoFileNames.Length; count++)
       {
         Progress = count / _csoFileNames.Length + 1 / _csoFileNames.Length;

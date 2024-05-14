@@ -18,6 +18,8 @@ namespace Colin.Core.Preparation
 
     public override void SceneInit()
     {
+      if (CoreInfo.DebugEnable)
+        Console.WriteLine("Remind", "当前正以调试模式启动");
       Asset.LoadAssets();
       Task.Run(
         () =>
@@ -30,7 +32,7 @@ namespace Colin.Core.Preparation
             theTask.Prepare();
           }
           CodeResourceManager.LoadCodeResource();
-          Console.WriteLine(ConsoleTextType.Remind, "初始化加载完成.");
+          Console.WriteLine("Remind", "初始化加载完成.");
           OnLoadComplete?.Invoke();
         });
       base.SceneInit();
@@ -45,7 +47,7 @@ namespace Colin.Core.Preparation
         {
           asset = (IGameAsset)Activator.CreateInstance(item);
           asset.LoadResource();
-          Console.WriteLine(ConsoleTextType.Remind, string.Concat("正在加载 ", asset.Name));
+          Console.WriteLine(string.Concat("正在加载 ", asset.Name));
         }
       }
     }

@@ -25,7 +25,7 @@ namespace Colin.Core.Graphics.Shaders
           profilePar = "cs_5_0";
           break;
       };
-      string resultPath = Path.Combine(Path.ChangeExtension(path, ".cso"));
+      string resultPath = Path.Combine(Path.ChangeExtension(path, ComputeShader.FileExtension));
       CompilationResult result = ShaderBytecode.CompileFromFile(path, "Main", profilePar, ShaderFlags.Debug);
       try
       {
@@ -41,7 +41,7 @@ namespace Colin.Core.Graphics.Shaders
       {
         if (result.HasErrors)
         {
-          Console.WriteLine(ConsoleTextType.Error, result.HasErrors);
+          Console.WriteLine("Error", result.HasErrors);
         }
       }
     }

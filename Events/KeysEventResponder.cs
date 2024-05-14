@@ -9,6 +9,8 @@
 
     public override void Handle(IEvent theEvent)
     {
+      if (Core.OnActive is false)
+        return;
       if (theEvent is KeyEventArgs keysEvent)
       {
         if (keysEvent.ClickBefore)

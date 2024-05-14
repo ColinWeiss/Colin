@@ -34,27 +34,37 @@ namespace Colin.Core
   /// </summary>
   public class Console
   {
-    /// <summary>  
-    /// 向控制台输出信息.
-    /// </summary>  
-    /// <param name="informationType">信息类型.</param>  
-    /// <param name="output">输出内容.</param>  
-    public static void WriteLine(ConsoleTextType informationType, object output)
+    private static Dictionary<string, ConsoleColor> LineDisplay = new Dictionary<string, ConsoleColor>();
+    static Console()
     {
-      WriteLine(informationType, output.ToString());
+      LineDisplay.Add("Normal", ConsoleColor.DarkGray);
+      LineDisplay.Add("Remind", ConsoleColor.Cyan);
+      LineDisplay.Add("Game", ConsoleColor.White);
+      LineDisplay.Add("Warning", ConsoleColor.Yellow);
+      LineDisplay.Add("Error", ConsoleColor.Red);
     }
 
     /// <summary>  
     /// 向控制台输出信息.
     /// </summary>  
-    /// <param name="informationType">信息类型.</param>  
+    /// <param name="infoType">信息类型.</param>  
     /// <param name="output">输出内容.</param>  
-    public static void WriteLine(ConsoleTextType informationType, string output)
+    public static void WriteLine(string infoType, object output)
     {
-      System.Console.ForegroundColor = GetConsoleColor(informationType);
-      string NowTime = string.Concat("[", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "]");
-      string outPutText = string.Concat("=>", "[", CoreInfo.EngineName, "] ", output);
+      WriteLine(infoType, output.ToString());
+    }
+
+    /// <summary>  
+    /// 向控制台输出信息.
+    /// </summary>  
+    /// <param name="infoType">信息类型.</param>  
+    /// <param name="output">输出内容.</param>  
+    public static void WriteLine(string infoType, string output)
+    {
+      System.Console.ForegroundColor = LineDisplay[infoType];
+      string outPutText = string.Concat("[", CoreInfo.EngineName, "] ", output);
       System.Console.WriteLine(outPutText);
+      System.Console.ResetColor();
     }
 
     /// <summary>  
@@ -62,7 +72,7 @@ namespace Colin.Core
     /// </summary>  
     public static void WriteLine(string output)
     {
-      WriteLine(ConsoleTextType.Remind, output);
+      WriteLine("Normal", output);
     }
 
     /// <summary>  
@@ -70,30 +80,7 @@ namespace Colin.Core
     /// </summary>  
     public static void WriteLine(object output)
     {
-      WriteLine(ConsoleTextType.Remind, output);
-    }
-
-    /// <summary>  
-    /// 根据输出文本选择控制台文字颜色.
-    /// </summary>  
-    /// <param name="informationType">信息类型.</param>  
-    /// <returns></returns>  
-    private static ConsoleColor GetConsoleColor(ConsoleTextType informationType)
-    {
-      switch (informationType)
-      {
-        case ConsoleTextType.Normal:
-          return ConsoleColor.DarkGray;
-        case ConsoleTextType.Remind:
-          return ConsoleColor.Yellow;
-        case ConsoleTextType.Game:
-          return ConsoleColor.White;
-        case ConsoleTextType.Warning:
-          return ConsoleColor.Yellow;
-        case ConsoleTextType.Error:
-          return ConsoleColor.Red;
-      }
-      return ConsoleColor.White;
+      WriteLine("Normal", output);
     }
 
     /// <summary>
