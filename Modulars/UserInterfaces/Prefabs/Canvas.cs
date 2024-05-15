@@ -1,26 +1,20 @@
 ﻿namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
-    public class Canvas : Division
+  public class Canvas : Div
+  {
+    public Canvas(string name) : base(name, true) { }
+    public override void DivInit()
     {
-        public override sealed bool IsCanvas => true;
-        public Canvas(string name) : base(name) { }
-        public override void OnInit()
-        {
-            SetCanvas(Layout.Width, Layout.Height);
-            base.OnInit();
-        }
-        public void SetCanvas(int width, int height)
-        {
-            Layout.Width = width;
-            Layout.Height = height;
-            Design.Anchor = Layout.SizeF / 2;
-            Canvas?.Dispose();
-            Canvas = RenderTargetExt.CreateDefault(width, height);
-        }
-        public override void OnUpdate(GameTime time)
-        {
-            Layout.IsCanvas = IsCanvas;
-            base.OnUpdate(time);
-        }
+      SetCanvas(Layout.Width, Layout.Height);
+      base.DivInit();
     }
+    public void SetCanvas(float width, float height)
+    {
+      Layout.Width = width;
+      Layout.Height = height;
+      Layout.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
+      Canvas?.Dispose();
+      Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
+    }
+  }
 }
