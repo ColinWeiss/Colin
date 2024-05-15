@@ -13,31 +13,3 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Effects/Gaussian.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/processorParam:Defines=
-/build:Effects/Gaussian.fx
-
-#begin Effects/LeftRightLoopMapping.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/processorParam:Defines=DX11
-/build:Effects/LeftRightLoopMapping.fx
-
-#begin Effects/Particles/ParticleDataStream.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/processorParam:Defines=DX11
-/build:Effects/Particles/ParticleDataStream.fx
-
-#begin Effects/Particles/ParticleInstancing.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/processorParam:Defines=DX11
-/build:Effects/Particles/ParticleInstancing.fx
-

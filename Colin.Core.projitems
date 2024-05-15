@@ -14,15 +14,8 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Gaussian.fx" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\LeftRightLoopMapping.fx" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\ColinMacros.fxh" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Macros.fxh" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleInstancing.fx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Effects\Particles\ParticleDataStream.fx" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansBook.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
