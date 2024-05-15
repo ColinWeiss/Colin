@@ -115,7 +115,7 @@ namespace Colin.Core.Modulars.Ecses
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) 
     {
      // device.SetRenderTarget(LightingAdpter.RawRt);
-      batch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp, effect: null);
+      batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, effect: null);
       Scene.GetModule<LightingAdapter>().ApplyLightEffect
         (RawRt, 0, Vector2.One / Scene.SceneCamera.Zoom, Scene.SceneCamera.ConvertScreenToWorld(default)
         - Scene.GetModule<BlockRenderer>().AlignedTopLeft);
