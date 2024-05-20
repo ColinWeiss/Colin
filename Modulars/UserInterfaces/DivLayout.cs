@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+﻿using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 划分元素的布局信息.
@@ -105,6 +107,10 @@
     }
 
     public Vector2 Half => new Vector2(width / 2, height / 2);
+
+    public float HalfWidth => width / 2;
+
+    public float HalfHeight => height / 2;
 
     private Vector2 size;
     /// <summary>
@@ -284,6 +290,20 @@
     /// </summary>
     public Rectangle Bounds => bounds;
 
+    public bool ScissorEnable;
+
+    public int ScissorLeft;
+    public int ScissorTop;
+    public int ScissorWidth;
+    public int ScissorHeight;
+
+    private Rectangle scissorRectangle;
+    /// <summary>
+    /// 指示该划分元素的剪裁矩形.
+    /// <br>剪裁矩形的坐标相对于划分元素进行计算.</br>
+    /// </summary>
+    public Rectangle ScissorRectangle => scissorRectangle;
+
     /// <summary>
     /// 更新计算指定划分元素的布局信息.
     /// </summary>
@@ -306,6 +326,21 @@
       div.Layout.renderTargetBounds.Width = (int)div.Layout.width;
       div.Layout.renderTargetBounds.Height = (int)div.Layout.height;
 
+      if (div.Parent is not null && div.Parent.Layout.ScissorEnable && !div.Layout.ScissorEnable)
+      {
+        div.Layout.ScissorEnable = true;
+        div.Layout.ScissorLeft = div.Parent.Layout.ScissorLeft - (int)div.Layout.Left;
+        div.Layout.ScissorTop = div.Parent.Layout.ScissorTop - (int)div.Layout.Top;
+        div.Layout.ScissorWidth = div.Parent.Layout.ScissorWidth;
+        div.Layout.ScissorHeight = div.Parent.Layout.ScissorHeight;
+      }
+      if (div.Layout.ScissorEnable)
+      {
+        div.Layout.scissorRectangle.X = div.Layout.renderTargetBounds.X + div.Layout.ScissorLeft;
+        div.Layout.scissorRectangle.Y = div.Layout.renderTargetBounds.Y + div.Layout.ScissorTop;
+        div.Layout.scissorRectangle.Width = div.Layout.ScissorWidth;
+        div.Layout.scissorRectangle.Height = div.Layout.ScissorHeight;
+      }
       div.Layout.screenTransform =
           Matrix.CreateScale(1, 1, 0) *
           Matrix.CreateRotationZ(div.Layout.rotation) *

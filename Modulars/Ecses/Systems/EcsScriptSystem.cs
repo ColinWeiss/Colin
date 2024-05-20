@@ -28,11 +28,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
       base.Reset();
     }
-
-    int C = 0;
     public override void DoUpdate()
     {
-      C = 0;
       Section _current;
       ISectionCom _sectionCom;
       Dictionary<Type, ISectionCom> comDic;
@@ -42,9 +39,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
         _current = Ecs.Sections[sectionCount];
         if (_current is null)
           continue;
-        else
-          C++;
-
         comDic = _current.Components;
         coms = comDic.Values;
         foreach (ISectionCom component in coms)
@@ -76,7 +70,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
           }
         }
       }
-      Perfmon.SetItem("SectionCount ", C);
       base.DoUpdate();
     }
   }

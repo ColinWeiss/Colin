@@ -45,16 +45,11 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
-      NormalBatchBegin(batch);
+      batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
       Container?.DoRender(device, batch);
       batch.End();
     }
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
-
-    public static void NormalBatchBegin(SpriteBatch batch)
-    {
-      batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-    }
 
     public void Register(DivThreshold container) => Container?.Register(container);
 

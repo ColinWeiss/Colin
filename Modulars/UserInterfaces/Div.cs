@@ -174,6 +174,13 @@
 
     public void DoInitialize()
     {
+      if (this is DivThreshold divThreshold)
+        threshold = divThreshold;
+      if (Parent is not null)
+      {
+        userInterface = parent.userInterface;
+        threshold = parent.threshold;
+      }
       if (InitializationCompleted)
         return;
       DivInit();
@@ -250,6 +257,12 @@
       });
     }
 
+    public RasterizerState ScissiorRasterizer = new RasterizerState()
+    {
+      CullMode = CullMode.None,
+      ScissorTestEnable = true,
+    };
+
     /// <summary>
     /// 执行划分元素的渲染.
     /// </summary>
@@ -262,10 +275,16 @@
       {
         batch.End();
         device.SetRenderTarget(Canvas);
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null);
         device.Clear(Color.Transparent);
       }
       renderer?.DoRender(device, batch);//渲染器进行渲染.
+      if (Layout.ScissorEnable)
+      {
+        device.ScissorRectangle = Layout.ScissorRectangle;
+        batch.End();
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, ScissiorRasterizer);
+      }
       RenderChildren(device, batch);
       if (IsCanvas)
       {
@@ -274,7 +293,9 @@
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
           device.SetRenderTarget(UserInterface.RawRt);
-        UserInterface.NormalBatchBegin(batch);
+        if (threshold.Layout.ScissorEnable)
+          device.ScissorRectangle = threshold.Layout.ScissorRectangle;
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, threshold.Layout.ScissorEnable ? threshold.ScissiorRasterizer : null);
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
       }
     }
@@ -351,6 +372,23 @@
     }
 
     public void Do(Action<Div> action) => action(this);
+
+    /// <summary>
+    /// 检查该划分元素是否为某个划分元素的后代.
+    /// </summary>
+    /// <param name="div"></param>
+    /// <returns></returns>
+    public bool DescendantsOf(Div div)
+    {
+      if (div.parent is not null)
+      {
+        if (div.parent.Equals(div))
+          return true;
+        else
+          return div.parent.DescendantsOf(div);
+      }
+      return false;
+    }
 
     /// <summary>
     /// 判断该划分元素是否包含屏幕上的指定点.

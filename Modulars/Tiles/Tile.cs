@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Modulars.Tiles
 {
-  public class Tile : ISceneModule
+  public class Tile : ISceneModule, IRenderableISceneModule
   {
     public int Depth { get; private set; }
 
@@ -14,6 +14,11 @@ namespace Colin.Core.Modulars.Tiles
       get => _enable;
       set => _enable = value;
     }
+    public RenderTarget2D RawRt { get; set; }
+
+    public bool RawRtVisible { get; set; }
+
+    public bool Presentation { get; set; } = false;
 
     public Tile()
     {
@@ -41,9 +46,16 @@ namespace Colin.Core.Modulars.Tiles
 
     public void DoInitialize() { }
     public void Start() { }
+
+    /// <summary>
+    /// 对齐后的渲染左上角位置，这个位置要求恰好对齐物块左上角
+    /// </summary>
+    public Vector2 AlignedTopLeft;
+
+    public Vector2 lastTopLeft;
+
     public void DoUpdate(GameTime time)
     {
-
     }
     public void Dispose()
     {
@@ -215,6 +227,16 @@ namespace Colin.Core.Modulars.Tiles
         chunk.SaveChunk(path);
       else
         Console.WriteLine("Error", string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
+    }
+
+    public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
+    {
+      lastTopLeft = AlignedTopLeft;
+      AlignedTopLeft = Vector2.Floor(Scene.SceneCamera.ConvertScreenToWorld(Vector2.Zero) / TileOption.TileSizeF) * TileOption.TileSizeF;
+    }
+
+    public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
+    {
     }
   }
 }
