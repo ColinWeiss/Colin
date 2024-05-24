@@ -136,6 +136,16 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// 设置划分元素的大小.
     /// <br>[!] 使用损失精度的参数.</br>
     /// </summary>
+    /// <param name="size">宽高.</param>
+    public void SetSize(float size)
+    {
+      this.size.X = width = (int)size;
+      this.size.Y = height = (int)size;
+    }
+    /// <summary>
+    /// 设置划分元素的大小.
+    /// <br>[!] 使用损失精度的参数.</br>
+    /// </summary>
     /// <param name="size">大小.</param>
     public void SetSize(Vector2 size) => SetSize((int)size.X, (int)size.Y);
 

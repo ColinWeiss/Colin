@@ -6,7 +6,7 @@
   public struct TileInfo
   {
     /// <summary>
-    /// 指示物块非空状态.
+    /// 指示物块的空状态.
     /// </summary>
     public bool Empty;
 

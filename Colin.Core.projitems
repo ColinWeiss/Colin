@@ -46,6 +46,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileDestructor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
     <Compile Include="..\Colin\Modulars\Ecses\ISectionBindableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
@@ -141,10 +143,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Line.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\IMod.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\IModType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\ModContent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ModLoaders\ModLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />

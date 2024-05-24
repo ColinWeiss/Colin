@@ -147,41 +147,14 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
-    /// 使用世界物块坐标在指定位置放置物块.
-    /// </summary>
-    public bool Place<T>(int x, int y, int z, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
-    {
-      var coords = GetCoords(x, y);
-      TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      if (targetChunk is not null)
-        return targetChunk.Place<T>(coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh);
-      else
-        return false;
-    }
-    /// <summary>
-    /// 使用世界物块坐标在指定位置放置物块.
-    /// </summary>
-    public bool Place(TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
-    {
-      var coords = GetCoords(x, y);
-      TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      if (targetChunk is not null)
-        return targetChunk.Place(behavior, coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh);
-      else
-        return false;
-    }
-
-    /// <summary>
     /// 使用世界物块坐标破坏指定位置的物块.
     /// </summary>
-    public bool Destruction(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
+    public void Destruction(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (targetChunk is not null)
-        return targetChunk.Destruction(coords.tCoord.X, coords.tCoord.Y, z, doEvent, doRefresh);
-      else
-        return false;
+      targetChunk.Destruction(coords.tCoord.X, coords.tCoord.Y, z);
     }
 
     public void CreateEmptyChunk(Point coord, int? quantumLayer = null) => CreateEmptyChunk(coord.X, coord.Y , quantumLayer);

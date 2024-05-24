@@ -18,7 +18,7 @@
     }
 
     public bool ResetEnable { get; set; } = true;
-    public void SetSection(Section section) { Section = section; }
+    public void SetSection(Section section) => Section = section;
     /// <summary>
     /// 通过  Script 访问同 <see cref="Section"/> 的其他 <see cref="ISectionCom"/>.
     /// </summary>

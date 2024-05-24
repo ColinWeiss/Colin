@@ -10,9 +10,6 @@
     /// </summary>
     public Transform2D Parent;
 
-    /// <summary>
-    /// 指示锚点.
-    /// </summary>
     public Vector2 Anchor;
 
     /// <summary>
@@ -40,13 +37,15 @@
       }
     }
 
-    private void Calculate()
+    public void Calculate()
     {
       _transform =
-        Matrix.CreateScale(Anchor.X, Anchor.Y, 0f) *
-        Matrix.CreateScale(Scale.X, Scale.Y, 0f) * 
-        Matrix.CreateRotationZ(Rotation) * 
+        Matrix.CreateScale(Scale.X, Scale.Y, 0f) *
+        Matrix.CreateTranslation(-Anchor.X * Scale.X, -Anchor.Y * Scale.Y, 0) *
+        Matrix.CreateRotationZ(Rotation) *
+        Matrix.CreateTranslation(Anchor.X * Scale.X , Anchor.Y * Scale.Y , 0) *
         Matrix.CreateTranslation(Translation.X, Translation.Y, 0);
+
       if (Parent is not null)
         _transform *= Parent.Transform;
     }
@@ -57,5 +56,6 @@
       return result.Translation.GetVector2();
     }
     public Vector2 GetLocation(int width, int height) => GetLocation(new Vector2(width, height));
+
   }
 }

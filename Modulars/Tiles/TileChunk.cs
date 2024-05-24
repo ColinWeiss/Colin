@@ -1,6 +1,8 @@
 ﻿using Colin.Core.Resources;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms.Design.Behavior;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -15,9 +17,19 @@ namespace Colin.Core.Modulars.Tiles
     public readonly Tile Tile;
 
     /// <summary>
+    /// 获取物块区块所属的物块放置模块.
+    /// </summary>
+    public readonly TilePlacer Placer;
+
+    /// <summary>
+    /// 获取物块区块所属的物块破坏模块.
+    /// </summary>
+    public readonly TileDestructor Destructor;
+
+    /// <summary>
     /// 获取物块区块所属的物块刷新模块.
     /// </summary>
-    public readonly TileRefresher TileRefresher;
+    public readonly TileRefresher Refresher;
 
     /// <summary>
     /// 获取区块的深度.
@@ -137,7 +149,9 @@ namespace Colin.Core.Modulars.Tiles
     public TileChunk(Tile tile)
     {
       Tile = tile;
-      TileRefresher = tile.Scene.GetModule<TileRefresher>();
+      Placer = tile.Scene.GetModule<TilePlacer>();
+      Destructor = tile.Scene.GetModule<TileDestructor>();
+      Refresher = tile.Scene.GetModule<TileRefresher>();
       Depth = tile.Depth;
       CoordX = 0;
       CoordY = 0;
@@ -181,159 +195,31 @@ namespace Colin.Core.Modulars.Tiles
     public void CreateInfo(int x, int y, int z) => CreateInfo((z * Height * Width) + x + y * Width);
 
     /// <summary>
-    /// 根据索引和指定类型设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
-    /// </summary>
-    public void Set<T>(int index) where T : TileBehavior, new()
-    {
-      ref TileInfo info = ref this[index];
-      info.Behavior = CodeResources<TileBehavior>.Get<T>();
-      info.Behavior.Tile = Tile;
-      info.Behavior.OnInitialize(ref info);
-    }
-    /// <summary>
-    /// 根据坐标和指定类型设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
-    /// </summary>
-    public void Set<T>(int x, int y, int z) where T : TileBehavior, new() => Set<T>(z * Width * Height + x + y * Width);
-    /// <summary>
-    /// 根据索引和引用设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
-    /// </summary>
-    public void Set(TileBehavior behavior, int index)
-    {
-      ref TileInfo info = ref this[index];
-      info.Behavior = behavior;
-      info.Behavior.Tile = Tile;
-      info.Behavior.OnInitialize(ref this[index]);
-    }
-    /// <summary>
-    /// 根据坐标和引用设置区块内物块的 <see cref="TileBehavior"/> 并执行其初始化.
-    /// </summary>
-    public void Set(TileBehavior behavior, int x, int y, int z) => Set(behavior, z * Width * Height + x + y * Width);
-
-    /// <summary>
-    /// 根据索引和指定类型放置物块.
-    /// </summary>
-    /// <param name="doEvent">指示是否触发放置事件.</param>
-    /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-    public bool Place<T>(int index, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
-    {
-      ref TileInfo info = ref this[index];
-      if (!Tile.TilePointers.ContainsKey(info.WorldCoord2) && info.Empty)
-      {
-        info.Scripts.Clear();
-        info.Empty = false;
-        Set<T>(index);
-        if (doEvent)
-        {
-          foreach (var script in info.Scripts.Values)
-          {
-            if (script.CanPlace() is false)
-            {
-              info.Scripts.Clear();
-              return false;
-            }
-          }
-          info.Behavior.OnPlace(ref info);
-          foreach (var script in info.Scripts.Values)
-            script.OnPlace();
-        }
-        if (doRefresh)
-        {
-          TileRefresher.RefreshMark(info.WorldCoord3, 1);
-        }
-        return true;
-      }
-      else return false;
-    }
-    /// <summary>
     /// 根据坐标和指定类型放置物块.
     /// </summary>
     /// <param name="doEvent">指示是否触发放置事件.</param>
     /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-    public bool Place<T>(int x, int y, int z, bool doEvent = true, bool doRefresh = true) where T : TileBehavior, new()
-        => Place<T>(z * Width * Height + x + y * Width, doEvent, doRefresh);
-    /// <summary>
-    /// 根据索引和引用放置物块.
-    /// </summary>
-    /// <param name="doEvent">指示是否触发放置事件.</param>
-    /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-    public bool Place(TileBehavior behavior, int index, bool doEvent = true, bool doRefresh = true)
+    public void Place<T>(int x, int y, int z) where T : TileBehavior, new()
     {
-      ref TileInfo info = ref this[index];
-      if (!Tile.TilePointers.ContainsKey(info.WorldCoord2))
-      {
-        if (info.Empty)
-        {
-          info.Scripts.Clear();
-          info.Empty = false;
-          Set(behavior, index);
-          if (doEvent)
-          {
-            foreach (var script in info.Scripts.Values)
-            {
-              if (script.CanPlace() is false)
-              {
-                info.Scripts.Clear();
-                return false;
-              }
-            }
-            info.Behavior.OnPlace(ref info);
-            foreach (var script in info.Scripts.Values)
-              script.OnPlace();
-          }
-          if (doRefresh)
-          {
-            TileRefresher.RefreshMark(info.WorldCoord3, 1);
-          }
-          return true;
-        }
-        else return false;
-      }
-      else return false;
+      ref TileInfo info = ref this[x, y, z];
+      Placer.Mark<T>(x, y, z);
     }
-    /// <summary>
-    /// 根据坐标向区块内放置物块.
-    /// </summary>
-    /// <param name="doEvent">指示是否触发放置事件.</param>
-    /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-    public bool Place(TileBehavior behavior, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
-        => Place(behavior, z * Width * Height + x + y * Width, doEvent, doRefresh);
 
     /// <summary>
-    /// 根据索引破坏区块内物块.
+    /// 破坏指定坐标的物块.
     /// </summary>
-    /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
-    /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
-    public bool Destruction(int index, bool doEvent = true, bool doRefresh = true)
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
+    public void Destruction(int x, int y, int z)
     {
-      ref TileInfo info = ref this[index];
-      if (!Tile.TilePointers.ContainsKey(info.WorldCoord2))
+      ref TileInfo info = ref this[x, y, z];
+      if (!Tile.TilePointers.ContainsKey(info.WorldCoord2) && !Destructor.Destructs.Contains(info.WorldCoord3))
       {
         if (!info.Empty)
-        {
-          info.Empty = true;
-          if (doEvent)
-          {
-            info.Behavior.OnDestruction(ref info);
-            foreach (var script in info.Scripts.Values)
-              script.OnDestruction();
-          }
-          if (doRefresh)
-          {
-            TileRefresher.RefreshMark(info.WorldCoord3, 1);
-          }
-          return true;
-        }
-        else return false;
+          Destructor.Mark(x, y, z);
       }
-      else return false;
     }
-    /// <summary>
-    /// 根据坐标破坏区块内物块.
-    /// </summary>
-    /// <param name="doEvent">指示执行破坏时是否触发物块行为和脚本的破坏行为.</param>
-    /// <param name="doRefresh">指示执行破坏时是否触发物块行为和脚本的刷新行为.</param>
-    public bool Destruction(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
-        => Destruction(z * Width * Height + x + y * Width, doEvent, doRefresh);
 
     public void LoadChunk(string path)
     {
@@ -344,16 +230,20 @@ namespace Colin.Core.Modulars.Tiles
           using (BinaryReader reader = new BinaryReader(fileStream))
           {
             DoInitialize();
+            ref TileInfo info = ref this[0, 0, 0];
             for (int count = 0; count < Infos.Length; count++)
             {
+              info = ref this[count];
               if (count % TileOption.ChunkWidth == 0)
                 Thread.Sleep(10);
-              Infos[count].LoadStep(reader);
-              if (!Infos[count].Empty)
+              info.LoadStep(reader);
+              if (!info.Empty)
                 if (CodeResources<TileBehavior>.HashMap.TryGetValue(reader.ReadInt32(), out string value))
                 {
-                  Set(CodeResources<TileBehavior>.Get(value), count);
-                  TileRefresher.RefreshMark(Infos[count].WorldCoord3, 0);
+                  info.Behavior = CodeResources<TileBehavior>.Get(value);
+                  info.Behavior.Tile = Tile;
+                  info.Behavior.OnInitialize(ref info); //执行行为初始化放置
+                  Refresher.Mark(Infos[count].WorldCoord3, 0);
                 }
             }
           }

@@ -1,14 +1,11 @@
 ﻿using Colin.Core.IO;
-using Colin.Core.ModLoaders;
 using Colin.Core.Preparation;
 using System.Reflection;
 
 namespace Colin.Core
 {
-  public class Core : Game, IMod
+  public class Core : Game
   {
-    public string Name => "Colin.Core.Engine";
-
     public CoreInfo Info;
 
     public bool Enable { get; set; } = true;

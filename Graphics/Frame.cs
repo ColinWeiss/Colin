@@ -96,7 +96,6 @@
     {
       if (!IsPlay)
         return;
-      Timer += Time.DeltaTime;
       if (Timer > Interval)
       {
         Timer = Timer - Interval;
@@ -105,6 +104,7 @@
         else if (IsLoop)
           Current = Start;
       }
+      Timer += Time.DeltaTime;
     }
   }
 }

@@ -1,5 +1,4 @@
-﻿using Colin.Core.ModLoaders;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 using System.Reflection;
 
 namespace Colin.Core
@@ -166,7 +165,6 @@ namespace Colin.Core
     internal static void Init(Core engine)
     {
       Engine = engine;
-      ModContent.DoInitialize();
       IMEHandler = new WinFormsIMEHandler(Engine, true);
 #if DEBUG
       DebugEnable = true;
