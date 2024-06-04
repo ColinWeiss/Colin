@@ -42,9 +42,8 @@ namespace Colin.Core.Modulars.Tiles
     public void DoUpdate(GameTime time)
     {
       ref TileInfo info = ref Tile[0, 0, 0];
-      while (!RefreshQueue.IsEmpty)
+      while (RefreshQueue.TryDequeue(out Point3 coord))
       {
-        RefreshQueue.TryDequeue(out Point3 coord);
         info = ref Tile[coord];
         Handle(coord);
         if (info.Empty)

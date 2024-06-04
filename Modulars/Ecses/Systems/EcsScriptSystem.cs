@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
-using DeltaMachine.Core.GameContents.Sections.Players;
 using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.ISectionCom>;
 
 namespace Colin.Core.Modulars.Ecses.Systems

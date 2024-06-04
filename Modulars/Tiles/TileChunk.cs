@@ -192,7 +192,7 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="z"></param>
-    public void CreateInfo(int x, int y, int z) => CreateInfo((z * Height * Width) + x + y * Width);
+    public void CreateInfo(int x, int y, int z) => CreateInfo(z * Width * Height + x + y * Width);
 
     /// <summary>
     /// 根据坐标和指定类型放置物块.
@@ -202,7 +202,7 @@ namespace Colin.Core.Modulars.Tiles
     public void Place<T>(int x, int y, int z) where T : TileBehavior, new()
     {
       ref TileInfo info = ref this[x, y, z];
-      Placer.Mark<T>(x, y, z);
+      Placer.Mark<T>(info.WorldCoord3);
     }
 
     /// <summary>
@@ -217,7 +217,7 @@ namespace Colin.Core.Modulars.Tiles
       if (!Tile.TilePointers.ContainsKey(info.WorldCoord2) && !Destructor.Destructs.Contains(info.WorldCoord3))
       {
         if (!info.Empty)
-          Destructor.Mark(x, y, z);
+          Destructor.Mark(info.WorldCoord3);
       }
     }
 

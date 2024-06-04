@@ -1,6 +1,5 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Modulars.Tiles;
-using DeltaMachine.Core.GameContents.Sections.Players;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {

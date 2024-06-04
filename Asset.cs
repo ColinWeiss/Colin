@@ -12,6 +12,8 @@ namespace Colin.Core
   /// </summary>
   public class Asset
   {
+    public static string AssetsDirName = "Sources";
+
     private static string _dir = "";
     public static string Dir
     {
@@ -22,28 +24,28 @@ namespace Colin.Core
     private static string _textureDir = "Textures";
     public static string TextureDir
     {
-      get => Path.Combine(Dir, "Sources", _textureDir);
+      get => Path.Combine(Dir, AssetsDirName, _textureDir);
       set => _textureDir = value;
     }
 
     private static string _fontDir = "Fonts";
     public static string FontDir
     {
-      get => Path.Combine(Dir, "Sources", _fontDir);
+      get => Path.Combine(Dir, AssetsDirName, _fontDir);
       set => _fontDir = value;
     }
 
     private static string _effectDir = "Effects";
     public static string EffectDir
     {
-      get => Path.Combine(Dir, "Sources", _effectDir);
+      get => Path.Combine(Dir, AssetsDirName, _effectDir);
       set => _effectDir = value;
     }
 
     private static string _shaderDir = "Shaders";
     public static string ShaderDir
     {
-      get => Path.Combine(Dir, "Sources", _shaderDir);
+      get => Path.Combine(Dir, AssetsDirName, _shaderDir);
       set => _shaderDir = value;
     }
 

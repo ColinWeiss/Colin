@@ -39,7 +39,7 @@ namespace Colin.Core.Modulars.Tiles
         if (_places.TryDequeue(out ValueTuple<Point3, TileBehavior> element))
         {
           info = ref Tile[element.Item1];
-          PlaceHandle(element.Item1, element.Item2);
+          Handle(element.Item1, element.Item2);
           if (info.Empty)
           {
             info.Behavior = null;
@@ -63,13 +63,13 @@ namespace Colin.Core.Modulars.Tiles
     public void Mark<T>(int x, int y, int z) where T : TileBehavior =>
       Mark<T>(new Point3(x, y, z));
 
-    public void PlaceHandle(Point3 coord, TileBehavior behavior)
+    public void Handle(Point3 coord, TileBehavior behavior)
     {
       ref TileInfo info = ref Tile[coord]; //获取对应坐标的物块格的引用传递.
       if (info.IsNull)
         return;
       info.Scripts.Clear();
-      info.Empty = true;
+      info.Empty = false;
       info.Behavior = behavior;
       info.Behavior.Tile = Tile;
       info.Behavior.OnInitialize(ref info); //执行行为初始化放置

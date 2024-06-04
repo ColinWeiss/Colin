@@ -1,4 +1,7 @@
 ﻿using Colin.Core.Events;
+using System.Windows.Forms;
+using MouseEventArgs = Colin.Core.Events.MouseEventArgs;
+using KeyEventArgs = Colin.Core.Events.KeyEventArgs;
 using TextInputEventArgs = MonoGame.IMEHelper.TextInputEventArgs;
 
 namespace Colin.Core.Common
