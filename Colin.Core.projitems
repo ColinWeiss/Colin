@@ -42,6 +42,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />

@@ -49,6 +49,12 @@ namespace Colin.Core
       set => _shaderDir = value;
     }
 
+    private static string _soundEffectDir = "SoundEffects";
+    public static string SoundEffectDir
+    {
+      get => Path.Combine(Dir, AssetsDirName, _soundEffectDir);
+      set => _soundEffectDir = value;
+    }
 
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
     private static Dictionary<string, FontSystem> _fonts = new Dictionary<string, FontSystem>();
@@ -62,6 +68,7 @@ namespace Colin.Core
       LoadTextures();
       LoadFonts();
       LoadEffects();
+      LoadSoundEffects();
     }
     public static void LoadTextures()
     {
@@ -155,6 +162,25 @@ namespace Colin.Core
         _computeShaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName), null), _effect);
       }
     }
+    public static void LoadSoundEffects()
+    {
+      if (Directory.Exists(SoundEffectDir) is false)
+      {
+        Console.WriteLine("Error", "未检查到音效文件夹.");
+        return;
+      }
+      string[] fileFullName = Directory.GetFiles(SoundEffectDir, "*.wav*", SearchOption.AllDirectories);
+      string fileName;
+      SoundEffect target;
+      for (int count = 0; count < fileFullName.Length; count++)
+      {
+        fileName = fileFullName[count];
+        target = SoundEffect.FromFile(fileName);
+        fileName = OrganizePath(fileName);
+        target.Name = fileName;
+        _soundEffects.Add(fileName, target);
+      }
+    }
     private static void CompileShaders()
     {
       if (Directory.Exists(EffectDir) is false)
@@ -202,12 +228,21 @@ namespace Colin.Core
         return null;
     }
 
+    public static SoundEffect GetSoundEffect(string path)
+    {
+      path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
+      if (_soundEffects.TryGetValue(path, out SoundEffect result))
+        return result;
+      else
+        return null;
+    }
     private static string OrganizePath(string path)
     {
       StringBuilder sb = new StringBuilder(path);
       sb.Replace(string.Concat(TextureDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(FontDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(EffectDir, Path.DirectorySeparatorChar), "");
+      sb.Replace(string.Concat(SoundEffectDir, Path.DirectorySeparatorChar), "");
       sb.Replace(Path.GetExtension(sb.ToString()), "");
       return sb.ToString();
     }

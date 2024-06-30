@@ -41,6 +41,7 @@ namespace Colin.Core.Assets
         _fileName = Path.ChangeExtension(_csoFileNames[count], ".cso");
         if (File.Exists(_fileName) is false)
           CompileShaders();
+        Console.WriteLine(_fileName);
         _effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(_fileName));
         Shaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName), null), _effect);
       }
