@@ -115,23 +115,29 @@ namespace Colin.Core
     /// <returns>执行结果</returns>
     public static void Execute(string[] cmdLine)
     {
-      using (var process = new Process())
+      Process process = new Process();
+      try
       {
-        process.StartInfo.FileName = "cmd.exe";
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardInput = true;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-        process.StartInfo.CreateNoWindow = false;
-        process.Start();
-        process.StandardInput.AutoFlush = true;
         for (int count = 0; count < cmdLine.Length; count++)
         {
-          process.StandardInput.WriteLine(cmdLine[count] );
+          process.StartInfo.FileName = "cmd.exe";
+          process.StartInfo.UseShellExecute = false;
+          process.StartInfo.RedirectStandardInput = true;
+          process.StartInfo.RedirectStandardOutput = true;
+          process.StartInfo.RedirectStandardError = true;
+          process.StartInfo.CreateNoWindow = false;
+          process.Start();
+          process.StandardInput.AutoFlush = true;
+          process.StandardInput.WriteLine(cmdLine[count]);
+          WriteLine("Execute: " + cmdLine[count]);
+          process.StandardInput.WriteLine("exit");
+          process.WaitForExit();
+          process.Close();
         }
-        process.StandardInput.WriteLine("exit");
-        process.WaitForExit();
-        process.Close();
+      }
+      catch
+      {
+        WriteLine(process.StandardError.ReadToEnd());
       }
     }
 
@@ -142,23 +148,29 @@ namespace Colin.Core
     /// <returns>执行结果</returns>
     public static void Execute(List<string> cmdLine)
     {
-      using (var process = new Process())
+      Process process = new Process();
+      try
       {
-        process.StartInfo.FileName = "cmd.exe";
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardInput = true;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-        process.StartInfo.CreateNoWindow = false;
-        process.Start();
-        process.StandardInput.AutoFlush = true;
         for (int count = 0; count < cmdLine.Count; count++)
         {
+          process.StartInfo.FileName = "cmd.exe";
+          process.StartInfo.UseShellExecute = false;
+          process.StartInfo.RedirectStandardInput = true;
+          process.StartInfo.RedirectStandardOutput = true;
+          process.StartInfo.RedirectStandardError = true;
+          process.StartInfo.CreateNoWindow = false;
+          process.Start();
+          process.StandardInput.AutoFlush = true;
           process.StandardInput.WriteLine(cmdLine[count]);
+          WriteLine("Execute: " + cmdLine[count]);
+          process.StandardInput.WriteLine("exit");
+          process.WaitForExit();
+          process.Close();
         }
-        process.StandardInput.WriteLine("exit");
-        process.WaitForExit();
-        process.Close();
+      }
+      catch
+      {
+        WriteLine(process.StandardError.ReadToEnd());
       }
     }
   }
