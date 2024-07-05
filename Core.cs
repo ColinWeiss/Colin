@@ -79,9 +79,9 @@ namespace Colin.Core
         Components.Remove(CurrentScene);
         CurrentScene = null;
         Components.Clear();
-        Components.Add(Singleton<ControllerResponder>.Instance);
-        Components.Add(Singleton<MouseResponder>.Instance);
-        Components.Add(Singleton<KeyboardResponder>.Instance);
+        Components.Add(Singleton.Get<ControllerResponder>());
+        Components.Add(Singleton.Get<MouseResponder>());
+        Components.Add(Singleton.Get<KeyboardResponder>());
         Components.Add(SpritePool.Instance);
         GC.Collect();
         return;
@@ -97,9 +97,9 @@ namespace Colin.Core
       }
       CurrentScene?.Dispose();
       Components.Clear();
-      Components.Add(Singleton<ControllerResponder>.Instance);
-      Components.Add(Singleton<MouseResponder>.Instance);
-      Components.Add(Singleton<KeyboardResponder>.Instance);
+      Components.Add(Singleton.Get<ControllerResponder>());
+      Components.Add(Singleton.Get<MouseResponder>());
+      Components.Add(Singleton.Get<KeyboardResponder>());
       Components.Add(SpritePool.Instance);
       Components.Add(scene);
       CurrentScene = scene;

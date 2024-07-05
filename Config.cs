@@ -12,7 +12,7 @@ namespace Colin.Core
     /// 指示游戏配置文件的位置及其本身.
     /// <br>包含文件扩展名.</br>
     /// </summary>
-    public static string ConfigPath => string.Concat(BasicsDirectory.ProgramDir, "\\Configs.json");
+    public static string ConfigPath => Path.Combine(BasicsDirectory.ProgramDir, "Configs.json");
 
     /// <summary>
     /// 指示是否全屏.

@@ -17,4 +17,8 @@
       }
     }
   }
+  public class Singleton
+  {
+    public static T Get<T>() where T : ISingleton, new() => Singleton<T>.Instance;
+  }
 }

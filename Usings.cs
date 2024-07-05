@@ -13,11 +13,11 @@ global using System.Collections.Generic;
 global using System.IO;
 global using System.Linq;
 global using Keys = Microsoft.Xna.Framework.Input.Keys;
-global using Point = Microsoft.Xna.Framework.Point;
+global using Point2 = Microsoft.Xna.Framework.Point;
 global using Vector2 = Microsoft.Xna.Framework.Vector2;
 global using Vector3 = Microsoft.Xna.Framework.Vector3;
-global using RectangleF = Colin.Core.RectangleF;
 global using Rectangle = Microsoft.Xna.Framework.Rectangle;
+global using RectangleF = Colin.Core.RectangleF;
 global using Color = Microsoft.Xna.Framework.Color;
 global using Console = Colin.Core.Console;
 #if WINDOWS

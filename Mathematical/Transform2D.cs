@@ -56,6 +56,5 @@
       return result.Translation.GetVector2();
     }
     public Vector2 GetLocation(int width, int height) => GetLocation(new Vector2(width, height));
-
   }
 }

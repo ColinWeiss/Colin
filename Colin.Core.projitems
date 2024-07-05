@@ -85,11 +85,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsPhysicSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transform2D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleID.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Direction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Console.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreInfo.cs" />
@@ -102,15 +102,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Point3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Point3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EventExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\FontExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\IOExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\LineExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\MathExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\RandomExt.cs" />
@@ -120,7 +116,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TextureExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\VectorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\DirectoryChecker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GlobalUsing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcherExt.cs" />
@@ -143,7 +139,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IProgramChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Line.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Line.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
@@ -188,14 +184,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UserInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Noises\Berlin\BerlinNoiseInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PictureQuality.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\UnsafeObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Triangle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Triangle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Mathematical\" />
   </ItemGroup>
 </Project>
