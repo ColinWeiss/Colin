@@ -56,11 +56,6 @@ namespace Colin.Core
     }
 
     /// <summary>
-    /// 指示图形质量.
-    /// </summary>
-    public PictureQuality PictureQuality { get; set; }
-
-    /// <summary>
     /// 指示鼠标是否可见.
     /// </summary>
     public bool IsMouseVisiable
@@ -83,7 +78,6 @@ namespace Colin.Core
         IsFullScreen = result.IsFullScreen;
         SoundEffect = result.SoundEffect;
         SoundEffectVolume = result.SoundEffectVolume;
-        PictureQuality = result.PictureQuality;
         IsMouseVisiable = result.IsMouseVisiable;
         TargetFrame = result.TargetFrame;
       }

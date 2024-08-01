@@ -84,7 +84,7 @@ namespace Colin.Core.Modulars.Particles
     public void DoInitialize()
     {
       ParticleDataStream = Asset.GetEffect("Particles/ParticleDataStream");
-      ParticleUpdateCompute = ShaderAssets.Get("ParticleUpdate");
+      ParticleUpdateCompute = Asset.GetComputeShader("ParticleUpdate");
       ParticleInstancing = Asset.GetEffect("Particles/ParticleInstancing");
       CreateDatasBuffer();
       CreateParticlesBuffer();

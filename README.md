@@ -1,0 +1,1 @@
+﻿xcopy $(SolutionDir)你的项目名称\Assets $(TargetDir)Assets /s/i/e/y

@@ -14,6 +14,19 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\Cyotek.Drawing.BitmapFont.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Base.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.MonoGame.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Rasterizers.FreeType.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Rasterizers.SixLabors.Fonts.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Rasterizers.StbTrueTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FreeTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.Common.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\SharpDX.D3DCompiler.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\StbImageSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\StbTrueTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansBook.ttf">
@@ -35,8 +48,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\ShaderAssets.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\SoundAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\GameSoundEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />

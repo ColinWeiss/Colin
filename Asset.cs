@@ -12,7 +12,7 @@ namespace Colin.Core
   /// </summary>
   public class Asset
   {
-    public static string AssetsDirName = "Sources";
+    public static string AssetsDirName = "Assets";
 
     private static string _dir = "";
     public static string Dir
@@ -49,7 +49,7 @@ namespace Colin.Core
       set => _shaderDir = value;
     }
 
-    private static string _soundEffectDir = "SoundEffects";
+    private static string _soundEffectDir = "Sounds";
     public static string SoundEffectDir
     {
       get => Path.Combine(Dir, AssetsDirName, _soundEffectDir);
@@ -59,7 +59,7 @@ namespace Colin.Core
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
     private static Dictionary<string, FontSystem> _fonts = new Dictionary<string, FontSystem>();
     private static Dictionary<string, Effect> _effects = new Dictionary<string, Effect>();
-    private static Dictionary<string, ComputeShader> _computeShaders = new Dictionary<string, ComputeShader>();
+    private static Dictionary<string, ComputeShader> computeShaders = new Dictionary<string, ComputeShader>();
     private static Dictionary<string, SoundEffect> _soundEffects = new Dictionary<string, SoundEffect>();
     private static Dictionary<string, Song> _songs = new Dictionary<string, Song>();
 
@@ -68,6 +68,7 @@ namespace Colin.Core
       LoadTextures();
       LoadFonts();
       LoadEffects();
+      LoadComputeShaders();
       LoadSoundEffects();
     }
     public static void LoadTextures()
@@ -77,6 +78,9 @@ namespace Colin.Core
         Console.WriteLine("Error", "未检查到纹理文件夹.");
         return;
       }
+      else
+        Console.WriteLine("正在加载纹理资源.");
+
       string[] fileFullName = Directory.GetFiles(TextureDir, "*.png*", SearchOption.AllDirectories);
       string fileName;
       Texture2D target;
@@ -96,6 +100,9 @@ namespace Colin.Core
         Console.WriteLine("Error", "未检查到字体文件夹.");
         return;
       }
+      else
+        Console.WriteLine("正在加载字体资源.");
+
       string[] fileFullName = Directory.GetFiles(FontDir, "*.ttf*", SearchOption.AllDirectories);
       string fileName;
       FontSystem target;
@@ -115,6 +122,9 @@ namespace Colin.Core
         Console.WriteLine("Error", "未检查到着色器文件夹.");
         return;
       }
+      else
+        Console.WriteLine("正在加载着色器资源.");
+
       string[] fileFullName = Directory.GetFiles(EffectDir, "*.fx*", SearchOption.AllDirectories);
       string fileName;
       string sourceFile;
@@ -146,39 +156,28 @@ namespace Colin.Core
     }
     public static void LoadComputeShaders()
     {
-#if DEBUG
-      CompileShaders();
-#endif
-      ComputeShader _effect;
-      string _fileName;
+      if (Directory.Exists(ShaderDir) is false)
+      {
+        Console.WriteLine("Error", "未检查到计算着色器文件夹.");
+        return;
+      }
+      else
+        Console.WriteLine("正在加载计算着色器资源.");
+
+      if (CoreInfo.DebugEnable)
+        CompileShaders();
+      ComputeShader effect;
+      string fileName;
       string[] fileFullName = Directory.GetFiles(ShaderDir, "*.hlsl*", SearchOption.AllDirectories);
 
       for (int count = 0; count < fileFullName.Length; count++)
       {
-        _fileName = Path.ChangeExtension(fileFullName[count], ComputeShader.FileExtension);
-        if (File.Exists(_fileName) is false)
+        fileName = Path.ChangeExtension(fileFullName[count], ComputeShader.FileExtension);
+        if (File.Exists(fileName) is false)
           CompileShaders();
-        _effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(_fileName));
-        _computeShaders.Add(Path.ChangeExtension(IGameAsset.ArrangementPath(_fileName), null), _effect);
-      }
-    }
-    public static void LoadSoundEffects()
-    {
-      if (Directory.Exists(SoundEffectDir) is false)
-      {
-        Console.WriteLine("Error", "未检查到音效文件夹.");
-        return;
-      }
-      string[] fileFullName = Directory.GetFiles(SoundEffectDir, "*.wav*", SearchOption.AllDirectories);
-      string fileName;
-      SoundEffect target;
-      for (int count = 0; count < fileFullName.Length; count++)
-      {
-        fileName = fileFullName[count];
-        target = SoundEffect.FromFile(fileName);
+        effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(fileName));
         fileName = OrganizePath(fileName);
-        target.Name = fileName;
-        _soundEffects.Add(fileName, target);
+        computeShaders.Add(fileName, effect);
       }
     }
     private static void CompileShaders()
@@ -194,6 +193,27 @@ namespace Colin.Core
       {
         fileName = fileFullName[count];
         ShaderCompiler.Compile(fileName, ShaderCompiler.CompileProfile.Compute);
+      }
+    }
+    public static void LoadSoundEffects()
+    {
+      if (Directory.Exists(SoundEffectDir) is false)
+      {
+        Console.WriteLine("Error", "未检查到音效文件夹.");
+        return;
+      }
+      else
+        Console.WriteLine("正在加载音效资源.");
+      string[] fileFullName = Directory.GetFiles(SoundEffectDir, "*.wav*", SearchOption.AllDirectories);
+      string fileName;
+      SoundEffect target;
+      for (int count = 0; count < fileFullName.Length; count++)
+      {
+        fileName = fileFullName[count];
+        target = SoundEffect.FromFile(fileName);
+        fileName = OrganizePath(fileName);
+        target.Name = fileName;
+        _soundEffects.Add(fileName, target);
       }
     }
 
@@ -219,6 +239,16 @@ namespace Colin.Core
         return null;
     }
 
+    public static ComputeShader GetComputeShader(string path)
+    {
+      path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
+      ComputeShader shader;
+      if (computeShaders.TryGetValue(path, out shader))
+        return shader;
+      else
+        return null;
+    }
+
     public static FontSystem GetFont(string path)
     {
       path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
@@ -236,12 +266,14 @@ namespace Colin.Core
       else
         return null;
     }
+
     private static string OrganizePath(string path)
     {
       StringBuilder sb = new StringBuilder(path);
       sb.Replace(string.Concat(TextureDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(FontDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(EffectDir, Path.DirectorySeparatorChar), "");
+      sb.Replace(string.Concat(ShaderDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(SoundEffectDir, Path.DirectorySeparatorChar), "");
       sb.Replace(Path.GetExtension(sb.ToString()), "");
       return sb.ToString();
