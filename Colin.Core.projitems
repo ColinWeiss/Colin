@@ -59,6 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionBindableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsMoveSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileDestructor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
@@ -94,7 +95,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Section.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\SectionSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsPhysicSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsTileCollisionSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />

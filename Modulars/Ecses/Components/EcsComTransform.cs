@@ -5,7 +5,7 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// <summary>
   /// [默认组件]
   /// <br>提供关于位置/速度/旋转/缩放的字段.</br>
-  /// <br>它将被 <see cref="EcsPhysicSystem"/> 解析.</br>
+  /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
   public class EcsComTransform : Transform2D, ISectionCom
   {
@@ -18,6 +18,8 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// 指示切片的速度.
     /// </summary>
     public Vector2 Velocity;
+
+    public Vector2 DeltaVelocity => Velocity * Time.DeltaTime;
 
     /// <summary>
     /// 获取 <see cref="Size"/> 的一半.

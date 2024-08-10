@@ -11,9 +11,9 @@
     Passable = 0,
 
     /// <summary>
-    /// 不允许通过.
+    /// 实心方块.
     /// </summary>
-    Impassable = 1,
+    Solid = 1,
 
     /// <summary>
     /// 平台.

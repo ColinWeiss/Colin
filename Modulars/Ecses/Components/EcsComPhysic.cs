@@ -4,7 +4,7 @@ namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
   /// 物理组件.
-  /// <br>它将被 <see cref="EcsPhysicSystem"/> 解析.</br>
+  /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
   public class EcsComPhysic : ISectionCom, IResetable
   {
@@ -58,22 +58,22 @@ namespace Colin.Core.Modulars.Ecses.Components
     public bool ResetEnable { get; set; } = true;
 
     /// <summary>
-    /// 用于 <see cref="EcsPhysicSystem"/> 计算的值之一.
+    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
     /// </summary>
     public float PreviousBottom;
 
     /// <summary>
-    /// 用于 <see cref="EcsPhysicSystem"/> 计算的值之一.
+    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
     /// </summary>
     public float PreviousTop;
 
     /// <summary>
-    /// 用于 <see cref="EcsPhysicSystem"/> 计算的值之一.
+    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
     /// </summary>
     public float PreviousLeft;
 
     /// <summary>
-    /// 用于 <see cref="EcsPhysicSystem"/> 计算的值之一.
+    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
     /// </summary>
     public float PreviousRight;
 
@@ -83,7 +83,7 @@ namespace Colin.Core.Modulars.Ecses.Components
     public bool PreviousCollisionBottom;
 
     /// <summary>
-    /// 用于 <see cref="EcsPhysicSystem"/> 计算的值之一.
+    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
     /// </summary>
     public Vector2 PreviousPosition;
 

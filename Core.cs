@@ -67,7 +67,7 @@ namespace Colin.Core
     /// 切换场景.
     /// </summary>
     /// <param name="scene">要切换到的场景对象.</param>
-    public void SetScene(Scene scene)
+    public void SetScene(Scene scene = null)
     {
       if (scene is null)
       {
