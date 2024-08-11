@@ -100,7 +100,7 @@
     /// <returns>如果成功删除, 那么返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public bool RemoveModule<T>() where T : ISceneModule => Components.Remove(typeof(T));
 
-    public T Register<T>(out T t) where T : ISceneModule, new()
+    public T Register<T>() where T : ISceneModule, new()
     {
       T sceneMode = new T();
       sceneMode.Scene = Scene;
@@ -121,7 +121,30 @@
         }
       }
       Components.Add(typeof(T), sceneMode);
-      t = sceneMode;
+      return sceneMode;
+    }
+
+    public T Register<T>(params object[] args) where T : ISceneModule
+    {
+      T sceneMode = (T)Activator.CreateInstance(typeof(T), args);
+      sceneMode.Scene = Scene;
+      sceneMode.Enable = true;
+      if (sceneMode is IRenderableISceneModule dwMode)
+      {
+        dwMode.RawRtVisible = true;
+        dwMode.Presentation = true;
+        RenderableComponents.Add(dwMode.GetType(), dwMode);
+      }
+      sceneMode.DoInitialize();
+      if (sceneMode is IRenderableISceneModule dwMode2)
+      {
+        if (dwMode2.RawRt is null)
+        {
+          dwMode2.InitRenderTarget();
+          Scene.Events.ClientSizeChanged += dwMode2.OnClientSizeChanged;
+        }
+      }
+      Components.Add(typeof(T), sceneMode);
       return sceneMode;
     }
 

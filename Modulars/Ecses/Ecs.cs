@@ -26,13 +26,6 @@ namespace Colin.Core.Modulars.Ecses
     private Dictionary<Type, SectionSystem> _systems;
     public Dictionary<Type, SectionSystem> Systems => _systems;
 
-    [Obsolete()]
-    public void AddSystem(SectionSystem system)
-    {
-      system._ecs = this;
-      system.DoInitialize();
-      _systems.Add(system.GetType(), system);
-    }
     public T RegisterSystem<T>() where T : SectionSystem, new()
     {
       T system = new T();

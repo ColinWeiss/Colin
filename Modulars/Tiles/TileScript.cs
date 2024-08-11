@@ -17,7 +17,7 @@
       get
       {
         if (_coordX is null)
-          _coordX = Info.CoordX;
+          _coordX = Info.ChunkCoordX;
         return _coordX.Value;
       }
     }
@@ -27,7 +27,7 @@
       get
       {
         if (_coordY is null)
-          _coordY = Info.CoordY;
+          _coordY = Info.ChunkCoordY;
         return _coordY.Value;
       }
     }

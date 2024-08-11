@@ -10,6 +10,9 @@
     /// </summary>
     public bool Empty;
 
+    /// <summary>
+    /// 指示物块是否为一个物块指针.
+    /// </summary>
     public bool IsPointer
     {
       get
@@ -24,14 +27,14 @@
     public int Index;
 
     /// <summary>
-    /// 指示物块的横坐标.
+    /// 指示物块在区块内的横坐标.
     /// </summary>
-    public int CoordX => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) % TileOption.ChunkWidth;
+    public int ChunkCoordX => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) % TileOption.ChunkWidth;
 
     /// <summary>
-    /// 指示物块的纵坐标.
+    /// 指示物块在区块内的纵坐标.
     /// </summary>
-    public int CoordY => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) / TileOption.ChunkWidth;
+    public int ChunkCoordY => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) / TileOption.ChunkWidth;
 
     /// <summary>
     /// 指示物块所处的深度.
@@ -47,7 +50,7 @@
       get
       {
         if (_chunkCoord2 == Point.Zero)
-          _chunkCoord2 = new Point(CoordX, CoordY);
+          _chunkCoord2 = new Point(ChunkCoordX, ChunkCoordY);
         return _chunkCoord2;
       }
     }
@@ -61,7 +64,7 @@
       get
       {
         if (_chunkCoord3 == Point3.Zero)
-          _chunkCoord3 = new Point3(CoordX, CoordY, CoordZ);
+          _chunkCoord3 = new Point3(ChunkCoordX, ChunkCoordY, CoordZ);
         return _chunkCoord3;
       }
     }
@@ -102,7 +105,7 @@
     /// <summary>
     /// 指示物块纹理帧格.
     /// </summary>
-    public TileFrame Texture;
+    public TileFrame Frame;
 
     /// <summary>
     /// 指示物块的碰撞信息.
@@ -225,7 +228,7 @@
       Empty = true;
       Tile = null;
       Chunk = null;
-      Texture = new TileFrame(-1, -1);
+      Frame = new TileFrame(-1, -1);
       Collision = TileCollision.Passable;
       _chunkCoord2 = Point.Zero;
       _chunkCoord3 = Point3.Zero;
@@ -240,7 +243,7 @@
       Empty = reader.ReadBoolean();
       if (!Empty)
       {
-        Texture.LoadStep(reader);
+        Frame.LoadStep(reader);
         Collision = (TileCollision)reader.ReadInt32();
       }
     }
@@ -250,7 +253,7 @@
       writer.Write(Empty);
       if (!Empty)
       {
-        Texture.SaveStep(writer);
+        Frame.SaveStep(writer);
         writer.Write((int)Collision);
       }
     }

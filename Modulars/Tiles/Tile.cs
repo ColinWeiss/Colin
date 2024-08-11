@@ -181,7 +181,7 @@ namespace Colin.Core.Modulars.Tiles
       if (File.Exists(path))
       {
         TileChunk chunk = new TileChunk(this);
-        chunk.LoadChunk(path);
+        chunk.AsyncLoadChunk(path);
         chunk.CoordX = x;
         chunk.CoordY = y;
         chunk.QuantumLayer = quantumLayer ?? QuantumLayer;

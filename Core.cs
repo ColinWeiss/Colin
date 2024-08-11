@@ -77,6 +77,7 @@ namespace Colin.Core
           Window.OrientationChanged -= CurrentScene.InitRenderTarget;
         }
         Components.Remove(CurrentScene);
+        CurrentScene?.Dispose();
         CurrentScene = null;
         Components.Clear();
         Components.Add(Singleton.Get<ControllerResponder>());

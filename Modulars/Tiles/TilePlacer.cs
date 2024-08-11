@@ -58,7 +58,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public void Mark<T>(Point3 coord) where T : TileBehavior
     {
-      _places.Enqueue((coord, CodeResources<TileBehavior>.Get<T>()));
+      _places.Enqueue((coord, CodeResources.Get<TileBehavior,T>()));
     }
     public void Mark<T>(int x, int y, int z) where T : TileBehavior =>
       Mark<T>(new Point3(x, y, z));

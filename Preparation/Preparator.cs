@@ -22,7 +22,7 @@ namespace Colin.Core.Preparation
         Console.WriteLine("Remind", "当前正以调试模式启动");
       Asset.LoadAssets();
       Task.Run(
-        () =>
+        (Action)(() =>
         {
           LoadGameAssets();
           IPreExecution theTask;
@@ -31,10 +31,10 @@ namespace Colin.Core.Preparation
             theTask = _preparatoryTasks[count];
             theTask.Prepare();
           }
-          CodeResourceManager.LoadCodeResource();
+          CodeResources.Load();
           Console.WriteLine("Remind", "初始化加载完成.");
           OnLoadComplete?.Invoke();
-        });
+        }));
       base.SceneInit();
     }
 

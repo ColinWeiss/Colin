@@ -24,11 +24,6 @@ namespace Colin.Core.Modulars.Ecses.Components
     public Entrance<bool> IgnoreTile;
 
     /// <summary>
-    /// 指示各个方向上的空气阻力.
-    /// </summary>
-    public Entrance<Vector2> AirResistance;
-
-    /// <summary>
     /// 指示达到最大重力速度的时间.
     /// </summary>
     public Entrance<float> UniGravitySpeedAttTime;
@@ -57,35 +52,13 @@ namespace Colin.Core.Modulars.Ecses.Components
 
     public bool ResetEnable { get; set; } = true;
 
-    /// <summary>
-    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
-    /// </summary>
-    public float PreviousBottom;
+    public bool PreviousCollisionLeft;
 
-    /// <summary>
-    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
-    /// </summary>
-    public float PreviousTop;
+    public bool PreviousCollisionRight;
 
-    /// <summary>
-    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
-    /// </summary>
-    public float PreviousLeft;
+    public bool PreviousCollisionTop;
 
-    /// <summary>
-    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
-    /// </summary>
-    public float PreviousRight;
-
-    /// <summary>
-    /// 指示该切片上一帧触发了碰撞.
-    /// </summary>
     public bool PreviousCollisionBottom;
-
-    /// <summary>
-    /// 用于 <see cref="EcsTileCollisionSystem"/> 计算的值之一.
-    /// </summary>
-    public Vector2 PreviousPosition;
 
     /// <summary>
     /// 指示基础碰撞盒.
@@ -97,13 +70,11 @@ namespace Colin.Core.Modulars.Ecses.Components
     public void DoInitialize()
     {
       IgnoreTile = false;
-      AirResistance = Vector2.Zero;
       UniGravitySpeedAttTime = 0.24f;
     }
     public void Reset()
     {
       IgnoreTile.Reset();
-      AirResistance.Reset();
       UniGravitySpeedAttTime.Reset();
     }
   }

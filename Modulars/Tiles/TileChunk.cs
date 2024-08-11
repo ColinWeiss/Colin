@@ -221,7 +221,7 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    public void LoadChunk(string path)
+    public void AsyncLoadChunk(string path)
     {
       Task.Run(() =>
       {
@@ -231,6 +231,7 @@ namespace Colin.Core.Modulars.Tiles
           {
             DoInitialize();
             ref TileInfo info = ref this[0, 0, 0];
+            string typeName;
             for (int count = 0; count < Infos.Length; count++)
             {
               info = ref this[count];
@@ -238,13 +239,16 @@ namespace Colin.Core.Modulars.Tiles
                 Thread.Sleep(10);
               info.LoadStep(reader);
               if (!info.Empty)
-                if (CodeResources<TileBehavior>.HashMap.TryGetValue(reader.ReadInt32(), out string value))
+              {
+                typeName = CodeResources<TileBehavior>.GetTypeNameFromHash(reader.ReadInt32());
+                if (typeName is not null)
                 {
-                  info.Behavior = CodeResources<TileBehavior>.Get(value);
+                  info.Behavior = CodeResources<TileBehavior>.GetFromTypeName(typeName);
                   info.Behavior.Tile = Tile;
                   info.Behavior.OnInitialize(ref info); //执行行为初始化放置
                   Refresher.Mark(Infos[count].WorldCoord3, 0);
                 }
+              }
             }
           }
         }
@@ -258,16 +262,20 @@ namespace Colin.Core.Modulars.Tiles
         {
           using (BinaryWriter writer = new BinaryWriter(fileStream))
           {
+            int? hash;
             TileBehavior behavior;
             for (int count = 0; count < Infos.Length; count++)
             {
               behavior = Infos[count].Behavior;
               Infos[count].SaveStep(writer);
               if (!Infos[count].Empty && behavior is not null)
-                if (CodeResources<TileBehavior>.SerializeTable.TryGetValue(behavior.Identifier, out int value))
+              {
+                hash = CodeResources<TileBehavior>.GetHashFromTypeName(behavior.Identifier);
+                if (hash.HasValue)
                 {
-                  writer.Write(value);
+                  writer.Write(hash.Value);
                 }
+              }
             }
           }
         }

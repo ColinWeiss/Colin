@@ -14,7 +14,7 @@ namespace Colin.Core.Common
   /// <summary>
   /// 场景.
   /// </summary>
-  public class Scene : DrawableGameComponent
+  public class Scene : DrawableGameComponent, IDisposeControllable, IScene
   {
     public SceneCamera SceneCamera;
 
@@ -23,6 +23,8 @@ namespace Colin.Core.Common
     /// 获取场景模块列表.
     /// </summary>
     public SceneModuleList Modules => _components;
+
+    public bool CanDispose { get; set; }
 
     /// <summary>
     /// 指示场景在切换时是否执行初始化的值.
@@ -167,6 +169,5 @@ namespace Colin.Core.Common
       }
       base.Dispose(disposing);
     }
-
   }
 }

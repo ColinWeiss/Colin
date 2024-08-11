@@ -3,6 +3,7 @@
 namespace Colin.Core.Resources
 {
   public class CodeResourceManager
+
   {
     private static List<Type> _codeResourceTypes = new List<Type>();
     /// <summary>
