@@ -123,7 +123,15 @@ namespace Colin.Core.Modulars.UserInterfaces
         }
       };
       Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
-      Mouse.RightClickBefore += (s,e) => Invoke(e, RightClickBefore);
+      Mouse.RightClickBefore += (s, e) => 
+      {
+        if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+        {
+          if (!DivLock)
+            DivLock = true;
+          Invoke(e, RightClickBefore);
+        }
+      };
       Mouse.RightDown += (s, e) => Invoke(e, RightDown);
       Mouse.RightClickAfter += (s, e) => Invoke(e, RightClickAfter);
       Mouse.RightUp += (s, e) => Invoke(e, RightUp);
