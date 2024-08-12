@@ -65,22 +65,22 @@ namespace Colin.Core.Modulars.Ecses.Systems
       int topTile = (int)Math.Floor((float)bounds.Top / TileOption.TileSize.Y);
       int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / TileOption.TileSizeF.Y);
 
-      Vector2 vel = comTransform.DeltaVelocity;
+      Vector2 deltaVel = comTransform.DeltaVelocity;
 
       comPhysic.CollisionLeft = false;
       comPhysic.CollisionRight = false;
       comPhysic.CollisionBottom = false;
       comPhysic.CollisionTop = false;
 
-       if (vel.X > 0)
-         rightTile += (int)(vel.X / 16);
-       else if (vel.X < 0)
-         leftTile += (int)(vel.X / 16);
+      if (deltaVel.X > 0)
+        rightTile += (int)(deltaVel.X / 16);
+      else if (deltaVel.X < 0)
+        leftTile += (int)(deltaVel.X / 16) - 1;
 
-       if (vel.Y > 0)
-         bottomTile += (int)(vel.Y / 16);
-       else if (vel.Y < 0)
-         topTile += (int)(vel.Y / 16);
+      if (deltaVel.Y > 0)
+        bottomTile += (int)(deltaVel.Y / 16);
+      else if (deltaVel.Y < 0)
+        topTile += (int)(deltaVel.Y / 16) - 1;
 
       Vector2 depth;
       Vector2 v;
@@ -93,64 +93,63 @@ namespace Colin.Core.Modulars.Ecses.Systems
       float xt = 0;
       float yt = 0;
 
+      bool positiveX = deltaVel.X > 0;
+      bool positiveY = deltaVel.Y > 0;
 
-      bool positiveX = vel.X > 0;
-      bool positiveY = vel.Y > 0;
-
-      Vector2 AVel = comTransform.DeltaVelocity;
       for (int x = positiveX ? leftTile : rightTile; positiveX ? x <= rightTile : x >= leftTile; x += positiveX ? 1 : -1)
       {
         for (int y = positiveY ? topTile : bottomTile; positiveY ? y <= bottomTile : y >= topTile; y += positiveY ? 1 : -1)
         {
           info = tile[x, y, comPhysic.Layer];
           target = info.HitBox;
-          if (next.Intersects(target) && info.Collision != Tiles.TileCollision.Passable &&
-              !previousBounds.Intersects(target))
+          if (
+            next.Intersects(target) &&
+            info.Collision != Tiles.TileCollision.Passable &&
+            !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);
             v = depth / comTransform.DeltaVelocity;
-            v.X = AVel.X == 0 ? -float.MaxValue : v.X;
-            v.Y = AVel.Y == 0 ? -float.MaxValue : v.Y;
+            v.X = deltaVel.X == 0 ? -float.MaxValue : v.X;
+            v.Y = deltaVel.Y == 0 ? -float.MaxValue : v.Y;
             absV = -v;
-
             if (absV.X < absV.Y)
             {
-              if (AVel.X < 0 && next.Left < target.Right)
+              if (deltaVel.X < 0 && next.Left < target.Right)
               {
-                xt = (bounds.Left - target.Right) / Math.Abs(AVel.X);
+                xt = (bounds.Left - target.Right) / Math.Abs(deltaVel.X);
                 comPhysic.CollisionLeft = true;
               }
-              else if (AVel.X > 0 && next.Right > target.Left)
+              else if (deltaVel.X > 0 && next.Right > target.Left)
               {
-                xt = (target.Left - bounds.Right) / Math.Abs(AVel.X);
+                xt = (target.Left - bounds.Right) / Math.Abs(deltaVel.X);
                 comPhysic.CollisionRight = true;
               }
-              AVel.X *= xt;
+              deltaVel.X *= xt;
               next = GetHitBox(section);
-              next.Location += AVel;
+              next.Location += deltaVel;
               break;
             }
             else if (absV.X > absV.Y)
             {
-              if (AVel.Y < 0 && next.Top < target.Bottom)
+              if (deltaVel.Y < 0 && next.Top < target.Bottom)
               {
-                yt = (bounds.Top - target.Bottom) / Math.Abs(AVel.Y);
+                yt = (bounds.Top - target.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionTop = true;
               }
-              else if (AVel.Y > 0 && next.Bottom > target.Top)
+              else if (deltaVel.Y > 0 && next.Bottom > target.Top)
               {
+                yt = (target.Top - bounds.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionBottom = true;
-                yt = (target.Top - bounds.Bottom) / AVel.Y;
               }
-              AVel.Y *= yt;
+              deltaVel.Y *= yt;
               next = GetHitBox(section);
-              next.Location += AVel;
+              next.Location += deltaVel;
               break;
             }
           }
         }
       }
-      comTransform.Velocity = AVel / Time.DeltaTime;
+      comTransform.Velocity = deltaVel / Time.DeltaTime;
     }
     public RectangleF GetHitBox(Section section)
     {
