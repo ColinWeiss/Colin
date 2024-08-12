@@ -84,7 +84,7 @@ namespace Colin.Core
         Components.Add(Singleton.Get<MouseResponder>());
         Components.Add(Singleton.Get<KeyboardResponder>());
         Components.Add(SpritePool.Instance);
-        GC.Collect();
+     //   GC.Collect();
         return;
       }
       if (CurrentScene != null)
@@ -96,7 +96,7 @@ namespace Colin.Core
         }
         Components.Remove(CurrentScene);
       }
-      CurrentScene?.Dispose();
+     // CurrentScene?.Dispose();
       Components.Clear();
       Components.Add(Singleton.Get<ControllerResponder>());
       Components.Add(Singleton.Get<MouseResponder>());
@@ -104,7 +104,7 @@ namespace Colin.Core
       Components.Add(SpritePool.Instance);
       Components.Add(scene);
       CurrentScene = scene;
-      GC.Collect();
+   //   GC.Collect();
     }
 
     protected override sealed void Initialize()
