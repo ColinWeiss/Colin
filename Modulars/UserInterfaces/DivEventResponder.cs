@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using System;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -20,7 +21,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       Mouse.Register(div.Events.Mouse);
       Keys.Register(div.Events.Keys);
     }
-    public void RegisterTo( EventResponder eventResponder )
+    public void RegisterTo(EventResponder eventResponder)
     {
       eventResponder.Register(Mouse);
       eventResponder.Register(Keys);
@@ -35,6 +36,8 @@ namespace Colin.Core.Modulars.UserInterfaces
     public event Action<MouseEventArgs> HoverStart;
     public event Action<MouseEventArgs> Hover;
     public event Action<MouseEventArgs> HoverOver;
+
+    public event Action<MouseEventArgs> UnconditionalHover;
 
     public event Action<MouseEventArgs> LeftClickBefore;
     public event Action<MouseEventArgs> LeftDown;
@@ -74,9 +77,13 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       Mouse.Hover += (s, e) =>
           {
+            if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position))
+            {
+              UnconditionalHover?.Invoke(e);
+            }
             if (Div.Interact.Interaction && !Div.Interact.InteractionLast)
               HoverStart?.Invoke(e);
-            Invoke(e, Hover);
+            Invoke(e, Hover, true);
             if (!Div.Interact.Interaction && Div.Interact.InteractionLast)
               HoverOver?.Invoke(e);
           };
@@ -123,7 +130,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         }
       };
       Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
-      Mouse.RightClickBefore += (s, e) => 
+      Mouse.RightClickBefore += (s, e) =>
       {
         if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
         {

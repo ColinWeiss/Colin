@@ -7,7 +7,7 @@ namespace Colin.Core.Inputs
   /// </summary>
   public sealed class KeyboardResponder : GameComponent, ISingleton
   {
-    public KeyboardResponder() : base(CoreInfo.Engine) { }
+    public KeyboardResponder() : base(CoreInfo.Core) { }
 
     public static KeyboardState State = new KeyboardState();
 

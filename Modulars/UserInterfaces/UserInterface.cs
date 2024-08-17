@@ -43,9 +43,14 @@ namespace Colin.Core.Modulars.UserInterfaces
       Container?.DoUpdate(time);
     }
 
-    public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
+    public static void BatchNormalBegin(SpriteBatch batch)
     {
       batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+    }
+
+    public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
+    {
+      BatchNormalBegin(batch);
       Container?.DoRender(device, batch);
       batch.End();
     }

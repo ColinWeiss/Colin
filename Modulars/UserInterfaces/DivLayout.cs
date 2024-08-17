@@ -121,6 +121,9 @@ namespace Colin.Core.Modulars.UserInterfaces
       get => size;
       set => SetSize(value);
     }
+
+    public Point SizeP => size.ToPoint();
+
     /// <summary>
     /// 设置划分元素的大小.
     /// <br>[!] 使用损失精度的参数.</br>
@@ -307,12 +310,21 @@ namespace Colin.Core.Modulars.UserInterfaces
     public int ScissorWidth;
     public int ScissorHeight;
 
+    public static Stack<Rectangle> scissors = new Stack<Rectangle>();
+
+    /// <summary>
+    /// 用于暂存划分元素本次剪裁矩形的字段.
+    /// </summary>
+    public Rectangle ScissorRectangleCache;
+
     private Rectangle scissorRectangle;
     /// <summary>
     /// 指示该划分元素的剪裁矩形.
     /// <br>剪裁矩形的坐标相对于划分元素进行计算.</br>
     /// </summary>
     public Rectangle ScissorRectangle => scissorRectangle;
+
+    private Rectangle interactiveRectangle;
 
     /// <summary>
     /// 更新计算指定划分元素的布局信息.
@@ -336,14 +348,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       div.Layout.renderTargetBounds.Width = (int)div.Layout.width;
       div.Layout.renderTargetBounds.Height = (int)div.Layout.height;
 
-      if (div.Parent is not null && div.Parent.Layout.ScissorEnable && !div.Layout.ScissorEnable)
-      {
-        div.Layout.ScissorEnable = true;
-        div.Layout.ScissorLeft = div.Parent.Layout.ScissorLeft - (int)div.Layout.Left;
-        div.Layout.ScissorTop = div.Parent.Layout.ScissorTop - (int)div.Layout.Top;
-        div.Layout.ScissorWidth = div.Parent.Layout.ScissorWidth;
-        div.Layout.ScissorHeight = div.Parent.Layout.ScissorHeight;
-      }
       if (div.Layout.ScissorEnable)
       {
         div.Layout.scissorRectangle.X = div.Layout.renderTargetBounds.X + div.Layout.ScissorLeft;
@@ -351,6 +355,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         div.Layout.scissorRectangle.Width = div.Layout.ScissorWidth;
         div.Layout.scissorRectangle.Height = div.Layout.ScissorHeight;
       }
+
       div.Layout.screenTransform =
           Matrix.CreateScale(1, 1, 0) *
           Matrix.CreateRotationZ(div.Layout.rotation) *

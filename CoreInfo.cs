@@ -35,7 +35,7 @@ namespace Colin.Core
     /// <summary>
     /// 指示当前 <see cref="Colin.Engine"/> 对象.
     /// </summary>
-    public static Core Engine { get; set; }
+    public static Core Core { get; set; }
 
     /// <summary>
     /// 指示当前程序设置.
@@ -164,8 +164,8 @@ namespace Colin.Core
 
     internal static void Init(Core engine)
     {
-      Engine = engine;
-      IMEHandler = new WinFormsIMEHandler(Engine, true);
+      Core = engine;
+      IMEHandler = new WinFormsIMEHandler(Core, true);
 #if DEBUG
       DebugEnable = true;
 #endif

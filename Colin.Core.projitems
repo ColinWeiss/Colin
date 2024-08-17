@@ -55,6 +55,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IDisposeControllable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />

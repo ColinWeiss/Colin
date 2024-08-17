@@ -5,7 +5,7 @@ namespace Colin.Core.IO
 {
   public sealed class FileDropProcessor : GameComponent
   {
-    internal FileDropProcessor() : base(CoreInfo.Engine) { }
+    internal FileDropProcessor() : base(CoreInfo.Core) { }
     private static FileDropProcessor _instance;
     public static FileDropProcessor Instance
     {

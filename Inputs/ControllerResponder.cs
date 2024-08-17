@@ -7,7 +7,7 @@ namespace Colin.Core.Inputs
   /// </summary>
   public class ControllerResponder : GameComponent, ISingleton
   {
-    public ControllerResponder() : base(CoreInfo.Engine) { }
+    public ControllerResponder() : base(CoreInfo.Core) { }
 
     public static GamePadState state;
 

@@ -23,11 +23,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public void Bind(Div content, Div contentContainer, Div response)
     {
       if (Response is not null)
-        Response.Events.Hover -= WheelEvent;
+        Response.Events.UnconditionalHover -= WheelEvent;
       Content = content;
       ContentContainer = contentContainer;
       Response = response;
-      Response.Events.Hover += WheelEvent;
+      Response.Events.UnconditionalHover += WheelEvent;
     }
     private void WheelEvent(MouseEventArgs args)
     {

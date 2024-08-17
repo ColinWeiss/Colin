@@ -47,11 +47,11 @@ namespace Colin.Core
     {
       get
       {
-        return CoreInfo.Engine.TargetFrame;
+        return CoreInfo.Core.TargetFrame;
       }
       set
       {
-        CoreInfo.Engine.TargetFrame = value;
+        CoreInfo.Core.TargetFrame = value;
       }
     }
 
@@ -62,11 +62,11 @@ namespace Colin.Core
     {
       get
       {
-        return CoreInfo.Engine.IsMouseVisible;
+        return CoreInfo.Core.IsMouseVisible;
       }
       set
       {
-        CoreInfo.Engine.IsMouseVisible = value;
+        CoreInfo.Core.IsMouseVisible = value;
       }
     }
 

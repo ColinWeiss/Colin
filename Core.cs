@@ -12,11 +12,6 @@ namespace Colin.Core
 
     public bool Visiable { get; set; } = true;
 
-    /// <summary>
-    /// 指示当前活跃场景.
-    /// </summary>
-    public Scene CurrentScene { get; internal set; }
-
     public Preparator Preparator { get; private set; }
 
     private int _targetFrame = 60;
@@ -63,50 +58,6 @@ namespace Colin.Core
       IsFixedTimeStep = true;
     }
 
-    /// <summary>
-    /// 切换场景.
-    /// </summary>
-    /// <param name="scene">要切换到的场景对象.</param>
-    public void SetScene(Scene scene = null)
-    {
-      if (scene is null)
-      {
-        if (CurrentScene.InitializeOnSwitch)
-        {
-          Window.ClientSizeChanged -= CurrentScene.InitRenderTarget;
-          Window.OrientationChanged -= CurrentScene.InitRenderTarget;
-        }
-        Components.Remove(CurrentScene);
-        CurrentScene?.Dispose();
-        CurrentScene = null;
-        Components.Clear();
-        Components.Add(Singleton.Get<ControllerResponder>());
-        Components.Add(Singleton.Get<MouseResponder>());
-        Components.Add(Singleton.Get<KeyboardResponder>());
-        Components.Add(SpritePool.Instance);
-     //   GC.Collect();
-        return;
-      }
-      if (CurrentScene != null)
-      {
-        if (CurrentScene.InitializeOnSwitch)
-        {
-          Window.ClientSizeChanged -= CurrentScene.InitRenderTarget;
-          Window.OrientationChanged -= CurrentScene.InitRenderTarget;
-        }
-        Components.Remove(CurrentScene);
-      }
-    //  CurrentScene?.Dispose();
-      Components.Clear();
-      Components.Add(Singleton.Get<ControllerResponder>());
-      Components.Add(Singleton.Get<MouseResponder>());
-      Components.Add(Singleton.Get<KeyboardResponder>());
-      Components.Add(SpritePool.Instance);
-      Components.Add(scene);
-      CurrentScene = scene;
-     // GC.Collect();
-    }
-
     protected override sealed void Initialize()
     {
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
@@ -114,6 +65,11 @@ namespace Colin.Core
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
+      Components.Add(Singleton.Get<SceneManager>());
+      Components.Add(Singleton.Get<ControllerResponder>());
+      Components.Add(Singleton.Get<MouseResponder>());
+      Components.Add(Singleton.Get<KeyboardResponder>());
+      Components.Add(SpritePool.Instance);
       Components.Add(FileDropProcessor.Instance);
       DoInitialize();
       base.Initialize();
@@ -142,7 +98,7 @@ namespace Colin.Core
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
       if (!Started)
       {
-        SetScene(Preparator);
+        SceneManager.SetScene(Preparator);
         Started = true;
       }
       CoreInfo.GetInformationFromDevice(gameTime);

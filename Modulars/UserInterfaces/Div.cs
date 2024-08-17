@@ -263,6 +263,7 @@
       ScissorTestEnable = true,
     };
 
+
     /// <summary>
     /// 执行划分元素的渲染.
     /// </summary>
@@ -278,14 +279,27 @@
         batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null);
         device.Clear(Color.Transparent);
       }
+
       renderer?.DoRender(device, batch);//渲染器进行渲染.
+
+      Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
       if (Layout.ScissorEnable)
       {
-        device.ScissorRectangle = Layout.ScissorRectangle;
         batch.End();
+        device.ScissorRectangle = Layout.ScissorRectangle;
         batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, ScissiorRasterizer);
       }
       RenderChildren(device, batch);
+      if (Layout.ScissorEnable)
+      {
+        batch.End();
+        if (parent.Layout.ScissorEnable)
+          batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, parent.ScissiorRasterizer);
+        else
+          UserInterface.BatchNormalBegin(batch);
+      }
+      device.ScissorRectangle = Layout.ScissorRectangleCache;
+
       if (IsCanvas)
       {
         batch.End();

@@ -8,7 +8,7 @@ namespace Colin.Core.Inputs
   /// </summary>
   public sealed class MouseResponder : GameComponent, ISingleton
   {
-    public MouseResponder() : base(CoreInfo.Engine) { }
+    public MouseResponder() : base(CoreInfo.Core) { }
 
     public static bool LeftClickBefore =>
       State.LeftButton == ButtonState.Pressed &&

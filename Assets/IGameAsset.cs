@@ -31,8 +31,8 @@
       _result = _result.Replace(".xnb", "");
       _result = _result.Replace(".ttf", "");
       _result = _result.Replace(".otf", "");
-      _result = _result.Replace(string.Concat(CoreInfo.Engine.Content.RootDirectory, "/"), "");
-      _result = _result.Replace(string.Concat(CoreInfo.Engine.Content.RootDirectory, "\\"), "");
+      _result = _result.Replace(string.Concat(CoreInfo.Core.Content.RootDirectory, "/"), "");
+      _result = _result.Replace(string.Concat(CoreInfo.Core.Content.RootDirectory, "\\"), "");
       return _result;
     }
   }
