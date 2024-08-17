@@ -39,6 +39,16 @@ namespace Colin.Core.Modulars.UserInterfaces
       set => paddingLeft = value;
     }
 
+    private float paddingRight;
+    /// <summary>
+    /// 指示划分元素的右侧填充值.
+    /// </summary>
+    public float PaddingRight
+    {
+      get => paddingRight;
+      set => paddingRight = value;
+    }
+
     private float paddingTop;
     /// <summary>
     /// 指示划分元素的顶部填充值.
@@ -47,6 +57,16 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       get => paddingTop;
       set => paddingTop = value;
+    }
+
+    /// <summary>
+    /// 指示划分元素的底部填充值.
+    /// </summary>
+    private float paddingBottom;
+    public float PaddingBottom
+    {
+      get => paddingBottom;
+      set => paddingBottom = value;
     }
 
     private Vector2 location;

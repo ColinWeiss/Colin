@@ -76,11 +76,14 @@ namespace Colin.Core.Modulars.UserInterfaces
     public void DoInitialize()
     {
       Mouse.Hover += (s, e) =>
+      {
+        if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position))
+        {
+          UnconditionalHover?.Invoke(e);
+        }
+      };
+      Mouse.Hover += (s, e) =>
           {
-            if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position))
-            {
-              UnconditionalHover?.Invoke(e);
-            }
             if (Div.Interact.Interaction && !Div.Interact.InteractionLast)
               HoverStart?.Invoke(e);
             Invoke(e, Hover, true);

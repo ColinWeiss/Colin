@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
@@ -19,22 +20,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     private Div Content;
     private Div ContentContainer;
-    private Div Response;
-    public void Bind(Div content, Div contentContainer, Div response)
+    public void Bind(Div content, Div contentContainer)
     {
-      if (Response is not null)
-        Response.Events.UnconditionalHover -= WheelEvent;
+      if (ContentContainer is not null)
+        ContentContainer.Events.UnconditionalHover -= WheelEvent;
       Content = content;
       ContentContainer = contentContainer;
-      Response = response;
-      Response.Events.UnconditionalHover += WheelEvent;
+      ContentContainer.Events.UnconditionalHover += WheelEvent;
     }
     private void WheelEvent(MouseEventArgs args)
     {
       if (MouseResponder.ScrollDown)
-        Block.Layout.Top -= 2;
+        Block.Layout.Top -= 4;
       else if (MouseResponder.ScrollUp)
-        Block.Layout.Top += 2;
+        Block.Layout.Top += 4;
     }
     public override void DivInit()
     {
@@ -64,22 +63,32 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     }
     public override void OnUpdate(GameTime time)
     {
-      Block.Layout.Left = Math.Clamp(Block.Layout.Left, 0, Layout.Width - Block.Layout.Width);
-      Block.Layout.Top = Math.Clamp(Block.Layout.Top, 0, Layout.Height - Block.Layout.Height);
+      Block.Layout.Left = Math.Clamp(Block.Layout.Left, Layout.PaddingLeft, Layout.Width - Layout.PaddingRight - Block.Layout.Width);
+      Block.Layout.Top = Math.Clamp(Block.Layout.Top, Layout.PaddingTop, Layout.Height - Layout.PaddingBottom - Block.Layout.Height);
 
-      Precent = Block.Layout.Location / (Layout.Size - Block.Layout.Size);
+      Precent =
+        (Block.Layout.Location - new Vector2(Layout.PaddingLeft, Layout.PaddingTop))
+        /
+        (Layout.Size - Block.Layout.Size - new Vector2(Layout.PaddingLeft + Layout.PaddingRight, Layout.PaddingTop + Layout.PaddingBottom));
 
       if (Content is not null && ContentContainer is not null)
       {
         if (Content.Layout.Width > ContentContainer.Layout.Width)
-          Content.Layout.Left = (int)-(Precent.X * (Content.Layout.Width - ContentContainer.Layout.Width));
+          Content.Layout.Left = (int)-(Precent.X * (Content.Layout.Width - ContentContainer.Layout.Width)) + ContentContainer.Layout.Left;
         else
-          Content.Layout.Left = 0;
+          Content.Layout.Left = ContentContainer.Layout.Left;
 
         if (Content.Layout.Height > ContentContainer.Layout.Height)
-          Content.Layout.Top = (int)-(Precent.Y * (Content.Layout.Height - ContentContainer.Layout.Height));
+        {
+          Content.Layout.Top = (int)-(Precent.Y * (Content.Layout.Height - ContentContainer.Layout.Height)) + ContentContainer.Layout.Top;
+        }
         else
-          Content.Layout.Top = 0;
+          Content.Layout.Top = ContentContainer.Layout.Top;
+
+        if (Content.Controller is LinearMenuController controller)
+        {
+          Content.Layout.Top = (int)-(Precent.Y * (controller.TotalSize.Y - ContentContainer.Layout.Height)) + ContentContainer.Layout.Top;
+        }
       }
       base.OnUpdate(time);
     }

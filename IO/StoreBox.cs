@@ -1,20 +1,25 @@
-﻿using System.Runtime.Serialization;
+﻿using Colin.Core.Modulars.UserInterfaces;
+using System.Runtime.Serialization;
 using System.Text.Json;
 
 namespace Colin.Core.IO
 {
   public class StoreBox : ISerializable
   {
-    private Dictionary<string, object> _datas = new Dictionary<string, object>();
-    public Dictionary<string, object> Datas => _datas;
+    private Dictionary<string, object> _datas;
+   // public Dictionary<string, object> Datas => _datas;
 
-    public object this[string index]
+    public object this[int index] => _datas.ElementAt(index).Value;
+    public object this[string key]
     {
-      get => _datas[index];
-      set => _datas[index] = value;
+      get => _datas[key];
+      set => _datas[key] = value;
     }
 
-    public StoreBox() { }
+    public int Count => _datas.Count;
+
+    public StoreBox() { _datas = new Dictionary<string, object>(); }
+    public StoreBox(Dictionary<string, object> dic) { _datas = dic; }
     public StoreBox(SerializationInfo info, StreamingContext context)
     {
       _datas = (Dictionary<string, object>)info.GetValue("_datas", typeof(Dictionary<string, object>));
@@ -22,7 +27,7 @@ namespace Colin.Core.IO
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-      info.AddValue("Datas", _datas);
+      info.AddValue("_datas", _datas);
     }
 
     /// <summary>
@@ -34,7 +39,9 @@ namespace Colin.Core.IO
       string _fullPath = Path.Combine(BasicsDirectory.DataDir, fileName);
       using (FileStream fileStream = new FileStream(_fullPath, FileMode.OpenOrCreate))
       {
-        JsonSerializer.Serialize(fileStream, _datas);
+        JsonSerializerOptions options = new JsonSerializerOptions();
+        options.WriteIndented = true;
+        JsonSerializer.Serialize(fileStream, _datas, options);
       }
     }
 
@@ -50,10 +57,13 @@ namespace Colin.Core.IO
       }
     }
 
-    public T Get<T>(string key) where T : ISerializable
+    public StoreBox GetBox(string key)
     {
       if (_datas.TryGetValue(key, out object value))
-        return (T)value;
+      {
+        Dictionary<string, object> dic = JsonSerializer.Deserialize<Dictionary<string, object>>((JsonElement)value);
+        return new StoreBox(dic);
+      }
       else
         return default;
     }
@@ -89,6 +99,11 @@ namespace Colin.Core.IO
     public string GetString(string key) => (string)Get(key);
 
     public char GetChar(string key) => (char)Get(key);
+
+    public void Add(string key, StoreBox box)
+    {
+      _datas.Add(key, box._datas);
+    }
 
     public void Add(string key, ISerializable value)
     {

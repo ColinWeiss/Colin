@@ -34,6 +34,7 @@ namespace Colin.Core.Common
       Reset?.Invoke();
       MouseEventArgs mouseEvent = new MouseEventArgs("MouseEvent");
       Mouse.Response(mouseEvent);
+
       Keys[] lasts = KeyboardResponder.StateLast.GetPressedKeys();
       Keys[] current = KeyboardResponder.State.GetPressedKeys();
       KeyEventArgs keysEvent;

@@ -2,6 +2,11 @@
 {
   public static class RectangleExt
   {
+    public static RectangleF ToRectangleF(this Rectangle rectangle)
+    {
+      return new RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+    }
+
     /// <summary>
     /// 获取矩形左边缘的中心位置.
     /// </summary>
