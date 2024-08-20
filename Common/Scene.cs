@@ -1,20 +1,9 @@
-﻿/* 项目“DeltaMachine.Desktop”的未合并的更改
-在此之前:
-using Colin.Core.Collections;
-using Colin.Core.Extensions;
-using Colin.Core.Assets;
-在此之后:
-using Colin.Core.Assets;
-using Colin.Core.Collections;
-using Colin.Core.Extensions;
-*/
-
-namespace Colin.Core.Common
+﻿namespace Colin.Core.Common
 {
   /// <summary>
   /// 场景.
   /// </summary>
-  public class Scene : DrawableGameComponent, IDisposeControllable, IScene
+  public class Scene : DrawableGameComponent, IScene
   {
     public SceneCamera SceneCamera;
 
@@ -24,6 +13,10 @@ namespace Colin.Core.Common
     /// </summary>
     public SceneModuleList Modules => _components;
 
+    /// <summary>
+    /// 指示场景是否可以被回收.
+    /// <br>[!] 默认为 <see langword="true"/>, 若需要控制 Dispose 时序, 则需要先设为 <see langword="false"/>, 再按需操作为 <see langword="true"/>.</br>
+    /// </summary>
     public bool CanDispose { get; set; }
 
     /// <summary>
@@ -42,6 +35,7 @@ namespace Colin.Core.Common
 
     public Scene() : base(CoreInfo.Core)
     {
+      CanDispose = true;
       Events = new SceneEventResponder();
       // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
     }

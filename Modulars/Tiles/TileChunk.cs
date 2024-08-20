@@ -146,6 +146,13 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    private Point?[] _directs;
+    /// <summary>
+    /// 指示物块指针.
+    /// 元素为指向物块的世界坐标.
+    /// </summary>
+    public ref Point?[] Directs => ref _directs;
+
     public TileChunk(Tile tile)
     {
       Tile = tile;
@@ -165,6 +172,7 @@ namespace Colin.Core.Modulars.Tiles
     public void DoInitialize()
     {
       Infos = new TileInfo[Width * Height * Depth];
+      _directs = new Point?[Width * Height * Depth];
       for (int count = 0; count < Infos.Length; count++)
         CreateInfo(count);
     }
@@ -185,6 +193,7 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].Empty = true;
       Infos[index].Index = index;
       Infos[index].Scripts = new Dictionary<Type, TileScript>();
+      _directs[index] = null;
     }
     /// <summary>
     /// 在指定坐标处创建物块信息.
@@ -221,22 +230,29 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    private bool _loading = false;
+    public bool Loading => _loading;
+
+    private bool _saved = false;
+    public bool Saved => _saved;
+
     public void AsyncLoadChunk(string path)
     {
+      _loading = true;
+      DoInitialize();
       Task.Run(() =>
       {
         using (FileStream fileStream = new FileStream(path, FileMode.Open))
         {
           using (BinaryReader reader = new BinaryReader(fileStream))
           {
-            DoInitialize();
             ref TileInfo info = ref this[0, 0, 0];
             string typeName;
             for (int count = 0; count < Infos.Length; count++)
             {
               info = ref this[count];
               if (count % TileOption.ChunkWidth == 0)
-                Thread.Sleep(10);
+                Thread.Sleep(8);
               info.LoadStep(reader);
               if (!info.Empty)
               {
@@ -251,9 +267,69 @@ namespace Colin.Core.Modulars.Tiles
               }
             }
           }
+          _loading = false;
         }
       });
     }
+
+    public void LoadChunk(string path)
+    {
+      using (FileStream fileStream = new FileStream(path, FileMode.Open))
+      {
+        using (BinaryReader reader = new BinaryReader(fileStream))
+        {
+          DoInitialize();
+          ref TileInfo info = ref this[0, 0, 0];
+          string typeName;
+          for (int count = 0; count < Infos.Length; count++)
+          {
+            info = ref this[count];
+            info.LoadStep(reader);
+            if (!info.Empty)
+            {
+              typeName = CodeResources<TileBehavior>.GetTypeNameFromHash(reader.ReadInt32());
+              if (typeName is not null)
+              {
+                info.Behavior = CodeResources<TileBehavior>.GetFromTypeName(typeName);
+                info.Behavior.Tile = Tile;
+                info.Behavior.OnInitialize(ref info); //执行行为初始化放置
+                Refresher.Mark(info.WorldCoord3, 0);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    public void AsyncSaveChunk(string path)
+    {
+      Task.Run(() =>
+      {
+        using (FileStream fileStream = new FileStream(path, FileMode.Create))
+        {
+          using (BinaryWriter writer = new BinaryWriter(fileStream))
+          {
+            int? hash;
+            TileBehavior behavior;
+            for (int count = 0; count < Infos.Length; count++)
+            {
+              behavior = Infos[count].Behavior;
+              Infos[count].SaveStep(writer);
+              if (!Infos[count].Empty && behavior is not null)
+              {
+                hash = CodeResources<TileBehavior>.GetHashFromTypeName(behavior.Identifier);
+                if (hash.HasValue)
+                {
+                  writer.Write(hash.Value);
+                }
+              }
+            }
+          }
+        }
+        _saved = true;
+      });
+    }
+
     public void SaveChunk(string path)
     {
       try
@@ -279,6 +355,7 @@ namespace Colin.Core.Modulars.Tiles
             }
           }
         }
+        _saved = true;
       }
       catch
       {

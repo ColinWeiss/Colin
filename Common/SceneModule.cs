@@ -10,6 +10,8 @@ namespace Colin.Core.Common
 
     public bool Enable { get; set; }
 
+    public bool CanDispose { get; set; }
+
     public virtual void DoInitialize()
     {
     }

@@ -65,11 +65,12 @@
       return null;
     }
 
+    private float _disposePromptTimer;
     public override void Update(GameTime gameTime)
     {
       if (_toBeUsedScene is not null)
       {
-        if(_currentScene is not null)
+        if (_currentScene is not null)
         {
           if (_currentScene.InitializeOnSwitch)
           {
@@ -77,6 +78,16 @@
             CoreInfo.Core.Window.OrientationChanged -= _currentScene.InitRenderTarget;
           }
           CoreInfo.Core.Components.Remove(_currentScene);
+          while (!_currentScene.CanDispose)
+          {
+            _disposePromptTimer += Time.UnscaledDeltaTime;
+            if (_disposePromptTimer >= 1)
+            {
+              Console.WriteLine(_currentScene.GetType().Name );
+              _disposePromptTimer -= 1;
+            }
+          }
+          _currentScene?.Dispose();
         }
         CoreInfo.Core.Components.Add(_toBeUsedScene);
         _currentScene = _toBeUsedScene;

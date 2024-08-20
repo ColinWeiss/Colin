@@ -53,7 +53,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\IDisposeControllable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
@@ -67,6 +66,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\IPreExecution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\Preparator.cs" />
