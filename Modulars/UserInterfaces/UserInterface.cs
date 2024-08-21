@@ -50,6 +50,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
+      device.Clear(Color.Transparent);
       BatchNormalBegin(batch);
       Container?.DoRender(device, batch);
       batch.End();

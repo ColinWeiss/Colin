@@ -1,8 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using Colin.Core.IO;
+using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Tiles
 {
-  public class Tile : ISceneModule, IRenderableISceneModule
+  public class Tile : ISceneModule, IRenderableISceneModule, IOStep
   {
     public int Depth { get; private set; }
 
@@ -209,6 +210,14 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
+    {
+    }
+
+    public void LoadStep(BinaryReader reader)
+    {
+    }
+
+    public void SaveStep(BinaryWriter writer)
     {
     }
   }

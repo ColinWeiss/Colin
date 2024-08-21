@@ -48,19 +48,20 @@
       IRenderableISceneModule renderMode;
       RenderTarget2D frameRenderLayer;
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
-      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Black);
+      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
       for (int count = 0; count < RenderableComponents.Values.Count; count++)
       {
         renderMode = RenderableComponents.Values.ElementAt(count);
+        frameRenderLayer = renderMode.RawRt;
+        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
+        CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
         if (renderMode.RawRtVisible)
         {
-          frameRenderLayer = renderMode.RawRt;
-          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
-          CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
           renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
         }
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
       for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
       {
         renderMode = RenderableComponents.Values.ElementAt(count);
@@ -148,6 +149,11 @@
       return sceneMode;
     }
 
+    public KeyValuePair<Type,ISceneModule> ElementAt(int index)
+    {
+      return Components.ElementAt(index);
+    }
+
     public void Add(ISceneModule sceneMode)
     {
       sceneMode.Scene = Scene;
@@ -192,7 +198,13 @@
 
     public void Dispose()
     {
-
+      for (int count = 0; count < Components.Count; count++)
+        Components.Values.ElementAt(count).Dispose();
+      for (int count = 0; count < RenderableComponents.Count; count++)
+      {
+        RenderableComponents.Values.ElementAt(count).RawRt.Dispose();
+        RenderableComponents.Values.ElementAt(count).Dispose();
+      }
     }
   }
 }

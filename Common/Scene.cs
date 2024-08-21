@@ -1,9 +1,11 @@
-﻿namespace Colin.Core.Common
+﻿using Colin.Core.IO;
+
+namespace Colin.Core.Common
 {
   /// <summary>
   /// 场景.
   /// </summary>
-  public class Scene : DrawableGameComponent, IScene
+  public class Scene : DrawableGameComponent, IScene, IOStep
   {
     public SceneCamera SceneCamera;
 
@@ -146,14 +148,7 @@
     {
       if (disposing)
       {
-        for (int count = 0; count < Modules.Components.Count; count++)
-          Modules.Components.Values.ElementAt(count).Dispose();
-        for (int count = 0; count < Modules.RenderableComponents.Count; count++)
-        {
-          Modules.RenderableComponents.Values.ElementAt(count).RawRt.Dispose();
-          Modules.RenderableComponents.Values.ElementAt(count).Dispose();
-        }
-        Modules.Clear();
+        Modules.Dispose();
       }
       if (Game.Window is not null)
       {
@@ -162,6 +157,32 @@
         CoreInfo.IMEHandler.TextInput -= Events.OnTextInput;
       }
       base.Dispose(disposing);
+    }
+
+    public void LoadStep(BinaryReader reader)
+    {
+      ISceneModule module;
+      for (int count = 0; count < Modules.Count; count++)
+      {
+        module = Modules.ElementAt(count).Value;
+        if (module is IOStep io)
+        {
+          io.LoadStep(reader);
+        }
+      }
+    }
+
+    public void SaveStep(BinaryWriter writer)
+    {
+      ISceneModule module;
+      for (int count = 0; count < Modules.Count; count++)
+      {
+        module = Modules.ElementAt(count).Value;
+        if (module is IOStep io)
+        {
+          io.SaveStep(writer);
+        }
+      }
     }
   }
 }

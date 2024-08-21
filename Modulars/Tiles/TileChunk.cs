@@ -274,11 +274,11 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadChunk(string path)
     {
+      DoInitialize();
       using (FileStream fileStream = new FileStream(path, FileMode.Open))
       {
         using (BinaryReader reader = new BinaryReader(fileStream))
         {
-          DoInitialize();
           ref TileInfo info = ref this[0, 0, 0];
           string typeName;
           for (int count = 0; count < Infos.Length; count++)

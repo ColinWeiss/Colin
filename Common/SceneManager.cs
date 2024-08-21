@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Common
+﻿using DeltaMachine.Core.Scenes.Loaders;
+
+namespace Colin.Core.Common
 {
   public class SceneManager : GameComponent, ISingleton
   {
@@ -78,18 +80,20 @@
             CoreInfo.Core.Window.OrientationChanged -= _currentScene.InitRenderTarget;
           }
           CoreInfo.Core.Components.Remove(_currentScene);
+          CoreInfo.Core.Components.Remove(Singleton.Get<Loader>());
           while (!_currentScene.CanDispose)
           {
             _disposePromptTimer += Time.UnscaledDeltaTime;
             if (_disposePromptTimer >= 1)
             {
-              Console.WriteLine(_currentScene.GetType().Name );
+              Console.WriteLine("正在保存场景: " + _currentScene.GetType().Name);
               _disposePromptTimer -= 1;
             }
           }
           _currentScene?.Dispose();
         }
         CoreInfo.Core.Components.Add(_toBeUsedScene);
+        CoreInfo.Core.Components.Add(Singleton.Get<Loader>());
         _currentScene = _toBeUsedScene;
         _toBeUsedScene = null;
       }

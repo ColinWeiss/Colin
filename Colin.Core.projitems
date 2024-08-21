@@ -53,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
