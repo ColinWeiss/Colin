@@ -42,7 +42,7 @@ namespace Colin.Core.Common
       // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
     }
 
-    public override sealed void Initialize()
+    public override void Initialize()
     {
       Started = false;
       if (InitializeOnSwitch)
@@ -54,8 +54,8 @@ namespace Colin.Core.Common
         _components.Add(Events);
         _components.Add(SceneCamera = new SceneCamera());
         SceneInit();
-        Game.Window.ClientSizeChanged += Events.InvokeSizeChange;
-        Game.Window.OrientationChanged += Events.InvokeSizeChange;
+        CoreInfo.Core.Window.ClientSizeChanged += Events.InvokeSizeChange;
+        CoreInfo.Core.Window.OrientationChanged += Events.InvokeSizeChange;
         CoreInfo.IMEHandler.TextInput += Events.OnTextInput;
       }
       base.Initialize();
@@ -146,14 +146,12 @@ namespace Colin.Core.Common
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing)
+      Modules.Dispose();
+      SceneRenderTarget?.Dispose();
+      if (CoreInfo.Core.Window is not null)
       {
-        Modules.Dispose();
-      }
-      if (Game.Window is not null)
-      {
-        Game.Window.ClientSizeChanged -= Events.InvokeSizeChange;
-        Game.Window.OrientationChanged -= Events.InvokeSizeChange;
+        CoreInfo.Core.Window.ClientSizeChanged -= Events.InvokeSizeChange;
+        CoreInfo.Core.Window.OrientationChanged -= Events.InvokeSizeChange;
         CoreInfo.IMEHandler.TextInput -= Events.OnTextInput;
       }
       base.Dispose(disposing);

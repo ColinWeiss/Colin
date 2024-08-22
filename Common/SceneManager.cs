@@ -1,8 +1,9 @@
-﻿using DeltaMachine.Core.Scenes.Loaders;
+﻿using DeltaMachine.Core.Repairs;
+using DeltaMachine.Core.Scenes.Loaders;
 
 namespace Colin.Core.Common
 {
-  public class SceneManager : GameComponent, ISingleton
+  public class SceneManager : ISingleton
   {
     private static Scene _currentScene;
     public static Scene CurrentScene => _currentScene;
@@ -11,7 +12,7 @@ namespace Colin.Core.Common
 
     private static Dictionary<string, Scene> _permanentScenes = new Dictionary<string, Scene>();
 
-    public SceneManager() : base(CoreInfo.Core) { }
+    public SceneManager() { }
 
     public static T SetScene<T>() where T : Scene, new()
     {
@@ -24,6 +25,7 @@ namespace Colin.Core.Common
       _toBeUsedScene = scene;
     }
 
+    /*
     public static void AddPermanentScene(string sceneIdentifier, Scene scene)
     {
       if (_permanentScenes.ContainsKey(sceneIdentifier))
@@ -37,7 +39,8 @@ namespace Colin.Core.Common
     {
       if (_permanentScenes.TryGetValue(sceneIdentifier, out Scene scene))
         SetScene(scene);
-      Console.WriteLine("Error", "场景标识符错误.");
+      else
+        Console.WriteLine("Error", "场景标识符错误.");
     }
     public static void SetPermanentScene(string sceneIdentifier, Scene scene)
     {
@@ -66,9 +69,10 @@ namespace Colin.Core.Common
       }
       return null;
     }
+    */
 
-    private float _disposePromptTimer;
-    public override void Update(GameTime gameTime)
+    private static float _disposePromptTimer;
+    public static void Update(GameTime gameTime)
     {
       if (_toBeUsedScene is not null)
       {
@@ -90,14 +94,14 @@ namespace Colin.Core.Common
               _disposePromptTimer -= 1;
             }
           }
-          _currentScene?.Dispose();
+          if(_permanentScenes.ContainsValue(_currentScene) is false)
+            _currentScene?.Dispose();
         }
         CoreInfo.Core.Components.Add(_toBeUsedScene);
         CoreInfo.Core.Components.Add(Singleton.Get<Loader>());
         _currentScene = _toBeUsedScene;
         _toBeUsedScene = null;
       }
-      base.Update(gameTime);
     }
   }
 }

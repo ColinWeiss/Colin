@@ -30,6 +30,17 @@ namespace Colin.Core
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
     }
 
+  /*  private List<CoreModule> Modules = new List<CoreModule>();
+    public void AddModule(CoreModule module)
+    {
+      module.DoInitialize();
+      Modules.Add(module);
+    }
+    public void RemoveModule(CoreModule module)
+    {
+      Modules.Remove(module);
+    }*/
+
     public Core()
     {
       //执行程序检查程序.
@@ -66,7 +77,6 @@ namespace Colin.Core
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
-      Components.Add(Singleton.Get<SceneManager>());
       Components.Add(Singleton.Get<ControllerResponder>());
       Components.Add(Singleton.Get<MouseResponder>());
       Components.Add(Singleton.Get<KeyboardResponder>());
@@ -75,6 +85,7 @@ namespace Colin.Core
       DoInitialize();
       base.Initialize();
     }
+
     public virtual void DoInitialize() { }
 
     protected override sealed void LoadContent()
@@ -103,6 +114,7 @@ namespace Colin.Core
         Started = true;
       }
       CoreInfo.GetInformationFromDevice(gameTime);
+      SceneManager.Update(gameTime);
       DoUpdate();
       base.Update(gameTime);
     }
@@ -113,14 +125,23 @@ namespace Colin.Core
       if (!Visiable)
         return;
       GraphicsDevice.Clear(Color.Black);
+
+    /*  CoreModule module;
+      for (int count = 0; count < Modules.Count; count++)
+      {
+        module = Modules[count];
+        module.DoRender(GraphicsDevice, CoreInfo.Batch);
+      }*/
+
       base.Draw(gameTime);
       DoRender();
     }
     public virtual void DoRender() { }
 
-    protected override void OnExiting(object sender, EventArgs args)
+    protected override void OnExiting(object sender, ExitingEventArgs args)
     {
       CoreInfo.Config.Save();
+      args.Cancel = false;
       base.OnExiting(sender, args);
     }
 

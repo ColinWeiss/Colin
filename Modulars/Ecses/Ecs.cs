@@ -1,5 +1,6 @@
 ﻿using Colin.Core.Events;
 using Colin.Core.Modulars.Tiles;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -146,6 +147,13 @@ namespace Colin.Core.Modulars.Ecses
 
     public void Dispose()
     {
+      for (int count = 0; count < Sections.Length; count++)
+      {
+        if (Sections[count] is IDisposable disposable)
+        {
+          disposable.Dispose();
+        }
+      }
     }
   }
 }
