@@ -7,6 +7,8 @@ namespace Colin.Core.Common
   /// </summary>
   public class Scene : DrawableGameComponent, IScene, IOStep
   {
+    public string Name { get; set; }
+
     public SceneCamera SceneCamera;
 
     private SceneModuleList _components;

@@ -1,12 +1,5 @@
-﻿using Colin.Core.Common;
-using Colin.Core.Events;
-using Colin.Core.Resources;
-using System;
+﻿using Colin.Core.Resources;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms.Design.Behavior;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -58,7 +51,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public void Mark<T>(Point3 coord) where T : TileBehavior
     {
-      _places.Enqueue((coord, CodeResources.Get<TileBehavior,T>()));
+      _places.Enqueue((coord, CodeResources.Get<TileBehavior, T>()));
     }
     public void Mark<T>(int x, int y, int z) where T : TileBehavior =>
       Mark<T>(new Point3(x, y, z));

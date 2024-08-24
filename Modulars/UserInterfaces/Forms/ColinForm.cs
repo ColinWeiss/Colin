@@ -2,7 +2,6 @@
 using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {

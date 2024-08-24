@@ -1,6 +1,4 @@
 ﻿using Colin.Core.Events;
-using Colin.Core.Modulars.Tiles;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -97,9 +95,9 @@ namespace Colin.Core.Modulars.Ecses
         _system.DoRender(device, batch);
       }
     }
-    public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) 
+    public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
     {
-     // device.SetRenderTarget(LightingAdpter.RawRt);
+      // device.SetRenderTarget(LightingAdpter.RawRt);
     }
 
     /// <summary>

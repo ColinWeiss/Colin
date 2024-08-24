@@ -36,7 +36,7 @@
       _sprite = Sprite.Get(path);
       return this;
     }
-    public void SetCut(int x , int y)
+    public void SetCut(int x, int y)
     {
       Cut = new Point(x, y);
     }

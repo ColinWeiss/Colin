@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
-
-namespace Colin.Core.Graphics.Tweens
+﻿namespace Colin.Core.Graphics.Tweens
 {
   public abstract class Tweener<T>
   {

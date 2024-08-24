@@ -1,6 +1,5 @@
 ﻿using Colin.Core.Resources;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Colin.Core.Preparation

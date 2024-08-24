@@ -2,8 +2,6 @@
 using FontStashSharp;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
-using System;
-using System.Diagnostics;
 
 namespace Colin.Core
 {

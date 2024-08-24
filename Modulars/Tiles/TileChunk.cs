@@ -1,8 +1,6 @@
 ﻿using Colin.Core.Resources;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms.Design.Behavior;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -239,13 +237,13 @@ namespace Colin.Core.Modulars.Tiles
     public void AsyncLoadChunk(string path)
     {
       _loading = true;
-      DoInitialize();
       Task.Run(() =>
       {
         using (FileStream fileStream = new FileStream(path, FileMode.Open))
         {
           using (BinaryReader reader = new BinaryReader(fileStream))
           {
+            DoInitialize();
             ref TileInfo info = ref this[0, 0, 0];
             string typeName;
             for (int count = 0; count < Infos.Length; count++)

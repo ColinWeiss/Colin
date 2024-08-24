@@ -1,5 +1,4 @@
-﻿using DeltaMachine.Core.Repairs;
-using DeltaMachine.Core.Scenes.Loaders;
+﻿using DeltaMachine.Core.Scenes.Loaders;
 
 namespace Colin.Core.Common
 {
@@ -94,7 +93,7 @@ namespace Colin.Core.Common
               _disposePromptTimer -= 1;
             }
           }
-          if(_permanentScenes.ContainsValue(_currentScene) is false)
+          if (_permanentScenes.ContainsValue(_currentScene) is false)
             _currentScene?.Dispose();
         }
         CoreInfo.Core.Components.Add(_toBeUsedScene);

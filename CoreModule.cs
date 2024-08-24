@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core
+﻿namespace Colin.Core
 {
   public class CoreModule
   {

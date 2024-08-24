@@ -1,6 +1,4 @@
-﻿using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 划分元素的布局信息.

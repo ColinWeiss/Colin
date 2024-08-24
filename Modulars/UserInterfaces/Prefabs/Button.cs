@@ -16,7 +16,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     }
     public override void DivInit()
     {
-      if(Renderer is null)
+      if (Renderer is null)
         BindRenderer<DivPixelRenderer>();
       Register(Label);
       base.DivInit();

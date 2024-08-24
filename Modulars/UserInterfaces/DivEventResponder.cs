@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using System;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {

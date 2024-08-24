@@ -1,8 +1,4 @@
-﻿using Colin.Core.Resources;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -32,7 +28,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref Tile[0, 0, 0];
       while (!_destructs.IsEmpty)
       {
-        if(_destructs.TryDequeue(out Point3 coord))
+        if (_destructs.TryDequeue(out Point3 coord))
         {
           info = ref Tile[coord];
           Handle(coord);

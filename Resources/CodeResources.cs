@@ -1,7 +1,6 @@
 ﻿using Colin.Core.Modulars.Tiles;
 using System.Reflection;
 using System.Text.Json;
-using System.Windows.Forms.Design.Behavior;
 
 namespace Colin.Core.Resources
 {

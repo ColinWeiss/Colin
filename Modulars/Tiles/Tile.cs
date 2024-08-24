@@ -155,10 +155,10 @@ namespace Colin.Core.Modulars.Tiles
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (targetChunk is not null)
-      targetChunk.Destruction(coords.tCoord.X, coords.tCoord.Y, z);
+        targetChunk.Destruction(coords.tCoord.X, coords.tCoord.Y, z);
     }
 
-    public void CreateEmptyChunk(Point coord, int? quantumLayer = null) => CreateEmptyChunk(coord.X, coord.Y , quantumLayer);
+    public void CreateEmptyChunk(Point coord, int? quantumLayer = null) => CreateEmptyChunk(coord.X, coord.Y, quantumLayer);
 
     /// <summary>
     /// 在指定坐标新创建一个空区块.

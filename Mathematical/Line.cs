@@ -48,7 +48,7 @@
         return 0;
     }
 
-    public float GetCross( Vector2 pos )
+    public float GetCross(Vector2 pos)
     {
       return (float)Math.Sqrt((End.X - Start.X) * (pos.X - Start.X) + (End.Y - Start.Y) * (pos.Y - Start.Y));
     }

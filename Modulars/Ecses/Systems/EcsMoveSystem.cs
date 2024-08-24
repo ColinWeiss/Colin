@@ -1,8 +1,4 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {

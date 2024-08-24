@@ -1,6 +1,5 @@
 ﻿using Colin.Core.IO;
 using Colin.Core.Preparation;
-using DeltaMachine.Core.Scenes.Loaders;
 using System.Reflection;
 
 namespace Colin.Core
@@ -30,16 +29,16 @@ namespace Colin.Core
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
     }
 
-  /*  private List<CoreModule> Modules = new List<CoreModule>();
-    public void AddModule(CoreModule module)
-    {
-      module.DoInitialize();
-      Modules.Add(module);
-    }
-    public void RemoveModule(CoreModule module)
-    {
-      Modules.Remove(module);
-    }*/
+    /*  private List<CoreModule> Modules = new List<CoreModule>();
+      public void AddModule(CoreModule module)
+      {
+        module.DoInitialize();
+        Modules.Add(module);
+      }
+      public void RemoveModule(CoreModule module)
+      {
+        Modules.Remove(module);
+      }*/
 
     public Core()
     {
@@ -126,12 +125,12 @@ namespace Colin.Core
         return;
       GraphicsDevice.Clear(Color.Black);
 
-    /*  CoreModule module;
-      for (int count = 0; count < Modules.Count; count++)
-      {
-        module = Modules[count];
-        module.DoRender(GraphicsDevice, CoreInfo.Batch);
-      }*/
+      /*  CoreModule module;
+        for (int count = 0; count < Modules.Count; count++)
+        {
+          module = Modules[count];
+          module.DoRender(GraphicsDevice, CoreInfo.Batch);
+        }*/
 
       base.Draw(gameTime);
       DoRender();

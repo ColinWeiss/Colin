@@ -43,7 +43,7 @@
         Matrix.CreateScale(Scale.X, Scale.Y, 0f) *
         Matrix.CreateTranslation(-Anchor.X * Scale.X, -Anchor.Y * Scale.Y, 0) *
         Matrix.CreateRotationZ(Rotation) *
-        Matrix.CreateTranslation(Anchor.X * Scale.X , Anchor.Y * Scale.Y , 0) *
+        Matrix.CreateTranslation(Anchor.X * Scale.X, Anchor.Y * Scale.Y, 0) *
         Matrix.CreateTranslation(Translation.X, Translation.Y, 0);
 
       if (Parent is not null)

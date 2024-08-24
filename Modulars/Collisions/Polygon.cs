@@ -20,7 +20,7 @@ namespace Colin.Core.Modulars.Collisions
 
     public float Rotation;
 
-    public Line GetLine(int index0 , int index1)
+    public Line GetLine(int index0, int index1)
     {
       return new Line(Vertices[index0], Vertices[index1]);
     }

@@ -149,7 +149,7 @@
       return sceneMode;
     }
 
-    public KeyValuePair<Type,ISceneModule> ElementAt(int index)
+    public KeyValuePair<Type, ISceneModule> ElementAt(int index)
     {
       return Components.ElementAt(index);
     }

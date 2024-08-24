@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -24,7 +21,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public override void DoUpdate(GameTime time)
     {
-      while(SaveQueue.Count > 0)
+      while (SaveQueue.Count > 0)
       {
         Point coord = SaveQueue.Dequeue();
 

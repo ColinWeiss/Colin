@@ -1,5 +1,4 @@
-﻿using Colin.Core.Modulars.UserInterfaces;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Text.Json;
 
 namespace Colin.Core.IO
@@ -7,7 +6,7 @@ namespace Colin.Core.IO
   public class StoreBox : ISerializable
   {
     private Dictionary<string, object> _datas;
-   // public Dictionary<string, object> Datas => _datas;
+    // public Dictionary<string, object> Datas => _datas;
 
     public object this[int index] => _datas.ElementAt(index).Value;
     public object this[string key]
