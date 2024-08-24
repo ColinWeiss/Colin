@@ -34,9 +34,11 @@
 
     private int _width;
     public int Width => _width;
+    public void SetWidth(int width) => _width = width;
 
     private int _height;
     public int Height => _height;
+    public void SetHeight(int hegith) => _height = hegith;
 
     public Point Size => new Point(Width, Height);
     public Vector2 SizeF => new Vector2(Width, Height);
@@ -85,6 +87,8 @@
 
     public void ResetCamera()
     {
+      _width = CoreInfo.ViewWidth;
+      _height = CoreInfo.ViewHeight;
       Rotation = 0f;
       // Zoom = Vector2.One;
       SetView();

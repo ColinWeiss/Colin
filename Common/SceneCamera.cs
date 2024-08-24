@@ -9,9 +9,11 @@
     {
       Scene = null;
     }
+    public void Start() { }
+
     public void DoInitialize()
     {
-      DoInitialize(CoreInfo.Graphics.GraphicsDevice.Viewport.Width, CoreInfo.Graphics.GraphicsDevice.Viewport.Height);
+      DoInitialize(CoreInfo.ViewWidth , CoreInfo.ViewHeight);
       Scene.Events.ClientSizeChanged += (s, e) =>
       {
         Translate = CoreInfo.ViewCenter;
@@ -20,6 +22,5 @@
         ResetCamera();
       };
     }
-    public void Start() { }
   }
 }
