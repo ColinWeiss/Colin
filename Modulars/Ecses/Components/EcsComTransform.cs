@@ -27,11 +27,6 @@ namespace Colin.Core.Modulars.Ecses.Components
     public Vector2 Half => Size / 2;
 
     /// <summary>
-    /// 获取 <see cref="Transform2D.Translation"/> + <see cref="Half"/>.
-    /// </summary>
-    public Vector2 Center => Translation + Half;
-
-    /// <summary>
     /// 获取由 <see cref="Transform2D.Translation"/> 和 <see cref="Size"/> 计算得出的默认矩形.
     /// </summary>
     public RectangleF LocalBound => new RectangleF(Translation, Size);
@@ -56,11 +51,23 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// </summary>
     public bool OnMove => OnHorizontalMove || OnLongitudinalMove;
 
+    private Direction _horizontalDirection;
     /// <summary>
     /// 获取切片当前横向方向的值.
     /// <br><see cref="Direction.Left"/> 和 <see cref="Direction.Right"/>.</br>
     /// </summary>
-    public Direction HorizontalDirection { get; set; }
+    public Direction HorizontalDirection
+    {
+      get
+      {
+        if (Velocity.X > 0)
+          _horizontalDirection = Direction.Right;
+        if (Velocity.X < 0)
+          _horizontalDirection = Direction.Left;
+        return _horizontalDirection;
+      }
+    }
+
     private Direction _longitudinalDirection;
     /// <summary>
     /// 获取切片当前纵向方向的值.

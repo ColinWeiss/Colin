@@ -69,6 +69,8 @@
     /// </summary>
     public bool IsLoop;
 
+    public bool IsFlashBack;
+
     /// <summary>
     /// 指示该帧格读取的方向.
     /// </summary>
@@ -94,15 +96,26 @@
     /// </summary>
     public void UpdateFrame()
     {
+
       if (!IsPlay)
         return;
       if (Timer > Interval)
       {
         Timer = Timer - Interval;
-        if (Current < (FrameMax - 1) + Start)
-          Current++;
-        else if (IsLoop)
-          Current = Start;
+        if (IsFlashBack)
+        {
+          if (Current > Start)
+            Current--;
+          else if (IsLoop)
+            Current = Start + FrameMax;
+        }
+        else
+        {
+          if (Current < FrameMax + Start)
+            Current++;
+          else if (IsLoop)
+            Current = Start;
+        }
       }
       Timer += Time.DeltaTime;
     }

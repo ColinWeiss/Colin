@@ -104,6 +104,8 @@
     /// <param name="location">相对坐标.</param>
     public void SetLocation(Vector2 location) => SetLocation(location.X, location.Y);
 
+    public void SetLocation(Point point) => SetLocation(location.X, location.Y);
+
     private float width;
     /// <summary>
     /// 指示划分元素的宽度.
