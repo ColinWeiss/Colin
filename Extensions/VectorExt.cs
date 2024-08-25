@@ -98,6 +98,11 @@
       Vector2 angle = new Vector2((float)Math.Cos(v * 3.1415926f / 180f), (float)Math.Sin(v * 3.1415926f / 180f));
       return MathF.Atan2(angle.Y, angle.X);
     }
+    public static float GetDegrees(this int v)
+    {
+      Vector2 angle = new Vector2((float)Math.Cos(v * 3.1415926f / 180f), (float)Math.Sin(v * 3.1415926f / 180f));
+      return MathF.Atan2(angle.Y, angle.X);
+    }
 
     public static float Slop(this Vector2 vec)
     {

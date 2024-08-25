@@ -147,10 +147,26 @@ namespace Colin.Core.Modulars.Tiles
       return new Point(coordX, coordY);
     }
 
+    public void Place<T>(int x, int y, int z) where T : TileBehavior, new()
+    {
+      var coords = GetCoords(x, y);
+      TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      if (targetChunk is not null)
+        targetChunk.Place<T>(coords.tCoord.X, coords.tCoord.Y, z);
+    }
+
+    public void Place(TileBehavior behavior, int x, int y, int z)
+    {
+      var coords = GetCoords(x, y);
+      TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      if (targetChunk is not null)
+        targetChunk.Place(behavior, coords.tCoord.X, coords.tCoord.Y, z);
+    }
+
     /// <summary>
     /// 使用世界物块坐标破坏指定位置的物块.
     /// </summary>
-    public void Destruction(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
+    public void Destruction(int x, int y, int z)
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);

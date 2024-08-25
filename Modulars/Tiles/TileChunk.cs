@@ -213,6 +213,15 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
+    /// 根据坐标和指定类型放置物块.
+    /// </summary>
+    public void Place(TileBehavior behavior, int x, int y, int z)
+    {
+      ref TileInfo info = ref this[x, y, z];
+      Placer.Mark(info.WorldCoord3, behavior);
+    }
+
+    /// <summary>
     /// 破坏指定坐标的物块.
     /// </summary>
     /// <param name="x"></param>

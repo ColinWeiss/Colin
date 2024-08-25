@@ -29,7 +29,7 @@ namespace Colin.Core.Audios
     /// 播放指定音效.
     /// </summary>
     /// <param name="soundEffect">音效.</param>
-    public void Play(SoundEffect soundEffect, bool useInstance = false)
+    public void Play(SoundEffect soundEffect, bool useInstance = false, float pitch = 0f)
     {
       if (CoreInfo.Config.SoundEffect)
       {
@@ -44,7 +44,9 @@ namespace Colin.Core.Audios
           }
         }
         else if (!soundEffect.IsDisposed)
-          soundEffect?.Play();
+        {
+          soundEffect?.Play(CoreInfo.Config.SoundEffectVolume, pitch, 0.0f);
+        }
       }
     }
 
