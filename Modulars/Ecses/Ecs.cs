@@ -4,9 +4,9 @@ namespace Colin.Core.Modulars.Ecses
 {
   /// <summary>
   /// ECS: Entity Component System.
-  /// <br>但我将称它为 Environmental Control Section.</br>
-  /// <br>「环境控制切片」</br>
-  /// <br>这一系列会影响到环境的游戏元素, 我们统称为 <see cref="Section"/>.</br>
+  /// <br>但我将称它为 Environmental Control Entity.</br>
+  /// <br>「环境控制实体」</br>
+  /// <br>这一系列会影响到环境的游戏元素, 我们统称为 <see cref="Entity"/>.</br>
   /// </summary>
   public class Ecs : ISceneModule, IRenderableISceneModule
   {
@@ -22,10 +22,10 @@ namespace Colin.Core.Modulars.Ecses
 
     public EnvironmentalController Controller;
 
-    private Dictionary<Type, SectionSystem> _systems;
-    public Dictionary<Type, SectionSystem> Systems => _systems;
+    private Dictionary<Type, Entitiesystem> _systems;
+    public Dictionary<Type, Entitiesystem> Systems => _systems;
 
-    public T RegisterSystem<T>() where T : SectionSystem, new()
+    public T RegisterSystem<T>() where T : Entitiesystem, new()
     {
       T system = new T();
       system._ecs = this;
@@ -33,9 +33,9 @@ namespace Colin.Core.Modulars.Ecses
       _systems.Add(typeof(T), system);
       return system;
     }
-    public T GetSystem<T>() where T : SectionSystem => (T)_systems.GetValueOrDefault(typeof(T));
+    public T GetSystem<T>() where T : Entitiesystem => (T)_systems.GetValueOrDefault(typeof(T));
 
-    public Section[] Sections;
+    public Entity[] Entities;
 
     public KeysEventResponder KeysEvent;
 
@@ -45,12 +45,12 @@ namespace Colin.Core.Modulars.Ecses
       Controller.DoInitialize();
       KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
       Scene.Events.KeysEvent.Register(KeysEvent);
-      Sections = new Section[2000];
-      _systems = new Dictionary<Type, SectionSystem>();
+      Entities = new Entity[2000];
+      _systems = new Dictionary<Type, Entitiesystem>();
     }
     public void Start()
     {
-      SectionSystem _system;
+      Entitiesystem _system;
       for (int sCount = 0; sCount < _systems.Values.Count; sCount++)
       {
         _system = _systems.Values.ElementAt(sCount);
@@ -61,8 +61,8 @@ namespace Colin.Core.Modulars.Ecses
     public void DoUpdate(GameTime time)
     {
       Controller.Reset();
-      Section _section;
-      SectionSystem _currentSystem;
+      Entity _Entity;
+      Entitiesystem _currentSystem;
       for (int count = 0; count < Systems.Count; count++)
       {
         _currentSystem = Systems.ElementAt(count).Value;
@@ -73,14 +73,14 @@ namespace Colin.Core.Modulars.Ecses
         _currentSystem = Systems.ElementAt(count).Value;
         _currentSystem.DoUpdate();
       }
-      for (int count = 0; count < Sections.Length; count++)
+      for (int count = 0; count < Entities.Length; count++)
       {
-        _section = Sections[count];
-        if (_section is null)
+        _Entity = Entities[count];
+        if (_Entity is null)
           continue;
-        if (_section.NeedClear)
+        if (_Entity.NeedClear)
         {
-          Sections[count] = null;
+          Entities[count] = null;
           continue;
         }
       }
@@ -88,7 +88,7 @@ namespace Colin.Core.Modulars.Ecses
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
       device.Clear(Color.Transparent);
-      SectionSystem _system;
+      Entitiesystem _system;
       for (int count = 0; count < _systems.Values.Count; count++)
       {
         _system = _systems.Values.ElementAt(count);
@@ -106,38 +106,38 @@ namespace Colin.Core.Modulars.Ecses
     /// <param name="index"></param>
     public void SetNull(int index)
     {
-      Sections[index].NeedClear = true;
+      Entities[index].NeedClear = true;
     }
-    public T CreateSection<T>() where T : Section, new()
+    public T CreateEntity<T>() where T : Entity, new()
     {
       T result;
-      Section section;
-      for (int count = 0; count < Sections.Length; count++)
+      Entity Entity;
+      for (int count = 0; count < Entities.Length; count++)
       {
-        section = Sections[count];
-        if (section is null)
+        Entity = Entities[count];
+        if (Entity is null)
         {
           result = new T();
           result.Ecs = this;
           result.ID = count;
           result.DoInitialize();
-          Sections[count] = result;
+          Entities[count] = result;
           return result;
         }
       }
       return null;
     }
-    public Section Create(Section section)
+    public Entity Create(Entity Entity)
     {
-      for (int count = 0; count < Sections.Length; count++)
+      for (int count = 0; count < Entities.Length; count++)
       {
-        if (Sections[count] is null)
+        if (Entities[count] is null)
         {
-          Sections[count] = section;
-          section.ID = count;
-          section.Ecs = this;
-          section.DoInitialize();
-          return section;
+          Entities[count] = Entity;
+          Entity.ID = count;
+          Entity.Ecs = this;
+          Entity.DoInitialize();
+          return Entity;
         }
       }
       return null;
@@ -145,9 +145,9 @@ namespace Colin.Core.Modulars.Ecses
 
     public void Dispose()
     {
-      for (int count = 0; count < Sections.Length; count++)
+      for (int count = 0; count < Entities.Length; count++)
       {
-        if (Sections[count] is IDisposable disposable)
+        if (Entities[count] is IDisposable disposable)
         {
           disposable.Dispose();
         }

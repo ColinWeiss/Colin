@@ -48,7 +48,7 @@ namespace Colin.Core.Preparation
         {
           asset = (IGameAsset)Activator.CreateInstance(item);
           asset.LoadResource();
-          Console.WriteLine(string.Concat("正在加载 ", asset.Name));
+          Console.WriteLine(string.Concat("正在加载", asset.Name));
         }
       }
     }

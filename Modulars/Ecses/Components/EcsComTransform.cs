@@ -7,15 +7,15 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// <br>提供关于位置/速度/旋转/缩放的字段.</br>
   /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComTransform : Transform2D, ISectionCom
+  public class EcsComTransform : Transform2D, IEntityCom
   {
     /// <summary>
-    /// 指示切片的大小.
+    /// 指示实体的大小.
     /// </summary>
     public Vector2 Size;
 
     /// <summary>
-    /// 指示切片的速度.
+    /// 指示实体的速度.
     /// </summary>
     public Vector2 Velocity;
 
@@ -39,21 +39,21 @@ namespace Colin.Core.Modulars.Ecses.Components
     public EcsComTransform SetSize(float width, float height) => SetSize(new Vector2(width, height));
 
     /// <summary>
-    /// 指示切片当前是否正在进行横向移动.
+    /// 指示实体当前是否正在进行横向移动.
     /// </summary>
     public bool OnHorizontalMove => Math.Abs(Velocity.X) > 0;
     /// <summary>
-    /// 指示切片当前是否正在进行纵向移动.
+    /// 指示实体当前是否正在进行纵向移动.
     /// </summary>
     public bool OnLongitudinalMove => Math.Abs(Velocity.Y) > 0;
     /// <summary>
-    /// 指示切片当前是否正在移动.
+    /// 指示实体当前是否正在移动.
     /// </summary>
     public bool OnMove => OnHorizontalMove || OnLongitudinalMove;
 
     private Direction _horizontalDirection;
     /// <summary>
-    /// 获取切片当前横向方向的值.
+    /// 获取实体当前横向方向的值.
     /// <br><see cref="Direction.Left"/> 和 <see cref="Direction.Right"/>.</br>
     /// </summary>
     public Direction HorizontalDirection
@@ -70,7 +70,7 @@ namespace Colin.Core.Modulars.Ecses.Components
 
     private Direction _longitudinalDirection;
     /// <summary>
-    /// 获取切片当前纵向方向的值.
+    /// 获取实体当前纵向方向的值.
     /// <br<see cref="Direction.Up"/> 和 <see cref="Direction.Down"/>.</br>
     /// </summary>
     public Direction LongitudinalDirection

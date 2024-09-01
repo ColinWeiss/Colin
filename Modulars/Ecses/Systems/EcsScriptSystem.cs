@@ -1,22 +1,22 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
-using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.ISectionCom>;
+using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.IEntityCom>;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {
   /// <summary>
   /// 为EcsComScript提供生命周期钩子.
   /// </summary>
-  public class EcsScriptSystem : SectionSystem
+  public class EcsScriptSystem : Entitiesystem
   {
     public override void Reset()
     {
-      Section _current;
-      for (int sectionCount = 0; sectionCount < Ecs.Sections.Length; sectionCount++)
+      Entity _current;
+      for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
-        _current = Ecs.Sections[sectionCount];
+        _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
-        foreach (ISectionCom component in _current.Components.Values)
+        foreach (IEntityCom component in _current.Components.Values)
         {
           if (component is IResetable resetableCom && resetableCom.ResetEnable)
           {
@@ -29,18 +29,18 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
     public override void DoUpdate()
     {
-      Section _current;
-      ISectionCom _sectionCom;
-      Dictionary<Type, ISectionCom> comDic;
+      Entity _current;
+      IEntityCom _EntityCom;
+      Dictionary<Type, IEntityCom> comDic;
       ValueCollection coms;
-      for (int sectionCount = 0; sectionCount < Ecs.Sections.Length; sectionCount++)
+      for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
-        _current = Ecs.Sections[sectionCount];
+        _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
         comDic = _current.Components;
         coms = comDic.Values;
-        foreach (ISectionCom component in coms)
+        foreach (IEntityCom component in coms)
         {
           if (component is EcsComScript script && script._updateStarted is false)
           {
@@ -48,23 +48,23 @@ namespace Colin.Core.Modulars.Ecses.Systems
             script._updateStarted = true;
           }
         }
-        foreach (ISectionCom component in coms)
+        foreach (IEntityCom component in coms)
           if (component is EcsComScript script && script.UpdateEnable)
             script.DoUpdate();
       }
-      for (int sectionCount = 0; sectionCount < Ecs.Sections.Length; sectionCount++)
+      for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
-        _current = Ecs.Sections[sectionCount];
+        _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
         comDic = _current.Components;
         coms = comDic.Values;
         for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          _sectionCom = coms.ElementAt(comCount);
-          if (_sectionCom is ISectionRemovableCom removableCom && removableCom.NeedClear)
+          _EntityCom = coms.ElementAt(comCount);
+          if (_EntityCom is IEntityRemovableCom removableCom && removableCom.NeedClear)
           {
-            comDic.Remove(_sectionCom.GetType());
+            comDic.Remove(_EntityCom.GetType());
             comCount--;
           }
         }

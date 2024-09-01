@@ -45,7 +45,7 @@
     /// <param name="rectA"></param>
     /// <param name="rectB"></param>
     /// <returns></returns>
-    public static Vector2 GetIntersectionDepth(this Rectangle rectA, Rectangle rectB)
+    public static Vector2 GetInterEntityDepth(this Rectangle rectA, Rectangle rectB)
     {
       float halfWidthA = rectA.Width / 2.0f;
       float halfHeightA = rectA.Height / 2.0f;

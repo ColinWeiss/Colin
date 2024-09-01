@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
-  public interface ISectionCom
+  public interface IEntityCom
   {
     public void DoInitialize();
   }

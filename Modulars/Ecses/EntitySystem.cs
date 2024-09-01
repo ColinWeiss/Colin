@@ -1,9 +1,9 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
   /// <summary>
-  /// 切片系统喵
+  /// 实体系统喵
   /// </summary>
-  public class SectionSystem
+  public class Entitiesystem
   {
     internal Ecs _ecs;
     public Ecs Ecs => _ecs;

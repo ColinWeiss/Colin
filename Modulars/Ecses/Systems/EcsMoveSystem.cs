@@ -3,19 +3,19 @@
 namespace Colin.Core.Modulars.Ecses.Systems
 {
   /// <summary>
-  /// 用以处理切片位移的系统.
+  /// 用以处理实体位移的系统.
   /// </summary>
-  public class EcsMoveSystem : SectionSystem
+  public class EcsMoveSystem : Entitiesystem
   {
     private EcsComTransform comTransform;
 
     public override void DoUpdate()
     {
-      Section[] _sections = Ecs.Sections;
-      Section _current;
-      for (int count = 0; count < _sections.Length; count++)
+      Entity[] _Entities = Ecs.Entities;
+      Entity _current;
+      for (int count = 0; count < _Entities.Length; count++)
       {
-        _current = _sections[count];
+        _current = _Entities[count];
         if (_current is null)
           continue;
         comTransform = _current.GetComponent<EcsComTransform>();

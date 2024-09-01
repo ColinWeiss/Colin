@@ -1,36 +1,36 @@
 ﻿namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
-  /// 切片文档.
+  /// 实体文档.
   /// </summary>
-  public class EcsComDoc : ISectionBindableCom
+  public class EcsComDoc : IEntityBindableCom
   {
-    public Section Section { get; set; }
+    public Entity Entity { get; set; }
 
     private string identifier;
 
     /// <summary>
-    /// 指示切片的标识符.
-    /// <br>切片判断相等的依据之一.</br>
+    /// 指示实体的标识符.
+    /// <br>实体判断相等的依据之一.</br>
     /// </summary>
     public string Identifier
     {
       get
       {
-        identifier ??= Section.GetType().Name;
+        identifier ??= Entity.GetType().Name;
         return identifier;
       }
     }
 
     public string Description = "";
     /// <summary>
-    /// 指示切片标签.
+    /// 指示实体标签.
     /// </summary>
     public HashSet<string> Tags = new HashSet<string>();
 
     public void DoInitialize() { }
 
-    public bool Equals(ISectionCom other)
+    public bool Equals(IEntityCom other)
     {
       bool result = false;
       if (other is EcsComDoc doc)

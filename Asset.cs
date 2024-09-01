@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Graphics.Shaders;
+using Colin.Core.IO;
 using FontStashSharp;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
@@ -54,12 +55,20 @@ namespace Colin.Core
       set => _soundEffectDir = value;
     }
 
+    private static string _tableDir = "Tables";
+    public static string TableDir
+    {
+      get => Path.Combine(Dir, AssetsDirName, _tableDir);
+      set => _tableDir = value;
+    }
+
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
     private static Dictionary<string, FontSystem> _fonts = new Dictionary<string, FontSystem>();
     private static Dictionary<string, Effect> _effects = new Dictionary<string, Effect>();
-    private static Dictionary<string, ComputeShader> computeShaders = new Dictionary<string, ComputeShader>();
+    private static Dictionary<string, ComputeShader> _computeShaders = new Dictionary<string, ComputeShader>();
     private static Dictionary<string, SoundEffect> _soundEffects = new Dictionary<string, SoundEffect>();
     private static Dictionary<string, Song> _songs = new Dictionary<string, Song>();
+    private static Dictionary<string, CsvFile> _tables = new Dictionary<string, CsvFile>();
 
     public static void LoadAssets()
     {
@@ -68,6 +77,7 @@ namespace Colin.Core
       LoadEffects();
       LoadComputeShaders();
       LoadSoundEffects();
+      LoadCsvFiles();
     }
     public static void LoadTextures()
     {
@@ -175,7 +185,7 @@ namespace Colin.Core
           CompileShaders();
         effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(fileName));
         fileName = OrganizePath(fileName);
-        computeShaders.Add(fileName, effect);
+        _computeShaders.Add(fileName, effect);
       }
     }
     private static void CompileShaders()
@@ -214,6 +224,26 @@ namespace Colin.Core
         _soundEffects.Add(fileName, target);
       }
     }
+    public static void LoadCsvFiles()
+    {
+      if (Directory.Exists(TableDir) is false)
+      {
+        Console.WriteLine("Error", "未检查到配表文件夹.");
+        return;
+      }
+      else
+        Console.WriteLine("正在加载配表资源.");
+      string[] fileFullName = Directory.GetFiles(TableDir, "*.csv*", SearchOption.AllDirectories);
+      string fileName;
+      CsvFile target;
+      for (int count = 0; count < fileFullName.Length; count++)
+      {
+        fileName = fileFullName[count];
+        target = new CsvFile(fileName);
+        fileName = OrganizePath(fileName);
+        _tables.Add(fileName, target);
+      }
+    }
 
     public static Texture2D GetTexture(string path)
     {
@@ -241,7 +271,7 @@ namespace Colin.Core
     {
       path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
       ComputeShader shader;
-      if (computeShaders.TryGetValue(path, out shader))
+      if (_computeShaders.TryGetValue(path, out shader))
         return shader;
       else
         return null;
@@ -265,6 +295,16 @@ namespace Colin.Core
         return null;
     }
 
+    public static CsvFile GetCsv(string path)
+    {
+      path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
+      if (_tables.TryGetValue(path, out CsvFile result))
+        return result;
+      else
+        return null;
+
+    }
+
     private static string OrganizePath(string path)
     {
       StringBuilder sb = new StringBuilder(path);
@@ -273,6 +313,7 @@ namespace Colin.Core
       sb.Replace(string.Concat(EffectDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(ShaderDir, Path.DirectorySeparatorChar), "");
       sb.Replace(string.Concat(SoundEffectDir, Path.DirectorySeparatorChar), "");
+      sb.Replace(string.Concat(TableDir, Path.DirectorySeparatorChar), "");
       sb.Replace(Path.GetExtension(sb.ToString()), "");
       return sb.ToString();
     }

@@ -4,9 +4,9 @@ using Colin.Core.Modulars.Tiles;
 namespace Colin.Core.Modulars.Ecses.Systems
 {
   /// <summary>
-  /// 用以处理切片与物块碰撞的系统.
+  /// 用以处理实体与物块碰撞的系统.
   /// </summary>
-  public class EcsTileCollisionSystem : SectionSystem
+  public class EcsTileCollisionSystem : Entitiesystem
   {
     private EnvironmentalController controller;
     private EcsComTransform comTransform;
@@ -19,10 +19,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
     public override void DoUpdate()
     {
-      Section _current;
-      for (int count = 0; count < Ecs.Sections.Length; count++)
+      Entity _current;
+      for (int count = 0; count < Ecs.Entities.Length; count++)
       {
-        _current = Ecs.Sections[count];
+        _current = Ecs.Entities[count];
         if (_current is null)
           continue;
         comTransform = _current.GetComponent<EcsComTransform>();
@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
       base.DoUpdate();
     }
-    public void HandleCollision(Section section)
+    public void HandleCollision(Entity Entity)
     {
       Tile tile = Ecs.Scene.GetModule<Tile>();
       if (tile is null)
@@ -56,7 +56,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       if (comPhysic.IgnoreTile.Value)
         return;
 
-      RectangleF bounds = GetHitBox(section);
+      RectangleF bounds = GetHitBox(Entity);
       RectangleF previousBounds = bounds;
       previousBounds.Offset(-comTransform.DeltaVelocity);
 
@@ -125,7 +125,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 comPhysic.CollisionRight = true;
               }
               deltaVel.X *= xt;
-              next = GetHitBox(section);
+              next = GetHitBox(Entity);
               next.Location += deltaVel;
               break;
             }
@@ -142,7 +142,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 comPhysic.CollisionBottom = true;
               }
               deltaVel.Y *= yt;
-              next = GetHitBox(section);
+              next = GetHitBox(Entity);
               next.Location += deltaVel;
               break;
             }
@@ -151,10 +151,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
       comTransform.Velocity = deltaVel / Time.DeltaTime;
     }
-    public RectangleF GetHitBox(Section section)
+    public RectangleF GetHitBox(Entity Entity)
     {
-      EcsComTransform comTransform = section?.GetComponent<EcsComTransform>();
-      EcsComPhysic comPhysic = section?.GetComponent<EcsComPhysic>();
+      EcsComTransform comTransform = Entity?.GetComponent<EcsComTransform>();
+      EcsComPhysic comPhysic = Entity?.GetComponent<EcsComPhysic>();
       if (comTransform is not null && comPhysic is not null)
       {
         return new RectangleF(

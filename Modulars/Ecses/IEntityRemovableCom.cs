@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
-  public interface ISectionRemovableCom
+  public interface IEntityRemovableCom
   {
     public bool NeedClear { get; set; }
   }

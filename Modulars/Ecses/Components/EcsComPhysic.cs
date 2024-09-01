@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// 物理组件.
   /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComPhysic : ISectionCom, IResetable
+  public class EcsComPhysic : IEntityCom, IResetable
   {
     /// <summary>
     /// 指示是否忽略重力的值.
@@ -14,7 +14,7 @@ namespace Colin.Core.Modulars.Ecses.Components
     public bool IgnoreGravity = false;
 
     /// <summary>
-    /// 指示切片当前所处的层.
+    /// 指示实体当前所处的层.
     /// </summary>
     public int Layer;
 

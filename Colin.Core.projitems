@@ -14,18 +14,18 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\Cyotek.Drawing.BitmapFont.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Base.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.MonoGame.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Rasterizers.FreeType.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Rasterizers.SixLabors.Fonts.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp.Rasterizers.StbTrueTypeSharp.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FreeTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\Cyotek.Drawing.BitmapFont.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Base.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.MonoGame.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Rasterizers.FreeType.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Rasterizers.SixLabors.Fonts.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Rasterizers.StbTrueTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FreeTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\StbImageSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\StbTrueTypeSharp.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.Common.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\SharpDX.D3DCompiler.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\StbImageSharp.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\StbTrueTypeSharp.dll" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
@@ -62,11 +63,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionBindableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityBindableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsMoveSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileDestructor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
@@ -95,9 +96,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Ecs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entrance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EnvironmentalController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\ISectionCom.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Section.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\SectionSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityCom.cs" />
+    <Compile Include="..\Colin\Modulars\Ecses\Entity.cs" />
+    <Compile Include="..\Colin\Modulars\Ecses\EntitySystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsTileCollisionSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />
