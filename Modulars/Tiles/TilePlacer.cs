@@ -76,7 +76,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       info.Behavior.OnPlace(ref info); //触发行为放置事件
       foreach (var script in info.Scripts.Values)
-        script.OnPlace();
+        script.OnPlace(this);
       TileRefresher.Mark(info.WorldCoord3, 1); //将物块标记刷新, 刷新事件交由物块更新器处理
     }
 

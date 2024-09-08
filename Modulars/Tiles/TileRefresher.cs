@@ -67,24 +67,19 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private void Handle(Point3 coord)
+    /// <summary>
+    /// 在刷新环节, 进行物块刷新的处理.
+    /// <br>在此处会触发 <see cref="OnRefresh"/> 事件.</br>
+    /// </summary>
+    /// <param name="coord"></param>
+    public void Handle(Point3 coord)
     {
       ref TileInfo info = ref Tile[coord];
       if (info.IsNull)
         return;
-      if (Tile.TilePointers.TryGetValue(info.WorldCoord2, out Point coreCoord))
-      {
-        info = ref Tile[new Point3(coreCoord.X, coreCoord.Y, coord.Z)];
-        info.Behavior?.OnRefresh(ref info);
-        foreach (var script in info.Scripts.Values)
-          script.OnRefresh();
-      }
-      else
-      {
-        info.Behavior?.OnRefresh(ref info);
-        foreach (var script in info.Scripts.Values)
-          script.OnRefresh();
-      }
+      info.Behavior?.OnRefresh(ref info);
+      foreach (var script in info.Scripts.Values)
+        script.OnRefresh(this);
       OnRefresh?.Invoke(coord);
     }
 

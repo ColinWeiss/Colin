@@ -61,7 +61,7 @@
     /// <summary>
     /// 在第一次放置时执行.
     /// </summary>
-    public virtual void OnPlace() { }
+    public virtual void OnPlace(TilePlacer placer) { }
     /// <summary>
     /// 于物块初始化时执行.
     /// </summary>
@@ -69,11 +69,11 @@
     /// <summary>
     /// 于物块刷新时执行.
     /// </summary>
-    public virtual void OnRefresh() { }
+    public virtual void OnRefresh(TileRefresher refresher) { }
     /// <summary>
     /// 于物块被破坏时执行.
     /// </summary>
-    public virtual void OnDestruction() { }
+    public virtual void OnDestruction(TileDestructor destructor) { }
     public virtual void LoadStep(BinaryReader reader) { }
     public virtual void SaveStep(BinaryWriter writer) { }
 

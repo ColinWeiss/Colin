@@ -37,7 +37,51 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 物块指针字典, 允许你通过某个物块访问其他物块.
     /// </summary>
-    public Dictionary<Point, Point> TilePointers = new Dictionary<Point, Point>();
+    public Dictionary<Point3, Point3?> InfoReferences = new Dictionary<Point3, Point3?>();
+
+    /// <summary>
+    /// 获取指定坐标物块指向的引用块; 若引用不存在, 则返回 <see cref="TileInfo.Null"/>.
+    /// </summary>
+    /// <param name="coord"></param>
+    /// <returns></returns>
+    public ref TileInfo GetInfoReference(Point3 coord)
+    {
+      if (InfoReferences.TryGetValue(coord, out Point3? result))
+      {
+        if (result is not null)
+          return ref this[result.Value];
+      }
+      return ref TileInfo.Null;
+    }
+
+    public void AddInfoReference(Point3 coord, Point3 coreCoord)
+    {
+      if (InfoReferences.TryGetValue(coord, out Point3? value))
+      {
+        if (value is null)
+          InfoReferences[coord] = coreCoord;
+      }
+      else
+        InfoReferences.Add(coord, coreCoord);
+    }
+
+    public void RemoveInfoReference(Point3 coord)
+    {
+      InfoReferences[coord] = null;
+    }
+
+    public bool HasInfoReference(Point3 coord)
+    {
+      if (InfoReferences.TryGetValue(coord, out Point3? value))
+      {
+        if (value.HasValue is false)
+          return false;
+        else
+          return true;
+      }
+      else
+        return false;
+    }
 
     /// <summary>
     /// 创建物块模块.

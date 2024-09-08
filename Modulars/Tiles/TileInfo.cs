@@ -17,7 +17,7 @@
     {
       get
       {
-        return !IsNull && Tile.TilePointers.ContainsKey(WorldCoord2);
+        return !IsNull && Tile.InfoReferences.ContainsKey(WorldCoord3);
       }
     }
 

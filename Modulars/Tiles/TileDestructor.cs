@@ -13,8 +13,8 @@ namespace Colin.Core.Modulars.Tiles
     private TileRefresher _tileRefresher;
     public TileRefresher TileRefresher => _tileRefresher ??= Scene.GetModule<TileRefresher>();
 
-    private ConcurrentQueue<Point3> _destructs = new ConcurrentQueue<Point3>();
-    public ConcurrentQueue<Point3> Destructs => _destructs;
+    private ConcurrentQueue<Point3> _queue = new ConcurrentQueue<Point3>();
+    public ConcurrentQueue<Point3> Queue => _queue;
 
     public void DoInitialize()
     {
@@ -26,9 +26,9 @@ namespace Colin.Core.Modulars.Tiles
     public void DoUpdate(GameTime time)
     {
       ref TileInfo info = ref Tile[0, 0, 0];
-      while (!_destructs.IsEmpty)
+      while (!_queue.IsEmpty)
       {
-        if (_destructs.TryDequeue(out Point3 coord))
+        if (_queue.TryDequeue(out Point3 coord))
         {
           info = ref Tile[coord];
           Handle(coord);
@@ -43,21 +43,21 @@ namespace Colin.Core.Modulars.Tiles
 
     public void Mark(Point3 coord)
     {
-      _destructs.Enqueue(coord);
+      _queue.Enqueue(coord);
     }
     public void Mark(int x, int y, int z) =>
       Mark(new Point3(x, y, z));
 
     private void Handle(Point3 coord)
     {
-      ref TileInfo info = ref Tile[coord]; //获取对应坐标的物块格的引用传递.
+      ref TileInfo info = ref Tile[coord];
       if (info.IsNull)
         return;
-      if (!Tile.TilePointers.ContainsKey(info.WorldCoord2) && !info.Empty) //如果该格并非物块指针, 且不为空
+      if (info.Empty is false)
       {
         info.Behavior.OnDestruction(ref info);
         foreach (var script in info.Scripts.Values)
-          script.OnDestruction();
+          script.OnDestruction(this);
         info.Empty = true;
         TileRefresher.Mark(info.WorldCoord3, 1); //将物块标记刷新, 刷新事件交由物块更新器处理
       }

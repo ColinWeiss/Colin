@@ -230,7 +230,15 @@ namespace Colin.Core.Modulars.Tiles
     public void Destruction(int x, int y, int z)
     {
       ref TileInfo info = ref this[x, y, z];
-      if (!Tile.TilePointers.ContainsKey(info.WorldCoord2) && !Destructor.Destructs.Contains(info.WorldCoord3))
+      if (info.IsNull)
+        return;
+      if (Tile.HasInfoReference(info.WorldCoord3))
+      {
+        info = Tile.GetInfoReference(new Point3(x, y, z));
+        if (info.Empty is false)
+          Destructor.Mark(info.WorldCoord3);
+      }
+      else if (!Destructor.Queue.Contains(info.WorldCoord3))
       {
         if (!info.Empty)
           Destructor.Mark(info.WorldCoord3);
