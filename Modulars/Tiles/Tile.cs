@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       if (InfoReferences.TryGetValue(coord, out Point3? result))
       {
-        if (result is not null)
+        if (result.HasValue)
           return ref this[result.Value];
       }
       return ref TileInfo.Null;
@@ -58,7 +58,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       if (InfoReferences.TryGetValue(coord, out Point3? value))
       {
-        if (value is null)
+        if (value.HasValue is false)
           InfoReferences[coord] = coreCoord;
       }
       else
@@ -280,5 +280,6 @@ namespace Colin.Core.Modulars.Tiles
     public void SaveStep(BinaryWriter writer)
     {
     }
+
   }
 }

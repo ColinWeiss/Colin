@@ -17,7 +17,7 @@
     {
       get
       {
-        return !IsNull && Tile.InfoReferences.ContainsKey(WorldCoord3);
+        return !IsNull && Tile.HasInfoReference(WorldCoord3);
       }
     }
 
@@ -119,7 +119,7 @@
     /// </summary>
     public TileChunk Chunk;
 
-    public ref TileInfo Top
+    public ref readonly TileInfo Top
     {
       get
       {
@@ -130,7 +130,7 @@
       }
     }
 
-    public ref TileInfo Bottom
+    public ref readonly TileInfo Bottom
     {
       get
       {
@@ -141,7 +141,7 @@
       }
     }
 
-    public ref TileInfo Left
+    public ref readonly TileInfo Left
     {
       get
       {
@@ -152,7 +152,7 @@
       }
     }
 
-    public ref TileInfo Right
+    public ref readonly TileInfo Right
     {
       get
       {
@@ -163,7 +163,7 @@
       }
     }
 
-    public ref TileInfo Front
+    public ref readonly TileInfo Front
     {
       get
       {
@@ -176,7 +176,7 @@
       }
     }
 
-    public ref TileInfo Behind
+    public ref readonly TileInfo Behind
     {
       get
       {
@@ -258,19 +258,12 @@
       }
     }
 
+    private bool _isNull;
+    public bool IsNull => _isNull;
     internal static TileInfo _null = new TileInfo()
     {
       _isNull = true
     };
     public static ref TileInfo Null => ref _null;
-
-    private bool _isNull = false;
-    public bool IsNull
-    {
-      get
-      {
-        return _isNull;
-      }
-    }
   }
 }

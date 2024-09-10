@@ -62,7 +62,6 @@ namespace Colin.Core.Modulars.Tiles
       if (info.IsNull)
         return;
       info.Scripts.Clear();
-      info.Empty = false;
       info.Behavior = behavior;
       info.Behavior.Tile = Tile;
       info.Behavior.OnInitialize(ref info); //执行行为初始化放置
@@ -74,6 +73,7 @@ namespace Colin.Core.Modulars.Tiles
           return;
         }
       }
+      info.Empty = false;
       info.Behavior.OnPlace(ref info); //触发行为放置事件
       foreach (var script in info.Scripts.Values)
         script.OnPlace(this);

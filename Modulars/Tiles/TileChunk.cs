@@ -229,13 +229,13 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="z"></param>
     public void Destruction(int x, int y, int z)
     {
-      ref TileInfo info = ref this[x, y, z];
+      TileInfo info = this[x, y, z];
       if (info.IsNull)
         return;
       if (Tile.HasInfoReference(info.WorldCoord3))
       {
-        info = Tile.GetInfoReference(new Point3(x, y, z));
-        if (info.Empty is false)
+        info = Tile.GetInfoReference(info.WorldCoord3);
+        if (info.Empty is false && !info.IsNull)
           Destructor.Mark(info.WorldCoord3);
       }
       else if (!Destructor.Queue.Contains(info.WorldCoord3))
