@@ -14,7 +14,7 @@
       Sprite pixel = Sprite.Get("Pixel");
       float depth = pixel.Depth;
       if (pixel is not null)
-        batch.Draw(pixel.Source, line.Start, null, color, radian, Vector2.Zero, new Vector2(Vector2.Distance(line.Start, line.End), 1f), SpriteEffects.None, depth);
+        batch.Draw(pixel.Source , line.Start, null, color, radian, Vector2.Zero, new Vector2(Vector2.Distance(line.Start, line.End), 1f), SpriteEffects.None, depth);
     }
 
     /// <summary>
@@ -91,6 +91,20 @@
     public static void DrawRectangle(this SpriteBatch batch, Rectangle rect, Color color)
     {
       batch.Draw(Asset.GetTexture("Pixel"), rect, color);
+    }
+
+    /// <summary>
+    /// 使用线绘制矩形.
+    /// </summary>
+    /// <param name="batch"></param>
+    /// <param name="rect"></param>
+    /// <param name="color"></param>
+    public static void DrawRectangleLine(this SpriteBatch batch, Rectangle rect, Color color)
+    {
+      batch.DrawLine(new Line(new Vector2(rect.X, rect.Y), new Vector2(rect.X + rect.Width, rect.Y)), color);
+      batch.DrawLine(new Line(new Vector2(rect.X, rect.Y + rect.Height), new Vector2(rect.X + rect.Width, rect.Y + rect.Height)), color);
+      batch.DrawLine(new Line(new Vector2(rect.X, rect.Y), new Vector2(rect.X, rect.Y + rect.Height)), color);
+      batch.DrawLine(new Line(new Vector2(rect.X + rect.Width, rect.Y), new Vector2(rect.X + rect.Width, rect.Y + rect.Height)), color);
     }
 
     /// <summary>
