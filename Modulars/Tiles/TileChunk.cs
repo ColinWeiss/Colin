@@ -144,13 +144,6 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private Point?[] _directs;
-    /// <summary>
-    /// 指示物块指针.
-    /// 元素为指向物块的世界坐标.
-    /// </summary>
-    public ref Point?[] Directs => ref _directs;
-
     public TileChunk(Tile tile)
     {
       Tile = tile;
@@ -170,7 +163,6 @@ namespace Colin.Core.Modulars.Tiles
     public void DoInitialize()
     {
       Infos = new TileInfo[Width * Height * Depth];
-      _directs = new Point?[Width * Height * Depth];
       for (int count = 0; count < Infos.Length; count++)
         CreateInfo(count);
     }
@@ -191,7 +183,6 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].Empty = true;
       Infos[index].Index = index;
       Infos[index].Scripts = new Dictionary<Type, TileScript>();
-      _directs[index] = null;
     }
     /// <summary>
     /// 在指定坐标处创建物块信息.
@@ -206,19 +197,32 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     /// <param name="doEvent">指示是否触发放置事件.</param>
     /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-    public void Place<T>(int x, int y, int z) where T : TileBehavior, new()
+    public bool Place<T>(int x, int y, int z) where T : TileBehavior, new()
     {
       ref TileInfo info = ref this[x, y, z];
-      Placer.Mark<T>(info.WorldCoord3);
+      TileBehavior behavior = CodeResources.Get<TileBehavior, T>();
+      if (behavior.CanPlaceMark(ref info))
+      {
+        Placer.Mark(info.WorldCoord3, behavior);
+        return true;
+      }
+      else
+        return false;
     }
 
     /// <summary>
     /// 根据坐标和指定类型放置物块.
     /// </summary>
-    public void Place(TileBehavior behavior, int x, int y, int z)
+    public bool Place(TileBehavior behavior, int x, int y, int z)
     {
       ref TileInfo info = ref this[x, y, z];
-      Placer.Mark(info.WorldCoord3, behavior);
+      if( behavior.CanPlaceMark(ref info))
+      {
+        Placer.Mark(info.WorldCoord3, behavior);
+        return true;
+      }
+      else
+        return false;
     }
 
     /// <summary>

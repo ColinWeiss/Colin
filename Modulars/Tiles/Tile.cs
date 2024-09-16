@@ -35,50 +35,35 @@ namespace Colin.Core.Modulars.Tiles
     public ConcurrentDictionary<Point, TileChunk> Chunks = new ConcurrentDictionary<Point, TileChunk>();
 
     /// <summary>
-    /// 物块指针字典, 允许你通过某个物块访问其他物块.
-    /// </summary>
-    public Dictionary<Point3, Point3?> InfoReferences = new Dictionary<Point3, Point3?>();
-
-    /// <summary>
     /// 获取指定坐标物块指向的引用块; 若引用不存在, 则返回 <see cref="TileInfo.Null"/>.
     /// </summary>
     /// <param name="coord"></param>
     /// <returns></returns>
     public ref TileInfo GetInfoReference(Point3 coord)
     {
-      if (InfoReferences.TryGetValue(coord, out Point3? result))
-      {
-        if (result.HasValue)
-          return ref this[result.Value];
-      }
+      ref TileInfo info = ref this[coord];
+      if (info.PointTo is not null)
+        return ref this[info.PointTo.Value];
       return ref TileInfo.Null;
     }
 
     public void AddInfoReference(Point3 coord, Point3 coreCoord)
     {
-      if (InfoReferences.TryGetValue(coord, out Point3? value))
-      {
-        if (value.HasValue is false)
-          InfoReferences[coord] = coreCoord;
-      }
-      else
-        InfoReferences.Add(coord, coreCoord);
+      ref TileInfo info = ref this[coord];
+      info.SetPointTo(coreCoord);
     }
 
     public void RemoveInfoReference(Point3 coord)
     {
-      InfoReferences[coord] = null;
+      ref TileInfo info = ref this[coord];
+      info.RemovePointTo();
     }
 
     public bool HasInfoReference(Point3 coord)
     {
-      if (InfoReferences.TryGetValue(coord, out Point3? value))
-      {
-        if (value.HasValue is false)
-          return false;
-        else
-          return true;
-      }
+      ref TileInfo info = ref this[coord];
+      if (info.PointTo is not null)
+        return true;
       else
         return false;
     }
@@ -191,20 +176,24 @@ namespace Colin.Core.Modulars.Tiles
       return new Point(coordX, coordY);
     }
 
-    public void Place<T>(int x, int y, int z) where T : TileBehavior, new()
+    public bool Place<T>(int x, int y, int z) where T : TileBehavior, new()
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (targetChunk is not null)
-        targetChunk.Place<T>(coords.tCoord.X, coords.tCoord.Y, z);
+        return targetChunk.Place<T>(coords.tCoord.X, coords.tCoord.Y, z);
+      else
+        return false;
     }
 
-    public void Place(TileBehavior behavior, int x, int y, int z)
+    public bool Place(TileBehavior behavior, int x, int y, int z)
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (targetChunk is not null)
-        targetChunk.Place(behavior, coords.tCoord.X, coords.tCoord.Y, z);
+        return targetChunk.Place(behavior, coords.tCoord.X, coords.tCoord.Y, z);
+      else
+        return false;
     }
 
     /// <summary>

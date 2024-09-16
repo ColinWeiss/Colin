@@ -17,7 +17,7 @@
     {
       get
       {
-        return !IsNull && Tile.HasInfoReference(WorldCoord3);
+        return !IsNull && _pointTo is not null;//Tile.HasInfoReference(WorldCoord3);
       }
     }
 
@@ -228,6 +228,7 @@
       Empty = true;
       Tile = null;
       Chunk = null;
+      _pointTo = null;
       Frame = new TileFrame(-1, -1);
       Collision = TileCollision.Passable;
       _chunkCoord2 = Point.Zero;
@@ -238,8 +239,18 @@
       Scripts = new Dictionary<Type, TileScript>();
     }
 
+    private Point3? _pointTo = null;
+    public Point3? PointTo => _pointTo;
+    public void SetPointTo(Point3 coord) => _pointTo = coord;
+    public void RemovePointTo() => _pointTo = null;
+
     internal void LoadStep(BinaryReader reader)
     {
+      string pointExist = reader.ReadString();
+      if (pointExist is "X")
+        _pointTo = new Point3(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+      else
+        _pointTo = null;
       Empty = reader.ReadBoolean();
       if (!Empty)
       {
@@ -250,6 +261,17 @@
 
     internal void SaveStep(BinaryWriter writer)
     {
+      if (_pointTo is not null)
+      {
+        writer.Write("X");
+        writer.Write(_pointTo.Value.X);
+        writer.Write(_pointTo.Value.Y);
+        writer.Write(_pointTo.Value.Z);
+      }
+      else
+      {
+        writer.Write("M");
+      }
       writer.Write(Empty);
       if (!Empty)
       {

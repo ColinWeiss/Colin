@@ -49,13 +49,6 @@ namespace Colin.Core.Modulars.Tiles
     public void Mark(int x, int y, int z, TileBehavior behaivor) =>
       Mark(new Point3(x, y, z), behaivor);
 
-    public void Mark<T>(Point3 coord) where T : TileBehavior
-    {
-      _places.Enqueue((coord, CodeResources.Get<TileBehavior, T>()));
-    }
-    public void Mark<T>(int x, int y, int z) where T : TileBehavior =>
-      Mark<T>(new Point3(x, y, z));
-
     public void Handle(Point3 coord, TileBehavior behavior)
     {
       ref TileInfo info = ref Tile[coord]; //获取对应坐标的物块格的引用传递.
@@ -69,6 +62,7 @@ namespace Colin.Core.Modulars.Tiles
       {
         if (script.CanPlace() is false) //判断是否允许放置
         {
+          info.Behavior = null;
           info.Scripts.Clear();
           return;
         }

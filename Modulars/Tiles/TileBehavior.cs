@@ -21,15 +21,21 @@ namespace Colin.Core.Modulars.Tiles
     public Tile Tile { get; internal set; }
 
     /// <summary>
-    /// 执行于物块放置时.
+    /// 执行于判断物块放置标记前.
+    /// <br>若结果为 <see langword="true"/>, 则允许进行标记, 否则不进行标记.</br>
     /// </summary>
-    public virtual void OnPlace(ref TileInfo info) { }
+    public virtual bool CanPlaceMark(ref TileInfo info) => true;
 
     /// <summary>
     /// 执行于物块初始化.
     /// </summary>
     /// <param name="info"></param>
     public virtual void OnInitialize(ref TileInfo info) { }
+
+    /// <summary>
+    /// 执行于物块放置时.
+    /// </summary>
+    public virtual void OnPlace(ref TileInfo info) { }
 
     /// <summary>
     /// 执行于物块刷新时.

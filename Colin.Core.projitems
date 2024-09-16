@@ -69,7 +69,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileDestructor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\IPreExecution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\Preparator.cs" />
