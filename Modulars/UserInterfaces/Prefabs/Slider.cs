@@ -20,6 +20,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     private Div Content;
     private Div ContentContainer;
+
+    private float WheelVelocity = 8;
+
     public void Bind(Div content, Div contentContainer)
     {
       if (ContentContainer is not null)
@@ -31,9 +34,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     private void WheelEvent(MouseEventArgs args)
     {
       if (MouseResponder.ScrollDown)
-        Block.Layout.Top -= 4;
+      {
+        WheelVelocity = -6f;
+      }
       else if (MouseResponder.ScrollUp)
-        Block.Layout.Top += 4;
+      {
+        WheelVelocity = 6f;
+      }
     }
     public override void DivInit()
     {
@@ -65,6 +72,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     {
       Block.Layout.Left = Math.Clamp(Block.Layout.Left, Layout.PaddingLeft, Layout.Width - Layout.PaddingRight - Block.Layout.Width);
       Block.Layout.Top = Math.Clamp(Block.Layout.Top, Layout.PaddingTop, Layout.Height - Layout.PaddingBottom - Block.Layout.Height);
+
+      Block.Layout.Top += WheelVelocity;
+      WheelVelocity *= 0.9f;
 
       Precent =
         (Block.Layout.Location - new Vector2(Layout.PaddingLeft, Layout.PaddingTop))
