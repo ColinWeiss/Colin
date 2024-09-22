@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Resources;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -78,18 +78,14 @@
     public virtual void SaveStep(BinaryWriter writer) { }
 
     /// <summary>
-    /// 判断同层指定相对于该物块坐标具有指定偏移位置处的物块是否相同.
+    /// 判断同层指定相对于该物块坐标具有指定偏移位置处的物块是否具有相同的行为方式.
     /// </summary>
     /// <param name="dx">偏移的X坐标.</param>
     /// <param name="dy">偏移的Y坐标.</param>
     /// <returns></returns>
     public bool IsSame(int dx, int dy)
     {
-      TileInfo info = Tile[WorldCoord2.X + dx, WorldCoord2.Y + dy, CoordZ];
-      if (info.Behavior is null || Info.Behavior is null)
-        return false;
-      else
-        return info.Behavior.Equals(Info.Behavior);
+      return Info.IsSame(dx, dy);
     }
   }
 }

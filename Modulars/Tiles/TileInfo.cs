@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using System.Collections.Concurrent;
+
+namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 表示瓦片地图中的单个瓦片.
@@ -278,6 +280,21 @@
         Frame.SaveStep(writer);
         writer.Write((int)Collision);
       }
+    }
+
+    /// <summary>
+    /// 判断同层指定相对于该物块坐标具有指定偏移位置处的物块是否相同.
+    /// </summary>
+    /// <param name="dx">偏移的X坐标.</param>
+    /// <param name="dy">偏移的Y坐标.</param>
+    /// <returns></returns>
+    public bool IsSame(int dx, int dy)
+    {
+      TileInfo info = Tile[WorldCoord2.X + dx, WorldCoord2.Y + dy, CoordZ];
+      if (info.Behavior is null || Behavior is null)
+        return false;
+      else
+        return info.Behavior.Equals(Behavior);
     }
 
     private bool _isNull;

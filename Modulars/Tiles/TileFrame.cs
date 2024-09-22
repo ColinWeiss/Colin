@@ -24,7 +24,13 @@
     /// </summary>
     public bool Effective => X >= 0 && Y >= 0;
 
-    public Rectangle Frame =>
+    private bool _loadComplete;
+    /// <summary>
+    /// 表示该边框格是否已执行过 <see cref="LoadStep(BinaryReader)"/>.
+    /// </summary>
+    public bool LoadComplete => _loadComplete;
+
+    public Rectangle Rect =>
         new Rectangle(
             X * TileOption.TileSize.X,
             Y * TileOption.TileSize.Y,
@@ -41,6 +47,7 @@
 
     internal void LoadStep(BinaryReader reader)
     {
+      _loadComplete = true;
       X = reader.ReadInt32();
       Y = reader.ReadInt32();
       Width = reader.ReadInt32();
