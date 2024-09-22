@@ -40,6 +40,11 @@
       responder.Parent = this;
       Children.Add(responder);
     }
+    public void Insert(int index, EventResponder responder)
+    {
+      responder.Parent = this;
+      Children.Insert(index, responder);
+    }
     public void Remove(EventResponder responder)
     {
       responder.Parent = null;

@@ -201,7 +201,7 @@ namespace Colin.Core.Modulars.Tiles
     public bool Place<T>(int x, int y, int z) where T : TileBehavior, new()
     {
       ref TileInfo info = ref this[x, y, z];
-      TileBehavior behavior = CodeResources.Get<TileBehavior, T>();
+      TileBehavior behavior = CodeResources<TileBehavior>.GetFromType(typeof(T));
       if (behavior.CanPlaceMark(ref info))
       {
         Placer.Mark(info.WorldCoord3, behavior);
