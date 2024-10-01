@@ -9,7 +9,7 @@
 
     public override void Handle(IEvent theEvent)
     {
-      if (Core.OnActive is false)
+      if (Core.OnActive is false || CoreInfo.IMEHandler.Enabled)
         return;
       if (theEvent is KeyEventArgs keysEvent)
       {

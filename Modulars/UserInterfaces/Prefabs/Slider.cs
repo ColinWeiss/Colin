@@ -21,7 +21,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     private Div Content;
     private Div ContentContainer;
 
-    private float WheelVelocity = 8;
+    private float WheelVelocity = 0;
 
     public void Bind(Div content, Div contentContainer)
     {
@@ -95,7 +95,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         else
           Content.Layout.Top = ContentContainer.Layout.Top;
 
-        if (Content.Controller is LinearMenuController controller)
+        if (Content.Controller is LinearMenuController controller && Content.Layout.Height > ContentContainer.Layout.Height)
         {
           Content.Layout.Top = (int)-(Precent.Y * (controller.TotalSize.Y - ContentContainer.Layout.Height)) + ContentContainer.Layout.Top;
         }

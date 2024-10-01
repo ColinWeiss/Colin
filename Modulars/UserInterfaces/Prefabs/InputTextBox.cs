@@ -82,6 +82,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
             Text += "\n";
             CursorPosition++;
           }
+          Text = "";
         }
         else
         {
@@ -99,6 +100,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     public override void OnUpdate(GameTime time)
     {
+      Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
+
       Editing = UserInterface.Focus == this;
       InputRect = Layout.RenderTargetBounds;
       InputRect.Y += 16;
@@ -109,6 +112,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
           CursorPosition = Math.Clamp(CursorPosition - 1, 0, Text.Length);
         if (KeyboardResponder.IsKeyClickBefore(Keys.Right))
           CursorPosition = Math.Clamp(CursorPosition + 1, 0, Text.Length);
+
+        if (KeyboardResponder.IsKeyClickBefore(Keys.PageDown))
+          CursorPosition = Text.Length;
+        if (KeyboardResponder.IsKeyClickBefore(Keys.PageUp))
+          CursorPosition = 0;
       }
       else
         CursorPosition = Text.Length;
@@ -121,6 +129,5 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
       base.OnUpdate(time);
     }
-
   }
 }
