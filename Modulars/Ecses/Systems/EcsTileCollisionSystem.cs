@@ -101,6 +101,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
         for (int y = positiveY ? topTile : bottomTile; positiveY ? y <= bottomTile : y >= topTile; y += positiveY ? 1 : -1)
         {
           info = tile[x, y, comPhysic.Layer];
+          if (info.IsNull)
+            return;
           target = info.HitBox;
           if (
             next.Intersects(target) &&

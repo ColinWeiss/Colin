@@ -96,13 +96,13 @@ namespace Colin.Core.Modulars.Backgrounds
     public void RenderLeftRightLoopBackground(BackgroundLayer layer)
     {
       Vector3 translateBody = new Vector3(-(Camera.Position - CurrentStyle.LoopLayerDrawPosition) * layer.Parallax, 0f);
-      Vector3 translateCenter = new Vector3(Camera.Translate, 0f);
+      Vector3 translateCenter = new Vector3(Camera.Translate / 2, 0f);
       Vector2 drawCount = new Vector2((float)CoreInfo.ViewWidth / layer.Sprite.Width, (float)CoreInfo.ViewHeight / layer.Sprite.Height);
       Vector2 offset = Vector2.One / layer.Sprite.SizeF;
       layer.Transform = Matrix.CreateTranslation(translateBody) * Matrix.CreateTranslation(translateCenter);
       offset *= new Vector2(-layer.Translation.X, -layer.Translation.Y);
-      offset.X += CurrentStyle.LoopLayerOffset.X / layer.Sprite.Height;
-      offset.Y += CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Width;
+      offset.X -=CurrentStyle.LoopLayerOffset.X / layer.Sprite.Width;
+      offset.Y += CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Height;
 
       CoreInfo.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
       CoreInfo.Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;

@@ -1,6 +1,4 @@
-﻿using DeltaMachine.Core.Scenes.Loaders;
-
-namespace Colin.Core.Common
+﻿namespace Colin.Core.Common
 {
   public class SceneManager : ISingleton
   {
@@ -83,7 +81,7 @@ namespace Colin.Core.Common
             CoreInfo.Core.Window.OrientationChanged -= _currentScene.InitRenderTarget;
           }
           CoreInfo.Core.Components.Remove(_currentScene);
-          CoreInfo.Core.Components.Remove(Singleton.Get<Loader>());
+    //      CoreInfo.Core.Components.Remove(Singleton.Get<Loader>());
           while (!_currentScene.CanDispose)
           {
             _disposePromptTimer += Time.UnscaledDeltaTime;
@@ -97,7 +95,7 @@ namespace Colin.Core.Common
             _currentScene?.Dispose();
         }
         CoreInfo.Core.Components.Add(_toBeUsedScene);
-        CoreInfo.Core.Components.Add(Singleton.Get<Loader>());
+    //    CoreInfo.Core.Components.Add(Singleton.Get<Loader>());
         _currentScene = _toBeUsedScene;
         _toBeUsedScene = null;
       }

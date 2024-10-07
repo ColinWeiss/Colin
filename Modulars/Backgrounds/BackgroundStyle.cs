@@ -11,6 +11,8 @@
     /// </summary>
     public List<BackgroundLayer> Layers = new List<BackgroundLayer>();
 
+    public List<BackgroundLayer> Fixes = new List<BackgroundLayer>();
+
     /// <summary>
     /// 固定图层在绘制时的整体偏移量.
     /// </summary>

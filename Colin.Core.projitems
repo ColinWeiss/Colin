@@ -63,6 +63,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EntitySystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityBindableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityRemovableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsMoveSystem.cs" />
@@ -96,8 +98,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entrance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EnvironmentalController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityCom.cs" />
-    <Compile Include="..\Colin\Modulars\Ecses\Entity.cs" />
-    <Compile Include="..\Colin\Modulars\Ecses\EntitySystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsTileCollisionSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />

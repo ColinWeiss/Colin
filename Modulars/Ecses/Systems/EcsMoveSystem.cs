@@ -21,7 +21,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         comTransform = _current.GetComponent<EcsComTransform>();
         if (comTransform is null)
           continue;
-        comTransform.Translation += comTransform.Velocity * Time.DeltaTime;
+        comTransform.Translation += comTransform.DeltaVelocity;
       }
       base.DoUpdate();
     }
