@@ -46,6 +46,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\GameSoundEffect.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FileCheck\FileToMD5.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
