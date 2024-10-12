@@ -25,6 +25,11 @@ namespace Colin.Core.Audios
 
     }
 
+    public static void Play(SoundEffect soundEffect)
+    {
+      soundEffect.Play();
+    }
+
     /// <summary>
     /// 播放指定音效.
     /// </summary>

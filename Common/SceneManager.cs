@@ -11,6 +11,8 @@
 
     public SceneManager() { }
 
+    public static DrawableGameComponent Loader;
+
     public static T SetScene<T>() where T : Scene, new()
     {
       T scene = new T();
@@ -81,7 +83,8 @@
             CoreInfo.Core.Window.OrientationChanged -= _currentScene.InitRenderTarget;
           }
           CoreInfo.Core.Components.Remove(_currentScene);
-    //      CoreInfo.Core.Components.Remove(Singleton.Get<Loader>());
+          if(Loader is not null)
+            CoreInfo.Core.Components.Remove(Loader);
           while (!_currentScene.CanDispose)
           {
             _disposePromptTimer += Time.UnscaledDeltaTime;
@@ -95,7 +98,8 @@
             _currentScene?.Dispose();
         }
         CoreInfo.Core.Components.Add(_toBeUsedScene);
-    //    CoreInfo.Core.Components.Add(Singleton.Get<Loader>());
+        if (Loader is not null)
+          CoreInfo.Core.Components.Add(Loader);
         _currentScene = _toBeUsedScene;
         _toBeUsedScene = null;
       }
