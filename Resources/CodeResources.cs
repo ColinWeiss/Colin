@@ -39,15 +39,15 @@ namespace Colin.Core.Resources
   }
   public class CodeResources<T0> where T0 : ICodeResource
   {
-    private static Dictionary<Type, T0> resources = new Dictionary<Type, T0>();
+    public static Dictionary<Type, T0> Resources = new Dictionary<Type, T0>();
     private static Dictionary<string, int> serToHashs = new Dictionary<string, int>();
     private static Dictionary<int, string> hashToSers = new Dictionary<int, string>();
     private static Dictionary<string, Type> serToResourceTypes = new Dictionary<string, Type>();
 
-    public static T1 Get<T1>() where T1 : T0 => (T1)resources.GetValueOrDefault(typeof(T1));
+    public static T1 Get<T1>() where T1 : T0 => (T1)Resources.GetValueOrDefault(typeof(T1));
     public static T0 GetFromType(Type type)
     {
-      if (resources.TryGetValue(type, out T0 value))
+      if (Resources.TryGetValue(type, out T0 value))
         return value;
       else return default;
     }
@@ -80,13 +80,13 @@ namespace Colin.Core.Resources
 
     public void Load()
     {
-      resources.Clear();
+      Resources.Clear();
       serToHashs.Clear();
       foreach (var item in Assembly.GetExecutingAssembly().GetTypes())
       {
         if (!item.IsAbstract && item.IsSubclassOf(typeof(T0)))
         {
-          resources.Add(item, (T0)Activator.CreateInstance(item));
+          Resources.Add(item, (T0)Activator.CreateInstance(item));
           serToResourceTypes.Add(item.FullName, item);
           serToHashs.Add(item.FullName, item.FullName.GetMsnHashCode());
         }
