@@ -29,17 +29,6 @@ namespace Colin.Core
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / frame));
     }
 
-    /*  private List<CoreModule> Modules = new List<CoreModule>();
-      public void AddModule(CoreModule module)
-      {
-        module.DoInitialize();
-        Modules.Add(module);
-      }
-      public void RemoveModule(CoreModule module)
-      {
-        Modules.Remove(module);
-      }*/
-
     public Core()
     {
       //执行程序检查程序.

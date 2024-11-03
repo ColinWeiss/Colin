@@ -28,6 +28,19 @@
     /// </summary>
     public HashSet<string> Tags = new HashSet<string>();
 
+    /// <summary>
+    /// 为实体添加标签.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public void AddTag(string tag) => Tags.Add(tag);
+
+    /// <summary>
+    /// 判断该实体是否具有指定标签.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public bool HasTag(string tag) => Tags.Contains(tag);
+
     public void DoInitialize() { }
 
     public bool Equals(IEntityCom other)

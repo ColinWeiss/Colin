@@ -25,7 +25,7 @@
     /// <summary>
     /// 指示该变换的旋转.
     /// </summary>
-    public float Rotation;
+    public Angle Rotation;
 
     private Matrix _transform;
     public Matrix Transform
@@ -42,7 +42,7 @@
       _transform =
         Matrix.CreateScale(Scale.X, Scale.Y, 0f) *
         Matrix.CreateTranslation(-Anchor.X * Scale.X, -Anchor.Y * Scale.Y, 0) *
-        Matrix.CreateRotationZ(Rotation) *
+        Matrix.CreateRotationZ(Rotation.RadiansF) *
         Matrix.CreateTranslation(Anchor.X * Scale.X, Anchor.Y * Scale.Y, 0) *
         Matrix.CreateTranslation(Translation.X, Translation.Y, 0);
 

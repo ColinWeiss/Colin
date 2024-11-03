@@ -248,7 +248,7 @@
     public static Vector2 NextVectorUnit(this Random rand)
     {
       float rad = rand.Next(0, 360) * 3.141592f / 180;
-      return rad.GetAngle();
+      return rad.RtoA();
     }
     public static Vector2 NextVectorRec(this Random rand, Point size)
     {

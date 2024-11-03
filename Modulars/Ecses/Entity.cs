@@ -55,7 +55,6 @@ namespace Colin.Core.Modulars.Ecses
 
     public EcsComDoc _comDoc;
     public EcsComDoc Document => _comDoc;
-    public void AddTag(string tag) => _comDoc.Tags.Add(tag);
 
     private EcsComTransform _comTransform;
     public EcsComTransform Transform => _comTransform;

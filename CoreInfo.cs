@@ -160,14 +160,14 @@ namespace Colin.Core
     /// <summary>
     /// 指示当前程序是否处于调试模式.
     /// </summary>
-    public static bool DebugEnable = false;
+    public static bool Debug = false;
 
     internal static void Init(Core engine)
     {
       Core = engine;
       IMEHandler = new WinFormsIMEHandler(Core, true);
 #if DEBUG
-      DebugEnable = true;
+      Debug = true;
 #endif
     }
 

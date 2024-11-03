@@ -10,7 +10,7 @@
     /// </summary>
     public static void DrawLine(this SpriteBatch batch, Line line, Color color)
     {
-      float radian = (line.End - line.Start).GetRadian();
+      float radian = (line.End - line.Start).AtoR();
       Sprite pixel = Sprite.Get("Pixel");
       float depth = pixel.Depth;
       if (pixel is not null)

@@ -172,7 +172,7 @@ namespace Colin.Core
       else
         Console.WriteLine("正在加载计算着色器资源.");
 
-      if (CoreInfo.DebugEnable)
+      if (CoreInfo.Debug)
         CompileShaders();
       ComputeShader effect;
       string fileName;
