@@ -95,17 +95,23 @@ namespace Colin.Core.Modulars.Backgrounds
 
     public void RenderLeftRightLoopBackground(BackgroundLayer layer)
     {
-      Vector3 translateBody = new Vector3(-(Camera.Position - CurrentStyle.LoopLayerDrawPosition) * layer.Parallax, 0f);
+      Vector3 translateBody = new Vector3(-(Camera.Position - CurrentStyle.LoopLayerDrawPosition) * layer.Parallax * 0.33f, 0f);
       Vector2 drawCount = new Vector2((float)CoreInfo.ViewWidth / layer.Sprite.Width, (float)CoreInfo.ViewHeight / layer.Sprite.Height);
       Vector2 offset = Vector2.One / layer.Sprite.SizeF;
       layer.Transform = Matrix.CreateTranslation(translateBody);
       offset *= new Vector2(-layer.Translation.X, -layer.Translation.Y);
-      offset.X -=CurrentStyle.LoopLayerOffset.X / layer.Sprite.Width;
+      offset.X -= CurrentStyle.LoopLayerOffset.X / layer.Sprite.Width;
       offset.Y -= CurrentStyle.LoopLayerOffset.Y / layer.Sprite.Height;
 
       CoreInfo.Batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
       CoreInfo.Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-      LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / Camera.Zoom);
+
+      Vector2 log10(Vector2 v)
+      {
+        return new Microsoft.Xna.Framework.Vector2((float)Math.Log10(v.X), (float)Math.Log10(v.Y));
+      }
+
+      LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / (Camera.Zoom - ( Camera.Zoom * log10(Camera.Zoom))));
       LeftRightLoopEffect.Parameters["Offset"].SetValue(offset);
       LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
       CoreInfo.Graphics.GraphicsDevice.Textures[0] = _screenMap;
