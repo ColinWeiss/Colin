@@ -20,6 +20,7 @@
     public Direction Toward = Direction.Down;
     public Vector2 Scroll;
     public Vector2 TotalSize;
+    public bool AutoSetSize;
     private Div lastDiv;
 
     public override void Layout(ref DivLayout layout)
@@ -35,6 +36,8 @@
       else if (Direction == Direction.Horizontal)
         TotalSize.X -= DivInterval;
       lastDiv = null;
+      if (AutoSetSize)
+        Div.Layout.SetSize(TotalSize);
       base.Layout(ref layout);
     }
     public void CalculateLayout(Div division)

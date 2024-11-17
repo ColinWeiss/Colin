@@ -35,6 +35,8 @@
       }
     }
 
+    public int Order;
+
     /// <summary>
     /// 用于存放该划分元素的子元素.
     /// </summary>
@@ -263,7 +265,6 @@
       ScissorTestEnable = true,
     };
 
-
     /// <summary>
     /// 执行划分元素的渲染.
     /// </summary>
@@ -332,6 +333,7 @@
       for (int count = 0; count < Children.Count; count++)
       {
         _div = Children[count];
+        _div.Order = count;
         action.Invoke(_div);
       }
     }
@@ -411,7 +413,10 @@
     /// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
     public bool ContainsScreenPoint(Point point)
     {
-      return Layout.Bounds.Contains(point);
+      bool result = true;
+      if (parent is not null)
+        result = parent.ContainsScreenPoint(point);
+      return result && Layout.Bounds.Contains(point);
     }
 
     private bool disposedValue;
