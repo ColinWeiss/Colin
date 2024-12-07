@@ -25,8 +25,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
         _current = Ecs.Entities[count];
         if (_current is null)
           continue;
-        comTransform = _current.GetComponent<EcsComTransform>();
-        comPhysic = _current.GetComponent<EcsComPhysic>();
+        comTransform = _current.GetCom<EcsComTransform>();
+        comPhysic = _current.GetCom<EcsComPhysic>();
         if (comTransform is null || comPhysic is null)
           continue;
         //安全性检查.
@@ -155,8 +155,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
     public RectangleF GetHitBox(Entity Entity)
     {
-      EcsComTransform comTransform = Entity?.GetComponent<EcsComTransform>();
-      EcsComPhysic comPhysic = Entity?.GetComponent<EcsComPhysic>();
+      EcsComTransform comTransform = Entity?.GetCom<EcsComTransform>();
+      EcsComPhysic comPhysic = Entity?.GetCom<EcsComPhysic>();
       if (comTransform is not null && comPhysic is not null)
       {
         return new RectangleF(

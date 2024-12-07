@@ -1,32 +1,39 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
+using System.ComponentModel;
 
 namespace Colin.Core.Modulars.Ecses
 {
   /// <summary>
   /// 实体.
   /// </summary>
-  public class Entity : IGameContent<Entity>, ICodeResource
+  public abstract class Entity : IGameContent<Entity>, ICodeResource
   {
     internal Dictionary<Type, IEntityCom> _components;
     /// <summary>
     /// 实体组件列表.
     /// </summary>
     public Dictionary<Type, IEntityCom> Components => _components;
-    public bool HasComponent<T>() where T : IEntityCom => _components.ContainsKey(typeof(T));
-    public T GetComponent<T>() where T : IEntityCom => (T)_components.GetValueOrDefault(typeof(T), null);
-    public T RegisterCom<T>() where T : class, IEntityCom, new() => Register(new T()) as T;
-    public bool RemoveComponent<T>() where T : IEntityCom => _components.Remove(typeof(T));
-    public IEntityCom Register(IEntityCom component)
+    public bool HasCom<T>() where T : IEntityCom => _components.ContainsKey(typeof(T));
+    public T GetCom<T>() where T : IEntityCom => (T)_components.GetValueOrDefault(typeof(T), null);
+    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegistCom(new T()) as T;
+    public IEntityCom RegistCom(IEntityCom component)
     {
       if (component is EcsComScript script)
-      {
         script.SetEntity(this);
-      }
       if (Components.ContainsKey(component.GetType()) is false)
         Components.Add(component.GetType(), component);
       return component;
     }
+    public bool RemoveCom<T>() where T : IEntityCom => _components.Remove(typeof(T));
+    public void AddCom(IEntityCom com)
+    {
+      if (com is EcsComScript script)
+        script.SetEntity(this);
+      if (Components.ContainsKey(com.GetType()) is false)
+        Components.Add(com.GetType(), com);
+    }
+
     public Ecs Ecs { get; internal set; }
 
     /// <summary>
@@ -35,12 +42,12 @@ namespace Colin.Core.Modulars.Ecses
     public int ID;
 
     /// <summary>
-    /// 指示该实体需要被清除.
+    /// 指示该实体需要从Ecs中被清除.
     /// </summary>
     public bool NeedClear;
 
     /// <summary>
-    /// 指示该实体是否还存在于 Ecs系统的 对象池 中.
+    /// 指示该实体是否还存在于Ecs系统的对象池 中.
     /// </summary>
     public bool Active
     {
@@ -73,12 +80,19 @@ namespace Colin.Core.Modulars.Ecses
       _comDoc = RegisterCom<EcsComDoc>();
       _comDoc.Entity = this;
       _comTransform = RegisterCom<EcsComTransform>();
-      SetDefaults();
+      ComAdded();
       for (int count = 0; count < _components.Count; count++)
         _components.Values.ElementAt(count).DoInitialize();
-      SetDefaultsComplete();
+      SetDefaults();
     }
+    /// <summary>
+    /// 在此处添加组件.
+    /// </summary>
+    public virtual void ComAdded() { }
+
+    /// <summary>
+    /// 在此处处理组件数据.
+    /// </summary>
     public virtual void SetDefaults() { }
-    public virtual void SetDefaultsComplete() { }
   }
 }

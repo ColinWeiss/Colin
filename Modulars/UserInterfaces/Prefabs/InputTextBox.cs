@@ -100,7 +100,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     public override void OnUpdate(GameTime time)
     {
-      Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
+     // Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
 
       Editing = UserInterface.Focus == this;
       InputRect = Layout.RenderTargetBounds;

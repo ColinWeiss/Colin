@@ -18,7 +18,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         _current = _Entities[count];
         if (_current is null)
           continue;
-        comTransform = _current.GetComponent<EcsComTransform>();
+        comTransform = _current.GetCom<EcsComTransform>();
         if (comTransform is null)
           continue;
         comTransform.Translation += comTransform.DeltaVelocity;

@@ -131,7 +131,10 @@ namespace Colin.Core.Modulars.UserInterfaces
           _cachePos = new Vector2(-1, -1);
         }
       };
-      Mouse.LeftUp += (s, e) => Invoke(e, LeftUp);
+      Mouse.LeftUp += (s, e) =>
+      {
+        Invoke(e, LeftUp);
+      };
       Mouse.RightClickBefore += (s, e) =>
       {
         if (Div.IsVisible && Div.ContainsScreenPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
@@ -170,6 +173,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         Div.Interact.Interaction = true;
       else
         Div.Interact.Interaction = false;
+      if (MouseResponder.LeftUp)
+        DraggingState = false;
       if (DraggingState && Div.Interact.IsDraggable)
       {
         if (!Div.Interact.IsDraggable)
