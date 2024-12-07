@@ -3,7 +3,7 @@
 namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
-  /// 表示瓦片地图中的单个瓦片.
+  /// 表示瓦片地图中的单个瓦片的基本信息.
   /// </summary>
   public struct TileInfo
   {
@@ -19,7 +19,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       get
       {
-        return !IsNull && _pointTo is not null;//Tile.HasInfoReference(WorldCoord3);
+        return !IsNull && _pointTo is not null;
       }
     }
 

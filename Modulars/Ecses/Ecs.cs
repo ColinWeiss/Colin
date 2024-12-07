@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Events;
+using Colin.Core.Resources;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -108,7 +109,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       Entities[index].NeedClear = true;
     }
-    public T CreateEntity<T>() where T : Entity, new()
+    public T Create<T>() where T : Entity, new()
     {
       T result;
       Entity Entity;
@@ -127,7 +128,8 @@ namespace Colin.Core.Modulars.Ecses
       }
       return null;
     }
-    public Entity Create(Entity Entity)
+
+    public Entity Put(Entity Entity)
     {
       for (int count = 0; count < Entities.Length; count++)
       {
@@ -138,6 +140,23 @@ namespace Colin.Core.Modulars.Ecses
           Entity.Ecs = this;
           Entity.DoInitialize();
           return Entity;
+        }
+      }
+      return null;
+    }
+
+    public Entity Copy(Entity entity)
+    {
+      for (int count = 0; count < Entities.Length; count++)
+      {
+        if (Entities[count] is null)
+        {
+          entity = CodeResources<Entity>.GetFromType(entity.GetType());
+          entity.ID = count;
+          entity.Ecs = this;
+          entity.DoInitialize();
+          Entities[count] = entity;
+          return Entities[count];
         }
       }
       return null;

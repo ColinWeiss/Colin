@@ -264,11 +264,12 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadStep(BinaryReader reader)
     {
+
     }
 
     public void SaveStep(BinaryWriter writer)
     {
-    }
 
+    }
   }
 }

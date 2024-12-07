@@ -58,6 +58,7 @@ namespace Colin.Core.Modulars.Tiles
       info.Behavior = behavior;
       info.Behavior.Tile = Tile;
       info.Behavior.OnInitialize(ref info); //执行行为初始化放置
+      info.Behavior.OnScriptAdded(ref info);
       foreach (var script in info.Scripts.Values)
       {
         if (script.CanPlace() is false) //判断是否允许放置

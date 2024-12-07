@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Resources;
+using DeltaMachine.Core;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -217,7 +218,7 @@ namespace Colin.Core.Modulars.Tiles
     public bool Place(TileBehavior behavior, int x, int y, int z)
     {
       ref TileInfo info = ref this[x, y, z];
-      if( behavior.CanPlaceMark(ref info))
+      if (behavior.CanPlaceMark(ref info))
       {
         Placer.Mark(info.WorldCoord3, behavior);
         return true;
@@ -259,48 +260,28 @@ namespace Colin.Core.Modulars.Tiles
     public void AsyncLoadChunk(string path)
     {
       _loading = true;
+      DoInitialize();
       Task.Run(() =>
       {
-        using (FileStream fileStream = new FileStream(path, FileMode.Open))
-        {
-          using (BinaryReader reader = new BinaryReader(fileStream))
-          {
-            DoInitialize();
-            ref TileInfo info = ref this[0, 0, 0];
-            string typeName;
-            for (int count = 0; count < Infos.Length; count++)
-            {
-              info = ref this[count];
-              if (count % TileOption.ChunkWidth == 0)
-                Thread.Sleep(8);
-              info.LoadStep(reader);
-              if (!info.Empty)
-              {
-                typeName = CodeResources<TileBehavior>.GetTypeNameFromHash(reader.ReadInt32());
-                if (typeName is not null)
-                {
-                  info.Behavior = CodeResources<TileBehavior>.GetFromTypeName(typeName);
-                  info.Behavior.Tile = Tile;
-                  info.Behavior.OnInitialize(ref info); //执行行为初始化放置
-                  Refresher.Mark(Infos[count].WorldCoord3, 0);
-                }
-              }
-            }
-          }
-          _loading = false;
-        }
+        DoLoad(path);
       });
     }
 
     public void LoadChunk(string path)
     {
       DoInitialize();
+      DoLoad(path);
+    }
+
+    private void DoLoad(string path)
+    {
       using (FileStream fileStream = new FileStream(path, FileMode.Open))
       {
         using (BinaryReader reader = new BinaryReader(fileStream))
         {
           ref TileInfo info = ref this[0, 0, 0];
           string typeName;
+          TileScript script;
           for (int count = 0; count < Infos.Length; count++)
           {
             info = ref this[count];
@@ -313,7 +294,13 @@ namespace Colin.Core.Modulars.Tiles
                 info.Behavior = CodeResources<TileBehavior>.GetFromTypeName(typeName);
                 info.Behavior.Tile = Tile;
                 info.Behavior.OnInitialize(ref info); //执行行为初始化放置
+                info.Behavior.OnScriptAdded(ref info);
                 Refresher.Mark(info.WorldCoord3, 0);
+              }
+              for (int i = 0; i < info.Scripts.Count; i++)
+              {
+                script = info.Scripts.Values.ElementAt(i);
+                script.LoadStep(reader);
               }
             }
           }
@@ -325,27 +312,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       Task.Run(() =>
       {
-        using (FileStream fileStream = new FileStream(path, FileMode.Create))
-        {
-          using (BinaryWriter writer = new BinaryWriter(fileStream))
-          {
-            int? hash;
-            TileBehavior behavior;
-            for (int count = 0; count < Infos.Length; count++)
-            {
-              behavior = Infos[count].Behavior;
-              Infos[count].SaveStep(writer);
-              if (!Infos[count].Empty && behavior is not null)
-              {
-                hash = CodeResources<TileBehavior>.GetHashFromTypeName(behavior.Identifier);
-                if (hash.HasValue)
-                {
-                  writer.Write(hash.Value);
-                }
-              }
-            }
-          }
-        }
+        DoSave(path);
         _saved = true;
       });
     }
@@ -354,32 +321,45 @@ namespace Colin.Core.Modulars.Tiles
     {
       try
       {
-        using (FileStream fileStream = new FileStream(path, FileMode.Create))
-        {
-          using (BinaryWriter writer = new BinaryWriter(fileStream))
-          {
-            int? hash;
-            TileBehavior behavior;
-            for (int count = 0; count < Infos.Length; count++)
-            {
-              behavior = Infos[count].Behavior;
-              Infos[count].SaveStep(writer);
-              if (!Infos[count].Empty && behavior is not null)
-              {
-                hash = CodeResources<TileBehavior>.GetHashFromTypeName(behavior.Identifier);
-                if (hash.HasValue)
-                {
-                  writer.Write(hash.Value);
-                }
-              }
-            }
-          }
-        }
+        DoSave(path);
         _saved = true;
       }
       catch
       {
 
+      }
+    }
+
+    private void DoSave(string path)
+    {
+      using (FileStream fileStream = new FileStream(path, FileMode.Create))
+      {
+        using (BinaryWriter writer = new BinaryWriter(fileStream))
+        {
+          int? hash;
+          TileBehavior behavior;
+          TileScript script;
+          ref TileInfo info = ref TileInfo.Null;
+          for (int count = 0; count < Infos.Length; count++)
+          {
+            info = ref Infos[count];
+            behavior = info.Behavior;
+            info.SaveStep(writer);
+            if (!info.Empty && behavior is not null)
+            {
+              hash = CodeResources<TileBehavior>.GetHashFromTypeName(behavior.Identifier);
+              if (hash.HasValue)
+              {
+                writer.Write(hash.Value);
+              }
+              for (int i = 0; i < info.Scripts.Count; i++)
+              {
+                script = info.Scripts.Values.ElementAt(i);
+                script.SaveStep(writer);
+              }
+            }
+          }
+        }
       }
     }
   }

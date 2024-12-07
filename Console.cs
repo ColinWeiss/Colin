@@ -149,8 +149,6 @@ namespace Colin.Core
     public static void Execute(List<string> cmdLine)
     {
       Process process = new Process();
-      try
-      {
         for (int count = 0; count < cmdLine.Count; count++)
         {
           process.StartInfo.FileName = "cmd.exe";
@@ -163,15 +161,12 @@ namespace Colin.Core
           process.StandardInput.AutoFlush = true;
           process.StandardInput.WriteLine(cmdLine[count]);
           WriteLine("Execute: " + cmdLine[count]);
+          WriteLine(process.StandardError.ReadToEnd());
           process.StandardInput.WriteLine("exit");
           process.WaitForExit();
           process.Close();
         }
-      }
-      catch
-      {
-        WriteLine(process.StandardError.ReadToEnd());
-      }
+      
     }
   }
 }

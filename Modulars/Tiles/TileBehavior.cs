@@ -33,6 +33,12 @@ namespace Colin.Core.Modulars.Tiles
     public virtual void OnInitialize(ref TileInfo info) { }
 
     /// <summary>
+    /// 执行于添加 <see cref="TileScript"/> 时.
+    /// </summary>
+    /// <param name="info"></param>
+    public virtual void OnScriptAdded(ref TileInfo info) { }
+
+    /// <summary>
     /// 执行于物块放置时.
     /// </summary>
     public virtual void OnPlace(ref TileInfo info) { }
@@ -48,5 +54,9 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="info"></param>
     /// <param name="conduct"></param>
     public virtual void OnDestruction(ref TileInfo info) { }
+
+    public T AddScript<T>(ref TileInfo info) where T : TileScript, new() => info.AddScript<T>();
+
+    public T GetScript<T>(ref TileInfo info) where T : TileScript, new() => info.GetScript<T>();
   }
 }
