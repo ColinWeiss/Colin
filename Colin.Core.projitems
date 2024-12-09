@@ -136,15 +136,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\DirectoryChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\DrawBatcherExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\IDrawBatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\MinDrawBatcher2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Frame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Vert2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ControllerResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MouseResponder.cs" />

@@ -148,25 +148,36 @@ namespace Colin.Core
     /// <returns>执行结果</returns>
     public static void Execute(List<string> cmdLine)
     {
-      Process process = new Process();
-        for (int count = 0; count < cmdLine.Count; count++)
-        {
-          process.StartInfo.FileName = "cmd.exe";
-          process.StartInfo.UseShellExecute = false;
-          process.StartInfo.RedirectStandardInput = true;
-          process.StartInfo.RedirectStandardOutput = true;
-          process.StartInfo.RedirectStandardError = true;
-          process.StartInfo.CreateNoWindow = false;
-          process.Start();
-          process.StandardInput.AutoFlush = true;
-          process.StandardInput.WriteLine(cmdLine[count]);
-          WriteLine("Execute: " + cmdLine[count]);
-          WriteLine(process.StandardError.ReadToEnd());
-          process.StandardInput.WriteLine("exit");
-          process.WaitForExit();
-          process.Close();
-        }
-      
+      string msg = "";
+      for (int count = 0; count < cmdLine.Count; count++)
+      {
+        msg = CmdExecute(cmdLine[count]);
+        if(msg != "")
+          WriteLine("Error" , msg);
+        msg = "";
+      }
+    }
+    public static string CmdExecute(string command)
+    {
+      bool flag = true;
+      string result;
+      Process p = new Process();
+      p.StartInfo.FileName = "cmd.exe";
+      p.StartInfo.UseShellExecute = false;
+      p.StartInfo.RedirectStandardInput = true;
+      p.StartInfo.RedirectStandardOutput = true;
+      p.StartInfo.RedirectStandardError = true;
+      p.StartInfo.CreateNoWindow = true;
+      p.Start();
+      p.StandardInput.AutoFlush = true;
+      p.StandardInput.WriteLine(command);
+      WriteLine("Remind", "执行 " + command);
+      p.StandardInput.WriteLine("exit");
+      p.StandardInput.Close();
+      result = p.StandardError.ReadToEnd();
+      p.WaitForExit();
+      p.Close();
+      return result;
     }
   }
 }

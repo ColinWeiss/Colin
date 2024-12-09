@@ -23,11 +23,6 @@ namespace Colin.Core
     internal static SpriteBatch Batch { get; set; }
 
     /// <summary>
-    /// 纹理批管道.
-    /// </summary>
-    internal static DrawBatcher2D<Vert2> DrawBatcherAlt { get; set; }
-
-    /// <summary>
     /// 游戏刻缓存.
     /// </summary>
     public static GameTime GameTimeCache { get; set; }

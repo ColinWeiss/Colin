@@ -61,7 +61,6 @@ namespace Colin.Core
     protected override sealed void Initialize()
     {
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
-      CoreInfo.DrawBatcherAlt = new(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
