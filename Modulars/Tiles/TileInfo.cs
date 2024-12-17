@@ -203,6 +203,8 @@ namespace Colin.Core.Modulars.Tiles
     }
     public T GetScript<T>() where T : TileScript
     {
+      if (IsPointer)
+        return Tile.GetInfoReference(WorldCoord3).GetScript<T>();
       if (Scripts is null)
         return null;
       if (Scripts.TryGetValue(typeof(T), out TileScript script))

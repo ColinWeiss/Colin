@@ -220,6 +220,7 @@ namespace Colin.Core.Modulars.Tiles
 
     /// <summary>
     /// 使用世界物块坐标破坏指定位置的物块.
+    /// <br>如果该坐标为物块指针, 则针对其指向的物块操作.</br>
     /// </summary>
     public void Destruction(int x, int y, int z)
     {
