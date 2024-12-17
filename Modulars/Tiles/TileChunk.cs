@@ -67,6 +67,9 @@ namespace Colin.Core.Modulars.Tiles
 
     public Point Coord => new Point(CoordX, CoordY);
 
+    private Rectangle? _tileRect;
+    public Rectangle TileRect => _tileRect ??= new Rectangle(CoordX * TileOption.ChunkWidth, CoordY * TileOption.ChunkHeight, TileOption.ChunkWidth, TileOption.ChunkHeight);
+
     private TileChunk temp;
     public TileChunk Top
     {
@@ -138,11 +141,28 @@ namespace Colin.Core.Modulars.Tiles
     {
       get
       {
+        if (x >= Width)
+          x %= Width;
+        if (y >= Height)
+          y %= Height;
         if (x < 0)
           x = Width + x;
         if (y < 0)
           y = Height + y;
         return ref Infos[z * Width * Height + x + y * Width];
+      }
+    }
+
+    public void ForEach(Action<TileInfo> info, int x, int y, int width, int height, int depth)
+    {
+      ref TileInfo _i = ref TileInfo.Null;
+      for (int cx = x; cx < x + width; cx++)
+      {
+        for (int cy = y; cy < y + height; cy++)
+        {
+          _i = ref this[cx, cy, depth];
+          info.Invoke(_i);
+        }
       }
     }
 

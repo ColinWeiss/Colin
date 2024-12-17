@@ -166,6 +166,21 @@ namespace Colin.Core.Modulars.Tiles
       int tileCoordY = worldCoordY >= 0 ? worldCoordY % TileOption.ChunkHeight : (worldCoordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
       return (new Point(chunkCoordX, chunkCoordY), new Point(tileCoordX, tileCoordY));
     }
+
+    public Point GetInnerCoord(int worldCoordX, int worldCoordY)
+    {
+      int tileCoordX = worldCoordX >= 0 ? worldCoordX % TileOption.ChunkWidth : (worldCoordX + 1) % TileOption.ChunkWidth + (TileOption.ChunkWidth - 1);
+      int tileCoordY = worldCoordY >= 0 ? worldCoordY % TileOption.ChunkHeight : (worldCoordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
+      return new Point(tileCoordX, tileCoordY);
+    }
+
+    public Point GetChunkCoord(int worldCoordX, int worldCoordY)
+    {
+      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
+      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
+      return new Point(chunkCoordX, chunkCoordY);
+    }
+
     /// <summary>
     /// 从指定位置获取世界物块坐标.
     /// </summary>
@@ -174,6 +189,13 @@ namespace Colin.Core.Modulars.Tiles
       int coordX = (int)Math.Floor(position.X / TileOption.TileWidth);
       int coordY = (int)Math.Floor(position.Y / TileOption.TileHeight);
       return new Point(coordX, coordY);
+    }
+
+    public Point GetChunkCoordForWorldCoord(int worldCoordX, int worldCoordY)
+    {
+      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
+      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
+      return new Point(chunkCoordX, chunkCoordY);
     }
 
     public bool Place<T>(int x, int y, int z) where T : TileBehavior, new()
