@@ -3,7 +3,9 @@
   public static class RandomExt
   {
     private static int _seed = Environment.TickCount;
-    public static System.Random Rand = new System.Random(_seed);
+    public static Random Rand = new Random(_seed);
+
+    public static bool NextBoolean() => Rand.NextBool();
 
     /// <summary>
     /// returns current seed value

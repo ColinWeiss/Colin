@@ -65,6 +65,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CircleShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CollisionHandle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\PolygonShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\RectangleShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\SectorShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Shape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EntitySystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityBindableCom.cs" />
@@ -114,7 +120,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ComputeShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ShaderCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Polygon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleEmitter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />

@@ -13,8 +13,8 @@ namespace Colin.Core.Modulars.Tiles
     private TileRefresher _tileRefresher;
     public TileRefresher TileRefresher => _tileRefresher ??= Scene.GetModule<TileRefresher>();
 
-    private ConcurrentQueue<Point3> _queue = new ConcurrentQueue<Point3>();
-    public ConcurrentQueue<Point3> Queue => _queue;
+    private ConcurrentQueue<(Point3, bool)> _queue = new ConcurrentQueue<(Point3, bool)>();
+    public ConcurrentQueue<(Point3, bool)> Queue => _queue;
 
     public void DoInitialize()
     {
@@ -28,10 +28,10 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref Tile[0, 0, 0];
       while (!_queue.IsEmpty)
       {
-        if (_queue.TryDequeue(out Point3 coord))
+        if (_queue.TryDequeue(out ValueTuple<Point3,bool> coord))
         {
-          info = ref Tile[coord];
-          Handle(coord);
+          info = ref Tile[coord.Item1];
+          Handle(coord.Item1, coord.Item2);
           if (info.Empty)
           {
             info.Behavior = null;
@@ -41,23 +41,26 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    public void Mark(Point3 coord)
+    public void Mark(Point3 coord, bool doEvent)
     {
-      _queue.Enqueue(coord);
+      _queue.Enqueue((coord, doEvent));
     }
-    public void Mark(int x, int y, int z) =>
-      Mark(new Point3(x, y, z));
+    public void Mark(int x, int y, int z, bool doEvent) =>
+      Mark(new Point3(x, y, z), doEvent);
 
-    private void Handle(Point3 coord)
+    private void Handle(Point3 coord, bool doEvent)
     {
       ref TileInfo info = ref Tile[coord];
       if (info.IsNull)
         return;
       if (info.Empty is false)
       {
-        info.Behavior.OnDestruction(ref info);
-        foreach (var script in info.Scripts.Values)
-          script.OnDestruction(this);
+        if(doEvent)
+        {
+          info.Behavior.OnDestruction(ref info);
+          foreach (var script in info.Scripts.Values)
+            script.OnDestruction(this);
+        }
         info.Empty = true;
         TileRefresher.Mark(info.WorldCoord3, 1); //将物块标记刷新, 刷新事件交由物块更新器处理
       }

@@ -116,32 +116,35 @@ namespace Colin.Core.Modulars.Ecses.Systems
             absV = -v;
             if (absV.X < absV.Y)
             {
-              if (deltaVel.X < 0 && next.Left < target.Right)
+              if (info.Collision != TileCollision.Platform)
               {
-                xt = (bounds.Left - target.Right) / Math.Abs(deltaVel.X);
-                comPhysic.CollisionLeft = true;
+                if (deltaVel.X < 0 && next.Left < target.Right)
+                {
+                  xt = (bounds.Left - target.Right) / Math.Abs(deltaVel.X);
+                  comPhysic.CollisionLeft = true;
+                }
+                else if (deltaVel.X > 0 && next.Right > target.Left)
+                {
+                  xt = (target.Left - bounds.Right) / Math.Abs(deltaVel.X);
+                  comPhysic.CollisionRight = true;
+                }
+                deltaVel.X *= xt;
               }
-              else if (deltaVel.X > 0 && next.Right > target.Left)
-              {
-                xt = (target.Left - bounds.Right) / Math.Abs(deltaVel.X);
-                comPhysic.CollisionRight = true;
-              }
-              deltaVel.X *= xt;
               next = GetHitBox(Entity);
               next.Location += deltaVel;
               break;
             }
             else if (absV.X > absV.Y)
             {
-              if (deltaVel.Y < 0 && next.Top < target.Bottom)
-              {
-                yt = (bounds.Top - target.Bottom) / Math.Abs(deltaVel.Y);
-                comPhysic.CollisionTop = true;
-              }
-              else if (deltaVel.Y > 0 && next.Bottom > target.Top)
+              if (deltaVel.Y > 0 && next.Bottom > target.Top)
               {
                 yt = (target.Top - bounds.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionBottom = true;
+              }
+              else if (deltaVel.Y < 0 && next.Top < target.Bottom)
+              {
+                yt = (bounds.Top - target.Bottom) / Math.Abs(deltaVel.Y);
+                comPhysic.CollisionTop = true;
               }
               deltaVel.Y *= yt;
               next = GetHitBox(Entity);
@@ -150,9 +153,11 @@ namespace Colin.Core.Modulars.Ecses.Systems
             }
           }
         }
+
+        comTransform.Velocity = deltaVel / Time.DeltaTime;
       }
-      comTransform.Velocity = deltaVel / Time.DeltaTime;
     }
+
     public RectangleF GetHitBox(Entity Entity)
     {
       EcsComTransform comTransform = Entity?.GetCom<EcsComTransform>();

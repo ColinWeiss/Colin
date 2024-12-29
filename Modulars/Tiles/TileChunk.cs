@@ -1,5 +1,6 @@
 ﻿using Colin.Core.Resources;
 using DeltaMachine.Core;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,7 +69,13 @@ namespace Colin.Core.Modulars.Tiles
     public Point Coord => new Point(CoordX, CoordY);
 
     private Rectangle? _tileRect;
-    public Rectangle TileRect => _tileRect ??= new Rectangle(CoordX * TileOption.ChunkWidth, CoordY * TileOption.ChunkHeight, TileOption.ChunkWidth, TileOption.ChunkHeight);
+    public Rectangle TileRect =>
+      _tileRect ??=
+      new Rectangle(
+        CoordX * TileOption.ChunkWidth,
+        CoordY * TileOption.ChunkHeight,
+        TileOption.ChunkWidth,
+        TileOption.ChunkHeight);
 
     private TileChunk temp;
     public TileChunk Top
@@ -141,14 +148,6 @@ namespace Colin.Core.Modulars.Tiles
     {
       get
       {
-        if (x >= Width)
-          x %= Width;
-        if (y >= Height)
-          y %= Height;
-        if (x < 0)
-          x = Width + x;
-        if (y < 0)
-          y = Height + y;
         return ref Infos[z * Width * Height + x + y * Width];
       }
     }
@@ -156,13 +155,20 @@ namespace Colin.Core.Modulars.Tiles
     public void ForEach(Action<TileInfo> info, int x, int y, int width, int height, int depth)
     {
       ref TileInfo _i = ref TileInfo.Null;
-      for (int cx = x; cx < x + width; cx++)
+      try
       {
-        for (int cy = y; cy < y + height; cy++)
+        for (int cx = x; cx < x + width; cx++)
         {
-          _i = ref this[cx, cy, depth];
-          info.Invoke(_i);
+          for (int cy = y; cy < y + height; cy++)
+          {
+            _i = ref this[cx, cy, depth];
+            info.Invoke(_i);
+          }
         }
+      }
+      catch
+      {
+        Console.WriteLine("Error","区块遍历异常, 请检查输入参数合理性.");
       }
     }
 
@@ -253,21 +259,24 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="z"></param>
-    public void Destruction(int x, int y, int z)
+    public void Destruct(int x, int y, int z, bool doEvent = true)
+      => Destruct(z * Width * Height + x + y * Width, doEvent);
+
+    public void Destruct(int index, bool doEvent = true)
     {
-      TileInfo info = this[x, y, z];
+      TileInfo info = this[index];
       if (info.IsNull)
         return;
       if (Tile.HasInfoReference(info.WorldCoord3))
       {
         info = Tile.GetInfoReference(info.WorldCoord3);
         if (info.Empty is false && !info.IsNull)
-          Destructor.Mark(info.WorldCoord3);
+          Destructor.Mark(info.WorldCoord3, doEvent);
       }
-      else if (!Destructor.Queue.Contains(info.WorldCoord3))
+      else if (!Destructor.Queue.Contains((info.WorldCoord3, doEvent)))
       {
         if (!info.Empty)
-          Destructor.Mark(info.WorldCoord3);
+          Destructor.Mark(info.WorldCoord3, doEvent);
       }
     }
 

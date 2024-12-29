@@ -191,6 +191,8 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    public void ClearScript() => Scripts = null;
+
     public Dictionary<Type, TileScript> Scripts;
     public T AddScript<T>() where T : TileScript, new()
     {

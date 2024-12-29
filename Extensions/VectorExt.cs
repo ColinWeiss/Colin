@@ -104,6 +104,11 @@
       return MathF.Atan2(angle.Y, angle.X);
     }
 
+    public static float Cross(Vector2 a, Vector2 b)
+    {
+      return a.X * b.Y - a.Y * b.X;
+    }
+
     public static float Slop(this Vector2 vec)
     {
       return vec.Y / vec.X;
