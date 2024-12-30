@@ -34,9 +34,9 @@ namespace Colin.Core.Modulars.Collisions
       return new List<Vector2>
         {
             new Vector2(0, 0),          // 左上角
-            new Vector2(width, 0),      // 右上角
-            new Vector2(width, height), // 右下角
-            new Vector2(0, height)      // 左下角
+            new Vector2(width * 1.00001f, 0),      // 右上角
+            new Vector2(width* 1.00001f, height* 1.00001f), // 右下角
+            new Vector2(0, height* 1.00001f)      // 左下角
         };
     }
   }
