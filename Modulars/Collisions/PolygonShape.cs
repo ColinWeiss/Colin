@@ -127,7 +127,7 @@ namespace Colin.Core.Modulars.Collisions
           );
         }
       }
-      base.DoRender( device, batch);
+      base.DoRender(device, batch);
     }
 
     /// <summary>
@@ -224,6 +224,42 @@ namespace Colin.Core.Modulars.Collisions
         // 更新最小值和最大值
         if (projection < min) min = projection;
         if (projection > max) max = projection;
+      }
+    }
+
+    private RectangleF? _bounds;
+    public override RectangleF Bounds
+    {
+      get
+      {
+        if (_bounds is null)
+        {
+          if (Vertices.Count == 0)
+          {
+            throw new InvalidOperationException("多边形没有顶点，无法计算 AABB。");
+          }
+
+          // 初始化最小值和最大值
+          float minX = float.MaxValue;
+          float minY = float.MaxValue;
+          float maxX = float.MinValue;
+          float maxY = float.MinValue;
+
+          // 遍历所有顶点以计算 AABB
+          foreach (Vector2 vertex in Vertices)
+          {
+            Vector2 transformedVertex = vertex;
+
+            if (transformedVertex.X < minX) minX = transformedVertex.X;
+            if (transformedVertex.Y < minY) minY = transformedVertex.Y;
+            if (transformedVertex.X > maxX) maxX = transformedVertex.X;
+            if (transformedVertex.Y > maxY) maxY = transformedVertex.Y;
+          }
+          _bounds = new RectangleF(minX, minY, (maxX - minX), (maxY - minY));
+        }
+        RectangleF result = _bounds.Value;
+        result.Offset(Position);
+        return result;
       }
     }
   }

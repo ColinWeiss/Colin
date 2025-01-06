@@ -66,11 +66,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CircleShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Collision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CollisionHandle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Collider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\PolygonShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\RectangleShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\SectorShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Shape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComNetwork.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EntitySystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityBindableCom.cs" />

@@ -31,17 +31,17 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 指示物块在区块内的横坐标.
     /// </summary>
-    public int ChunkCoordX => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) % TileOption.ChunkWidth;
+    public int ChunkCoordX => Index % (Tile.Option.ChunkWidth * Tile.Option.ChunkHeight) % Tile.Option.ChunkWidth;
 
     /// <summary>
     /// 指示物块在区块内的纵坐标.
     /// </summary>
-    public int ChunkCoordY => Index % (TileOption.ChunkWidth * TileOption.ChunkHeight) / TileOption.ChunkWidth;
+    public int ChunkCoordY => Index % (Tile.Option.ChunkWidth * Tile.Option.ChunkHeight) / Tile.Option.ChunkWidth;
 
     /// <summary>
     /// 指示物块所处的深度.
     /// </summary>
-    public int CoordZ => Index / (TileOption.ChunkWidth * TileOption.ChunkHeight);
+    public int CoordZ => Index / (Tile.Option.ChunkWidth * Tile.Option.ChunkHeight);
 
     private Point _chunkCoord2;
     /// <summary>
@@ -80,7 +80,7 @@ namespace Colin.Core.Modulars.Tiles
       get
       {
         if (_worldCoord2 == Point.Zero)
-          _worldCoord2 = new Point(Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X, Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y);
+          _worldCoord2 = new Point(Chunk.CoordX * Tile.Option.ChunkWidth + ChunkCoord2.X, Chunk.CoordY * Tile.Option.ChunkHeight + ChunkCoord2.Y);
         return _worldCoord2;
       }
     }
@@ -96,8 +96,8 @@ namespace Colin.Core.Modulars.Tiles
         if (_worldCoord3 == Point3.Zero)
         {
           _worldCoord3 = new Point3(
-              Chunk.CoordX * TileOption.ChunkWidth + ChunkCoord2.X,
-              Chunk.CoordY * TileOption.ChunkHeight + ChunkCoord2.Y,
+              Chunk.CoordX * Tile.Option.ChunkWidth + ChunkCoord2.X,
+              Chunk.CoordY * Tile.Option.ChunkHeight + ChunkCoord2.Y,
               CoordZ);
         }
         return _worldCoord3;
@@ -223,7 +223,7 @@ namespace Colin.Core.Modulars.Tiles
       get
       {
         if (_hitBox.X == 0 && _hitBox.Y == 0 && _hitBox.Width == 0 && _hitBox.Height == 0)
-          _hitBox = new RectangleF(WorldCoord2.ToVector2() * TileOption.TileSizeF, TileOption.TileSizeF);
+          _hitBox = new RectangleF(WorldCoord2.ToVector2() * Tile.Option.TileSizeF, Tile.Option.TileSizeF);
         return _hitBox;
       }
     }

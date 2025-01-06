@@ -184,5 +184,39 @@ namespace Colin.Core.Modulars.Collisions
       while (angle >= MathHelper.TwoPi) angle -= MathHelper.TwoPi;
       return angle;
     }
+
+    private RectangleF? _bounds;
+    public override RectangleF Bounds
+    {
+      get
+      {
+        if (_bounds is null)
+        {
+          // 计算 AABB 的最小和最大坐标
+          float minX = -Radius;  // 从中心点开始计算
+          float minY = -Radius;  // 从中心点开始计算
+          float maxX = Radius;   // 从中心点开始计算
+          float maxY = Radius;   // 从中心点开始计算
+
+          // 根据起始角度和扫过角度计算扇形的边界
+          float endAngle = StartAngle + SweepAngle;
+
+          Vector2 point1 = new Vector2(Radius * (float)Math.Cos(StartAngle), Radius * (float)Math.Sin(StartAngle));
+          Vector2 point2 = new Vector2(Radius * (float)Math.Cos(endAngle), Radius * (float)Math.Sin(endAngle));
+
+          // 更新 AABB 的最小和最大坐标
+          minX = Math.Min(minX, Math.Min(point1.X, point2.X));
+          minY = Math.Min(minY, Math.Min(point1.Y, point2.Y));
+          maxX = Math.Max(maxX, Math.Max(point1.X, point2.X));
+          maxY = Math.Max(maxY, Math.Max(point1.Y, point2.Y));
+
+          // 创建并返回 AABB Rectangle
+          _bounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+        }
+        RectangleF result = _bounds.Value;
+        result.Offset(Position);
+        return result;
+      }
+    }
   }
 }

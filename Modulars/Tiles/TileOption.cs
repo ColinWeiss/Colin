@@ -5,15 +5,14 @@
   /// </summary>
   public class TileOption
   {
-    public static readonly int TileWidth = 16;
-    public static readonly int TileHeight = 16;
-    public static Point TileSize => new Point(TileWidth, TileHeight);
-    public static Vector2 TileSizeF => new Vector2(TileWidth, TileHeight);
+    public int TileWidth;
+    public int TileHeight;
+    public Point TileSize => new Point(TileWidth, TileHeight);
+    public Vector2 TileSizeF => new Vector2(TileWidth, TileHeight);
 
-    public static readonly int ChunkWidth = 96;
-    public static readonly int ChunkHeight = 96;
-    public static Point ChunkSize => new Point(ChunkWidth, ChunkHeight);
-    public static Vector2 ChunkSizeF => new Vector2(ChunkWidth, ChunkHeight);
-
+    public int ChunkWidth;
+    public int ChunkHeight;
+    public Point ChunkSize => new Point(ChunkWidth, ChunkHeight);
+    public Vector2 ChunkSizeF => new Vector2(ChunkWidth, ChunkHeight);
   }
 }

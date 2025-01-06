@@ -60,10 +60,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
       RectangleF previousBounds = bounds;
       previousBounds.Offset(-comTransform.DeltaVelocity);
 
-      int leftTile = (int)Math.Floor((float)bounds.Left / TileOption.TileSize.X);
-      int rightTile = (int)Math.Ceiling(((float)bounds.Right / TileOption.TileSize.X));
-      int topTile = (int)Math.Floor((float)bounds.Top / TileOption.TileSize.Y);
-      int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / TileOption.TileSizeF.Y);
+      int leftTile = (int)Math.Floor((float)bounds.Left / tile.Option.TileSize.X);
+      int rightTile = (int)Math.Ceiling(((float)bounds.Right / tile.Option.TileSize.X));
+      int topTile = (int)Math.Floor((float)bounds.Top / tile.Option.TileSize.Y);
+      int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / tile.Option.TileSizeF.Y);
 
       Vector2 deltaVel = comTransform.DeltaVelocity;
 

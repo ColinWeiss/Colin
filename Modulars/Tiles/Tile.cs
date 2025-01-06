@@ -1,5 +1,6 @@
 ﻿using Colin.Core.IO;
 using System.Collections.Concurrent;
+using System.IO;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -20,6 +21,14 @@ namespace Colin.Core.Modulars.Tiles
     public bool RawRtVisible { get; set; }
 
     public bool Presentation { get; set; } = false;
+
+    private TileOption _option;
+    public TileOption Option => _option;
+
+    public void SetOption(TileOption option)
+    {
+      _option = option;
+    }
 
     public Tile()
     {
@@ -75,7 +84,11 @@ namespace Colin.Core.Modulars.Tiles
     public void Create(int depth) => Depth = depth;
 
     public void DoInitialize() { }
-    public void Start() { }
+    public void Start()
+    {
+      if (_option is null)
+        Console.WriteLine("Error", "物块模块信息设置为 NULL.");
+    }
 
     /// <summary>
     /// 对齐后的渲染左上角位置，这个位置要求恰好对齐物块左上角
@@ -119,8 +132,8 @@ namespace Colin.Core.Modulars.Tiles
     /// <returns>若成功获取, 返回对象; 否则返回 <see langword="null"/>.</returns>
     public TileChunk GetChunkForWorldCoord(int worldCoordX, int worldCoordY)
     {
-      int indexX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
-      int indexY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
+      int indexX = worldCoordX >= 0 ? worldCoordX / Option.ChunkWidth : (worldCoordX + 1) / Option.ChunkWidth - 1;
+      int indexY = worldCoordY >= 0 ? worldCoordY / Option.ChunkHeight : (worldCoordY + 1) / Option.ChunkHeight - 1;
       return GetChunk(indexX, indexY);
     }
     /// <summary>
@@ -134,8 +147,8 @@ namespace Colin.Core.Modulars.Tiles
     {
       get
       {
-        int indexX = x >= 0 ? x % TileOption.ChunkWidth : ((x + 1) % TileOption.ChunkWidth) + (TileOption.ChunkWidth - 1);
-        int indexY = y >= 0 ? y % TileOption.ChunkHeight : ((y + 1) % TileOption.ChunkHeight) + (TileOption.ChunkHeight - 1);
+        int indexX = x >= 0 ? x % Option.ChunkWidth : ((x + 1) % Option.ChunkWidth) + (Option.ChunkWidth - 1);
+        int indexY = y >= 0 ? y % Option.ChunkHeight : ((y + 1) % Option.ChunkHeight) + (Option.ChunkHeight - 1);
         TileChunk target = GetChunkForWorldCoord(x, y);
         if (target is not null)
           return ref target[indexX, indexY, z];
@@ -160,24 +173,24 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public (Point cCoord, Point tCoord) GetCoords(int worldCoordX, int worldCoordY)
     {
-      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
-      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
-      int tileCoordX = worldCoordX >= 0 ? worldCoordX % TileOption.ChunkWidth : (worldCoordX + 1) % TileOption.ChunkWidth + (TileOption.ChunkWidth - 1);
-      int tileCoordY = worldCoordY >= 0 ? worldCoordY % TileOption.ChunkHeight : (worldCoordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
+      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / Option.ChunkWidth : (worldCoordX + 1) / Option.ChunkWidth - 1;
+      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Option.ChunkHeight : (worldCoordY + 1) / Option.ChunkHeight - 1;
+      int tileCoordX = worldCoordX >= 0 ? worldCoordX % Option.ChunkWidth : (worldCoordX + 1) % Option.ChunkWidth + (Option.ChunkWidth - 1);
+      int tileCoordY = worldCoordY >= 0 ? worldCoordY % Option.ChunkHeight : (worldCoordY + 1) % Option.ChunkHeight + (Option.ChunkHeight - 1);
       return (new Point(chunkCoordX, chunkCoordY), new Point(tileCoordX, tileCoordY));
     }
 
     public Point GetInnerCoord(int worldCoordX, int worldCoordY)
     {
-      int tileCoordX = worldCoordX >= 0 ? worldCoordX % TileOption.ChunkWidth : (worldCoordX + 1) % TileOption.ChunkWidth + (TileOption.ChunkWidth - 1);
-      int tileCoordY = worldCoordY >= 0 ? worldCoordY % TileOption.ChunkHeight : (worldCoordY + 1) % TileOption.ChunkHeight + (TileOption.ChunkHeight - 1);
+      int tileCoordX = worldCoordX >= 0 ? worldCoordX % Option.ChunkWidth : (worldCoordX + 1) % Option.ChunkWidth + (Option.ChunkWidth - 1);
+      int tileCoordY = worldCoordY >= 0 ? worldCoordY % Option.ChunkHeight : (worldCoordY + 1) % Option.ChunkHeight + (Option.ChunkHeight - 1);
       return new Point(tileCoordX, tileCoordY);
     }
 
     public Point GetChunkCoord(int worldCoordX, int worldCoordY)
     {
-      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
-      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
+      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / Option.ChunkWidth : (worldCoordX + 1) / Option.ChunkWidth - 1;
+      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Option.ChunkHeight : (worldCoordY + 1) / Option.ChunkHeight - 1;
       return new Point(chunkCoordX, chunkCoordY);
     }
 
@@ -186,15 +199,15 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public Point GetWorldCoordForPosition(Vector2 position)
     {
-      int coordX = (int)Math.Floor(position.X / TileOption.TileWidth);
-      int coordY = (int)Math.Floor(position.Y / TileOption.TileHeight);
+      int coordX = (int)Math.Floor(position.X / Option.TileWidth);
+      int coordY = (int)Math.Floor(position.Y / Option.TileHeight);
       return new Point(coordX, coordY);
     }
 
     public Point GetChunkCoordForWorldCoord(int worldCoordX, int worldCoordY)
     {
-      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / TileOption.ChunkWidth : (worldCoordX + 1) / TileOption.ChunkWidth - 1;
-      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / TileOption.ChunkHeight : (worldCoordY + 1) / TileOption.ChunkHeight - 1;
+      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / Option.ChunkWidth : (worldCoordX + 1) / Option.ChunkWidth - 1;
+      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Option.ChunkHeight : (worldCoordY + 1) / Option.ChunkHeight - 1;
       return new Point(chunkCoordX, chunkCoordY);
     }
 
@@ -278,7 +291,7 @@ namespace Colin.Core.Modulars.Tiles
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
       lastTopLeft = AlignedTopLeft;
-      AlignedTopLeft = Vector2.Floor(Scene.SceneCamera.ConvertScreenToWorld(Vector2.Zero) / TileOption.TileSizeF) * TileOption.TileSizeF;
+      AlignedTopLeft = Vector2.Floor(Scene.SceneCamera.ConvertScreenToWorld(Vector2.Zero) / Option.TileSizeF) * Option.TileSizeF;
     }
 
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)

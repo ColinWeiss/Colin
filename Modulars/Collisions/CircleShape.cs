@@ -125,7 +125,29 @@ namespace Colin.Core.Modulars.Collisions
           );
         }
       }
-      base.DoRender( device, batch);
+      base.DoRender(device, batch);
+    }
+
+    private RectangleF? _bounds;
+    public override RectangleF Bounds
+    {
+      get
+      {
+        if (_bounds is null)
+        {
+          // 计算 AABB 的最小和最大坐标
+          float minX = -Radius;
+          float minY = -Radius;
+          float maxX = Radius;
+          float maxY = Radius;
+
+          // 创建并返回 AABB Rectangle
+          _bounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+        }
+        RectangleF result = _bounds.Value;
+        result.Offset(Position);
+        return result;
+      }
     }
   }
 }

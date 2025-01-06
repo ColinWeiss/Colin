@@ -40,15 +40,15 @@ namespace Colin.Core.Modulars.Tiles
 
     /// <summary>
     /// 获取区块的宽度.
-    /// <br>它与 <see cref="TileOption.ChunkWidth"/> 的值相等.</br>
+    /// <br>它与 <see cref="Tile.Option.ChunkWidth"/> 的值相等.</br>
     /// </summary>
-    public int Width => TileOption.ChunkWidth;
+    public int Width => Tile.Option.ChunkWidth;
 
     /// <summary>
     /// 获取区块的宽度.
-    /// <br>它与 <see cref="TileOption.ChunkHeight"/> 的值相等.</br>
+    /// <br>它与 <see cref="Tile.Option.ChunkHeight"/> 的值相等.</br>
     /// </summary>
-    public int Height => TileOption.ChunkHeight;
+    public int Height => Tile.Option.ChunkHeight;
 
     /// <summary>
     /// 指示区块的横坐标.
@@ -72,10 +72,10 @@ namespace Colin.Core.Modulars.Tiles
     public Rectangle TileRect =>
       _tileRect ??=
       new Rectangle(
-        CoordX * TileOption.ChunkWidth,
-        CoordY * TileOption.ChunkHeight,
-        TileOption.ChunkWidth,
-        TileOption.ChunkHeight);
+        CoordX * Tile.Option.ChunkWidth,
+        CoordY * Tile.Option.ChunkHeight,
+        Tile.Option.ChunkWidth,
+        Tile.Option.ChunkHeight);
 
     private TileChunk temp;
     public TileChunk Top

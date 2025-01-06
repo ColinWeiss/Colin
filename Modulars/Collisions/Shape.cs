@@ -17,6 +17,8 @@ namespace Colin.Core.Modulars.Collisions
     /// </summary>
     public Color Color;
 
+    public virtual RectangleF Bounds { get; }
+
     public Shape(Vector2 position, Color color)
     {
       Position = position;
