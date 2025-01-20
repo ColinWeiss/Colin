@@ -78,6 +78,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EntitySystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityBindableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityRemovableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityUnloadableCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsMoveSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileDestructor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
@@ -102,7 +103,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDoc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComInteract.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\IEcsComIO.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComPhysic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComTileInteract.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Ecs.cs" />

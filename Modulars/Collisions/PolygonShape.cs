@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Colin.Core.Modulars.Collisions
 {
@@ -13,9 +14,11 @@ namespace Colin.Core.Modulars.Collisions
     /// </summary>
     public List<Vector2> Vertices { get; private set; }
 
-    public PolygonShape(Vector2 position, Color color, List<Vector2> vertices) : base(position, color)
+    public PolygonShape(Vector2 position, Color color, List<Vector2> vertices, float rotation = 0, Vector2 anchor = default(Vector2)) : base(position, color)
     {
       Vertices = vertices;
+      Rotation = rotation; // 初始化 Rotation 字段
+      Anchor = anchor; // 初始化 Anchor 字段
     }
 
     public override void DoInitialize()
@@ -42,6 +45,9 @@ namespace Colin.Core.Modulars.Collisions
       for (int i = 0; i < Vertices.Count; i++)
       {
         Vector2 point = Vertices[i] + Position;
+
+        // 旋转点围绕 Anchor
+        point = RotatePointAroundAnchor(point, Rotation.RadiansF, Anchor);
 
         // 添加当前点
         short currentIndex = (short)vertices.Count;
@@ -81,17 +87,31 @@ namespace Colin.Core.Modulars.Collisions
       base.DoUpdate(gameTime);
     }
 
+    // 辅助方法：旋转点围绕 Anchor
+    private Vector2 RotatePointAroundAnchor(Vector2 point, float rotation, Vector2 anchor)
+    {
+      float cos = (float)Math.Cos(rotation);
+      float sin = (float)Math.Sin(rotation);
+      Vector2 rotatedPoint = new Vector2(
+          cos * (point.X - anchor.X) - sin * (point.Y - anchor.Y) + anchor.X,
+          sin * (point.X - anchor.X) + cos * (point.Y - anchor.Y) + anchor.Y
+      );
+      return rotatedPoint;
+    }
+
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
       // 设置图形设备状态
       device.RasterizerState = RasterizerState.CullNone;
       device.BlendState = BlendState.Additive;
 
-      // 使用BasicEffect绘制
+      // 使用 BasicEffect 绘制
       using (BasicEffect basicEffect = new BasicEffect(device))
       {
         basicEffect.VertexColorEnabled = true;
-        basicEffect.World = Matrix.Identity;
+        basicEffect.World = Matrix.CreateTranslation(-Anchor.X, -Anchor.Y, 0) * // 移动到 Anchor
+                            Matrix.CreateRotationZ(Rotation.RadiansF) *                   // 旋转
+                            Matrix.CreateTranslation(Anchor.X, Anchor.Y, 0);       // 移动回原点
         basicEffect.View = View;
         basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
             0, device.Viewport.Width, device.Viewport.Height, 0, 0, 1
@@ -218,8 +238,10 @@ namespace Colin.Core.Modulars.Collisions
 
       foreach (Vector2 vertex in Vertices)
       {
+        Vector2 transformedVertex = vertex + Position;
+
         // 计算顶点在轴上的投影
-        float projection = Vector2.Dot(vertex + Position, axis);
+        float projection = Vector2.Dot(transformedVertex, axis);
 
         // 更新最小值和最大值
         if (projection < min) min = projection;
@@ -248,7 +270,8 @@ namespace Colin.Core.Modulars.Collisions
           // 遍历所有顶点以计算 AABB
           foreach (Vector2 vertex in Vertices)
           {
-            Vector2 transformedVertex = vertex;
+            Vector2 transformedVertex = vertex + Position;
+            transformedVertex = RotatePointAroundAnchor(transformedVertex, Rotation.RadiansF, Anchor);
 
             if (transformedVertex.X < minX) minX = transformedVertex.X;
             if (transformedVertex.Y < minY) minY = transformedVertex.Y;

@@ -16,19 +16,12 @@ namespace Colin.Core.Modulars.Collisions
     /// </summary>
     public const int Segments = 32;
 
-    public Matrix View;
-
     public CircleShape(Vector2 position, Color color, float radius) : base(position, color)
     {
       Radius = radius;
-    }
-
-    public override void DoInitialize()
-    {
       // 初始化顶点数组和索引数组
       FillVertices = new VertexPositionColor[Segments + 1]; // 中心点 + 分段数
       BorderVertices = new VertexPositionColor[Segments + 1]; // 描边圆形也有分段数 + 1 个顶点
-      base.DoInitialize();
     }
 
     public override void DoUpdate(GameTime gameTime)
@@ -134,16 +127,7 @@ namespace Colin.Core.Modulars.Collisions
       get
       {
         if (_bounds is null)
-        {
-          // 计算 AABB 的最小和最大坐标
-          float minX = -Radius;
-          float minY = -Radius;
-          float maxX = Radius;
-          float maxY = Radius;
-
-          // 创建并返回 AABB Rectangle
-          _bounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
-        }
+          _bounds = new RectangleF(-Radius, -Radius, 2 * Radius, 2 * Radius);
         RectangleF result = _bounds.Value;
         result.Offset(Position);
         return result;

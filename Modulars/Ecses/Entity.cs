@@ -19,6 +19,8 @@ namespace Colin.Core.Modulars.Ecses
     public T RegisterCom<T>() where T : class, IEntityCom, new() => RegistCom(new T()) as T;
     public IEntityCom RegistCom(IEntityCom component)
     {
+      if (component is IEntityBindableCom bind)
+        bind.Entity = this;
       if (component is EcsComScript script)
         script.SetEntity(this);
       if (Components.ContainsKey(component.GetType()) is false)
@@ -78,7 +80,6 @@ namespace Colin.Core.Modulars.Ecses
     {
       _components = new Dictionary<Type, IEntityCom>();
       _comDoc = RegisterCom<EcsComDoc>();
-      _comDoc.Entity = this;
       _comTransform = RegisterCom<EcsComTransform>();
       ComAdded();
       for (int count = 0; count < _components.Count; count++)

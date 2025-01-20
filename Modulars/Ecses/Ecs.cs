@@ -74,6 +74,8 @@ namespace Colin.Core.Modulars.Ecses
         _currentSystem = Systems.ElementAt(count).Value;
         _currentSystem.DoUpdate();
       }
+      Dictionary<Type, IEntityCom>.ValueCollection coms;
+      IEntityCom com;
       for (int count = 0; count < Entities.Length; count++)
       {
         _Entity = Entities[count];
@@ -81,6 +83,11 @@ namespace Colin.Core.Modulars.Ecses
           continue;
         if (_Entity.NeedClear)
         {
+          coms = _Entity._components.Values;
+          for (int i = 0; i < coms.Count; i++)
+          {
+            com = coms.ElementAt(i);
+          }
           Entities[count] = null;
           continue;
         }

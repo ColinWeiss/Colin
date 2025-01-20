@@ -38,7 +38,17 @@ namespace Colin.Core.Modulars.Collisions
 
     public Collider()
     {
-      Guid = new Guid();
+      Guid = Guid.NewGuid();
     }
+
+    public bool CheckAabb(Collider target) => Sensor.Bounds.Intersects(target.Sensor.Bounds);
+
+    public bool CheckCollision(Collider target) => Sensor.CheckCollision(target.Sensor);
+
+    public event Action<Collider> OnCollision;
+    public void DoCollision(Collider target) => OnCollision?.Invoke(target);
+
+    public void DoRender(GraphicsDevice device, SpriteBatch batch)
+      => Sensor.DoRender(device, batch);
   }
 }

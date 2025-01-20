@@ -10,7 +10,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
   {
     private EnvironmentalController controller;
     private EcsComTransform comTransform;
-    private EcsComPhysic comPhysic;
+    private EcsComTileInteract comPhysic;
 
     public override void DoInitialize()
     {
@@ -26,7 +26,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         if (_current is null)
           continue;
         comTransform = _current.GetCom<EcsComTransform>();
-        comPhysic = _current.GetCom<EcsComPhysic>();
+        comPhysic = _current.GetCom<EcsComTileInteract>();
         if (comTransform is null || comPhysic is null)
           continue;
         //安全性检查.
@@ -161,7 +161,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
     public RectangleF GetHitBox(Entity Entity)
     {
       EcsComTransform comTransform = Entity?.GetCom<EcsComTransform>();
-      EcsComPhysic comPhysic = Entity?.GetCom<EcsComPhysic>();
+      EcsComTileInteract comPhysic = Entity?.GetCom<EcsComTileInteract>();
       if (comTransform is not null && comPhysic is not null)
       {
         return new RectangleF(

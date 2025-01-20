@@ -44,6 +44,8 @@ namespace Colin.Core.Modulars.Collisions
     {
       Vector3 center = new Vector3(Position, 0);
 
+      float startAngleOffsetResult = StartAngle + Rotation.RadiansF;
+
       // 初始化顶点列表和索引列表
       List<VertexPositionColor> vertices = new List<VertexPositionColor>();
       List<short> fillIndices = new List<short>();
@@ -55,8 +57,8 @@ namespace Colin.Core.Modulars.Collisions
 
       // 添加起始边缘点
       Vector2 previousPoint = new Vector2(
-          Position.X + Radius * (float)Math.Cos(StartAngle),
-          Position.Y + Radius * (float)Math.Sin(StartAngle)
+          Position.X + Radius * (float)Math.Cos(startAngleOffsetResult),
+          Position.Y + Radius * (float)Math.Sin(startAngleOffsetResult)
       );
       short previousIndex = (short)vertices.Count;
       vertices.Add(new VertexPositionColor(new Vector3(previousPoint, 0), new Color(Color, 0.5f)));
@@ -67,7 +69,7 @@ namespace Colin.Core.Modulars.Collisions
 
       for (int i = 0; i <= Segments; i++)
       {
-        float angle = StartAngle + (SweepAngle / Segments) * i;
+        float angle = startAngleOffsetResult + (SweepAngle / Segments) * i;
         Vector2 point = new Vector2(
             Position.X + Radius * (float)Math.Cos(angle),
             Position.Y + Radius * (float)Math.Sin(angle)

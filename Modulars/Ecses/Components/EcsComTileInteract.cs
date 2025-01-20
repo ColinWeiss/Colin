@@ -3,10 +3,10 @@
 namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
-  /// 物理组件.
+  /// 物块交互组件.
   /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComPhysic : IEntityCom, IResetable
+  public class EcsComTileInteract : IEntityCom, IResetable
   {
     /// <summary>
     /// 指示是否忽略重力的值.
