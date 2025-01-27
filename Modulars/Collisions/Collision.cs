@@ -246,7 +246,6 @@ namespace Colin.Core.Modulars.Collisions
           OnAabb?.Invoke(collider, target);
           if (collider.CheckCollision(target))
           {
-            Console.WriteLine("?");
             OnCollision?.Invoke(collider, target);
             collider.DoCollision(target);
           }

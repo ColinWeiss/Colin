@@ -41,7 +41,7 @@ namespace Colin.Core.Common
     {
       CanDispose = true;
       Events = new SceneEventResponder();
-      // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
+      // 仅此一处管理Game.Window事件, 其他地方都用Scene.Event统一进行管理, 不需要单独删除
     }
 
     public override void Initialize()

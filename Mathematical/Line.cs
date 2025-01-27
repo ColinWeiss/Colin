@@ -62,7 +62,7 @@
     {
       double cross = (x2 - x1) * (x - x1) + (y2 - y1) * (y - y1); // |AB| * |AC|*cos(x)
                                                                   //double cross2 = (x1 - x2) * (x1 - x) + (y1 - y2) * (y1 - y); // |AB| * |AC|*cos(x)
-      if (cross <= 0)  //积小于等于0，说明 角BAC 是直角或钝角
+      if (cross <= 0)  //积小于等于0, 说明 角BAC 是直角或钝角
         return Math.Pow(((x - x1) * (x - x1) + (y - y1) * (y - y1) + 0.0), 0.5);
 
       double d2 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1); // |AB|
@@ -71,7 +71,7 @@
 
       //锐角三角形
       double r = cross / d2;
-      double px = x1 + (x2 - x1) * r;  // C在 AB上的垂足点（px，py）
+      double px = x1 + (x2 - x1) * r;  // C在 AB上的垂足点（px, py）
       double py = y1 + (y2 - y1) * r;
       return Math.Pow(((x - px) * (x - px) + (y - py) * (y - py) + 0.0), 0.5); //两点间距离公式
     }

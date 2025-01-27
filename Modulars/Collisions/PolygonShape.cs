@@ -154,7 +154,7 @@ namespace Colin.Core.Modulars.Collisions
     /// 检测当前多边形与另一个多边形是否发生碰撞
     /// </summary>
     /// <param name="other">另一个多边形</param>
-    /// <returns>如果发生碰撞返回 true，否则返回 false</returns>
+    /// <returns>如果发生碰撞返回 true, 否则返回 false</returns>
     public bool CollidesWith(PolygonShape other)
     {
       // 获取当前多边形和另一个多边形的边法线
@@ -170,12 +170,12 @@ namespace Colin.Core.Modulars.Collisions
       {
         if (!OverlapOnAxis(axis, other))
         {
-          // 如果存在一个分离轴，说明两个多边形不相交
+          // 如果存在一个分离轴, 说明两个多边形不相交
           return false;
         }
       }
 
-      // 如果没有找到分离轴，说明两个多边形相交
+      // 如果没有找到分离轴, 说明两个多边形相交
       return true;
     }
 
@@ -210,7 +210,7 @@ namespace Colin.Core.Modulars.Collisions
     /// </summary>
     /// <param name="axis">分离轴</param>
     /// <param name="other">另一个多边形</param>
-    /// <returns>如果重叠返回 true，否则返回 false</returns>
+    /// <returns>如果重叠返回 true, 否则返回 false</returns>
     private bool OverlapOnAxis(Vector2 axis, PolygonShape other)
     {
       // 获取当前多边形在轴上的投影
@@ -226,7 +226,7 @@ namespace Colin.Core.Modulars.Collisions
     }
 
     /// <summary>
-    /// 将多边形投影到给定轴上，并计算投影的最小值和最大值
+    /// 将多边形投影到给定轴上, 并计算投影的最小值和最大值
     /// </summary>
     /// <param name="axis">投影轴</param>
     /// <param name="min">投影的最小值</param>
@@ -258,7 +258,7 @@ namespace Colin.Core.Modulars.Collisions
         {
           if (Vertices.Count == 0)
           {
-            throw new InvalidOperationException("多边形没有顶点，无法计算 AABB。");
+            throw new InvalidOperationException("多边形没有顶点, 无法计算 AABB。");
           }
 
           // 初始化最小值和最大值

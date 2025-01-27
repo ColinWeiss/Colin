@@ -33,7 +33,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         if (comPhysic is not null)
         {
           if (!comPhysic.IgnoreGravity)
-            comTransform.Velocity += controller.UniGravity.Value * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
+            comTransform.Velocity += controller.UniGravity * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
         }
         //添加重力.
         if (comPhysic is not null && comTransform is not null)
@@ -53,7 +53,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       Tile tile = Ecs.Scene.GetModule<Tile>();
       if (tile is null)
         return;
-      if (comPhysic.IgnoreTile.Value)
+      if (comPhysic.IgnoreTile)
         return;
 
       RectangleF bounds = GetHitBox(Entity);

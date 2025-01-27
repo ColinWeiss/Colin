@@ -1,7 +1,7 @@
 ﻿namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
-  /// 行为脚本组件，提供更多相关接口，如允许访问 Entity 与 Ecs.
+  /// 行为脚本组件, 提供更多相关接口, 如允许访问 Entity 与 Ecs.
   /// </summary>
   public abstract class EcsComScript : IEntityCom, IResetable
   {

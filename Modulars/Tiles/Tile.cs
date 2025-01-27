@@ -91,7 +91,7 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
-    /// 对齐后的渲染左上角位置，这个位置要求恰好对齐物块左上角
+    /// 对齐后的渲染左上角位置, 这个位置要求恰好对齐物块左上角
     /// </summary>
     public Vector2 AlignedTopLeft;
 

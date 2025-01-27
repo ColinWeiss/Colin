@@ -27,7 +27,7 @@
 
     public static void LoadTileSpriteSheets()
     {
-      // TODO: 通过加载配置文件初始化排版方式，目前这里硬编码几个用于测试
+      // TODO: 通过加载配置文件初始化排版方式, 目前这里硬编码几个用于测试
       RegisterTileSpriteSheet("Normal", new Point(112, 16), new Point(64, 16), new Point(16, 16), 48);
       inited = true;
     }

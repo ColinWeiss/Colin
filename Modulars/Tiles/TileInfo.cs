@@ -71,7 +71,7 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private Point _worldCoord2;
+    private Point? _worldCoord2 = null;
     /// <summary>
     /// 指示物块在世界内的坐标.
     /// </summary>
@@ -79,9 +79,9 @@ namespace Colin.Core.Modulars.Tiles
     {
       get
       {
-        if (_worldCoord2 == Point.Zero)
+        if (_worldCoord2 is null)
           _worldCoord2 = new Point(Chunk.CoordX * Tile.Option.ChunkWidth + ChunkCoord2.X, Chunk.CoordY * Tile.Option.ChunkHeight + ChunkCoord2.Y);
-        return _worldCoord2;
+        return _worldCoord2.Value;
       }
     }
 
@@ -239,7 +239,7 @@ namespace Colin.Core.Modulars.Tiles
       Collision = TileCollision.Passable;
       _chunkCoord2 = Point.Zero;
       _chunkCoord3 = Point3.Zero;
-      _worldCoord2 = Point.Zero;
+      _worldCoord2 = null;
       _worldCoord3 = Point3.Zero;
       _hitBox = RectangleF.Empty;
       Scripts = new Dictionary<Type, TileScript>();

@@ -5,7 +5,7 @@
     /// <summary>
     /// 重力.
     /// </summary>
-    public Entrance<Vector2> UniGravity;
+    public Vector2 UniGravity;
 
     public void DoInitialize()
     {
@@ -13,7 +13,7 @@
     }
     public void Reset()
     {
-      UniGravity.Reset();
+      UniGravity = Vector2.UnitY * 400;
     }
   }
 }

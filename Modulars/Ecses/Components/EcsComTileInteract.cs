@@ -21,7 +21,7 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// <summary>
     /// 指示是否无视物块碰撞的值.
     /// </summary>
-    public Entrance<bool> IgnoreTile;
+    public bool IgnoreTile;
 
     /// <summary>
     /// 指示达到最大重力速度的时间.
@@ -70,11 +70,11 @@ namespace Colin.Core.Modulars.Ecses.Components
     public void DoInitialize()
     {
       IgnoreTile = false;
-      UniGravitySpeedAttTime = 0.24f;
+      UniGravitySpeedAttTime = new Entrance<float>(0.24f);
     }
     public void Reset()
     {
-      IgnoreTile.Reset();
+      IgnoreTile = false;
       UniGravitySpeedAttTime.Reset();
     }
   }

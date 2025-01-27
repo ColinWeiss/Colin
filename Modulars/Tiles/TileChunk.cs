@@ -62,7 +62,7 @@ namespace Colin.Core.Modulars.Tiles
 
     /// <summary>
     /// 指示区块的量子层.
-    /// <br>同一二维位置可以存在不同量子层的区块，用于无缝子世界</br>
+    /// <br>同一二维位置可以存在不同量子层的区块, 用于无缝子世界</br>
     /// </summary>
     public int QuantumLayer;
 
@@ -152,7 +152,9 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    public void ForEach(Action<TileInfo> info, int x, int y, int width, int height, int depth)
+    public delegate void ForEachDelegate(ref TileInfo info);
+
+    public void ForEach(ForEachDelegate info, int x, int y, int width, int height, int depth)
     {
       ref TileInfo _i = ref TileInfo.Null;
       try
@@ -162,7 +164,7 @@ namespace Colin.Core.Modulars.Tiles
           for (int cy = y; cy < y + height; cy++)
           {
             _i = ref this[cx, cy, depth];
-            info.Invoke(_i);
+            info.Invoke(ref _i);
           }
         }
       }
@@ -293,6 +295,7 @@ namespace Colin.Core.Modulars.Tiles
       Task.Run(() =>
       {
         DoLoad(path);
+        _loading = false;
       });
     }
 
@@ -339,6 +342,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
+      _saved = false;
       Task.Run(() =>
       {
         DoSave(path);

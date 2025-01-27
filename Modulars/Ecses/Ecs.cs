@@ -46,7 +46,7 @@ namespace Colin.Core.Modulars.Ecses
       Controller.DoInitialize();
       KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
       Scene.Events.KeysEvent.Register(KeysEvent);
-      Entities = new Entity[2000];
+      Entities = new Entity[2047];
       _systems = new Dictionary<Type, Entitiesystem>();
     }
     public void Start()

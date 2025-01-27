@@ -410,7 +410,7 @@
     /// 判断该划分元素是否包含屏幕上的指定点.
     /// </summary>
     /// <param name="point">输入的点.</param>
-    /// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
+    /// <returns>如果包含则返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public bool ContainsScreenPoint(Point point)
     {
       bool result = true;

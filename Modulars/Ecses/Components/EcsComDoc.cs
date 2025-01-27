@@ -10,6 +10,11 @@
     private string identifier;
 
     /// <summary>
+    /// 名称.
+    /// </summary>
+    public string Name;
+
+    /// <summary>
     /// 指示实体的标识符.
     /// <br>实体判断相等的依据之一.</br>
     /// </summary>
