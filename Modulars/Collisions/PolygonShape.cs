@@ -1,13 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace Colin.Core.Modulars.Collisions
+﻿namespace Colin.Core.Modulars.Collisions
 {
   public class PolygonShape : Shape
   {
-    public Matrix View;
+    public static PolygonShape CreateRectangleShape(Vector2 position, Color color, int width, int height)
+    {
+      PolygonShape result = new PolygonShape(position, color, GenerateRectVertices(width, height));
+      return result;
+    }
+
+    /// <summary>
+    /// 生成矩形的顶点列表
+    /// </summary>
+    /// <param name="width">矩形的宽度</param>
+    /// <param name="height">矩形的高度</param>
+    /// <returns>矩形的顶点列表</returns>
+    private static List<Vector2> GenerateRectVertices(float width, float height)
+    {
+      return new List<Vector2>
+        {
+            new Vector2(0, 0),          // 左上角
+            new Vector2(width, 0),      // 右上角
+            new Vector2(width, height), // 右下角
+            new Vector2(0, height)      // 左下角
+        };
+    }
 
     /// <summary>
     /// 指示多边形的顶点列表.
@@ -117,6 +133,8 @@ namespace Colin.Core.Modulars.Collisions
             0, device.Viewport.Width, device.Viewport.Height, 0, 0, 1
         );
 
+        if (FillIndicesArray is null)
+          return;
         // 绘制填充多边形
         foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
         {

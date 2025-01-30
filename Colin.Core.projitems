@@ -70,7 +70,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CollisionHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Collider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\PolygonShape.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\RectangleShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\SectorShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Shape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComNetwork.cs" />

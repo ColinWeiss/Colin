@@ -88,6 +88,8 @@ namespace Colin.Core.Modulars.Collisions
             0, device.Viewport.Width, device.Viewport.Height, 0, 0, 1
         );
 
+        if (FillIndicesArray is null)
+          return;
         // 绘制填充圆形
         foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
         {

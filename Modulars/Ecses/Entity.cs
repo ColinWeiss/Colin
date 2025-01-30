@@ -16,8 +16,8 @@ namespace Colin.Core.Modulars.Ecses
     public Dictionary<Type, IEntityCom> Components => _components;
     public bool HasCom<T>() where T : IEntityCom => _components.ContainsKey(typeof(T));
     public T GetCom<T>() where T : IEntityCom => (T)_components.GetValueOrDefault(typeof(T), null);
-    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegistCom(new T()) as T;
-    public IEntityCom RegistCom(IEntityCom component)
+    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegisterCom(new T()) as T;
+    public IEntityCom RegisterCom(IEntityCom component)
     {
       if (component is IEntityBindableCom bind)
         bind.Entity = this;
