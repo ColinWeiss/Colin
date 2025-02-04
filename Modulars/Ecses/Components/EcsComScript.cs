@@ -3,14 +3,14 @@
   /// <summary>
   /// 行为脚本组件, 提供更多相关接口, 如允许访问 Entity 与 Ecs.
   /// </summary>
-  public abstract class EcsComScript : IEntityCom, IResetable
+  public abstract class EcsComScript : IEntityCom, IEntityBindableCom, IResetable
   {
-    public Entity Entity { get; private set; }
+    public Entity Entity { get; set; }
+
     private Ecs _ecs;
     public Ecs Ecs => _ecs ??= Entity.Ecs;
 
     public bool ResetEnable { get; set; } = true;
-    public void SetEntity(Entity entitiy) => Entity = entitiy;
 
     /// <summary>
     /// 通过  Script 访问同 <see cref="Entity"/> 的其他 <see cref="IEntityCom"/>.

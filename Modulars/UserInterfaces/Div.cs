@@ -413,10 +413,11 @@
     /// <returns>如果包含则返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public bool ContainsScreenPoint(Point point)
     {
-      bool result = true;
+      if (Layout.Bounds.Contains(point) is false)
+        return false;
       if (parent is not null)
-        result = parent.ContainsScreenPoint(point);
-      return result && Layout.Bounds.Contains(point);
+        return parent.ContainsScreenPoint(point);
+      return true;
     }
 
     private bool disposedValue;

@@ -87,6 +87,8 @@ namespace Colin.Core.Modulars.Ecses
           for (int i = 0; i < coms.Count; i++)
           {
             com = coms.ElementAt(i);
+            if (com is IEntityUnloadableCom unLoadCom)
+              unLoadCom.OnClear();
           }
           Entities[count] = null;
           continue;

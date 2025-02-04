@@ -21,8 +21,6 @@ namespace Colin.Core.Modulars.Ecses
     {
       if (component is IEntityBindableCom bind)
         bind.Entity = this;
-      if (component is EcsComScript script)
-        script.SetEntity(this);
       if (Components.ContainsKey(component.GetType()) is false)
         Components.Add(component.GetType(), component);
       return component;
@@ -30,8 +28,8 @@ namespace Colin.Core.Modulars.Ecses
     public bool RemoveCom<T>() where T : IEntityCom => _components.Remove(typeof(T));
     public void AddCom(IEntityCom com)
     {
-      if (com is EcsComScript script)
-        script.SetEntity(this);
+      if (com is IEntityBindableCom bind)
+        bind.Entity = this;
       if (Components.ContainsKey(com.GetType()) is false)
         Components.Add(com.GetType(), com);
     }
