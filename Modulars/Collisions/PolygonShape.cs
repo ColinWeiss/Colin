@@ -288,7 +288,7 @@
           // 遍历所有顶点以计算 AABB
           foreach (Vector2 vertex in Vertices)
           {
-            Vector2 transformedVertex = vertex + Position;
+            Vector2 transformedVertex = vertex;
             transformedVertex = RotatePointAroundAnchor(transformedVertex, Rotation.RadiansF, Anchor);
 
             if (transformedVertex.X < minX) minX = transformedVertex.X;

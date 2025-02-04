@@ -30,7 +30,7 @@
       for (int count = 0; count < Children.Count; count++)
       {
         child = Children[count];
-        if (!theEvent.Captured)
+        if (!theEvent.Captured && !theEvent.Postorder)
           child.Response(theEvent);
       }
     }

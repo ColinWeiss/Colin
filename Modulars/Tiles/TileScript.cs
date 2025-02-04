@@ -77,6 +77,9 @@
     public virtual void LoadStep(BinaryReader reader) { }
     public virtual void SaveStep(BinaryWriter writer) { }
 
+    //public virtual void R(BinaryReader reader) { }
+    //public virtual void S(BinaryWriter writer) { }
+
     /// <summary>
     /// 判断同层指定相对于该物块坐标具有指定偏移位置处的物块是否具有相同的行为方式.
     /// </summary>
