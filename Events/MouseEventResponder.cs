@@ -24,19 +24,19 @@
       if (theEvent is MouseEventArgs mouseEvent)
       {
         Hover?.Invoke(this, mouseEvent);
-        if (MouseResponder.LeftClickBefore)
+        if (MouseResponder.LeftClicking)
           LeftClickBefore?.Invoke(this, mouseEvent);
         if (MouseResponder.LeftDown)
           LeftDown?.Invoke(this, mouseEvent);
-        if (MouseResponder.LeftClickAfter)
+        if (MouseResponder.LeftClicked)
           LeftClickAfter?.Invoke(this, mouseEvent);
         if (MouseResponder.LeftUp)
           LeftUp?.Invoke(this, mouseEvent);
-        if (MouseResponder.RightClickBefore)
+        if (MouseResponder.RightClicking)
           RightClickBefore?.Invoke(this, mouseEvent);
         if (MouseResponder.RightDown)
           RightDown?.Invoke(this, mouseEvent);
-        if (MouseResponder.RightClickAfter)
+        if (MouseResponder.RightClicked)
           RightClickAfter?.Invoke(this, mouseEvent);
         if (MouseResponder.RightUp)
           RightUp?.Invoke(this, mouseEvent);

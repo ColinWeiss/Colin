@@ -53,8 +53,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\EventNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\IEventBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileCheck\FileToMD5.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />

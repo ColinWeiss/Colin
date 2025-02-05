@@ -10,7 +10,7 @@ namespace Colin.Core.Inputs
   {
     public MouseResponder() : base(CoreInfo.Core) { }
 
-    public static bool LeftClickBefore =>
+    public static bool LeftClicking =>
       State.LeftButton == ButtonState.Pressed &&
       StateLast.LeftButton == ButtonState.Released;
 
@@ -22,11 +22,11 @@ namespace Colin.Core.Inputs
       State.LeftButton == ButtonState.Released &&
       StateLast.LeftButton == ButtonState.Released;
 
-    public static bool LeftClickAfter =>
+    public static bool LeftClicked =>
       State.LeftButton == ButtonState.Released &&
       StateLast.LeftButton == ButtonState.Pressed;
 
-    public static bool RightClickBefore =>
+    public static bool RightClicking =>
       State.RightButton == ButtonState.Pressed &&
       StateLast.RightButton == ButtonState.Released;
 
@@ -38,7 +38,7 @@ namespace Colin.Core.Inputs
       State.RightButton == ButtonState.Released &&
       StateLast.RightButton == ButtonState.Released;
 
-    public static bool RightClickAfter =>
+    public static bool RightClicked =>
       State.RightButton == ButtonState.Released &&
       StateLast.RightButton == ButtonState.Pressed;
 
