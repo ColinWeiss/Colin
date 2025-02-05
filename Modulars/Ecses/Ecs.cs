@@ -1,4 +1,5 @@
-﻿using Colin.Core.Events;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Events;
 using Colin.Core.Resources;
 
 namespace Colin.Core.Modulars.Ecses
@@ -61,37 +62,40 @@ namespace Colin.Core.Modulars.Ecses
 
     public void DoUpdate(GameTime time)
     {
-      Controller.Reset();
-      Entity _Entity;
-      Entitiesystem _currentSystem;
-      for (int count = 0; count < Systems.Count; count++)
+      using (DebugProfiler.Tag("ECS System"))
       {
-        _currentSystem = Systems.ElementAt(count).Value;
-        _currentSystem.Reset();
-      }
-      for (int count = 0; count < Systems.Count; count++)
-      {
-        _currentSystem = Systems.ElementAt(count).Value;
-        _currentSystem.DoUpdate();
-      }
-      Dictionary<Type, IEntityCom>.ValueCollection coms;
-      IEntityCom com;
-      for (int count = 0; count < Entities.Length; count++)
-      {
-        _Entity = Entities[count];
-        if (_Entity is null)
-          continue;
-        if (_Entity.NeedClear)
+        Controller.Reset();
+        Entity _Entity;
+        Entitiesystem _currentSystem;
+        for (int count = 0; count < Systems.Count; count++)
         {
-          coms = _Entity._components.Values;
-          for (int i = 0; i < coms.Count; i++)
+          _currentSystem = Systems.ElementAt(count).Value;
+          _currentSystem.Reset();
+        }
+        for (int count = 0; count < Systems.Count; count++)
+        {
+          _currentSystem = Systems.ElementAt(count).Value;
+          _currentSystem.DoUpdate();
+        }
+        Dictionary<Type, IEntityCom>.ValueCollection coms;
+        IEntityCom com;
+        for (int count = 0; count < Entities.Length; count++)
+        {
+          _Entity = Entities[count];
+          if (_Entity is null)
+            continue;
+          if (_Entity.NeedClear)
           {
-            com = coms.ElementAt(i);
-            if (com is IEntityUnloadableCom unLoadCom)
-              unLoadCom.OnClear();
+            coms = _Entity._components.Values;
+            for (int i = 0; i < coms.Count; i++)
+            {
+              com = coms.ElementAt(i);
+              if (com is IEntityUnloadableCom unLoadCom)
+                unLoadCom.OnClear();
+            }
+            Entities[count] = null;
+            continue;
           }
-          Entities[count] = null;
-          continue;
         }
       }
     }

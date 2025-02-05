@@ -1,4 +1,5 @@
-﻿using Colin.Core.IO;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.IO;
 using Colin.Core.Preparation;
 using System.Reflection;
 
@@ -95,6 +96,7 @@ namespace Colin.Core
       if (!Enable)
         return;
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+      DebugProfiler.NextTick();
       if (!Started)
       {
         SceneManager.SetScene(Preparator);

@@ -1,4 +1,5 @@
-﻿using Colin.Core.IO;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.IO;
 
 namespace Colin.Core.Common
 {
@@ -77,16 +78,19 @@ namespace Colin.Core.Common
     internal bool Started = false;
     public override sealed void Update(GameTime gameTime)
     {
-      if (!Started)
+      using (DebugProfiler.Tag("Update-" + GetType().Name))
       {
-        Start();
-        Modules.DoStart();
-        Started = true;
+        if (!Started)
+        {
+          Start();
+          Modules.DoStart();
+          Started = true;
+        }
+        UpdatePreset();
+        Modules.DoUpdate(gameTime);
+        SceneUpdate();
+        base.Update(gameTime);
       }
-      UpdatePreset();
-      Modules.DoUpdate(gameTime);
-      SceneUpdate();
-      base.Update(gameTime);
     }
     public virtual void Start() { }
     public virtual void UpdatePreset() { }
@@ -96,24 +100,27 @@ namespace Colin.Core.Common
     private bool _renderStarted = false;
     public override sealed void Draw(GameTime gameTime)
     {
-      if (_skipRender is true)
+      using (DebugProfiler.Tag("Draw-" + GetType().Name))
       {
-        _skipRender = false;
-        return;
+        if (_skipRender is true)
+        {
+          _skipRender = false;
+          return;
+        }
+        else if (_renderStarted is false)
+        {
+          RenderStart();
+          _renderStarted = true;
+        }
+        SceneRenderPreset();
+        Modules.DoRender(CoreInfo.Batch);
+        SceneRender();
+        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
+        CoreInfo.Batch.Begin();
+        CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+        CoreInfo.Batch.End();
+        base.Draw(gameTime);
       }
-      else if (_renderStarted is false)
-      {
-        RenderStart();
-        _renderStarted = true;
-      }
-      SceneRenderPreset();
-      Modules.DoRender(CoreInfo.Batch);
-      SceneRender();
-      CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
-      CoreInfo.Batch.Begin();
-      CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-      CoreInfo.Batch.End();
-      base.Draw(gameTime);
     }
     public virtual void RenderStart() { }
     public virtual void SceneRenderPreset() { }

@@ -1,4 +1,5 @@
-﻿using Colin.Core.Events;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -50,10 +51,13 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
-      device.Clear(Color.Transparent);
-      BatchNormalBegin(batch);
-      Container?.DoRender(device, batch);
-      batch.End();
+      using (DebugProfiler.Tag("UI"))
+      {
+        device.Clear(Color.Transparent);
+        BatchNormalBegin(batch);
+        Container?.DoRender(device, batch);
+        batch.End();
+      }
     }
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
