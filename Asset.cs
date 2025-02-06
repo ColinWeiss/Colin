@@ -143,7 +143,7 @@ namespace Colin.Core
         fileName = fileFullName[count];
         sourceFile = Path.Combine(EffectDir, fileName);
         targetFile = Path.ChangeExtension(Path.Combine(EffectDir, fileName), ".rShader");
-        if (Path.GetExtension(sourceFile) is not ".fx" || File.Exists(targetFile))
+        if (Path.GetExtension(sourceFile) is not ".fx" || File.Exists(targetFile) && File.GetLastWriteTime(targetFile) >= File.GetLastWriteTime(fileName))
           continue;
         cmdLine.Add($"mgfxc {sourceFile} {targetFile} /Profile:DirectX_11");
       }
@@ -181,7 +181,7 @@ namespace Colin.Core
       for (int count = 0; count < fileFullName.Length; count++)
       {
         fileName = Path.ChangeExtension(fileFullName[count], ComputeShader.FileExtension);
-        if (File.Exists(fileName) is false)
+        if (!File.Exists(fileName) || File.GetLastWriteTime(fileName) < File.GetLastWriteTime(fileFullName[count]))
           CompileShaders();
         effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(fileName));
         fileName = OrganizePath(fileName);
