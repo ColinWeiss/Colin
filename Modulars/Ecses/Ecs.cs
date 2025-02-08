@@ -39,14 +39,14 @@ namespace Colin.Core.Modulars.Ecses
 
     public Entity[] Entities;
 
-    public KeysEventResponder KeysEvent;
+    public KeysEventNode KeysEvent;
 
     public void DoInitialize()
     {
       Controller = new EnvironmentalController();
       Controller.DoInitialize();
-      KeysEvent = new KeysEventResponder("Ecs.KeysEvent");
-      Scene.Events.KeysEvent.Register(KeysEvent);
+      KeysEvent = new KeysEventNode();
+      Scene.Events.Keys.Register(KeysEvent);
       Entities = new Entity[2047];
       _systems = new Dictionary<Type, Entitiesystem>();
     }

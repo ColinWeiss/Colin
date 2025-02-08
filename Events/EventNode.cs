@@ -1,7 +1,9 @@
-﻿using DeltaMachine.Core.GameContents.UserInterfaces.Gameplays;
+﻿using Colin.Core.Modulars.UserInterfaces.Events;
+using DeltaMachine.Core.GameContents.UserInterfaces.Gameplays;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Colin.Core.Events
@@ -10,43 +12,8 @@ namespace Colin.Core.Events
   /// 事件节点.
   /// 包含触发事件/事件处理办法.
   /// </summary>
-  public class EventNode<T> where T : IEventBase
+  public class EventNode<T> : Node<T> where T : IEventBase
   {
-    /// <summary>
-    /// 在层级树事件结构中表示父节点;
-    /// <br>在链表事件结构中表示上一个节点.</br>
-    /// </summary>
-    public EventNode<T> Last;
-
-    /// <summary>
-    /// 表示 <see cref="Children"/> 中的0号节点.
-    /// </summary>
-    public EventNode<T> Next
-    {
-      get => Children[0];
-      set
-      {
-        if (Children is null)
-        {
-          _children = new List<EventNode<T>>();
-        }
-        _children[0] = value;
-      }
-    }
-
-    private List<EventNode<T>> _children;
-    /// <summary>
-    /// 子节点列表.
-    /// </summary>
-    public List<EventNode<T>> Children
-    {
-      get
-      {
-        _children ??= new List<EventNode<T>>();
-        return _children;
-      }
-    }
-
     /// <summary>
     /// 获取该节点对应的事件类型.
     /// </summary>
@@ -57,52 +24,72 @@ namespace Colin.Core.Events
     /// </summary>
     public event EventHandler<T> Event;
 
+    public static EventNode<T> operator +(EventNode<T> node, EventHandler<T> a)
+    {
+      node.Event += a;
+      return node;
+    }
+
+    public static EventNode<T> operator -(EventNode<T> node, EventHandler<T> a)
+    {
+      node.Event -= a;
+      return node;
+    }
+
     /// <summary>
     /// 触发条件检查.
     /// </summary>
     public virtual bool CheckCondition() => true;
+
     /// <summary>
-    /// 触发事件.
+    /// 触发事件捕获流程.
     /// </summary>
-    public virtual void Trigger(T args)
+    public virtual void TriggerCapture(T args)
     {
       if (CheckCondition())
       {
-        foreach (var child in _children)
+        Node<T> node;
+        for (int index = Children.Count - 1; index >= 0; index--)
         {
-          child.Trigger(args); //播子节点.
-          if (args.IsHandled)
-            break;
+          node = Children[index];
+          if (node is EventNode<T> eventNode)
+          {
+            if (args.IsCapture)
+              break;
+            eventNode.TriggerCapture(args); //播子节点.
+          }
         }
-        if (args.IsHandled is false)
-          Event?.Invoke(args.Sender, args); //播自己.
-        if (!args.IsHandled && Last is not null)
-        {
-          Last.Trigger(args); //播到上一级.
-        }
+        if (args.IsCapture is false)
+          Event?.Invoke(args.Sender, args); //执行自己事件.
+        if (Children.Count <= 0&& args.IsCapture is false)
+          TriggerBubbling(args);
       }
     }
 
     /// <summary>
-    /// 为节点附加子节点.
+    /// 触发事件冒泡流程.
     /// </summary>
-    public void Append(EventNode<T> node)
+    /// <param name="args"></param>
+    public virtual void TriggerBubbling(T args)
     {
-      if (_children is null)
-        Next = node;
-      else
-        _children.Add(node);
+      if (args.StopBubbling is false && Last is not null)
+      {
+        Event?.Invoke(args.Sender, args); //执行自己事件.
+        if (Last is EventNode<T> eventNode)
+          eventNode.TriggerBubbling(args); //播到上一级.
+      }
     }
 
-    /// <summary>
-    /// 从该节点中删除指定节点.
-    /// </summary>
+    public void Append(EventNode<T> node)
+      => DoAppend(node);
+
+    public void Insert(int index, EventNode<T> node)
+      => DoInsert(index, node);
+
+    public void Register(EventNode<T> node)
+      => DoRegister(node);
+
     public void Remove(EventNode<T> node)
-    {
-      if (_children is null)
-        Console.WriteLine("Error", "EventNode Remove Failed; Children Is Null.");
-      else
-        _children.Remove(node);
-    }
+      => DoRemove(node);
   }
 }

@@ -36,12 +36,12 @@ namespace Colin.Core.Common
 
     public ScreenReprocess ScreenReprocess = new ScreenReprocess();
 
-    public SceneEventResponder Events;
+    public SceneEvents Events;
 
     public Scene() : base(CoreInfo.Core)
     {
       CanDispose = true;
-      Events = new SceneEventResponder();
+      Events = new SceneEvents();
       // 仅此一处管理Game.Window事件, 其他地方都用Scene.Event统一进行管理, 不需要单独删除
     }
 

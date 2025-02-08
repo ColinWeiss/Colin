@@ -1,5 +1,6 @@
 ﻿using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
+using Colin.Core.Modulars.UserInterfaces.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -13,9 +14,9 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public Div LastFocus;
 
-    private DivThreshold _contianer = new DivThreshold("NomalContainer");
+    private DivRoot _contianer = new DivRoot("NomalContainer");
 
-    public DivThreshold Container => _contianer;
+    public DivRoot Container => _contianer;
 
     public RenderTarget2D RawRt { get; set; }
 
@@ -27,14 +28,8 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public Scene Scene { get; set; }
 
-    public EventResponder Events;
-
     public void DoInitialize()
     {
-      Events = new EventResponder("UserInterface.EventResponder");
-      Scene.Events.Reset += () => LastFocus = Focus;
-      Scene.Events.Mouse.Register(Events);
-      Scene.Events.KeysEvent.Register(Events);
     }
 
     public void Start() { }
@@ -61,16 +56,30 @@ namespace Colin.Core.Modulars.UserInterfaces
     }
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
-    public void Register(DivThreshold container) => Container?.Register(container);
+    public void Register(DivRoot container) => Container?.Register(container);
 
-    public void Remove(DivThreshold container, bool dispose) => Container?.Remove(container);
+    public void Remove(DivRoot container, bool dispose) => Container?.Remove(container);
 
-    public void SetContainer(DivThreshold container)
+    public void SetContainer(DivRoot root)
     {
-      container.userInterface = this;
-      _contianer = container;
-      container.DoInitialize();
-      container.Events.RegisterTo(Events);
+      root.userInterface = this;
+      _contianer = root;
+      root.DoInitialize();
+
+      Scene.Events.Mouse.LeftClicked.Register(root.Events.LeftClicked);
+      Scene.Events.Mouse.LeftClicking.Register(root.Events.LeftClicking);
+      Scene.Events.Mouse.LeftDown.Register(root.Events.LeftDown);
+      Scene.Events.Mouse.LeftUp.Register(root.Events.LeftUp);
+      Scene.Events.Mouse.RightClicked.Register(root.Events.RightClicked);
+      Scene.Events.Mouse.RightClicking.Register(root.Events.RightClicking);
+      Scene.Events.Mouse.RightDown.Register(root.Events.RightDown);
+      Scene.Events.Mouse.RightUp.Register(root.Events.RightUp);
+      Scene.Events.Mouse.ScrollDown.Register(root.Events.ScrollDown);
+      Scene.Events.Mouse.ScrollUp.Register(root.Events.ScrollUp);
+
+      Scene.Events.Keys.KeysClicked.Register(root.Events.KeysClicked);
+      Scene.Events.Keys.KeysClicking.Register(root.Events.KeysClicking);
+      Scene.Events.Keys.KeysDown.Register(root.Events.KeysDown);
     }
 
     public void Dispose()

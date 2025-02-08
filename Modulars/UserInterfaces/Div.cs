@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+﻿using Colin.Core.Modulars.UserInterfaces.Events;
+
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 指代用户交互界面中的一个划分元素.
@@ -57,10 +59,7 @@
     /// </summary>
     public DivDesign Design;
 
-    /// <summary>
-    /// 划分元素的事件响应器.
-    /// </summary>
-    public DivEventResponder Events;
+    public DivEvents Events;
 
     private DivRenderer renderer;
     /// <summary>
@@ -144,11 +143,11 @@
     /// </summary>
     public UserInterface UserInterface => userInterface;
 
-    internal DivThreshold threshold;
+    internal DivRoot root;
     /// <summary>
     /// 获取划分元素之「阈点」.
     /// </summary>
-    public DivThreshold Threshold => threshold;
+    public DivRoot Root => root;
 
     /// <summary>
     /// 指示该划分元素是否为可作为渲染目标的画布元素.
@@ -166,22 +165,22 @@
     {
       Name = name;
       Children = new List<Div>();
-      Events = new DivEventResponder(this);
+      Events = new DivEvents(this);
+      Events.DoBlockOut();
       Layout.Scale = Vector2.One;
       Interact.IsInteractive = true;
-      Interact.IsBubbling = true;
       Design.Color = Color.White;
       IsCanvas = isCanvas;
     }
 
     public void DoInitialize()
     {
-      if (this is DivThreshold divThreshold)
-        threshold = divThreshold;
+      if (this is DivRoot divThreshold)
+        root = divThreshold;
       if (Parent is not null)
       {
         userInterface = parent.userInterface;
-        threshold = parent.threshold;
+        root = parent.root;
       }
       if (InitializationCompleted)
         return;
@@ -190,7 +189,6 @@
       renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
       ForEach(child => child?.DoInitialize());
-      Events.DoInitialize();
       InitializationCompleted = true;
     }
 
@@ -210,10 +208,10 @@
       PreUpdate(time);
       if (!IsVisible)
         return;
-      if (this is DivThreshold is false)
+      if (this is DivRoot is false)
       {
         userInterface = Parent?.userInterface;
-        threshold = Parent?.threshold;
+        root = Parent?.root;
       }
       if (!_started)
       {
@@ -308,9 +306,9 @@
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
           device.SetRenderTarget(UserInterface.RawRt);
-        if (threshold.Layout.ScissorEnable)
-          device.ScissorRectangle = threshold.Layout.ScissorRectangle;
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, threshold.Layout.ScissorEnable ? threshold.ScissiorRasterizer : null);
+        if (root.Layout.ScissorEnable)
+          device.ScissorRectangle = root.Layout.ScissorRectangle;
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, root.Layout.ScissorEnable ? root.ScissiorRasterizer : null);
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
       }
     }
@@ -348,8 +346,8 @@
     {
       div.parent = this;
       div.userInterface = userInterface;
-      div.threshold = threshold;
-      Events.Register(div);
+      div.root = root;
+      Events.Register(div.Events);
       if (doInit)
         div.DoInitialize();
       Children.Add(div);
@@ -364,9 +362,9 @@
     public virtual bool Remove(Div div)
     {
       div.parent = null;
-      div.threshold = null;
+      div.root = null;
       div.userInterface = null;
-      Events.Remove(div);
+      Events.Remove(div.Events);
       return Children.Remove(div);
     }
 
@@ -412,13 +410,7 @@
     /// <param name="point">输入的点.</param>
     /// <returns>如果包含则返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public bool ContainsScreenPoint(Point point)
-    {
-      if (Layout.Bounds.Contains(point) is false)
-        return false;
-      if (parent is not null)
-        return parent.ContainsScreenPoint(point);
-      return true;
-    }
+      => Layout.Bounds.Contains(point);
 
     private bool disposedValue;
     protected virtual void Dispose(bool disposing)

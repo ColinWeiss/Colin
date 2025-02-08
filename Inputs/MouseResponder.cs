@@ -48,6 +48,19 @@ namespace Colin.Core.Inputs
     public static bool ScrollDown =>
       State.ScrollWheelValue > StateLast.ScrollWheelValue;
 
+    public static int ScrollValue
+    {
+      get
+      {
+        if (MouseResponder.ScrollDown)
+          return 1;
+        else if (MouseResponder.ScrollUp)
+          return -1;
+        else
+          return 0;
+      }
+    }
+
     public static bool ScrollClickAfter =>
       State.MiddleButton == ButtonState.Released &&
       StateLast.MiddleButton == ButtonState.Pressed;

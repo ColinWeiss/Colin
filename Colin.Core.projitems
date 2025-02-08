@@ -53,11 +53,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\EventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEventBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\IBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\KeysArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
+    <Compile Include="..\Colin\Events\MouseEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileCheck\FileToMD5.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
@@ -86,6 +90,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePlacer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Events\DivEventNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Events\DivEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\IPreExecution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
@@ -93,10 +99,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Perfmon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\TextInputEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAdvancedRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComBasic.cs" />
@@ -117,7 +121,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\KeyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
@@ -134,7 +137,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Point3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResources.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\MathExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExt.cs" />
@@ -169,9 +171,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\EventResponder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\MouseEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackageTransfer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\INetworkMode.cs" />
@@ -188,13 +187,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivThreshold.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRoot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\LinearMenuController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivDesign.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Div.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivEventResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\ColinForm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Forms\Popup.cs" />

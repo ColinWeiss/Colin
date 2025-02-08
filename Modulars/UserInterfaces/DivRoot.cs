@@ -4,12 +4,11 @@
   /// 用户交互界面中的根划分元素.
   /// <br>"万物皆有「阈点」..."</br>
   /// </summary>
-  public class DivThreshold : Div
+  public class DivRoot : Div
   {
-    public DivThreshold(string name) : base(name) => threshold = this;
+    public DivRoot(string name) : base(name) => root = this;
     public override sealed void DivInit()
     {
-      Interact.IsInteractive = false;
       Interact.IsSelectable = false;
       Layout.Width = CoreInfo.ViewWidth;
       Layout.Height = CoreInfo.ViewHeight;

@@ -11,7 +11,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       Label.FontRenderer = Label.BindRenderer<DivFontRenderer>();
       Label.FontRenderer.Font = Asset.GetFont("GlowSansMedium").GetFont(20);
       Label.Design.Color = Color.Black;
-      Label.Interact.IsInteractive = false;
       Label.SetText(text);
     }
     public override void DivInit()

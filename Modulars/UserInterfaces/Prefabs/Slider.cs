@@ -26,12 +26,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public void Bind(Div content, Div contentContainer)
     {
       if (ContentContainer is not null)
-        ContentContainer.Events.UnconditionalHover -= WheelEvent;
+        ContentContainer.Events.LeftUp.Event -= WheelEvent;
       Content = content;
       ContentContainer = contentContainer;
-      ContentContainer.Events.UnconditionalHover += WheelEvent;
+      ContentContainer.Events.LeftUp.Event += WheelEvent;
     }
-    private void WheelEvent(MouseEventArgs args)
+    private void WheelEvent(object sender, MouseArgs args)
     {
       if (MouseResponder.ScrollDown)
       {
