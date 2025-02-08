@@ -14,6 +14,7 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Content\obj\Windows\net8.0-windows7.0\Content\.mgstats" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\Cyotek.Drawing.BitmapFont.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Base.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.MonoGame.dll" />
@@ -27,23 +28,6 @@
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\SharpDX.D3DCompiler.dll" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansBook.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\GlowSansMedium.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\MiSansNormal.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Fonts\Unifont.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Content\Shaders\ParticleUpdate.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
@@ -215,6 +199,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\Windows\Content\" />
     <Folder Include="$(MSBuildThisFileDirectory)Mathematical\" />
   </ItemGroup>
 </Project>
