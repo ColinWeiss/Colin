@@ -8,15 +8,9 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// </summary>
   public class EcsTileCollisionSystem : Entitiesystem
   {
-    private EnvironmentalController controller;
     private EcsComTransform comTransform;
     private EcsComTileInteract comPhysic;
 
-    public override void DoInitialize()
-    {
-      controller = Ecs.Controller;
-      base.DoInitialize();
-    }
     public override void DoUpdate()
     {
       Entity _current;
@@ -30,12 +24,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
         if (comTransform is null || comPhysic is null)
           continue;
         //安全性检查.
-        if (comPhysic is not null)
-        {
-          if (!comPhysic.IgnoreGravity)
-            comTransform.Velocity += controller.UniGravity * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
-        }
-        //添加重力.
         if (comPhysic is not null && comTransform is not null)
         {
           comPhysic.PreviousCollisionLeft = comPhysic.CollisionLeft;

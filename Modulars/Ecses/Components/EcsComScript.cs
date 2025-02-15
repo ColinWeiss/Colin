@@ -15,8 +15,8 @@
     /// <summary>
     /// 通过  Script 访问同 <see cref="Entity"/> 的其他 <see cref="IEntityCom"/>.
     /// </summary>
-    public T GetComponent<T>() where T : IEntityCom => Entity.GetCom<T>();
-    public bool HasComponent<T>() where T : IEntityCom => Entity.HasCom<T>();
+    public T GetCom<T>() where T : IEntityCom => Entity.GetCom<T>();
+    public bool HasCom<T>() where T : IEntityCom => Entity.HasCom<T>();
     public virtual void DoInitialize() { }
     public virtual void Reset() { }
 

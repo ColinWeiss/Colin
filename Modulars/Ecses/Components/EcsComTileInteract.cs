@@ -8,10 +8,6 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// </summary>
   public class EcsComTileInteract : IEntityCom, IResetable
   {
-    /// <summary>
-    /// 指示是否忽略重力的值.
-    /// </summary>
-    public bool IgnoreGravity = false;
 
     /// <summary>
     /// 指示实体当前所处的层.
@@ -23,10 +19,6 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// </summary>
     public bool IgnoreTile;
 
-    /// <summary>
-    /// 指示达到最大重力速度的时间.
-    /// </summary>
-    public Entrance<float> UniGravitySpeedAttTime;
 
     /// <summary>
     /// 指示基础碰撞盒是否拥有左侧碰撞状态.
@@ -70,12 +62,10 @@ namespace Colin.Core.Modulars.Ecses.Components
     public void DoInitialize()
     {
       IgnoreTile = false;
-      UniGravitySpeedAttTime = new Entrance<float>(0.24f);
     }
     public void Reset()
     {
       IgnoreTile = false;
-      UniGravitySpeedAttTime.Reset();
     }
   }
 }

@@ -19,6 +19,15 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// </summary>
     public Vector2 Velocity;
 
+    /// <summary>
+    /// 指示实体的位置.
+    /// </summary>
+    public Vector2 Pos
+    {
+      get => Translation;
+      set => Translation = value;
+    }
+
     public Vector2 DeltaVelocity => Velocity * Time.DeltaTime;
 
     /// <summary>

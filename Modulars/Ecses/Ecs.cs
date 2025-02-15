@@ -22,8 +22,6 @@ namespace Colin.Core.Modulars.Ecses
 
     public RenderTarget2D RawRt { get; set; }
 
-    public EnvironmentalController Controller;
-
     private Dictionary<Type, Entitiesystem> _systems;
     public Dictionary<Type, Entitiesystem> Systems => _systems;
 
@@ -43,8 +41,6 @@ namespace Colin.Core.Modulars.Ecses
 
     public void DoInitialize()
     {
-      Controller = new EnvironmentalController();
-      Controller.DoInitialize();
       KeysEvent = new KeysEventNode();
       Scene.Events.Keys.Register(KeysEvent);
       Entities = new Entity[2047];
@@ -64,7 +60,6 @@ namespace Colin.Core.Modulars.Ecses
     {
       using (DebugProfiler.Tag("ECS System"))
       {
-        Controller.Reset();
         Entity _Entity;
         Entitiesystem _currentSystem;
         for (int count = 0; count < Systems.Count; count++)
