@@ -1,9 +1,4 @@
-﻿
-
-using FontStashSharp;
-using System.Threading.Tasks;
-
-namespace Colin.Core.Modulars.Collisions
+﻿namespace Colin.Core.Modulars.Collisions
 {
   /// <summary>
   /// 碰撞检测模块.

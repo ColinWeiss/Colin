@@ -1,7 +1,4 @@
 ﻿using Colin.Core.Modulars.Networks;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Modulars.Ecses.Components
 {

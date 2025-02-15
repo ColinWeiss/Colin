@@ -1,6 +1,5 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
-using System.ComponentModel;
 
 namespace Colin.Core.Modulars.Ecses
 {

@@ -14,7 +14,7 @@
       Sprite pixel = Sprite.Get("Pixel");
       float depth = pixel.Depth;
       if (pixel is not null)
-        batch.Draw(pixel.Source , line.Start, null, color, radian, Vector2.Zero, new Vector2(Vector2.Distance(line.Start, line.End), 1f), SpriteEffects.None, depth);
+        batch.Draw(pixel.Source, line.Start, null, color, radian, Vector2.Zero, new Vector2(Vector2.Distance(line.Start, line.End), 1f), SpriteEffects.None, depth);
     }
 
     /// <summary>

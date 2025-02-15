@@ -51,7 +51,7 @@ namespace Colin.Core.Common.Debugs
     {
       Instance.resetFlag = true;
     }
-    
+
     private static void ResetImmediate()
     {
       RootNode.report.count = 0;

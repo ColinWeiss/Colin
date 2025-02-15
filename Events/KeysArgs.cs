@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
   /// <summary>
   /// 键盘键位事件参数.

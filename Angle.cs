@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-
-namespace Colin.Core
+﻿namespace Colin.Core
 {
   public struct Angle : IEquatable<Angle>
   {

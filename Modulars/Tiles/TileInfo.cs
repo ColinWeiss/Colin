@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 表示瓦片地图中的单个瓦片的基本信息.

@@ -1,5 +1,4 @@
-﻿using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Controllers;
+﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 

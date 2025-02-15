@@ -1,6 +1,4 @@
 ﻿using Colin.Core.Common.Debugs;
-using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {

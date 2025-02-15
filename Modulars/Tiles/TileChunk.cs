@@ -1,8 +1,4 @@
 ﻿using Colin.Core.Resources;
-using DeltaMachine.Core;
-using System;
-using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars.Tiles
@@ -170,7 +166,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       catch
       {
-        Console.WriteLine("Error","区块遍历异常, 请检查输入参数合理性.");
+        Console.WriteLine("Error", "区块遍历异常, 请检查输入参数合理性.");
       }
     }
 

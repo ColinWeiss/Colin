@@ -83,7 +83,7 @@
             CoreInfo.Core.Window.OrientationChanged -= _currentScene.InitRenderTarget;
           }
           CoreInfo.Core.Components.Remove(_currentScene);
-          if(Loader is not null)
+          if (Loader is not null)
             CoreInfo.Core.Components.Remove(Loader);
           while (!_currentScene.CanDispose)
           {

@@ -13,7 +13,7 @@
 
     public void DoInitialize()
     {
-      DoInitialize(CoreInfo.ViewWidth , CoreInfo.ViewHeight);
+      DoInitialize(CoreInfo.ViewWidth, CoreInfo.ViewHeight);
       Scene.Events.ClientSizeChanged += (s, e) =>
       {
         Translate = CoreInfo.ViewCenter;

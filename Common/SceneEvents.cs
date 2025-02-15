@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Events;
 using TextInputEventArgs = MonoGame.IMEHelper.TextInputEventArgs;
 
 namespace Colin.Core.Common

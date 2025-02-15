@@ -1,7 +1,4 @@
 ﻿using Colin.Core.Events;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Modulars.UserInterfaces.Events
 {
@@ -165,12 +162,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       if (Div.UserInterface.Focus == Div && Div.UserInterface.LastFocus != Div)
       {
         DivLock = true;
-   //     GetFocus?.Invoke();
+        //     GetFocus?.Invoke();
       }
       if (Div.UserInterface.Focus != Div && Div.UserInterface.LastFocus == Div)
       {
         DivLock = false;
-  //      LoseFocus?.Invoke();
+        //      LoseFocus?.Invoke();
       }
     }
 

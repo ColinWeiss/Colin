@@ -1,6 +1,4 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
   /// <summary>
   /// 鼠标事件的 EventNode 封装.
@@ -54,10 +52,10 @@ namespace Colin.Core.Events
       LeftUp.Insert(index, node.LeftUp);
       RightClicked.Insert(index, node.RightClicked);
       RightClicking.Insert(index, node.RightClicking);
-      RightDown.Insert(index,node.RightDown);
-      RightUp.Insert(index,node.RightUp);
-      ScrollDown.Insert(index,node.ScrollDown);
-      ScrollUp.Insert(index,node.ScrollUp);
+      RightDown.Insert(index, node.RightDown);
+      RightUp.Insert(index, node.RightUp);
+      ScrollDown.Insert(index, node.ScrollDown);
+      ScrollUp.Insert(index, node.ScrollUp);
     }
 
     public void Register(MouseEventNode node)

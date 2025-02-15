@@ -111,7 +111,7 @@ namespace Colin.Core.Modulars.Backgrounds
         return new Microsoft.Xna.Framework.Vector2((float)Math.Log10(v.X), (float)Math.Log10(v.Y));
       }
 
-      LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / (Camera.Zoom - ( Camera.Zoom * log10(Camera.Zoom))));
+      LeftRightLoopEffect.Parameters["DrawCount"].SetValue(drawCount / (Camera.Zoom - (Camera.Zoom * log10(Camera.Zoom))));
       LeftRightLoopEffect.Parameters["Offset"].SetValue(offset);
       LeftRightLoopEffect.CurrentTechnique.Passes[0].Apply();
       CoreInfo.Graphics.GraphicsDevice.Textures[0] = _screenMap;

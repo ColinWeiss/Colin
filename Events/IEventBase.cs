@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
   /// <summary>
   /// 表示一个基础事件; 其中包含事件参数.
   /// </summary>
-  public interface IEventBase 
+  public interface IEventBase
   {
     public Type EventType => GetType();
 

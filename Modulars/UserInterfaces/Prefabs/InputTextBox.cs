@@ -50,16 +50,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       Text = "";
       Register(Label);
 
-   //   global::Colin.Core.Modulars.UserInterfaces.Events.GetFocus += () =>
-   //   {
-   //     global::Colin.Core.CoreInfo.IMEHandler.StartTextComposition();
-   //     global::Colin.Core.CoreInfo.IMEHandler.SetTextInputRect(ref InputRect);
-   //   };
-   //   global::Colin.Core.Modulars.UserInterfaces.Events.LoseFocus += () =>
-   //   {
-   //     global::Colin.Core.CoreInfo.IMEHandler.StopTextComposition();
-   //     Label.SetText(Text);
-   //   };
+      //   global::Colin.Core.Modulars.UserInterfaces.Events.GetFocus += () =>
+      //   {
+      //     global::Colin.Core.CoreInfo.IMEHandler.StartTextComposition();
+      //     global::Colin.Core.CoreInfo.IMEHandler.SetTextInputRect(ref InputRect);
+      //   };
+      //   global::Colin.Core.Modulars.UserInterfaces.Events.LoseFocus += () =>
+      //   {
+      //     global::Colin.Core.CoreInfo.IMEHandler.StopTextComposition();
+      //     Label.SetText(Text);
+      //   };
       UserInterface.Scene.Events.TextInput += IMEHandler_TextInput;
       base.DivInit();
     }
@@ -99,7 +99,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     public override void OnUpdate(GameTime time)
     {
-     // Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
+      // Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
 
       Editing = UserInterface.Focus == this;
       InputRect = Layout.RenderTargetBounds;

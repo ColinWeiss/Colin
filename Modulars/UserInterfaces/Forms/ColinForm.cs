@@ -1,5 +1,4 @@
-﻿using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Controllers;
+﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 
@@ -121,8 +120,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.LeftClicked.Event += (s,e) => UserInterface.Container.SetTop(this);
-      Events.KeysClicked.Event += (s,e) =>
+      Events.LeftClicked.Event += (s, e) => UserInterface.Container.SetTop(this);
+      Events.KeysClicked.Event += (s, e) =>
       {
         if (e.Keys == Keys.Escape && base.IsVisible)
         {

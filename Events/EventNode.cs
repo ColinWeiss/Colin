@@ -1,12 +1,4 @@
-﻿using Colin.Core.Modulars.UserInterfaces.Events;
-using DeltaMachine.Core.GameContents.UserInterfaces.Gameplays;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
   /// <summary>
   /// 事件节点.
@@ -61,7 +53,7 @@ namespace Colin.Core.Events
         }
         if (args.IsCapture is false)
           Event?.Invoke(args.Sender, args); //执行自己事件.
-        if (Children.Count <= 0&& args.IsCapture is false)
+        if (Children.Count <= 0 && args.IsCapture is false)
           TriggerBubbling(args);
       }
     }

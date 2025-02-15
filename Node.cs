@@ -1,9 +1,4 @@
-﻿using Colin.Core.Events;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core
+﻿namespace Colin.Core
 {
   /// <summary>
   /// 表示一类节点.
@@ -29,7 +24,7 @@ namespace Colin.Core
           _children = new List<Node<T>>();
           _children.Add(value);
         }
-        else if(_children.Count >= 1)
+        else if (_children.Count >= 1)
           _children[0] = value;
         else
           _children.Add(value);

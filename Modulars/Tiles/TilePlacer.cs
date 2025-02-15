@@ -1,5 +1,4 @@
-﻿using Colin.Core.Resources;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Tiles
 {

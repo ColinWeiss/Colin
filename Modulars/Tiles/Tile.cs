@@ -1,6 +1,5 @@
 ﻿using Colin.Core.IO;
 using System.Collections.Concurrent;
-using System.IO;
 
 namespace Colin.Core.Modulars.Tiles
 {

@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Resources;
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 

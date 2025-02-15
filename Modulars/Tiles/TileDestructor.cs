@@ -28,7 +28,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref Tile[0, 0, 0];
       while (!_queue.IsEmpty)
       {
-        if (_queue.TryDequeue(out ValueTuple<Point3,bool> coord))
+        if (_queue.TryDequeue(out ValueTuple<Point3, bool> coord))
         {
           info = ref Tile[coord.Item1];
           Handle(coord.Item1, coord.Item2);
@@ -55,7 +55,7 @@ namespace Colin.Core.Modulars.Tiles
         return;
       if (info.Empty is false)
       {
-        if(doEvent)
+        if (doEvent)
         {
           info.Behavior.OnDestruction(ref info);
           foreach (var script in info.Scripts.Values)
