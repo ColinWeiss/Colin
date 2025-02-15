@@ -129,14 +129,17 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 yt = (target.Top - bounds.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionBottom = true;
               }
-              else if (deltaVel.Y < 0 && next.Top < target.Bottom)
+              else if (deltaVel.Y < 0 && next.Top < target.Bottom && info.Collision != TileCollision.Platform)
               {
                 yt = (bounds.Top - target.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionTop = true;
               }
-              deltaVel.Y *= yt;
-              next = GetHitBox(Entity);
-              next.Location += deltaVel;
+              if (comPhysic.CollisionBottom)
+              {
+                deltaVel.Y *= yt;
+                next = GetHitBox(Entity);
+                next.Location += deltaVel;
+              }
               break;
             }
           }
