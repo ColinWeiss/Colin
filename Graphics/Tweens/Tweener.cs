@@ -43,7 +43,6 @@
       {
         Current = Target;
         _isPlay = IsLoop;
-        _timer -= Time;
       }
       return Current;
     }
