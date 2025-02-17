@@ -77,6 +77,10 @@ namespace Colin.Core.Resources
     {
       return (T1)Activator.CreateInstance(typeof(T1));
     }
+    public static T0 CreateNewInstance(T0 t)
+    {
+      return (T0)Activator.CreateInstance(typeof(T0));
+    }
 
     public void Load()
     {
