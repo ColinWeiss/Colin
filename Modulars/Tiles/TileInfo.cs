@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using DeltaMachine.Core.Common.Tiles.Scripts;
+
+namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 表示瓦片地图中的单个瓦片的基本信息.
@@ -192,6 +194,19 @@
     public void ClearScript() => Scripts = null;
 
     public Dictionary<Type, TileScript> Scripts;
+    public LiquidScript LiquidScript;
+
+    // 属于空物块也要有的特殊组件 这里直接特判处理
+    public LiquidScript AddLiquidScript()
+    {
+      LiquidScript = new LiquidScript();
+      LiquidScript.Tile = Tile;
+      LiquidScript.Chunk = Chunk;
+      LiquidScript.Index = Index;
+      LiquidScript.Info = this;
+      return LiquidScript;
+    }
+
     public T AddScript<T>() where T : TileScript, new()
     {
       T t = new T();
@@ -261,6 +276,7 @@
         Frame.LoadStep(reader);
         Collision = (TileCollision)reader.ReadInt32();
       }
+      LiquidScript.LoadStep(reader);
     }
 
     internal void SaveStep(BinaryWriter writer)
@@ -282,6 +298,7 @@
         Frame.SaveStep(writer);
         writer.Write((int)Collision);
       }
+      LiquidScript.SaveStep(writer);
     }
 
     /// <summary>

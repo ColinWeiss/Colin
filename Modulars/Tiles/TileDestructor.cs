@@ -62,6 +62,7 @@ namespace Colin.Core.Modulars.Tiles
             script.OnDestruction(this);
         }
         info.Empty = true;
+        info.Scripts.Clear();
         TileRefresher.Mark(info.WorldCoord3, 1); //将物块标记刷新, 刷新事件交由物块更新器处理
       }
     }

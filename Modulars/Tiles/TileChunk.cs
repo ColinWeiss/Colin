@@ -208,8 +208,10 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].Chunk = this;
       Infos[index].Empty = true;
       Infos[index].Index = index;
-      Infos[index].Scripts = new Dictionary<Type, TileScript>();
+      Infos[index].Scripts = new();
+      Infos[index].AddLiquidScript();
     }
+
     /// <summary>
     /// 在指定坐标处创建物块信息.
     /// </summary>
