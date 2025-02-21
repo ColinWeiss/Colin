@@ -146,7 +146,7 @@ namespace Colin.Core.Graphics.Shaders
           .GetMethod("GetShaderResourceView", BindingFlags.Instance | BindingFlags.NonPublic)
           .Invoke(texture, null) as ShaderResourceView);
     }
-    public void SetUnorderedTexture(int slot, UnorderedAccessTexture2D texture)
+    public void SetUnorderedTexture2D(int slot, UnorderedAccessTexture2D texture)
     {
       if (texture == null)
       {
@@ -156,6 +156,18 @@ namespace Colin.Core.Graphics.Shaders
       UnorderedAccessView uav = texture.GetUAV(D3dDevice);
       D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, uav);
     }
+
+    public void SetUnorderedTexture(int slot, UnorderedAccessTexture3D texture)
+    {
+      if (texture == null)
+      {
+        D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, null);
+        return;
+      }
+      UnorderedAccessView uav = texture.GetUAV(D3dDevice);
+      D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, uav);
+    }
+
     public void Dispose()
     {
       if (CBuffer != null)

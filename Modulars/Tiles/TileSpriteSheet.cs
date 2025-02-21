@@ -7,7 +7,14 @@
   /// </summary>
   public class TileSpriteSheet
   {
-    protected static Dictionary<string, TileSpriteSheet> TileSpriteRepository = new Dictionary<string, TileSpriteSheet>();
+    public enum TileSpriteFormat : int
+    {
+      Normal = 0,
+      Max = 1,
+    };
+
+    protected static TileSpriteSheet[] TileSpriteRepository = new TileSpriteSheet[(int)TileSpriteFormat.Max];
+
     private static bool inited = false;
 
     public Point CornerTextureOffset;
@@ -18,23 +25,23 @@
 
     public int Height;
 
-    public static TileSpriteSheet Query(string key)
+    public static TileSpriteSheet Query(TileSpriteFormat key)
     {
       if (!inited)
         LoadTileSpriteSheets();
-      return TileSpriteRepository.GetValueOrDefault(key, null);
+      return TileSpriteRepository[(int)key];
     }
 
     public static void LoadTileSpriteSheets()
     {
       // TODO: 通过加载配置文件初始化排版方式, 目前这里硬编码几个用于测试
-      RegisterTileSpriteSheet("Normal", new Point(112, 16), new Point(64, 16), new Point(16, 16), 48);
+      RegisterTileSpriteSheet(TileSpriteFormat.Normal, new Point(112, 16), new Point(64, 16), new Point(16, 16), 48);
       inited = true;
     }
 
-    public static void RegisterTileSpriteSheet(string key, Point cornerOffset, Point borderOffset, Point solidOffset, int height)
+    public static void RegisterTileSpriteSheet(TileSpriteFormat key, Point cornerOffset, Point borderOffset, Point solidOffset, int height)
     {
-      TileSpriteRepository.Add(key, new TileSpriteSheet(cornerOffset, borderOffset, solidOffset, height));
+      TileSpriteRepository[(int)key] = new TileSpriteSheet(cornerOffset, borderOffset, solidOffset, height);
     }
 
     protected TileSpriteSheet(Point cornerOffset, Point borderOffset, Point solidOffset, int height)

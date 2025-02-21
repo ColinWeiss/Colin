@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Colin.Core.Common.Debugs;
+using System.Collections.Concurrent;
 
 namespace Colin.Core.Graphics
 {
@@ -26,13 +27,16 @@ namespace Colin.Core.Graphics
     }
     public void Update(GameTime gameTime)
     {
-      Sprite _sprite;
-      for (int count = 0; count < Values.Count; count++)
+      using (DebugProfiler.Tag("SpritePool"))
       {
-        _sprite = Values.ElementAt(count);
-        if (_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
-            && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
-          _sprite.Frame.UpdateFrame();
+        Sprite _sprite;
+        for (int count = 0; count < Values.Count; count++)
+        {
+          _sprite = Values.ElementAt(count);
+          if (_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
+              && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
+            _sprite.Frame.UpdateFrame();
+        }
       }
     }
   }

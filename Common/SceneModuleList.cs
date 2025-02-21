@@ -56,38 +56,44 @@ namespace Colin.Core.Common
       RenderTarget2D frameRenderLayer;
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-      for (int count = 0; count < RenderableComponents.Values.Count; count++)
+      using (DebugProfiler.Tag("(Raw)"))
       {
-        renderMode = RenderableComponents.Values.ElementAt(count);
-        frameRenderLayer = renderMode.RawRt;
-        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
-        CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-        if (renderMode.RawRtVisible)
+        for (int count = 0; count < RenderableComponents.Values.Count; count++)
         {
-          using (DebugProfiler.Tag("(Raw Render)"))
+          renderMode = RenderableComponents.Values.ElementAt(count);
+          frameRenderLayer = renderMode.RawRt;
+          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
+          CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
+          if (renderMode.RawRtVisible)
           {
-            renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
+            // using (DebugProfiler.Tag(renderMode.GetType().Name))
+            {
+              renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
+            }
           }
         }
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-      for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
+      using (DebugProfiler.Tag("(Re-render)"))
       {
-        renderMode = RenderableComponents.Values.ElementAt(count);
-        frameRenderLayer = renderMode.RawRt;
-        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
-        if (renderMode.Presentation)
+        for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
         {
-          using (DebugProfiler.Tag("(Re-render)"))
+          renderMode = RenderableComponents.Values.ElementAt(count);
+          frameRenderLayer = renderMode.RawRt;
+          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+          if (renderMode.Presentation)
           {
-            renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
-            if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
-              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
-            else
-              CoreInfo.Batch.Begin(SpriteSortMode.Deferred);
-            CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-            CoreInfo.Batch.End();
+            // using (DebugProfiler.Tag("(Re-render)"))
+            {
+              renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
+              if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
+                CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
+              else
+                CoreInfo.Batch.Begin(SpriteSortMode.Deferred);
+              CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              CoreInfo.Batch.End();
+            }
           }
         }
       }

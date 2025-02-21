@@ -2,7 +2,7 @@
 
 namespace Colin.Core.Modulars.UserInterfaces.Events
 {
-  public class DivEvents : Node<DivEvents>
+  public class DivEvents
   {
     public Div Div { get; }
     public DivEventNode<LeftClickedArgs> LeftClicked;

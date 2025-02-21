@@ -216,6 +216,7 @@ namespace Colin.Core.Modulars.Tiles
       Scripts.Add(t.GetType(), t);
       return t;
     }
+
     public T GetScript<T>() where T : TileScript
     {
       if (IsPointer)

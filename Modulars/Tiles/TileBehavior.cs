@@ -17,6 +17,8 @@ namespace Colin.Core.Modulars.Tiles
         return _identifier;
       }
     }
+    private TileSpriteSheet.TileSpriteFormat _spriteSheetCategory = TileSpriteSheet.TileSpriteFormat.Normal;
+    public TileSpriteSheet.TileSpriteFormat SpriteSheetCategory => _spriteSheetCategory;
 
     public Tile Tile { get; internal set; }
 

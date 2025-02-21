@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -75,6 +76,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref Tile[coord]; //获取对应坐标的物块格的引用传递.
       if (info.IsNull)
         return;
+      Debug.Assert(info.Empty || !info.IsPointer);
       info.Scripts.Clear();//清空脚本
       info.Behavior = behavior;//设置物块行为
       info.Behavior.Tile = Tile;

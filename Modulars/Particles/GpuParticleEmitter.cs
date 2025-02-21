@@ -200,11 +200,11 @@ namespace Colin.Core.Modulars.Particles
     public void DoCompute()
     {
       ParticleUpdateCompute.SetTexture(0, DataRt);
-      ParticleUpdateCompute.SetUnorderedTexture(0, DataResultRt);
+      ParticleUpdateCompute.SetUnorderedTexture2D(0, DataResultRt);
       ParticleUpdateCompute.Dispatch(2048, 1, 1);
 
       ParticleUpdateCompute.SetTexture(0, null);
-      ParticleUpdateCompute.SetUnorderedTexture(0, null);
+      ParticleUpdateCompute.SetUnorderedTexture2D(0, null);
     }
     /// <summary>
     /// 使用 ParticleInstancing 对粒子进行实例绘制.
