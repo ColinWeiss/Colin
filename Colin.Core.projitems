@@ -46,6 +46,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileChunkModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="..\Colin\Events\MouseEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
