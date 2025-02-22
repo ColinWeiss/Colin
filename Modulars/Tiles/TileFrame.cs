@@ -30,13 +30,13 @@
     /// </summary>
     public bool LoadComplete => _loadComplete;
 
-    public Rectangle GetRect(TileOption tileOption)
+    public Rectangle GetRect(ITileContext tileOption)
     {
       return new Rectangle(
-            X * tileOption.TileSize.X,
-            Y * tileOption.TileSize.Y,
-            Width * tileOption.TileSize.X,
-            Height * tileOption.TileSize.X);
+            X * tileOption.TileWidth,
+            Y * tileOption.TileHeight,
+            Width * tileOption.TileWidth,
+            Height * tileOption.TileHeight);
     }
 
     public TileFrame(int x, int y, int width = 1, int height = 1)

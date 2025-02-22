@@ -177,12 +177,12 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 获取区块宽度.
     /// </summary>
-    public int Width => Tile.Option.ChunkWidth;
+    public int Width => Tile.Context.ChunkWidth;
 
     /// <summary>
     /// 获取区块高度.
     /// </summary>
-    public int Height => Tile.Option.ChunkHeight;
+    public int Height => Tile.Context.ChunkHeight;
 
     /// <summary>
     /// 获取区块深度.
@@ -248,9 +248,9 @@ namespace Colin.Core.Modulars.Tiles
     {
       Cells[index] = new Cell();
       Cells[index].Empty = true;
-      Cells[index].CoordX = (short)(index % (Tile.Option.ChunkWidth * Tile.Option.ChunkHeight) % Tile.Option.ChunkWidth);
-      Cells[index].CoordY = (short)(index % (Tile.Option.ChunkWidth * Tile.Option.ChunkHeight) / Tile.Option.ChunkWidth);
-      Cells[index].CoordZ = (short)(index / (Tile.Option.ChunkWidth * Tile.Option.ChunkHeight));
+      Cells[index].CoordX = (short)(index % (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight) % Tile.Context.ChunkWidth);
+      Cells[index].CoordY = (short)(index % (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight) / Tile.Context.ChunkWidth);
+      Cells[index].CoordZ = (short)(index / (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight));
     }
 
     public int GetIndex(Point3 coord)

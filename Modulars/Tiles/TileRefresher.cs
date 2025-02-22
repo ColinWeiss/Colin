@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -46,11 +47,6 @@ namespace Colin.Core.Modulars.Tiles
       {
         info = ref Tile[coord];
         Handle(coord);
-        if (info.Empty)
-        {
-          info.Behavior = null;
-          info.Scripts.Clear();
-        }
       }
     }
 
@@ -68,19 +64,39 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
+    /// 用于缓存区块;
+    /// <br>若本次操作放置的物块与上次放置的物块属于同一个区块则不需要重新获取.</br>
+    /// </summary>
+    private TileChunk _chunk;
+
+    /// <summary>
     /// 在刷新环节, 进行物块刷新的处理.
     /// <br>在此处会触发 <see cref="OnRefresh"/> 事件.</br>
     /// </summary>
-    /// <param name="coord"></param>
-    public void Handle(Point3 coord)
+    /// <param name="wCoord"></param>
+    public void Handle(Point3 wCoord)
     {
-      ref TileInfo info = ref Tile[coord];
+      ref TileInfo info = ref Tile[wCoord];
       if (info.IsNull)
         return;
-      info.Behavior?.OnRefresh(ref info);
-      foreach (var script in info.Scripts.Values)
-        script.OnRefresh(this);
-      OnRefresh?.Invoke(coord);
+      var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
+
+      if (_chunk is not null)
+        if (_chunk.Coord.Equals(coords.tCoord) is false)
+          _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+
+      TileComport _com;
+      int innerIndex = _chunk.GetIndex(_chunk.ConvertInner(wCoord));
+      Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
+
+      _com = _chunk.TileComport[innerIndex];
+      _com.OnRefresh(Tile, _chunk, wCoord, iCoord);
+      foreach (var script in _chunk.ChunkComport.Values)
+        script.OnRefreshHandle(this, wCoord, iCoord);
+      OnRefresh?.Invoke(wCoord);
+
+      if (info.Empty)
+        _chunk.TileComport[innerIndex] = null;
     }
 
     public void Dispose()

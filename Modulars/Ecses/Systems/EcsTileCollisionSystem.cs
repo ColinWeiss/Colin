@@ -48,10 +48,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
       RectangleF previousBounds = bounds;
       previousBounds.Offset(-comTransform.DeltaVelocity);
 
-      int leftTile = (int)Math.Floor((float)bounds.Left / tile.Option.TileSize.X);
-      int rightTile = (int)Math.Ceiling(((float)bounds.Right / tile.Option.TileSize.X));
-      int topTile = (int)Math.Floor((float)bounds.Top / tile.Option.TileSize.Y);
-      int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / tile.Option.TileSizeF.Y);
+      int leftTile = (int)Math.Floor((float)bounds.Left / tile.Context.TileSize.X);
+      int rightTile = (int)Math.Ceiling(((float)bounds.Right / tile.Context.TileSize.X));
+      int topTile = (int)Math.Floor((float)bounds.Top / tile.Context.TileSize.Y);
+      int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / tile.Context.TileSizeF.Y);
 
       Vector2 deltaVel = comTransform.DeltaVelocity;
 
@@ -94,7 +94,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
           target = info.HitBox;
           if (
             next.Intersects(target) &&
-            info.Collision != Tiles.TileCollision.Passable &&
+            info.Collision != Tiles.TileSolid.Passable &&
             !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);
@@ -104,7 +104,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
             absV = -v;
             if (absV.X < absV.Y)
             {
-              if (info.Collision != TileCollision.Platform)
+              if (info.Collision != TileSolid.Platform)
               {
                 if (deltaVel.X < 0 && next.Left < target.Right)
                 {
@@ -129,7 +129,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                 yt = (target.Top - bounds.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionBottom = true;
               }
-              else if (deltaVel.Y < 0 && next.Top < target.Bottom && info.Collision != TileCollision.Platform)
+              else if (deltaVel.Y < 0 && next.Top < target.Bottom && info.Collision != TileSolid.Platform)
               {
                 yt = (bounds.Top - target.Bottom) / Math.Abs(deltaVel.Y);
                 comPhysic.CollisionTop = true;
