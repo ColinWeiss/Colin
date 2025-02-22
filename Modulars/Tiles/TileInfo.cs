@@ -199,7 +199,7 @@ namespace Colin.Core.Modulars.Tiles
     // 属于空物块也要有的特殊组件 这里直接特判处理
     public LiquidScript AddLiquidScript()
     {
-      LiquidScript = new LiquidScript();
+      LiquidScript = new LiquidScript(this.WorldCoord2.Y);
       LiquidScript.Tile = Tile;
       LiquidScript.Chunk = Chunk;
       LiquidScript.Index = Index;
