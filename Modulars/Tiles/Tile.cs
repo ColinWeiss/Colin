@@ -41,7 +41,7 @@ namespace Colin.Core.Modulars.Tiles
     public ref TileInfo GetPointTo(Point3 wCoord)
     {
       ref TileInfo info = ref this[wCoord];
-      if (info.IsPointer())
+      if (info.IsPointer)
         return ref this[info.GetPointTo()];
       else
         return ref TileInfo.Null;
@@ -74,7 +74,7 @@ namespace Colin.Core.Modulars.Tiles
     public bool CheckPointer(Point3 wCoord)
     {
       ref TileInfo info = ref this[wCoord];
-      return info.IsPointer();
+      return info.IsPointer;
     }
 
     public void DoInitialize() { }
@@ -156,6 +156,76 @@ namespace Colin.Core.Modulars.Tiles
     /// 索引器: 根据世界物块坐标获取指定位置的物块.
     /// </summary>
     public ref TileInfo this[Point3 coord] => ref this[coord.X, coord.Y, coord.Z];
+
+    public TileKenel GetTileComport(int x, int y, int z)
+    {
+      int indexX = x >= 0 ? x % Context.ChunkWidth : ((x + 1) % Context.ChunkWidth) + (Context.ChunkWidth - 1);
+      int indexY = y >= 0 ? y % Context.ChunkHeight : ((y + 1) % Context.ChunkHeight) + (Context.ChunkHeight - 1);
+      TileChunk target = GetChunkForWorldCoord(x, y);
+      if (target is not null)
+        return target.TileKenel[target.GetIndex(indexX, indexY, z)];
+      else
+        return null;
+    }
+
+    public TileKenel GetTileComport(Point3 coord)
+      => GetTileComport(coord.X, coord.Y, coord.Z);
+
+    public T GetChunkComport<T>(ref TileInfo info) where T : TileHandler
+    {
+      return GetChunk(ref info).GetHandler<T>();
+    }
+
+    public ref TileInfo GetRelative(Point3 wCoord, TileRelative relative)
+    {
+      ref TileInfo info = ref this[wCoord];
+      Point3 temp = Point3.Zero;
+      switch (relative)
+      {
+        case TileRelative.Left:
+          temp = Point3.Left;
+          break;
+        case TileRelative.Right:
+          temp = Point3.Right;
+          break;
+        case TileRelative.Up:
+          temp = Point3.Up;
+          break;
+        case TileRelative.Down:
+          temp = Point3.Down;
+          break;
+        case TileRelative.Front:
+          temp = Point3.Front;
+          break;
+        case TileRelative.Behind:
+          temp = Point3.Behind;
+          break;
+      }
+      temp = info.GetWCoord3() + temp;
+      if (temp.Z < 0 || temp.Z >= Context.Depth)
+        return ref TileInfo.Null;
+      else
+        return ref this[info.GetWCoord3() + temp];
+    }
+
+    public int GetNeighborCount(Point3 wCoord)
+    {
+      int result = 0;
+      if (GetRelative(wCoord, TileRelative.Front).Empty is false)
+        result++;
+      if (GetRelative(wCoord, TileRelative.Behind).Empty is false)
+        result++;
+      if (GetRelative(wCoord, TileRelative.Left).Empty is false)
+        result++;
+      if (GetRelative(wCoord, TileRelative.Right).Empty is false)
+        result++;
+      if (GetRelative(wCoord, TileRelative.Up).Empty is false)
+        result++;
+      if (GetRelative(wCoord, TileRelative.Down).Empty is false)
+        result++;
+      return result;
+    }
+
     /// <summary>
     /// 判断指定坐标的区块是否存在.
     /// </summary>
@@ -174,6 +244,15 @@ namespace Colin.Core.Modulars.Tiles
       int tileCoordX = worldCoordX >= 0 ? worldCoordX % Context.ChunkWidth : (worldCoordX + 1) % Context.ChunkWidth + (Context.ChunkWidth - 1);
       int tileCoordY = worldCoordY >= 0 ? worldCoordY % Context.ChunkHeight : (worldCoordY + 1) % Context.ChunkHeight + (Context.ChunkHeight - 1);
       return (new Point(chunkCoordX, chunkCoordY), new Point(tileCoordX, tileCoordY));
+    }
+
+    public TileChunk GetChunk(ref TileInfo info)
+    {
+      int worldCoordX = info.WCoordX;
+      int worldCoordY = info.WCoordY;
+      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / Context.ChunkWidth : (worldCoordX + 1) / Context.ChunkWidth - 1;
+      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Context.ChunkHeight : (worldCoordY + 1) / Context.ChunkHeight - 1;
+      return GetChunk(chunkCoordX, chunkCoordY);
     }
 
     public Point GetInnerCoord(int worldCoordX, int worldCoordY)
@@ -207,7 +286,7 @@ namespace Colin.Core.Modulars.Tiles
       return new Point(chunkCoordX, chunkCoordY);
     }
 
-    public bool Place<T>(int x, int y, int z) where T : TileComport, new()
+    public bool Place<T>(int x, int y, int z) where T : TileKenel, new()
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
@@ -217,7 +296,7 @@ namespace Colin.Core.Modulars.Tiles
         return false;
     }
 
-    public bool Place(TileComport behavior, int x, int y, int z)
+    public bool Place(TileKenel behavior, int x, int y, int z)
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
@@ -226,6 +305,7 @@ namespace Colin.Core.Modulars.Tiles
       else
         return false;
     }
+
 
     /// <summary>
     /// 使用世界物块坐标破坏指定位置的物块.

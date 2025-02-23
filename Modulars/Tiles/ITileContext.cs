@@ -27,9 +27,9 @@ namespace Colin.Core.Modulars.Tiles
     public short Depth { get; set; }
 
     /// <summary>
-    /// 于区块初始化时执行; 允许于此处为区块添加行为.
+    /// 于区块初始化时执行; 允许于此处为区块添加物块处理方式.
     /// <br>[提示] 建议使用 SOA 组织数据的方式为行为附加数据; 并且尽量注意 <see langword="null"/> 相关值的利用.</br>
-    /// </summary>
-    public virtual void DoChunkComportInit(TileChunk chunk) { }
+    /// </summary> 
+    public void DoTileHandleInit(TileChunk chunk);
   }
 }

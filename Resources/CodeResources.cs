@@ -60,14 +60,14 @@ namespace Colin.Core.Resources
 
     public static string GetTypeNameFromHash(int hashValue)
     {
-      if (CodeResources<TileComport>.hashToSers.TryGetValue(hashValue, out string value))
+      if (CodeResources<TileKenel>.hashToSers.TryGetValue(hashValue, out string value))
         return value;
       else
         return null;
     }
     public static int? GetHashFromTypeName(string typeName)
     {
-      if (CodeResources<TileComport>.serToHashs.TryGetValue(typeName, out int value))
+      if (CodeResources<TileKenel>.serToHashs.TryGetValue(typeName, out int value))
         return value;
       else
         return null;

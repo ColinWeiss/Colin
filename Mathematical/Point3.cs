@@ -130,6 +130,8 @@
 
     public Point ToPoint() => new Point(X, Y);
 
+    public Vector2 ToVector2() => new Vector2(X, Y);
+
     public void Ceiling()
     {
       X = (int)MathF.Ceiling(X);

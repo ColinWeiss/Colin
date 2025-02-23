@@ -57,25 +57,32 @@ namespace Colin.Core.Modulars.Tiles
       if (info.IsNull)
         return;
 
-      Debug.Assert(info.Empty || !info.IsPointer());
+      Debug.Assert(info.Empty || !info.IsPointer);
 
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
 
       if (_chunk is not null)
         if (_chunk.Coord.Equals(coords.tCoord) is false)
           _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+        else
+          _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+      if (_chunk is null)
+        return;
 
-      TileComport _com;
+      TileKenel _com;
       int innerIndex = _chunk.GetIndex(_chunk.ConvertInner(wCoord));
       Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
 
-      _com = _chunk.TileComport[innerIndex];
+      _com = _chunk.TileKenel[innerIndex];
+
+      if (_com is null)
+        return;
 
       info.Empty = true;
 
-      foreach (var script in _chunk.ChunkComport.Values)
-        script.OnDestructHandle(this, wCoord, iCoord);
-      _com.OnDestruction(Tile, _chunk, wCoord, iCoord);
+      foreach (var script in _chunk.Handler.Values)
+        script.OnDestructHandle(this, info.Index, wCoord);
+      _com.OnDestruction(Tile, _chunk, info.Index, wCoord);
 
       TileRefresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
     }

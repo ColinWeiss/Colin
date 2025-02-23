@@ -3,9 +3,10 @@
 namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
-  /// 物块行为.
+  /// 物块内核.
+  /// <br>用以定制分种类物块相关行为.</br>
   /// </summary>
-  public class TileComport : ICodeResource
+  public class TileKenel : ICodeResource
   {
     private string _identifier;
     public string Identifier
@@ -17,8 +18,8 @@ namespace Colin.Core.Modulars.Tiles
         return _identifier;
       }
     }
-    private TileSpriteSheet.TileSpriteFormat _spriteSheetCategory = TileSpriteSheet.TileSpriteFormat.Normal;
-    public TileSpriteSheet.TileSpriteFormat SpriteSheetCategory => _spriteSheetCategory;
+
+    public ITileSpriteFormat SpriteFormat;
 
     /// <summary>
     /// 指示该物块行为所属的 Tile 模块.
@@ -29,32 +30,32 @@ namespace Colin.Core.Modulars.Tiles
     /// 执行于判断物块放置标记前.
     /// <br>若结果为 <see langword="true"/>, 则允许进行标记, 否则不进行标记.</br>
     /// </summary>
-    public virtual bool CanPlaceMark(Tile tile, TileChunk chunk, Point3 wCoord, Point3 iCoord) => true;
+    public virtual bool CanPlaceMark(Tile tile, TileChunk chunk, int index, Point3 wCoord) => true;
 
     /// <summary>
     /// 执行于判断物块破坏标记前.
     /// <br>若结果为 <see langword="true"/>, 则允许进行标记, 否则不进行标记.</br>
     /// </summary>
-    public virtual bool CanDestructMark(Tile tile, TileChunk chunk, Point3 wCoord, Point3 iCoord) => true;
+    public virtual bool CanDestructMark(Tile tile, TileChunk chunk, int index, Point3 wCoord) => true;
 
     /// <summary>
-    /// 执行于物块初始化.
+    /// 执行于初始化.
     /// </summary>
-    public virtual void OnInitialize(Tile tile, TileChunk chunk, Point3 wCoord, Point3 iCoord) { }
+    public virtual void OnInitialize(Tile tile, TileChunk chunk, int index) { }
 
     /// <summary>
     /// 执行于物块放置时.
     /// </summary>
-    public virtual void OnPlace(Tile tile, TileChunk chunk, Point3 wCoord, Point3 iCoord) { }
+    public virtual void OnPlace(Tile tile, TileChunk chunk, int index, Point3 wCoord) { }
 
     /// <summary>
     /// 执行于物块刷新时.
     /// </summary>
-    public virtual void OnRefresh(Tile tile, TileChunk chunk, Point3 wCoord, Point3 iCoord) { }
+    public virtual void OnRefresh(Tile tile, TileChunk chunk, int index, Point3 wCoord) { }
 
     /// <summary>
     /// 执行于物块被破坏时.
     /// </summary>
-    public virtual void OnDestruction(Tile tile, TileChunk chunk, Point3 wCoord, Point3 iCoord) { }
+    public virtual void OnDestruction(Tile tile, TileChunk chunk, int index, Point3 wCoord) { }
   }
 }

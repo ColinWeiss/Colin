@@ -47,8 +47,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Grid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileChunkModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRelative.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="..\Colin\Events\MouseEventNode.cs" />
@@ -169,11 +169,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Skys\Sky.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Skys\SkyStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\Tile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileComport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileKenel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSolid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileFrame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ChunkComport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRoot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />

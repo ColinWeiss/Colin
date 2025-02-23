@@ -93,34 +93,40 @@ namespace Colin.Core.Modulars.Tiles
     public TileInfo[] Infos;
 
     /// <summary>
-    /// 区块内的物块行为.
+    /// 区块内的物块内核.
     /// </summary>
-    public TileComport[] TileComport;
+    public TileKenel[] TileKenel;
 
     /// <summary>
     /// 区块内的物块可编程行为.
     /// </summary>
-    public Dictionary<Type, ChunkComport> ChunkComport;
+    public Dictionary<Type, TileHandler> Handler;
 
     /// <summary>
-    /// 为区块添加指定类型的区块行为.
+    /// 为区块添加指定类型的物块处理方式.
     /// </summary>
-    public T AddScript<T>() where T : ChunkComport, new()
+    public T AddHandler<T>() where T : TileHandler, new()
     {
       T script = new T();
       script.Tile = Tile;
       script.Chunk = this;
-      ChunkComport.Add(typeof(T), script);
+      Handler.Add(typeof(T), script);
       return script;
     }
 
-    /// <summary>
-    /// 获取指定类型的区块行为.
-    /// <br>[!] 使用内部坐标.</br>
-    /// </summary>
-    public T GetScript<T>() where T : ChunkComport
+    public void AddHandler(TileHandler handler)
     {
-      if (ChunkComport.TryGetValue(typeof(T), out ChunkComport script))
+      handler.Tile = Tile;
+      handler.Chunk = this;
+      Handler.Add(handler.GetType(), handler);
+    }
+
+    /// <summary>
+    /// 获取指定类型的物块处理方式.
+    /// </summary>
+    public T GetHandler<T>() where T : TileHandler
+    {
+      if (Handler.TryGetValue(typeof(T), out TileHandler script))
         return script as T;
       else
         return null;
@@ -133,7 +139,7 @@ namespace Colin.Core.Modulars.Tiles
     public ref TileInfo GetPointTo(Point3 iCoord)
     {
       ref TileInfo info = ref this[iCoord];
-      if (info.IsPointer())
+      if (info.IsPointer)
       {
         if (InChunk(info.GetPointTo().ToPoint()))
           return ref this[ConvertInner(info.GetPointTo())]; //若在内部则直接从内部获取省去一步获取区块.
@@ -172,7 +178,7 @@ namespace Colin.Core.Modulars.Tiles
     public bool CheckPointer(Point3 iCoord)
     {
       ref TileInfo info = ref this[iCoord];
-      return info.IsPointer();
+      return info.IsPointer;
     }
 
     /// <summary>
@@ -205,9 +211,9 @@ namespace Colin.Core.Modulars.Tiles
     public int GetIndex(Point3 coord)
       => GetIndex(coord.X, coord.Y, coord.Z);
 
-    public ref TileInfo GetRelative(Point3 iCoord, TileRelative relative)
+    public ref TileInfo GetRelative(int index, TileRelative relative)
     {
-      ref TileInfo info = ref this[iCoord];
+      ref TileInfo info = ref this[index];
       Point3 temp = Point3.Zero;
       switch (relative)
       {
@@ -230,7 +236,7 @@ namespace Colin.Core.Modulars.Tiles
           temp = Point3.Behind;
           break;
       }
-      temp = info.GetICoord3() + temp;
+      temp = info.GetWCoord3() + temp;
       bool inChunk = InChunk(temp);
       if (inChunk)
         return ref this[temp];
@@ -272,11 +278,15 @@ namespace Colin.Core.Modulars.Tiles
     {
       int length = Width * Height * Depth;
       Infos = new TileInfo[length];
-      TileComport = new TileComport[length];
-      ChunkComport = new Dictionary<Type, ChunkComport>();
+      TileKenel = new TileKenel[length];
+      Handler = new Dictionary<Type, TileHandler>();
       for (int count = 0; count < length; count++)
         CreateInfo(count);
-      Tile.Context.DoChunkComportInit(this);
+      Tile.Context.DoTileHandleInit(this);
+      foreach (var item in Handler.Values)
+      {
+        item.DoInitialize();
+      }
     }
 
     public void CreateInfo(int index)
@@ -289,7 +299,7 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].ICoordZ = (short)(index / (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight));
       Infos[index].WCoordX = CoordX * Tile.Context.ChunkWidth + Infos[index].ICoordX;
       Infos[index].WCoordY = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
-      ChunkComport = new Dictionary<Type, ChunkComport>();
+      Handler = new Dictionary<Type, TileHandler>();
     }
 
     /// <summary>
@@ -305,22 +315,34 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
+    /// 从区块内指定索引转换至世界坐标.
+    /// </summary>
+    public Point3 ConvertWorld(int index)
+    {
+      int x = CoordX * Tile.Context.ChunkWidth + Infos[index].ICoordX;
+      int y = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
+      int z = Infos[index].PointToZ;
+      return new Point3(x, y, z);
+    }
+
+    /// <summary>
     /// 从区块内指定坐标转换至世界坐标.
     /// </summary>
     public Point3 ConvertWorld(int x, int y, int z)
       => ConvertWorld(new Point3(x, y, z));
 
     /// <summary>
-    /// 从世界坐标转换至该区块坐标.
+    /// 从世界坐标转换至该区块坐标，支持负数坐标.
     /// </summary>
     public Point3 ConvertInner(Point3 wCoord)
     {
       Point3 result = new Point3();
-      result.X = wCoord.X % Tile.Context.ChunkWidth;
-      result.Y = wCoord.Y % Tile.Context.ChunkHeight;
+      result.X = ((wCoord.X % Tile.Context.ChunkWidth) + Tile.Context.ChunkWidth) % Tile.Context.ChunkWidth;
+      result.Y = ((wCoord.Y % Tile.Context.ChunkHeight) + Tile.Context.ChunkHeight) % Tile.Context.ChunkHeight;
       result.Z = wCoord.Z;
       return result;
     }
+
 
     /// <summary>
     /// 判断指定世界坐标是否处于该区块内.
@@ -342,24 +364,24 @@ namespace Colin.Core.Modulars.Tiles
     /// 根据指定坐标和指定类型放置物块.
     /// <br>[!] 使用内部坐标.</br>
     /// </summary>
-    public bool Place(TileComport behavior, int x, int y, int z)
+    public bool Place(TileKenel behavior, int x, int y, int z)
     {
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
-      if (behavior.CanPlaceMark(Tile, this, wCoord, new Point3(x, y, z)))
+    //  if (behavior.CanPlaceMark(Tile, this, GetIndex(x, y, z), ConvertWorld(x, y, z)))
       {
         Placer.Mark(wCoord, behavior);
         return true;
       }
-      else
-        return false;
+    //  else
+   //     return false;
     }
 
     /// <summary>
     /// 根据区块内坐标和指定类型放置物块.
     /// </summary>
-    public bool Place<T>(int x, int y, int z) where T : TileComport, new()
+    public bool Place<T>(int x, int y, int z) where T : TileKenel, new()
     {
-      TileComport behavior = CodeResources<TileComport>.GetFromType(typeof(T));
+      TileKenel behavior = CodeResources<TileKenel>.GetFromType(typeof(T));
       return Place(behavior, x, y, z);
     }
 
@@ -378,20 +400,20 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref this[x, y, z];
       if (info.IsNull)
         return;
-      TileComport comport = TileComport[GetIndex(x, y, z)];
+      TileKenel comport = TileKenel[GetIndex(x, y, z)];
       if (Tile.CheckPointer(info.GetWCoord3()))
       {
         info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
         {
-          if (comport.CanPlaceMark(Tile, this, info.GetWCoord3(), new Point3(x, y, z)))
+          if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
             Destructor.Mark(info.GetWCoord3(), doEvent);
         }
       }
       else if (!Destructor.Queue.Contains((info.GetWCoord3(), doEvent)))
       {
         if (!info.Empty)
-          if (comport.CanPlaceMark(Tile, this, info.GetWCoord3(), new Point3(x, y, z)))
+          if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
             Destructor.Mark(info.GetWCoord3(), doEvent);
       }
     }
@@ -427,25 +449,25 @@ namespace Colin.Core.Modulars.Tiles
         {
           ref TileInfo info = ref this[0, 0, 0];
           string typeName;
-          ChunkComport cCom;
+          TileHandler cCom;
           for (int count = 0; count < Infos.Length; count++)
           {
             info = ref this[count];
             info.LoadStep(reader);
             if (!info.Empty)
             {
-              typeName = CodeResources<TileComport>.GetTypeNameFromHash(reader.ReadInt32());
+              typeName = CodeResources<TileKenel>.GetTypeNameFromHash(reader.ReadInt32());
               if (typeName is not null)
               {
-                TileComport[count] = CodeResources<TileComport>.GetFromTypeName(typeName);
-                TileComport[count].Tile = Tile;
-                TileComport[count].OnInitialize(Tile, this, info.GetWCoord3(), info.GetICoord3()); //执行行为初始化放置
+                TileKenel[count] = CodeResources<TileKenel>.GetFromTypeName(typeName);
+                TileKenel[count].Tile = Tile;
+                TileKenel[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
                 Refresher.Mark(info.GetWCoord3(), 0);
               }
             }
-            for (int i = 0; i < ChunkComport.Count; i++)
+            for (int i = 0; i < Handler.Count; i++)
             {
-              cCom = ChunkComport.Values.ElementAt(i);
+              cCom = Handler.Values.ElementAt(i);
               cCom.LoadStep(reader);
             }
           }
@@ -483,24 +505,24 @@ namespace Colin.Core.Modulars.Tiles
         using (BinaryWriter writer = new BinaryWriter(fileStream))
         {
           int? hash;
-          TileComport tCom;
-          ChunkComport cCom;
+          TileKenel tCom;
+          TileHandler cCom;
           Span<TileInfo> infoSpan = Infos;
           for (int count = 0; count < infoSpan.Length; count++)
           {
             infoSpan[count].SaveStep(writer);
-            tCom = TileComport[count];
+            tCom = TileKenel[count];
             if (!infoSpan[count].Empty && tCom is not null)
             {
-              hash = CodeResources<TileComport>.GetHashFromTypeName(tCom.Identifier);
+              hash = CodeResources<TileKenel>.GetHashFromTypeName(tCom.Identifier);
               if (hash.HasValue)
               {
                 writer.Write(hash.Value);
               }
             }
-            for (int i = 0; i < ChunkComport.Count; i++)
+            for (int i = 0; i < Handler.Count; i++)
             {
-              cCom = ChunkComport.Values.ElementAt(i);
+              cCom = Handler.Values.ElementAt(i);
               cCom.SaveStep(writer);
             }
             //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
@@ -513,14 +535,26 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 判断同层指定坐标的物块行为与具有指定偏移位置处的物块行为是否相同.
     /// </summary>
-    public bool IsSame(Point3 own, Point3 target)
+    public bool IsSame(Point3 own, Point3 offset)
     {
-      var ownCom = TileComport[GetIndex(own)];
-      var tarCom = TileComport[GetIndex(target)];
-      if (ownCom is null || tarCom is null)
-        return false;
+      var ownCom = TileKenel[GetIndex(own)];
+      Point3 tarCoord = ConvertWorld(own + offset);
+      if (InChunk(tarCoord))
+      {
+        var tarCom = TileKenel[GetIndex(own + offset)];
+        if (ownCom is null || tarCom is null)
+          return false;
+        else
+          return ownCom.Equals(tarCom);
+      }
       else
-        return ownCom.Equals(tarCom);
+      {
+        var tarCom = Tile.GetTileComport(tarCoord);
+        if (ownCom is null || tarCom is null)
+          return false;
+        else
+          return ownCom.Equals(tarCom);
+      }
     }
   }
 }

@@ -76,27 +76,36 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="wCoord"></param>
     public void Handle(Point3 wCoord)
     {
-      ref TileInfo info = ref Tile[wCoord];
-      if (info.IsNull)
-        return;
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
-
       if (_chunk is not null)
+      {
         if (_chunk.Coord.Equals(coords.tCoord) is false)
           _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+      }
+      else
+        _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
 
-      TileComport _com;
+      if (_chunk is null)
+        return;
+
+      ref TileInfo info = ref _chunk[coords.tCoord.X, coords.tCoord.Y, wCoord.Z]; //获取对应坐标的物块格的引用传递.
+      if (info.IsNull)
+        return;
+
+      TileKenel _com;
       int innerIndex = _chunk.GetIndex(_chunk.ConvertInner(wCoord));
       Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
 
-      _com = _chunk.TileComport[innerIndex];
-      _com.OnRefresh(Tile, _chunk, wCoord, iCoord);
-      foreach (var script in _chunk.ChunkComport.Values)
-        script.OnRefreshHandle(this, wCoord, iCoord);
+      _com = _chunk.TileKenel[innerIndex];
+      if (_com is null)
+        return;
+      _com.OnRefresh(Tile, _chunk, info.Index, wCoord);
+      foreach (var script in _chunk.Handler.Values)
+        script.OnRefreshHandle(this, info.Index, wCoord);
       OnRefresh?.Invoke(wCoord);
 
       if (info.Empty)
-        _chunk.TileComport[innerIndex] = null;
+        _chunk.TileKenel[innerIndex] = null;
     }
 
     public void Dispose()

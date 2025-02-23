@@ -13,7 +13,7 @@
 
     public int PointToZ;
 
-    public bool IsPointer() => PointToX != 0 || PointToY != 0 || PointToZ != 0;
+    public bool IsPointer => PointToX != 0 || PointToY != 0 || PointToZ != 0;
 
     public Point3 GetPointTo() => new Point3(PointToX, PointToY, PointToZ);
 
@@ -67,17 +67,6 @@
        LiquidScript.Index = Index;
        LiquidScript.Info = this;
        return LiquidScript;
-     }*/
-
-    /* private RectangleF _hitBox;
-     public RectangleF HitBox
-     {
-       get
-       {
-         if (_hitBox.X == 0 && _hitBox.Y == 0 && _hitBox.Width == 0 && _hitBox.Height == 0)
-           _hitBox = new RectangleF(WorldCoord2.ToVector2() * Tile.Option.TileSizeF, Tile.Option.TileSizeF);
-         return _hitBox;
-       }
      }*/
 
     public void LoadStep(BinaryReader reader)
