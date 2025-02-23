@@ -133,24 +133,6 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
-    /// 获取指定坐标指针指向的引用; 若引用不存在, 则返回 <see cref="TileInfo.Null"/>.
-    /// <br>[!] 使用内部坐标.</br>
-    /// </summary>
-    public ref TileInfo GetPointTo(Point3 iCoord)
-    {
-      ref TileInfo info = ref this[iCoord];
-      if (info.IsPointer)
-      {
-        if (InChunk(info.GetPointTo().ToPoint()))
-          return ref this[ConvertInner(info.GetPointTo())]; //若在内部则直接从内部获取省去一步获取区块.
-        else
-          return ref Tile[info.GetPointTo()]; //不在内部那就从Tile模块走区块获取指向的块.
-      }
-      else
-        return ref TileInfo.Null;
-    }
-
-    /// <summary>
     /// 根据目标坐标为指定坐标物块设置指针.
     /// <br>[!] own 使用内部坐标.</br>
     /// <br>[!] target 使用世界坐标.</br>
@@ -258,11 +240,15 @@ namespace Colin.Core.Modulars.Tiles
 
     public void ForEach(TileChunkForEachDelegate info, int x, int y, int width, int height, int depth)
     {
+      ref TileInfo tileInfo = ref Infos[0];
       try
       {
         for (int cx = x; cx < x + width; cx++)
           for (int cy = y; cy < y + height; cy++)
-            info.Invoke(ref Infos[GetIndex(cx, cy, depth)]);
+          {
+            tileInfo = ref Infos[GetIndex(cx, cy, depth)];
+            info.Invoke(ref tileInfo);
+          }
       }
       catch
       {
@@ -319,30 +305,8 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public Point3 ConvertWorld(int index)
     {
-      int x = CoordX * Tile.Context.ChunkWidth + Infos[index].ICoordX;
-      int y = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
-      int z = Infos[index].PointToZ;
-      return new Point3(x, y, z);
+      return Infos[index].GetWCoord3();
     }
-
-    /// <summary>
-    /// 从区块内指定坐标转换至世界坐标.
-    /// </summary>
-    public Point3 ConvertWorld(int x, int y, int z)
-      => ConvertWorld(new Point3(x, y, z));
-
-    /// <summary>
-    /// 从世界坐标转换至该区块坐标，支持负数坐标.
-    /// </summary>
-    public Point3 ConvertInner(Point3 wCoord)
-    {
-      Point3 result = new Point3();
-      result.X = ((wCoord.X % Tile.Context.ChunkWidth) + Tile.Context.ChunkWidth) % Tile.Context.ChunkWidth;
-      result.Y = ((wCoord.Y % Tile.Context.ChunkHeight) + Tile.Context.ChunkHeight) % Tile.Context.ChunkHeight;
-      result.Z = wCoord.Z;
-      return result;
-    }
-
 
     /// <summary>
     /// 判断指定世界坐标是否处于该区块内.
@@ -367,13 +331,13 @@ namespace Colin.Core.Modulars.Tiles
     public bool Place(TileKenel behavior, int x, int y, int z)
     {
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
-    //  if (behavior.CanPlaceMark(Tile, this, GetIndex(x, y, z), ConvertWorld(x, y, z)))
+      //  if (behavior.CanPlaceMark(Tile, this, GetIndex(x, y, z), ConvertWorld(x, y, z)))
       {
         Placer.Mark(wCoord, behavior);
         return true;
       }
-    //  else
-   //     return false;
+      //  else
+      //     return false;
     }
 
     /// <summary>
@@ -406,14 +370,14 @@ namespace Colin.Core.Modulars.Tiles
         info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
         {
-          if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
+  //        if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
             Destructor.Mark(info.GetWCoord3(), doEvent);
         }
       }
       else if (!Destructor.Queue.Contains((info.GetWCoord3(), doEvent)))
       {
         if (!info.Empty)
-          if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
+    //      if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
             Destructor.Mark(info.GetWCoord3(), doEvent);
       }
     }

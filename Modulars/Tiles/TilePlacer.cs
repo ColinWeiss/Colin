@@ -79,25 +79,26 @@ namespace Colin.Core.Modulars.Tiles
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
       if (_chunk is not null)
       {
-        if (_chunk.Coord.Equals(coords.tCoord) is false)
-          _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+        if (_chunk.Coord.Equals(coords.cCoord) is false)
+          _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
       }
       else
-        _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+        _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (_chunk is null)
         return;
 
       ref TileInfo info = ref _chunk[coords.tCoord.X, coords.tCoord.Y, wCoord.Z]; //获取对应坐标的物块格的引用传递.
+
+
       if (info.IsNull)
         return;
       Debug.Assert(info.Empty || !info.IsPointer);
 
       TileKenel _com;
-      int innerIndex = _chunk.GetIndex(_chunk.ConvertInner(wCoord));
       Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
 
-      _chunk.TileKenel[innerIndex] = targetComport;
-      _com = _chunk.TileKenel[innerIndex];
+      _chunk.TileKenel[info.Index] = targetComport;
+      _com = _chunk.TileKenel[info.Index];
       _com.Tile = Tile;
       _com.OnInitialize(Tile, _chunk, info.Index);
 

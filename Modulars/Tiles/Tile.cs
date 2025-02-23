@@ -254,21 +254,6 @@ namespace Colin.Core.Modulars.Tiles
       int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Context.ChunkHeight : (worldCoordY + 1) / Context.ChunkHeight - 1;
       return GetChunk(chunkCoordX, chunkCoordY);
     }
-
-    public Point GetInnerCoord(int worldCoordX, int worldCoordY)
-    {
-      int tileCoordX = worldCoordX >= 0 ? worldCoordX % Context.ChunkWidth : (worldCoordX + 1) % Context.ChunkWidth + (Context.ChunkWidth - 1);
-      int tileCoordY = worldCoordY >= 0 ? worldCoordY % Context.ChunkHeight : (worldCoordY + 1) % Context.ChunkHeight + (Context.ChunkHeight - 1);
-      return new Point(tileCoordX, tileCoordY);
-    }
-
-    public Point GetChunkCoord(int worldCoordX, int worldCoordY)
-    {
-      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / Context.ChunkWidth : (worldCoordX + 1) / Context.ChunkWidth - 1;
-      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Context.ChunkHeight : (worldCoordY + 1) / Context.ChunkHeight - 1;
-      return new Point(chunkCoordX, chunkCoordY);
-    }
-
     /// <summary>
     /// 从指定位置获取世界物块坐标.
     /// </summary>
@@ -305,7 +290,6 @@ namespace Colin.Core.Modulars.Tiles
       else
         return false;
     }
-
 
     /// <summary>
     /// 使用世界物块坐标破坏指定位置的物块.

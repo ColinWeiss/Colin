@@ -70,10 +70,9 @@ namespace Colin.Core.Modulars.Tiles
         return;
 
       TileKenel _com;
-      int innerIndex = _chunk.GetIndex(_chunk.ConvertInner(wCoord));
       Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
 
-      _com = _chunk.TileKenel[innerIndex];
+      _com = _chunk.TileKenel[info.Index];
 
       if (_com is null)
         return;

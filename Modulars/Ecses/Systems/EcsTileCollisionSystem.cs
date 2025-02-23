@@ -96,7 +96,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
           target = GetTileBounds(ref info);
           if (
             next.Intersects(target) &&
-         //   info.Collision != Tiles.TileSolid.None &&
+            info.Collision != Tiles.TileSolid.None &&
             !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);
