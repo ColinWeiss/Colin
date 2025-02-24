@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Option = Colin.Core.Modulars.Tiles.TileOption;
 
 namespace Colin.Core.Modulars.Tiles
 {

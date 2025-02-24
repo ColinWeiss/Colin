@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -32,11 +34,6 @@ namespace Colin.Core.Modulars.Tiles
         {
           info = ref Tile[coord.Item1];
           Handle(coord.Item1, coord.Item2);
-          if (info.Empty)
-          {
-            info.Behavior = null;
-            info.Scripts.Clear();
-          }
         }
       }
     }
@@ -48,23 +45,41 @@ namespace Colin.Core.Modulars.Tiles
     public void Mark(int x, int y, int z, bool doEvent) =>
       Mark(new Point3(x, y, z), doEvent);
 
-    private void Handle(Point3 coord, bool doEvent)
+    /// <summary>
+    /// 用于缓存区块;
+    /// <br>若本次操作放置的物块与上次放置的物块属于同一个区块则不需要重新获取.</br>
+    /// </summary>
+    private TileChunk _chunk;
+
+    private void Handle(Point3 wCoord, bool doEvent)
     {
-      ref TileInfo info = ref Tile[coord];
+      var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
+      if (_chunk is not null)
+      {
+        if (_chunk.Coord.Equals(coords.cCoord) is false)
+          _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      }
+      else
+        _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      if (_chunk is null)
+        return;
+
+      ref TileInfo info = ref _chunk[coords.tCoord.X, coords.tCoord.Y, wCoord.Z]; //获取对应坐标的物块格的引用传递.
       if (info.IsNull)
         return;
-      if (info.Empty is false)
+
+      if (doEvent)
       {
-        if (doEvent)
-        {
-          info.Behavior.OnDestruction(ref info);
-          foreach (var script in info.Scripts.Values)
-            script.OnDestruction(this);
-        }
-        info.Empty = true;
-        info.Scripts.Clear();
-        TileRefresher.Mark(info.WorldCoord3, 1); //将物块标记刷新, 刷新事件交由物块更新器处理
+        TileKernel _com = _chunk.TileKernel[info.Index];
+
+        foreach (var handler in _chunk.Handler)
+          handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+        _com.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());
       }
+      info.Empty = true;
+      info.Collision = TileSolid.None;
+
+      TileRefresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
     }
 
     public void Dispose()
