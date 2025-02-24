@@ -79,11 +79,11 @@ namespace Colin.Core.Modulars.Tiles
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
       if (_chunk is not null)
       {
-        if (_chunk.Coord.Equals(coords.tCoord) is false)
-          _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+        if (_chunk.Coord.Equals(coords.cCoord) is false)
+          _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
       }
       else
-        _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+        _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
 
       if (_chunk is null)
         return;

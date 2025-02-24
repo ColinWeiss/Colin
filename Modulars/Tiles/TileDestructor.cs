@@ -53,35 +53,30 @@ namespace Colin.Core.Modulars.Tiles
 
     private void Handle(Point3 wCoord, bool doEvent)
     {
-      ref TileInfo info = ref Tile[wCoord];
-      if (info.IsNull)
-        return;
-
-      Debug.Assert(info.Empty || !info.IsPointer);
-
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
-
       if (_chunk is not null)
-        if (_chunk.Coord.Equals(coords.tCoord) is false)
-          _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
-        else
-          _chunk = Tile.GetChunk(coords.tCoord.X, coords.tCoord.Y);
+      {
+        if (_chunk.Coord.Equals(coords.cCoord) is false)
+          _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      }
+      else
+        _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (_chunk is null)
         return;
 
-      TileKenel _com;
-      Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
-
-      _com = _chunk.TileKenel[info.Index];
-
-      if (_com is null)
+      ref TileInfo info = ref _chunk[coords.tCoord.X, coords.tCoord.Y, wCoord.Z]; //获取对应坐标的物块格的引用传递.
+      if (info.IsNull)
         return;
 
-      info.Empty = true;
+      if (doEvent)
+      {
+        TileKenel _com = _chunk.TileKenel[info.Index];
 
-      foreach (var script in _chunk.Handler.Values)
-        script.OnDestructHandle(this, info.Index, wCoord);
-      _com.OnDestruction(Tile, _chunk, info.Index, wCoord);
+        foreach (var handler in _chunk.Handler.Values)
+          handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+        _com.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());
+      }
+      info.Empty = true;
 
       TileRefresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
     }

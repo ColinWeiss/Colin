@@ -219,11 +219,7 @@ namespace Colin.Core.Modulars.Tiles
           break;
       }
       temp = info.GetWCoord3() + temp;
-      bool inChunk = InChunk(temp);
-      if (inChunk)
-        return ref this[temp];
-      else
-        return ref Tile[info.GetWCoord3() + temp];
+      return ref Tile[temp];
     }
 
     public TileChunk(Tile tile, Point coord)
@@ -270,9 +266,7 @@ namespace Colin.Core.Modulars.Tiles
         CreateInfo(count);
       Tile.Context.DoTileHandleInit(this);
       foreach (var item in Handler.Values)
-      {
         item.DoInitialize();
-      }
     }
 
     public void CreateInfo(int index)
@@ -342,6 +336,7 @@ namespace Colin.Core.Modulars.Tiles
 
     /// <summary>
     /// 根据区块内坐标和指定类型放置物块.
+    /// [!] 使用内部坐标.
     /// </summary>
     public bool Place<T>(int x, int y, int z) where T : TileKenel, new()
     {
@@ -370,15 +365,15 @@ namespace Colin.Core.Modulars.Tiles
         info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
         {
-  //        if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
-            Destructor.Mark(info.GetWCoord3(), doEvent);
+          //        if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
+          Destructor.Mark(info.GetWCoord3(), doEvent);
         }
       }
       else if (!Destructor.Queue.Contains((info.GetWCoord3(), doEvent)))
       {
         if (!info.Empty)
-    //      if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
-            Destructor.Mark(info.GetWCoord3(), doEvent);
+          //      if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
+          Destructor.Mark(info.GetWCoord3(), doEvent);
       }
     }
 
@@ -429,11 +424,11 @@ namespace Colin.Core.Modulars.Tiles
                 Refresher.Mark(info.GetWCoord3(), 0);
               }
             }
-            for (int i = 0; i < Handler.Count; i++)
-            {
-              cCom = Handler.Values.ElementAt(i);
-              cCom.LoadStep(reader);
-            }
+          }
+          for (int i = 0; i < Handler.Count; i++)
+          {
+            cCom = Handler.Values.ElementAt(i);
+            cCom.LoadStep(reader);
           }
         }
       }
@@ -484,14 +479,14 @@ namespace Colin.Core.Modulars.Tiles
                 writer.Write(hash.Value);
               }
             }
-            for (int i = 0; i < Handler.Count; i++)
-            {
-              cCom = Handler.Values.ElementAt(i);
-              cCom.SaveStep(writer);
-            }
-            //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
-            //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
           }
+          for (int i = 0; i < Handler.Count; i++)
+          {
+            cCom = Handler.Values.ElementAt(i);
+            cCom.SaveStep(writer);
+          }
+          //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
+          //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
         }
       }
     }

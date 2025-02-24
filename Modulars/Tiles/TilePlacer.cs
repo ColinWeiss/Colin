@@ -89,24 +89,23 @@ namespace Colin.Core.Modulars.Tiles
 
       ref TileInfo info = ref _chunk[coords.tCoord.X, coords.tCoord.Y, wCoord.Z]; //获取对应坐标的物块格的引用传递.
 
-
       if (info.IsNull)
         return;
+
       Debug.Assert(info.Empty || !info.IsPointer);
 
-      TileKenel _com;
       Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
 
       _chunk.TileKenel[info.Index] = targetComport;
-      _com = _chunk.TileKenel[info.Index];
-      _com.Tile = Tile;
-      _com.OnInitialize(Tile, _chunk, info.Index);
+      _chunk.TileKenel[info.Index] = _chunk.TileKenel[info.Index];
+      _chunk.TileKenel[info.Index].Tile = Tile;
+      _chunk.TileKenel[info.Index].OnInitialize(Tile, _chunk, info.Index);
 
       info.Empty = false;
 
       foreach (var handler in _chunk.Handler.Values)
         handler.OnPlaceHandle(this, info.Index, wCoord);
-      _com.OnPlace(Tile, _chunk, info.Index, wCoord);
+      _chunk.TileKenel[info.Index].OnPlace(Tile, _chunk, info.Index, wCoord);
 
       TileRefresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
     }

@@ -21,8 +21,8 @@ namespace Colin.Core.Modulars.Tiles
 
     public short ChunkHeight { get; set; }
 
-    public Point ChunkSize => new Point(TileWidth, TileHeight);
-    public Vector2 ChunkSizeF => new Vector2(TileWidth, TileHeight);
+    public Point ChunkSize => new Point(ChunkWidth, ChunkHeight);
+    public Vector2 ChunkSizeF => new Vector2(ChunkWidth, ChunkHeight);
 
     public short Depth { get; set; }
 

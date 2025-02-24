@@ -74,7 +74,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       Vector2 depth;
       Vector2 v;
       Vector2 absV;
-      TileInfo info;
+      ref TileInfo info = ref TileInfo.Null;
       RectangleF target;
       RectangleF next = bounds;
       next.Location += comTransform.DeltaVelocity;
@@ -89,7 +89,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       {
         for (int y = positiveY ? topTile : bottomTile; positiveY ? y <= bottomTile : y >= topTile; y += positiveY ? 1 : -1)
         {
-          info = Tile[x, y, comPhysic.Layer];
+          info = ref Tile[x, y, comPhysic.Layer];
           if (info.IsNull)
             return;
 
