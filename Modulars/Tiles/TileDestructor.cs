@@ -71,7 +71,6 @@ namespace Colin.Core.Modulars.Tiles
       if (doEvent)
       {
         TileKernel _com = _chunk.TileKernel[info.Index];
-
         foreach (var handler in _chunk.Handler)
           handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
         _com.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());
