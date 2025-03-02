@@ -32,7 +32,7 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 于放置物块时执行.
     /// </summary>
-    public virtual void OnPlaceHandle(TilePlacer placer, int index, Point3 wCoord) { }
+    public virtual void OnPlaceHandle(TileBuilder placer, int index, Point3 wCoord) { }
 
     /// <summary>
     /// 于物块刷新时执行.
@@ -42,7 +42,7 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 于物块被破坏时执行.
     /// </summary>
-    public virtual void OnDestructHandle(TileDestructor destructor, int index, Point3 wCoord) { }
+    public virtual void OnDestructHandle(TileBuilder destructor, int index, Point3 wCoord) { }
 
     public virtual void LoadStep(BinaryReader reader) { }
 

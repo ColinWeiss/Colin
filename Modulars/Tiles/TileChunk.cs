@@ -23,17 +23,12 @@ namespace Colin.Core.Modulars.Tiles
     public readonly Tile Tile;
 
     /// <summary>
-    /// 获取物块区块所属的物块放置模块.
+    /// 获取物块模块的物块建造器.
     /// </summary>
-    public readonly TilePlacer Placer;
+    public readonly TileBuilder Builder;
 
     /// <summary>
-    /// 获取物块区块所属的物块破坏模块.
-    /// </summary>
-    public readonly TileDestructor Destructor;
-
-    /// <summary>
-    /// 获取物块区块所属的物块刷新模块.
+    /// 获取物块模块的物块刷新模块.
     /// </summary>
     public readonly TileRefresher Refresher;
 
@@ -224,8 +219,7 @@ namespace Colin.Core.Modulars.Tiles
     public TileChunk(Tile tile, Point coord)
     {
       Tile = tile;
-      Placer = tile.Scene.GetModule<TilePlacer>();
-      Destructor = tile.Scene.GetModule<TileDestructor>();
+      Builder = tile.Scene.GetModule<TileBuilder>();
       Refresher = tile.Scene.GetModule<TileRefresher>();
       Depth = tile.Context.Depth;
       _coordX = coord.X;
@@ -320,30 +314,26 @@ namespace Colin.Core.Modulars.Tiles
     /// 根据指定坐标和指定类型放置物块.
     /// <br>[!] 使用内部坐标.</br>
     /// </summary>
-    public bool Place(TileKernel behavior, int x, int y, int z)
+    public bool Place(TileKernel kernel, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
     {
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
-      //  if (behavior.CanPlaceMark(Tile, this, GetIndex(x, y, z), ConvertWorld(x, y, z)))
+   //   if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), ConvertWorld(x, y, z)))
       {
-        Placer.Mark(wCoord, behavior);
+        Builder.Place(wCoord, kernel, doEvent, doRefresh);
         return true;
       }
-      //  else
-      //     return false;
+    //    else
+     //      return false;
     }
 
     /// <summary>
     /// 根据区块内坐标和指定类型放置物块.
     /// [!] 使用内部坐标.
     /// </summary>
-    public bool Place<T>(int x, int y, int z) where T : TileKernel, new()
+    public bool Place<T>(int x, int y, int z, bool doEvent = true, bool doRefresh = true) where T : TileKernel, new()
     {
       TileKernel behavior = CodeResources<TileKernel>.GetFromType(typeof(T));
-      return Place(behavior, x, y, z);
-    }
-
-    public void Destruct(int index, bool doEvent = true)
-    {
+      return Place(behavior, x, y, z, doEvent, doRefresh);
     }
 
     /// <summary>
@@ -352,7 +342,7 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="z"></param>
-    public void Destruct(int x, int y, int z, bool doEvent = true)
+    public void Destruct(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
     {
       ref TileInfo info = ref this[x, y, z];
       if (info.IsNull)
@@ -362,16 +352,12 @@ namespace Colin.Core.Modulars.Tiles
       {
         info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
-        {
-          //        if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
-          Destructor.Mark(info.GetWCoord3(), doEvent);
-        }
+          Builder.Destruct(info.GetWCoord3(), doEvent, doRefresh);
       }
-      else if (!Destructor.Queue.Contains((info.GetWCoord3(), doEvent)))
+      else if (!Builder.Commands.Select(a => a.WorldCoord).Contains(info.GetWCoord3()))
       {
         if (!info.Empty)
-          //      if (comport.CanPlaceMark(Tile, this, info.Index, info.GetWCoord3()))
-          Destructor.Mark(info.GetWCoord3(), doEvent);
+          Builder.Destruct(info.GetWCoord3(), doEvent, doRefresh);
       }
     }
 

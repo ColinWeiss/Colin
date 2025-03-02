@@ -93,16 +93,13 @@ namespace Colin.Core.Modulars.Tiles
         return;
 
       TileKernel _com;
-      Point3 iCoord = new Point3(coords.tCoord, wCoord.Z);
-
       _com = _chunk.TileKernel[info.Index];
       if (_com is null)
         return;
-      _com.OnRefresh(Tile, _chunk, info.Index, wCoord);
       foreach (var script in _chunk.Handler)
         script.OnRefreshHandle(this, info.Index, wCoord);
       OnRefresh?.Invoke(wCoord);
-
+      _com.OnRefresh(Tile, _chunk, info.Index, wCoord);
       if (info.Empty)
         _chunk.TileKernel[info.Index] = null;
     }
