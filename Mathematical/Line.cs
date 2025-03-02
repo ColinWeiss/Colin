@@ -34,7 +34,6 @@
       return End - Start;
     }
 
-
     public int GetChaji(Vector2 pos)
     {
       Vector2 a = ToVector2();
