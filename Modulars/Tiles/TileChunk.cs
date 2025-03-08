@@ -319,7 +319,7 @@ namespace Colin.Core.Modulars.Tiles
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
       if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), wCoord))
       {
-        Builder.Place(wCoord, kernel, doEvent, doRefresh);
+        Builder.MarkPlace(wCoord, kernel, doEvent, doRefresh);
         return true;
       }
       else
@@ -352,12 +352,12 @@ namespace Colin.Core.Modulars.Tiles
       {
         info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
-          Builder.Destruct(info.GetWCoord3(), doEvent, doRefresh);
+          Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
       else if (!Builder.Commands.Select(a => a.WorldCoord).Contains(info.GetWCoord3()))
       {
         if (!info.Empty)
-          Builder.Destruct(info.GetWCoord3(), doEvent, doRefresh);
+          Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
     }
 

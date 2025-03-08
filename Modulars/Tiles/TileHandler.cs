@@ -44,6 +44,12 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public virtual void OnDestructHandle(TileBuilder destructor, int index, Point3 wCoord) { }
 
+    /// <summary>
+    /// 于任何建造过程中执行.
+    /// <br>不受Builder中的分支参数控制.</br>
+    /// </summary>
+    public virtual void OnBuildProcess(TileBuilder builder, bool placeOrDestruct , int index, Point3 wCoord) { }
+
     public virtual void LoadStep(BinaryReader reader) { }
 
     public virtual void SaveStep(BinaryWriter writer) { }
