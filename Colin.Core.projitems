@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEvents.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SceneRenderModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\EventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEventBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreModule.cs" />
