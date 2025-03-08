@@ -83,10 +83,50 @@ namespace Colin.Core.Modulars.Tiles
       _commands.Enqueue(command);
     }
 
+    public void PlaceNow(TileChunk _chunk, Point3 wCoord, TileKernel kernel, bool doEvent = true, bool doRefresh = true)
+    {
+      var (cCoord, tCoord) = Tile.GetCoords(wCoord.X, wCoord.Y);
+      ref TileInfo info = ref _chunk[tCoord.X, tCoord.Y, wCoord.Z];
+      _chunk.TileKernel[info.Index] = kernel;
+      _chunk.TileKernel[info.Index].Tile = Tile;
+      _chunk.TileKernel[info.Index].OnInitialize(Tile, _chunk, info.Index);
+      info.Empty = false;
+      if (doEvent)
+      {
+        foreach (var handler in _chunk.Handler)
+          handler.OnPlaceHandle(this, info.Index, wCoord);
+        OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, wCoord));
+        _chunk.TileKernel[info.Index].OnPlace(Tile, _chunk, info.Index, wCoord);
+      }
+      if (doRefresh)
+        TileRefresher.Mark(info.GetWCoord3(), 1);
+    }
+
     public void Destruct(Point3 wCoord, bool doEvent = true, bool doRefresh = true)
     {
       TileBuildCommand command = new TileBuildCommand(wCoord, null, false, doEvent, doRefresh);
       _commands.Enqueue(command);
+    }
+
+    public void DestructNow(TileChunk _chunk, Point3 wCoord, bool doEvent = true, bool doRefresh = true, bool doKernelDestruct = true)
+    {
+      var (cCoord, tCoord) = Tile.GetCoords(wCoord.X, wCoord.Y);
+      ref TileInfo info = ref _chunk[tCoord.X, tCoord.Y, wCoord.Z];
+      if (doEvent)
+      {
+        foreach (var handler in _chunk.Handler)
+          handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+        OnDestructHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, wCoord));
+      }
+      if (doKernelDestruct)
+      {
+        TileKernel _com = _chunk.TileKernel[info.Index];
+        _com?.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());
+      }
+      info.Empty = true;
+      info.Collision = TileSolid.None;
+      if (doRefresh)
+        TileRefresher.Mark(info.GetWCoord3(), 1);
     }
 
     /// <summary>

@@ -317,13 +317,13 @@ namespace Colin.Core.Modulars.Tiles
     public bool Place(TileKernel kernel, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
     {
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
-   //   if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), ConvertWorld(x, y, z)))
+      if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), wCoord))
       {
         Builder.Place(wCoord, kernel, doEvent, doRefresh);
         return true;
       }
-    //    else
-     //      return false;
+      else
+        return false;
     }
 
     /// <summary>
@@ -362,7 +362,8 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     private bool _loading = false;
-    public bool Loading => _loading;
+    public bool Generating = false;
+    public bool Loading => _loading || Generating;
 
     private bool _saved = false;
     public bool Saved => _saved;
@@ -382,6 +383,17 @@ namespace Colin.Core.Modulars.Tiles
     {
       DoInitialize();
       DoLoad(path);
+    }
+
+    public void RefreshAll()
+    {
+      ref TileInfo info = ref this[0, 0, 0];
+      for (int count = 0; count < Infos.Length; count++)
+      {
+        info = ref this[count];
+        if (!info.Empty)
+          Refresher.Mark(info.GetWCoord3(), 0);
+      }
     }
 
     private void DoLoad(string path)
