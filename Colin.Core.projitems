@@ -50,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRelative.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\DivList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="..\Colin\Events\MouseEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
