@@ -403,7 +403,7 @@ namespace Colin.Core.Modulars.Tiles
       DoLoad(path);
     }
 
-    public void RefreshAll()
+    public void MarkRefreshAll()
     {
       ref TileInfo info = ref this[0, 0, 0];
       for (int count = 0; count < Infos.Length; count++)
@@ -411,6 +411,16 @@ namespace Colin.Core.Modulars.Tiles
         info = ref this[count];
         if (!info.Empty)
           Refresher.Mark(info.GetWCoord3(), 0);
+      }
+    }
+
+    public void DoRefreshAll()
+    {
+      ref TileInfo info = ref this[0, 0, 0];
+      for (int count = 0; count < Infos.Length; count++)
+      {
+        info = ref this[count];
+        Refresher.DoRefresh(this, count, info.GetWCoord3());
       }
     }
 

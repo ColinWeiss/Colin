@@ -63,6 +63,23 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    public void DoRefresh(TileChunk chunk, int index, Point3 wCoord)
+    {
+      ref TileInfo info = ref chunk[index]; //获取对应坐标的物块格的引用传递.
+      if (info.IsNull)
+        return;
+      TileKernel _com;
+      _com = chunk.TileKernel[index];
+      if (_com is null)
+        return;
+      foreach (var script in chunk.Handler)
+        script.OnRefreshHandle(this, index, wCoord);
+      OnRefresh?.Invoke(wCoord);
+      _com.OnRefresh(Tile, chunk, index, wCoord);
+      if (info.Empty)
+        chunk.TileKernel[index] = null;
+    }
+
     /// <summary>
     /// 用于缓存区块;
     /// <br>若本次操作放置的物块与上次放置的物块属于同一个区块则不需要重新获取.</br>
@@ -91,17 +108,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref _chunk[coords.tCoord.X, coords.tCoord.Y, wCoord.Z]; //获取对应坐标的物块格的引用传递.
       if (info.IsNull)
         return;
-
-      TileKernel _com;
-      _com = _chunk.TileKernel[info.Index];
-      if (_com is null)
-        return;
-      foreach (var script in _chunk.Handler)
-        script.OnRefreshHandle(this, info.Index, wCoord);
-      OnRefresh?.Invoke(wCoord);
-      _com.OnRefresh(Tile, _chunk, info.Index, wCoord);
-      if (info.Empty)
-        _chunk.TileKernel[info.Index] = null;
+      DoRefresh(_chunk, info.Index, wCoord);
     }
 
     public void Dispose()
