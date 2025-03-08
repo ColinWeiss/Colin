@@ -362,7 +362,25 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     private bool _loading = false;
-    public bool Generating = false;
+    private bool _generating = false;
+    public bool Generating => _generating;
+    public void SetGenerating(bool flag)
+    {
+      if (flag)
+      {
+        _generating = true;
+        Span<TileInfo> info = Infos;
+        for (int i = 0; i < Infos.Length; i++)
+          info[i].Loading = true;
+      }
+      else
+      {
+        _generating = false;
+        Span<TileInfo> info = Infos;
+        for (int i = 0; i < Infos.Length; i++)
+          info[i].Loading = false;
+      }
+    }
     public bool Loading => _loading || Generating;
 
     private bool _saved = false;

@@ -90,13 +90,15 @@ namespace Colin.Core.Modulars.Ecses.Systems
         for (int y = positiveY ? topTile : bottomTile; positiveY ? y <= bottomTile : y >= topTile; y += positiveY ? 1 : -1)
         {
           info = ref Tile[x, y, comPhysic.Layer];
+
           if (info.IsNull)
             return;
 
           target = GetTileBounds(ref info);
+
           if (
             next.Intersects(target) &&
-            info.Collision != Tiles.TileSolid.None &&
+            (info.Collision != TileSolid.None || info.Loading) &&
             !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);

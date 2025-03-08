@@ -53,7 +53,7 @@
 
     public bool Empty;
 
-    public bool Loaded;
+    public bool Loading;
 
     private bool _isNull;
     public bool IsNull => _isNull;
