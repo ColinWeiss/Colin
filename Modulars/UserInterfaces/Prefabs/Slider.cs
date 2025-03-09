@@ -86,18 +86,21 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         if (Content.Layout.Width > ContentContainer.Layout.Width)
           Content.Layout.Left = (int)-(Precent.X * (Content.Layout.Width - ContentContainer.Layout.Width)) + ContentContainer.Layout.Left;
         else
-          Content.Layout.Left = ContentContainer.Layout.Left;
+          Content.Layout.Left = 0;
 
         if (Content.Layout.Height > ContentContainer.Layout.Height)
         {
           Content.Layout.Top = (int)-(Precent.Y * (Content.Layout.Height - ContentContainer.Layout.Height)) + ContentContainer.Layout.Top;
         }
         else
-          Content.Layout.Top = ContentContainer.Layout.Top;
+          Content.Layout.Top = 0;
 
-        if (Content.Controller is LinearMenuController controller && Content.Layout.Height > ContentContainer.Layout.Height)
+        if (Content.Controller is LinearMenuController controller)
         {
-          Content.Layout.Top = (int)-(Precent.Y * (controller.TotalSize.Y - ContentContainer.Layout.Height)) + ContentContainer.Layout.Top;
+          if (Content.Layout.Height > ContentContainer.Layout.Height)
+            Content.Layout.Top = (int)-(Precent.Y * (controller.TotalSize.Y - ContentContainer.Layout.Height));
+          if (Content.Layout.Width > ContentContainer.Layout.Width)
+            Content.Layout.Left = (int)-(Precent.X * (controller.TotalSize.X - ContentContainer.Layout.Width));
         }
       }
       base.OnUpdate(time);
