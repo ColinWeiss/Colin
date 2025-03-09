@@ -87,7 +87,8 @@
           return new Rectangle(X * Width, Current * Height, Width, Height);
         case Direction.Horizontal:
           return new Rectangle(Current * Width, Y * Height, Width, Height);
-      };
+      }
+      ;
       return Rectangle.Empty;
     }
 

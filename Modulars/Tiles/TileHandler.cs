@@ -1,5 +1,4 @@
-﻿using SharpDX.Direct3D9;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -48,7 +47,7 @@ namespace Colin.Core.Modulars.Tiles
     /// 于任何建造过程中执行.
     /// <br>不受Builder中的分支参数控制.</br>
     /// </summary>
-    public virtual void OnBuildProcess(TileBuilder builder, bool placeOrDestruct , int index, Point3 wCoord) { }
+    public virtual void OnBuildProcess(TileBuilder builder, bool placeOrDestruct, int index, Point3 wCoord) { }
 
     public virtual void LoadStep(BinaryReader reader) { }
 

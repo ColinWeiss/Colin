@@ -24,7 +24,8 @@ namespace Colin.Core.Graphics.Shaders
         case CompileProfile.Compute:
           profilePar = "cs_5_0";
           break;
-      };
+      }
+      ;
       string resultPath = Path.Combine(Path.ChangeExtension(path, ComputeShader.FileExtension));
       CompilationResult result = ShaderBytecode.CompileFromFile(path, "Main", profilePar, ShaderFlags.Debug);
       try

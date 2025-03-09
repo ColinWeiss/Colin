@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace Colin.Core.Modulars.Tiles
 {

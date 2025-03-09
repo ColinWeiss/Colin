@@ -1,10 +1,6 @@
 ﻿using Colin.Core.Resources;
-using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Forms.Design.Behavior;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>

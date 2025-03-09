@@ -1,7 +1,4 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
-
-namespace Colin.Core.Modulars.Ecses
+﻿namespace Colin.Core.Modulars.Ecses
 {
   public interface IEntityCom
   {

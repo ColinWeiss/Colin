@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
+﻿using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Tiles
 {

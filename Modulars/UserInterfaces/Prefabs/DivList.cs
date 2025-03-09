@@ -1,8 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
-using Colin.Core.Modulars.UserInterfaces.Renderers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
