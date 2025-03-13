@@ -145,8 +145,6 @@ namespace Colin.Core
     /// </summary>
     public static MouseState MouseStateLast { get; private set; } = new MouseState();
 
-    public static Vector2 MousePositionF => MouseState.Position.ToVector2();
-
     /// <summary>
     /// 输入法处理.
     /// </summary>

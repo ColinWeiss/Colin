@@ -60,7 +60,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       //     global::Colin.Core.CoreInfo.IMEHandler.StopTextComposition();
       //     Label.SetText(Text);
       //   };
-      UserInterface.Scene.Events.TextInput += IMEHandler_TextInput;
+      Module.Scene.Events.TextInput += IMEHandler_TextInput;
       base.DivInit();
     }
 
@@ -101,7 +101,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     {
       // Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
 
-      Editing = UserInterface.Focus == this;
+      Editing = Module.Focus == this;
       InputRect = Layout.RenderTargetBounds;
       InputRect.Y += 16;
       InputRect.X += 16;

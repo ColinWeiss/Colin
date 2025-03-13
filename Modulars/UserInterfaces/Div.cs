@@ -137,11 +137,11 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public RenderTarget2D Canvas;
 
-    internal UserInterface userInterface;
+    internal UserInterface _module;
     /// <summary>
     /// 获取划分元素所属的用户交互界面.
     /// </summary>
-    public UserInterface UserInterface => userInterface;
+    public UserInterface Module => _module;
 
     internal DivRoot root;
     /// <summary>
@@ -179,7 +179,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         root = divThreshold;
       if (Parent is not null)
       {
-        userInterface = parent.userInterface;
+        _module = parent._module;
         root = parent.root;
       }
       if (InitializationCompleted)
@@ -210,7 +210,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         return;
       if (this is DivRoot is false)
       {
-        userInterface = Parent?.userInterface;
+        _module = Parent?._module;
         root = Parent?.root;
       }
       if (!_started)
@@ -282,6 +282,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       renderer?.DoRender(device, batch);//渲染器进行渲染.
 
       Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
+
       if (Layout.ScissorEnable)
       {
         batch.End();
@@ -293,9 +294,9 @@ namespace Colin.Core.Modulars.UserInterfaces
       {
         batch.End();
         if (parent.Layout.ScissorEnable)
-          batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, parent.ScissiorRasterizer);
+          batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, parent.ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
         else
-          UserInterface.BatchNormalBegin(batch);
+          Module.BatchNormalBegin(this);
       }
       device.ScissorRectangle = Layout.ScissorRectangleCache;
 
@@ -305,10 +306,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         if (UpperCanvas is not null)
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
-          device.SetRenderTarget(UserInterface.RawRt);
-        if (root.Layout.ScissorEnable)
-          device.ScissorRectangle = root.Layout.ScissorRectangle;
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, root.Layout.ScissorEnable ? root.ScissiorRasterizer : null);
+          device.SetRenderTarget(Module.RawRt);
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, root.Layout.ScissorEnable ? root.ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
       }
     }
@@ -345,7 +344,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public virtual bool Register(Div div, bool doInit = false)
     {
       div.parent = this;
-      div.userInterface = userInterface;
+      div._module = _module;
       div.root = root;
       Events.Register(div.Events);
       if (doInit)
@@ -363,7 +362,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       div.parent = null;
       div.root = null;
-      div.userInterface = null;
+      div._module = null;
       Events.Remove(div.Events);
       return Children.Remove(div);
     }
@@ -409,8 +408,13 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     /// <param name="point">输入的点.</param>
     /// <returns>如果包含则返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-    public bool ContainsScreenPoint(Point point)
-      => Layout.Bounds.Contains(point);
+    public virtual bool ContainsScreenPoint(Point point)
+    {
+      if (this == Root)
+        return true;
+      else
+        return Layout.Bounds.Contains(point);
+    }
 
     private bool disposedValue;
     protected virtual void Dispose(bool disposing)

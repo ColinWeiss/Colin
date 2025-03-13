@@ -13,7 +13,7 @@
       Layout.Width = CoreInfo.ViewWidth;
       Layout.Height = CoreInfo.ViewHeight;
       ContainerInitialize();
-      UserInterface.Scene.Events.ClientSizeChanged += Events_ClientSizeChanged;
+      Module.Scene.Events.ClientSizeChanged += Events_ClientSizeChanged;
       base.DivInit();
     }
     private void Events_ClientSizeChanged(object sender, EventArgs e)

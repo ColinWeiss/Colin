@@ -64,7 +64,7 @@
         RotationVelocity = (TargetRotation - Rotation) * 0.1f;
         if (Vector2.Distance(TargetPosition, Position) < 0.1f)
           Position = TargetPosition;
-        if (Math.Abs(Rotation - RotationVelocity) < 0.017f)
+        if (Math.Abs(Rotation - RotationVelocity) < 0.007f)
           Rotation = RotationVelocity;
       }
       Zoom += ZoomVelocity;
@@ -107,16 +107,16 @@
           Matrix.CreateTranslation(trCenter);
     }
 
-    public Vector2 ConvertScreenToWorld(Vector2 location)
+    public Vector2 ConvertToWorld(Vector2 mCoord)
     {
-      Vector3 t = new Vector3(location, 0);
+      Vector3 t = new Vector3(mCoord, 0);
       t = CoreInfo.Graphics.GraphicsDevice.Viewport.Unproject(t, Projection, View, Matrix.Identity);
       return new Vector2(t.X, t.Y);
     }
 
-    public Vector2 ConvertWorldToScreen(Vector2 location)
+    public Vector2 ConvertToScreen(Vector2 wCoord)
     {
-      Vector3 t = new Vector3(location, 0);
+      Vector3 t = new Vector3(wCoord, 0);
       t = CoreInfo.Graphics.GraphicsDevice.Viewport.Project(t, Projection, View, Matrix.Identity);
       return new Vector2(t.X, t.Y);
     }
@@ -124,8 +124,8 @@
     public RectangleF ViewBound
       =>
       new RectangleF(
-        ConvertScreenToWorld(Vector2.Zero),
-        ConvertScreenToWorld(CoreInfo.ViewSizeF)
+        ConvertToWorld(Vector2.Zero),
+        ConvertToWorld(CoreInfo.ViewSizeF)
         );
   }
 }

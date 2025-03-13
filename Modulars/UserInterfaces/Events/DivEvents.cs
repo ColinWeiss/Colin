@@ -64,26 +64,28 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public bool DraggingState = false;
 
+    private Vector2 MousePos => Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
+
     private Vector2 _cachePos = new Vector2(-1, -1);
     public void DoBlockOut()
     {
       LeftClicking += MouseBlockOutEvent;
-      LeftClicking += (s, e) =>
+      LeftClicking += (object s, LeftClickingArgs e) =>
       {
         if (!DivLock)
           DivLock = true;
-        Div.UserInterface.Focus = Div;
+        Div.Module.Focus = Div;
         if (!Div.Interact.IsDraggable)
           return;
         DraggingState = true;
         if (Div.Parent != null)
         {
-          Vector2 mouseForParentLocation = MouseResponder.Position - Div.Parent.Layout.Location;
+          Vector2 mouseForParentLocation = MousePos - Div.Parent.Layout.Location;
           _cachePos = mouseForParentLocation - Div.Layout.Location;
         }
         else
         {
-          _cachePos = MouseResponder.Position - Div.Layout.Location;
+          _cachePos = MousePos - Div.Layout.Location;
         }
       };
       LeftDown += MouseBlockOutEvent;
@@ -131,7 +133,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void DoUpdate()
     {
       Div.Interact.InteractionLast = Div.Interact.Interaction;
-      if (Div.ContainsScreenPoint(MouseResponder.State.Position) && Div.Interact.IsInteractive)
+      if (Div.ContainsScreenPoint(MousePos.ToPoint()) && Div.Interact.IsInteractive)
         Div.Interact.Interaction = true;
       else
         Div.Interact.Interaction = false;
@@ -143,13 +145,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
           return;
         if (Div.Parent != null)
         {
-          Vector2 _resultLocation = MouseResponder.Position - Div.Parent.Layout.Location - _cachePos;
+          Vector2 _resultLocation = MousePos - Div.Parent.Layout.Location - _cachePos;
           Div.Layout.Left = _resultLocation.X;
           Div.Layout.Top = _resultLocation.Y;
         }
         else
         {
-          Vector2 _resultLocation = MouseResponder.Position - _cachePos;
+          Vector2 _resultLocation = MousePos - _cachePos;
           Div.Layout.Left = _resultLocation.X;
           Div.Layout.Top = _resultLocation.Y;
         }
@@ -159,12 +161,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
           Div.Layout.Top = Math.Clamp(Div.Layout.Top, 0, Div.Interact.DragLimit.Height - Div.Layout.Height);
         }
       }
-      if (Div.UserInterface.Focus == Div && Div.UserInterface.LastFocus != Div)
+      if (Div.Module.Focus == Div && Div.Module.LastFocus != Div)
       {
         DivLock = true;
         //     GetFocus?.Invoke();
       }
-      if (Div.UserInterface.Focus != Div && Div.UserInterface.LastFocus == Div)
+      if (Div.Module.Focus != Div && Div.Module.LastFocus == Div)
       {
         DivLock = false;
         //      LoseFocus?.Invoke();
