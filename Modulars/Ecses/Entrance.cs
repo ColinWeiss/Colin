@@ -47,6 +47,5 @@ namespace Colin.Core.Modulars.Ecses
       d.Value /= b;
       return d;
     }
-    public static implicit operator Entrance<T>(T b) => new Entrance<T>(b);
   }
 }

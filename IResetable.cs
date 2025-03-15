@@ -6,8 +6,8 @@
   public interface IResetable
   {
     /// <summary>
-    /// 重置启用.
-    /// <br>[!] 该功能每帧重置为 <see langword="true"/>, 若要每帧关闭请在每帧执行的逻辑下为其赋值 <see langword="false"/>.</br>
+    /// 启用重置功能.
+    /// <br>[!] 该功能在启用后将每帧重置为 <see langword="true"/>.</br>
     /// </summary>
     public bool ResetEnable { get; set; }
     void Reset();
