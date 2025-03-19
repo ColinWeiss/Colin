@@ -14,7 +14,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       using (DebugProfiler.Tag("Entity"))
       {
         Entity _current;
-        batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.SceneCamera.View);
+        batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.Camera.View);
         for (int count = 0; count < Ecs.Entities.Length; count++)
         {
           _current = Ecs.Entities[count];

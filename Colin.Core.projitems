@@ -47,6 +47,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBuilder.cs" />
@@ -157,7 +158,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Line.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackage.cs" />

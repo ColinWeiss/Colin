@@ -347,7 +347,7 @@ namespace Colin.Core.Modulars.Tiles
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
       lastTopLeft = AlignedTopLeft;
-      AlignedTopLeft = Vector2.Floor(Scene.SceneCamera.ConvertToWorld(Vector2.Zero) / Context.TileSizeF) * Context.TileSizeF;
+      AlignedTopLeft = Vector2.Floor(Scene.Camera.ConvertToWorld(Vector2.Zero) / Context.TileSizeF) * Context.TileSizeF;
     }
 
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)

@@ -10,7 +10,7 @@ namespace Colin.Core.Common
   {
     public string Name { get; set; }
 
-    public SceneCamera SceneCamera;
+    public SceneCamera Camera;
 
     private SceneModuleList _components;
     /// <summary>
@@ -55,7 +55,7 @@ namespace Colin.Core.Common
         Events.ClientSizeChanged += InitRenderTarget;
         _components = new SceneModuleList(this);
         _components.Add(Events);
-        _components.Add(SceneCamera = new SceneCamera());
+        _components.Add(Camera = new SceneCamera());
         SceneInit();
         CoreInfo.Core.Window.ClientSizeChanged += Events.InvokeSizeChange;
         CoreInfo.Core.Window.OrientationChanged += Events.InvokeSizeChange;

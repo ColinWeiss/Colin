@@ -22,7 +22,7 @@ namespace Colin.Core.Modulars.Backgrounds
 
     public bool Presentation { get; set; }
 
-    public SceneCamera Camera => Scene.SceneCamera;
+    public SceneCamera Camera => Scene.Camera;
 
     public RenderTarget2D RawRt { get; set; }
 
