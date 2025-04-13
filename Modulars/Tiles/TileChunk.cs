@@ -55,12 +55,6 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public int CoordY => _coordY;
 
-    /// <summary>
-    /// 指示区块的量子层.
-    /// <br>同一二维位置可以存在不同量子层的区块, 用于无缝子世界</br>
-    /// </summary>
-    public int QuantumLayer;
-
     private Point _coord;
     /// <summary>
     /// 获取区块坐标.
@@ -215,7 +209,7 @@ namespace Colin.Core.Modulars.Tiles
     public TileChunk(Tile tile, Point coord)
     {
       Tile = tile;
-      Builder = tile.Scene.GetModule<TileBuilder>();
+      Builder = tile.Scene.GetModule<Business>().Get<TileBuilder>();
       Refresher = tile.Scene.GetModule<TileRefresher>();
       Depth = tile.Context.Depth;
       _coordX = coord.X;
@@ -350,7 +344,7 @@ namespace Colin.Core.Modulars.Tiles
         if (info.Empty is false && !info.IsNull)
           Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
-      else if (!Builder.Commands.Select(a => a.WorldCoord).Contains(info.GetWCoord3()))
+      else if (!Builder.Cases.Select(a => (a as TileBuildCommand).WorldCoord).Contains(info.GetWCoord3()))
       {
         if (!info.Empty)
           Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);

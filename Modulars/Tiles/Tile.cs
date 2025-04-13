@@ -100,12 +100,6 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
-    /// 指示默认（玩家所处）的量子层.
-    /// <br>在探索时拓展未知区块时会拓展同量子层的区块</br>
-    /// </summary>
-    public int QuantumLayer = 0;
-
-    /// <summary>
     /// 从指定坐标获取物块区块对象.
     /// </summary>
     /// <returns>若成功获取, 返回对象; 否则返回 <see langword="null"/>.</returns>
@@ -312,7 +306,6 @@ namespace Colin.Core.Modulars.Tiles
     public void CreateEmptyChunk(int x, int y, int? quantumLayer = null)
     {
       TileChunk chunk = new TileChunk(this, new Point(x, y));
-      chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
       chunk.DoInitialize();
       Chunks[chunk.Coord] = chunk;
     }
@@ -326,7 +319,6 @@ namespace Colin.Core.Modulars.Tiles
       {
         TileChunk chunk = new TileChunk(this, new Point(x, y));
         chunk.AsyncLoadChunk(path);
-        chunk.QuantumLayer = quantumLayer ?? QuantumLayer;
         Chunks.TryAdd(chunk.Coord, chunk);
       }
       else

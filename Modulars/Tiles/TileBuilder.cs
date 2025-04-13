@@ -9,7 +9,47 @@ namespace Colin.Core.Modulars.Tiles
   /// <param name="WorldCoord">指示该指令所作用的物块坐标, 使用世界坐标.</param>
   /// <param name="Kernel">指示该指令所使用的物块内核.</param>
   /// <param name="DoEvent">指示本次建造指令是否触发Handler及物块本身的相关事件函数.</param>
-  public record TileBuildCommand(Point3 WorldCoord, TileKernel Kernel, bool PlaceOrDestruct, bool DoEvent = true, bool DoRefresh = true);
+  public record TileBuildCommand(
+    Tile Tile,
+    TileBuilder Builder,
+    TileRefresher Refresher,
+    Point3 WorldCoord,
+    TileKernel Kernel,
+    bool PlaceOrDestruct,
+    bool DoEvent = true,
+    bool DoRefresh = true) : IBusinessCase
+  {
+    static TileChunk _chunkCache;
+    public void Execute()
+    {
+      var coords = Tile.GetCoords(WorldCoord.X, WorldCoord.Y);
+      if (_chunkCache is not null)
+      {
+        if (_chunkCache.Coord.Equals(coords.cCoord) is false)
+          _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      }
+      else
+        _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      if (_chunkCache is null)
+        return;
+
+      ref TileInfo info = ref _chunkCache[coords.tCoord.X, coords.tCoord.Y, WorldCoord.Z]; //获取对应坐标的物块格的引用传递.
+
+      if (info.IsNull)
+        return;
+
+      if (PlaceOrDestruct)
+      {
+        Builder.DoPlace(_chunkCache, info.GetICoord3(), Kernel, DoEvent, DoRefresh);
+      }
+      else
+      {
+        Builder.DoDestruct(_chunkCache, info.GetICoord3(), DoEvent, DoRefresh);
+      }
+      if (DoRefresh)
+        Refresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
+    }
+  }
 
   public class TileBuildArgs
   {
@@ -24,66 +64,34 @@ namespace Colin.Core.Modulars.Tiles
     }
   }
 
-  public class TileBuilder : ISceneModule
+  public class TileBuilder : BusinessLine
   {
-    public Scene Scene { get; set; }
-    public bool Enable { get; set; }
-
     private Tile _tile;
     public Tile Tile => _tile ??= Scene.GetModule<Tile>();
 
-    private TileRefresher _tileRefresher;
-    public TileRefresher TileRefresher => _tileRefresher ??= Scene.GetModule<TileRefresher>();
-
-    private ConcurrentQueue<(Point3, TileKernel)> _places = new ConcurrentQueue<(Point3, TileKernel)>();
-    public ConcurrentQueue<(Point3, TileKernel)> Places => _places;
-
-    private ConcurrentQueue<TileBuildCommand> _commands = new ConcurrentQueue<TileBuildCommand>();
-    public ConcurrentQueue<TileBuildCommand> Commands => _commands;
+    private TileRefresher _refresher;
+    public TileRefresher Refresher => _refresher ??= Scene.GetModule<TileRefresher>();
 
     public event EventHandler<TileBuildArgs> OnPlaceHandle;
 
     public event EventHandler<TileBuildArgs> OnDestructHandle;
-
-    public void DoInitialize()
-    {
-
-    }
-
-    public void Start()
-    {
-    }
-
-    /// <summary>
-    /// 物块放置器更新.
-    /// </summary>
-    /// <param name="time"></param>
-    public void DoUpdate(GameTime time)
-    {
-      ref TileInfo info = ref Tile[0, 0, 0];
-      while (!_commands.IsEmpty)
-      {
-        if (_commands.TryDequeue(out TileBuildCommand command))
-        {
-          Handle(command);
-        }
-      }
-    }
 
     /// <summary>
     /// 将指定坐标标记为需要放置物块.
     /// </summary>
     public void MarkPlace(Point3 wCoord, TileKernel kernel, bool doEvent = true, bool doRefresh = true)
     {
-      TileBuildCommand command = new TileBuildCommand(wCoord, kernel, true, doEvent, doRefresh);
-      _commands.Enqueue(command);
+      TileBuildCommand command = new TileBuildCommand(Tile, this, Refresher, wCoord, kernel, true, doEvent, doRefresh);
+      Mark(command);
     }
 
     public void MarkDestruct(Point3 wCoord, bool doEvent = true, bool doRefresh = true)
     {
-      TileBuildCommand command = new TileBuildCommand(wCoord, null, false, doEvent, doRefresh);
-      _commands.Enqueue(command);
+      TileBuildCommand command = new TileBuildCommand(Tile, this, Refresher, wCoord, null, false, doEvent, doRefresh);
+      Mark(command);
     }
+
+    protected override void OnPrepare() { }
 
     public void DoPlace(TileChunk _chunk, Point3 cCoord, TileKernel kernel, bool doEvent = true, bool doRefresh = true)
     {
@@ -96,13 +104,13 @@ namespace Colin.Core.Modulars.Tiles
       {
         foreach (var handler in _chunk.Handler)
           handler.OnPlaceHandle(this, info.Index, _chunk.ConvertWorld(cCoord));
-        OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
+         OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _chunk.TileKernel[info.Index].OnPlace(Tile, _chunk, info.Index, _chunk.ConvertWorld(cCoord));
       }
       foreach (var handler in _chunk.Handler)
         handler.OnBuildProcess(this, true, info.Index, info.GetWCoord3());
       if (doRefresh)
-        TileRefresher.Mark(info.GetWCoord3(), 1);
+        Refresher.Mark(info.GetWCoord3(), 1);
     }
 
     public void DoDestruct(TileChunk _chunk, Point3 cCoord, bool doEvent = true, bool doRefresh = true)
@@ -113,7 +121,7 @@ namespace Colin.Core.Modulars.Tiles
         TileKernel _com = _chunk.TileKernel[info.Index];
         foreach (var handler in _chunk.Handler)
           handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
-        OnDestructHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
+          OnDestructHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _com?.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());
       }
       foreach (var handler in _chunk.Handler)
@@ -121,46 +129,7 @@ namespace Colin.Core.Modulars.Tiles
       info.Empty = true;
       info.Collision = TileSolid.None;
       if (doRefresh)
-        TileRefresher.Mark(info.GetWCoord3(), 1);
-    }
-
-    /// <summary>
-    /// 用于缓存区块;
-    /// <br>若本次操作的物块与上次放置的物块属于同一个区块则不需要重新获取.</br>
-    /// </summary>
-    private TileChunk _chunkCache;
-
-    /// <summary>
-    /// 处理物块建造事件.
-    /// </summary>
-    private void Handle(TileBuildCommand command)
-    {
-      var coords = Tile.GetCoords(command.WorldCoord.X, command.WorldCoord.Y);
-      if (_chunkCache is not null)
-      {
-        if (_chunkCache.Coord.Equals(coords.cCoord) is false)
-          _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      }
-      else
-        _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      if (_chunkCache is null)
-        return;
-
-      ref TileInfo info = ref _chunkCache[coords.tCoord.X, coords.tCoord.Y, command.WorldCoord.Z]; //获取对应坐标的物块格的引用传递.
-
-      if (info.IsNull)
-        return;
-
-      if (command.PlaceOrDestruct)
-      {
-        DoPlace(_chunkCache, info.GetICoord3(), command.Kernel, command.DoEvent, command.DoRefresh);
-      }
-      else
-      {
-        DoDestruct(_chunkCache, info.GetICoord3(), command.DoEvent, command.DoRefresh);
-      }
-      if (command.DoRefresh)
-        TileRefresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
+        Refresher.Mark(info.GetWCoord3(), 1);
     }
 
     public void Dispose()

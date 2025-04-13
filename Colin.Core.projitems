@@ -48,6 +48,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\Business.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\BusinessLine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\IBusinessCase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBuilder.cs" />
