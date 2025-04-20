@@ -27,6 +27,11 @@
     public static string CacheDir => Path.Combine(ProgramDir, "Caches");
 
     /// <summary>
+    /// 指示日志文件夹路径.
+    /// </summary>
+    public static string LogDir => Path.Combine(ProgramDir, "Logs");
+
+    /// <summary>
     /// 指示本地化相关内容文件夹路径.
     /// </summary>
     public static string LocalizationDir => Path.Combine(ProgramDir, "Localizations");
