@@ -351,30 +351,27 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    private bool _saved = false;
     private bool _loading = false;
-    private bool _generating = false;
-    public bool Generating => _generating;
-    public void SetGenerating(bool flag)
+    private bool _operation = false;
+    public bool InOperation => _operation || _loading || _saved;
+    public void SetOperation(bool flag)
     {
       if (flag)
       {
-        _generating = true;
+        _operation = true;
         Span<TileInfo> info = Infos;
         for (int i = 0; i < Infos.Length; i++)
           info[i].Loading = true;
       }
       else
       {
-        _generating = false;
+        _operation = false;
         Span<TileInfo> info = Infos;
         for (int i = 0; i < Infos.Length; i++)
           info[i].Loading = false;
       }
     }
-    public bool Loading => _loading || Generating;
-
-    private bool _saved = false;
-    public bool Saved => _saved;
 
     public void AsyncLoadChunk(string path)
     {
@@ -422,7 +419,6 @@ namespace Colin.Core.Modulars.Tiles
         {
           ref TileInfo info = ref this[0, 0, 0];
           string typeName;
-          TileHandler cCom;
           for (int count = 0; count < Infos.Length; count++)
           {
             info = ref this[count];

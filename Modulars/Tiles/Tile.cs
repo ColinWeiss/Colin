@@ -156,7 +156,7 @@ namespace Colin.Core.Modulars.Tiles
       int indexX = x >= 0 ? x % Context.ChunkWidth : ((x + 1) % Context.ChunkWidth) + (Context.ChunkWidth - 1);
       int indexY = y >= 0 ? y % Context.ChunkHeight : ((y + 1) % Context.ChunkHeight) + (Context.ChunkHeight - 1);
       TileChunk target = GetChunkForWorldCoord(x, y);
-      if (target is not null && (includeLoadingChunk || !target.Loading))
+      if (target is not null && (includeLoadingChunk || !target.InOperation))
         return target.TileKernel[target.GetIndex(indexX, indexY, z)];
       else
         return null;
@@ -269,7 +269,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      if (targetChunk is not null && !targetChunk.Loading)
+      if (targetChunk is not null && !targetChunk.InOperation)
         return targetChunk.Place<T>(coords.tCoord.X, coords.tCoord.Y, z);
       else
         return false;
@@ -279,7 +279,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      if (targetChunk is not null && !targetChunk.Loading)
+      if (targetChunk is not null && !targetChunk.InOperation)
         return targetChunk.Place(behavior, coords.tCoord.X, coords.tCoord.Y, z);
       else
         return false;
