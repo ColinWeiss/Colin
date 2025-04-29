@@ -419,16 +419,20 @@ namespace Colin.Core.Modulars.Tiles
         {
           ref TileInfo info = ref this[0, 0, 0];
           string typeName;
+          int typehash = 0;
           for (int count = 0; count < Infos.Length; count++)
           {
             info = ref this[count];
             info.LoadStep(reader);
             if (!info.Empty)
             {
-              typeName = CodeResources<TileKernel>.GetTypeNameFromHash(reader.ReadInt32());
+              typehash = reader.ReadInt32();
+              typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
+              Debug.Assert(typeName is not null);
               if (typeName is not null)
               {
                 TileKernel[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
+                Debug.Assert(TileKernel[count] is not null);
                 TileKernel[count].Tile = Tile;
                 TileKernel[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
                 Refresher.Mark(info.GetWCoord3(), 0);
@@ -498,13 +502,12 @@ namespace Colin.Core.Modulars.Tiles
           {
             infoSpan[count].SaveStep(writer);
             tCom = TileKernel[count];
-            if (!infoSpan[count].Empty && tCom is not null)
+            if (!infoSpan[count].Empty)
             {
+              Debug.Assert(tCom is not null);
               hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
-              if (hash.HasValue)
-              {
-                writer.Write(hash.Value);
-              }
+              Debug.Assert(hash.HasValue);
+              writer.Write(hash.Value);
             }
           }
           // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取

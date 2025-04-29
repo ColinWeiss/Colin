@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -95,7 +96,9 @@ namespace Colin.Core.Modulars.Tiles
 
     public void DoPlace(TileChunk _chunk, Point3 cCoord, TileKernel kernel, bool doEvent = true, bool doRefresh = true)
     {
+      Debug.Assert(kernel is not null);
       ref TileInfo info = ref _chunk[cCoord.X, cCoord.Y, cCoord.Z];
+      Debug.Assert(info.GetICoord3() == cCoord);
       _chunk.TileKernel[info.Index] = kernel;
       _chunk.TileKernel[info.Index].Tile = Tile;
       _chunk.TileKernel[info.Index].OnInitialize(Tile, _chunk, info.Index);
