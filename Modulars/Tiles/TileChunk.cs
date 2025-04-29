@@ -473,15 +473,9 @@ namespace Colin.Core.Modulars.Tiles
 
     public void SaveChunk(string path)
     {
-      try
-      {
-        DoSave(path);
-        _saved = true;
-      }
-      catch
-      {
-
-      }
+      _saved = true;
+      DoSave(path);
+      _saved = false;
     }
 
     private void DoSave(string path)
