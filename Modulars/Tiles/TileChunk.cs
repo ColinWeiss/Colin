@@ -351,10 +351,10 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private bool _saved = false;
+    private bool _saving = false;
     private bool _loading = false;
     private bool _operation = false;
-    public bool InOperation => _operation || _loading || _saved;
+    public bool InOperation => _operation || _loading || _saving;
     public void SetOperation(bool flag)
     {
       if (flag)
@@ -463,19 +463,19 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
-      _saved = false;
+      _saving = true;
       Task.Run(() =>
       {
         DoSave(path);
-        _saved = true;
+        _saving = false;
       });
     }
 
     public void SaveChunk(string path)
     {
-      _saved = true;
+      _saving = true;
       DoSave(path);
-      _saved = false;
+      _saving = false;
     }
 
     private void DoSave(string path)
