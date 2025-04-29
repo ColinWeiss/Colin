@@ -7,6 +7,23 @@ namespace Colin.Core
 {
   public class Core : Game
   {
+    [System.Runtime.InteropServices.DllImport("nvapi64.dll", EntryPoint = "fake")]
+    private static extern int LoadNvApi64();
+
+    [System.Runtime.InteropServices.DllImport("nvapi.dll", EntryPoint = "fake")]
+    private static extern int LoadNvApi32();
+
+    void TryForceHighPerformanceGpu()
+    {
+      try
+      {
+        if (System.Environment.Is64BitProcess)
+          LoadNvApi64();
+        else
+          LoadNvApi32();
+      }
+      catch { } // this will always be triggered, so just catch it and do nothing :P
+    }
     public CoreInfo Info;
 
     public bool Enable { get; set; } = true;
@@ -32,6 +49,7 @@ namespace Colin.Core
 
     public Core()
     {
+      TryForceHighPerformanceGpu();
       //执行程序检查程序.
       IProgramChecker checker;
       foreach (Type item in Assembly.GetExecutingAssembly().GetTypes())
