@@ -304,7 +304,7 @@ namespace Colin.Core.Modulars.Tiles
     /// 根据指定坐标和指定类型放置物块.
     /// <br>[!] 使用内部坐标.</br>
     /// </summary>
-    public bool Place(TileKernel kernel, int x, int y, int z, bool doEvent = true, bool doRefresh = true)
+    public bool Place(TileKernel kernel, int x, int y, int z, bool doEvent = true, int? doRefresh = 1)
     {
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
       if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), wCoord))
@@ -320,7 +320,7 @@ namespace Colin.Core.Modulars.Tiles
     /// 根据区块内坐标和指定类型放置物块.
     /// [!] 使用内部坐标.
     /// </summary>
-    public bool Place<T>(int x, int y, int z, bool doEvent = true, bool doRefresh = true) where T : TileKernel, new()
+    public bool Place<T>(int x, int y, int z, bool doEvent = true, int? doRefresh = 1) where T : TileKernel, new()
     {
       TileKernel behavior = CodeResources<TileKernel>.GetFromType(typeof(T));
       return Place(behavior, x, y, z, doEvent, doRefresh);
@@ -332,7 +332,7 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="z"></param>
-    public void Destruct(int x, int y, int z, bool doEvent = true, bool doRefresh = true)
+    public void Destruct(int x, int y, int z, bool doEvent = true, int? doRefresh = 1)
     {
       ref TileInfo info = ref this[x, y, z];
       if (info.IsNull)
@@ -380,6 +380,7 @@ namespace Colin.Core.Modulars.Tiles
       Task.Run(() =>
       {
         DoLoad(path);
+        DoRefreshAll();
         _loading = false;
       });
     }
@@ -388,6 +389,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       DoInitialize();
       DoLoad(path);
+      MarkRefreshAll();
     }
 
     public void MarkRefreshAll()
@@ -431,7 +433,6 @@ namespace Colin.Core.Modulars.Tiles
                 TileKernel[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
                 TileKernel[count].Tile = Tile;
                 TileKernel[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
-                Refresher.Mark(info.GetWCoord3(), 0);
               }
             }
           }
@@ -492,8 +493,9 @@ namespace Colin.Core.Modulars.Tiles
           {
             infoSpan[count].SaveStep(writer);
             tCom = TileKernel[count];
-            if (!infoSpan[count].Empty && tCom is not null)
+            if (!infoSpan[count].Empty)
             {
+              Debug.Assert(tCom is not null);
               hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
               if (hash.HasValue)
               {

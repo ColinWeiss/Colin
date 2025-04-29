@@ -79,6 +79,19 @@ namespace Colin.Core.Modulars.Tiles
         chunk.TileKernel[index] = null;
     }
 
+    public void DoRefresh(Point3 wCoord, int radius = 0)
+    {
+      Point3 refresh;
+      for (int x = -radius; x <= radius; x++)
+      {
+        for (int y = -radius; y <= radius; y++)
+        {
+          refresh = new Point3(wCoord.X + x, wCoord.Y + y, wCoord.Z);
+          Handle(refresh);
+        }
+      }
+    }
+
     /// <summary>
     /// 用于缓存区块;
     /// <br>若本次操作放置的物块与上次放置的物块属于同一个区块则不需要重新获取.</br>
