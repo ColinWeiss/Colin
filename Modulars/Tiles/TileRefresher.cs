@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -69,6 +70,8 @@ namespace Colin.Core.Modulars.Tiles
         return;
       TileKernel _com;
       _com = chunk.TileKernel[index];
+      if (!info.Empty)
+        Debug.Assert(_com is not null);
       if (_com is null)
         return;
       foreach (var script in chunk.Handler)

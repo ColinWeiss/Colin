@@ -103,6 +103,7 @@ namespace Colin.Core.Modulars.Tiles
       _chunk.TileKernel[info.Index].Tile = Tile;
       _chunk.TileKernel[info.Index].OnInitialize(Tile, _chunk, info.Index);
       info.Empty = false;
+      Debug.Assert(_chunk.TileKernel[info.Index] == kernel);
       if (doEvent)
       {
         foreach (var handler in _chunk.Handler)
