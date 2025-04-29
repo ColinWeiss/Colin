@@ -21,10 +21,7 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    /// <summary>
-    /// 表示物块的刷新信息队列, 其中存放需要刷新的物块的坐标.
-    /// </summary>
-    public ConcurrentQueue<Point3> RefreshQueue = new();
+    public ConcurrentDictionary<Point, ConcurrentQueue<Point3>> RefreshQueue = new();
 
     /// <summary>
     /// 在物块刷新时发生; 用于模块之间的联动事件.
@@ -41,25 +38,46 @@ namespace Colin.Core.Modulars.Tiles
 
     public void DoUpdate(GameTime time)
     {
-      ref TileInfo info = ref Tile[0, 0, 0];
-      while (RefreshQueue.TryDequeue(out Point3 coord))
+      ConcurrentQueue<Point3> queue;
+      TileChunk chunk;
+      for (int i = 0; i < Tile.Chunks.Count; i++)
       {
-        info = ref Tile[coord];
-        Handle(coord);
+        chunk = Tile.Chunks.ElementAt(i).Value;
+        if (chunk.InOperation)
+          continue;
+        else
+        {
+          if (RefreshQueue.ContainsKey(chunk.Coord))
+          {
+            queue = RefreshQueue[chunk.Coord];
+            while (queue.TryDequeue(out Point3 cCoord))
+            {
+              DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord));
+            }
+          }
+        }
       }
     }
 
-    public void Mark(Point3 coord, int radius = 0)
+    public void Mark(Point3 wCoord, int radius = 0) //标记刷新方法
     {
       Point3 refresh;
       for (int x = -radius; x <= radius; x++)
       {
         for (int y = -radius; y <= radius; y++)
         {
-          refresh = new Point3(coord.X + x, coord.Y + y, coord.Z);
-          RefreshQueue.Enqueue(refresh);
+          refresh = new Point3(wCoord.X + x, wCoord.Y + y, wCoord.Z);
+          Mark(refresh);
         }
       }
+    }
+
+    public void Mark(Point3 wCoord)
+    {
+      var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
+      if (RefreshQueue.ContainsKey(coords.cCoord) is false)
+        RefreshQueue.TryAdd(coords.cCoord, new ConcurrentQueue<Point3>());
+      RefreshQueue[coords.cCoord].Enqueue(new Point3(coords.tCoord, wCoord.Z)); //建队
     }
 
     public void DoRefresh(TileChunk chunk, int index, Point3 wCoord)
@@ -79,15 +97,23 @@ namespace Colin.Core.Modulars.Tiles
         chunk.TileKernel[index] = null;
     }
 
-    public void DoRefresh(Point3 wCoord, int radius = 0)
+    public void DoRefresh(Point3 wCoord, int radius = 0) //立刻刷新方法
     {
+      var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
       Point3 refresh;
+      Point targetChunk;
       for (int x = -radius; x <= radius; x++)
       {
         for (int y = -radius; y <= radius; y++)
         {
           refresh = new Point3(wCoord.X + x, wCoord.Y + y, wCoord.Z);
-          Handle(refresh);
+          targetChunk = Tile.GetChunkCoordForWorldCoord(refresh.X, refresh.Y);
+          if (targetChunk != coords.cCoord)
+          {
+            Mark(refresh); //跨区块则放入主线程
+          }
+          else
+            Handle(refresh); //本区块则立刻刷新
         }
       }
     }

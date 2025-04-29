@@ -174,8 +174,8 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 以坐标转换至索引.
     /// </summary>
-    public int GetIndex(Point3 coord)
-      => GetIndex(coord.X, coord.Y, coord.Z);
+    public int GetIndex(Point3 cCoord)
+      => GetIndex(cCoord.X, cCoord.Y, cCoord.Z);
 
     public ref TileInfo GetRelative(int index, TileRelative relative)
     {
@@ -398,8 +398,7 @@ namespace Colin.Core.Modulars.Tiles
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
-        if (!info.Empty)
-          Refresher.Mark(info.GetWCoord3(), 0);
+        Refresher.Mark(info.GetWCoord3(), 0);
       }
     }
 
