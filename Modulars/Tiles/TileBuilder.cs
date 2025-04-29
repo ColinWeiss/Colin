@@ -46,8 +46,8 @@ namespace Colin.Core.Modulars.Tiles
       {
         Builder.DoDestruct(_chunkCache, info.GetICoord3(), DoEvent, DoRefresh);
       }
-      if (DoRefresh)
-        Refresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
+  //    if (DoRefresh)
+    //    Refresher.Mark(info.GetWCoord3(), 1); //将物块标记刷新, 刷新事件交由物块更新器处理
     }
   }
 
