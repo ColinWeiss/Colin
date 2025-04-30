@@ -1,4 +1,5 @@
-﻿using DeltaMachine.Core.Common.GameSystems;
+﻿using Colin.Core.Modulars.Tiles;
+using DeltaMachine.Core.Common.GameSystems;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -51,6 +52,12 @@ namespace Colin.Core.Modulars
         _businesses.ElementAt(index).Value.DoUpdate();
       }
       base.DoUpdate(time);
+    }
+
+    public override void Dispose()
+    {
+      TileBuildCommand.ResetCache();
+      base.Dispose();
     }
   }
 }

@@ -21,6 +21,10 @@ namespace Colin.Core.Modulars.Tiles
     bool Immediately = false) : IBusinessCase
   {
     static TileChunk _chunkCache;
+    public static void ResetCache()
+    {
+      _chunkCache = null;
+    }
     public void Execute()
     {
       var coords = Tile.GetCoords(WorldCoord.X, WorldCoord.Y);
