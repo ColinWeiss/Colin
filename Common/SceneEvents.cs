@@ -46,6 +46,8 @@ namespace Colin.Core.Common
         Mouse.RightUp?.TriggerCapture(GetMouseArgs<RightUpArgs>());
       if (MouseResponder.ScrollDown)
         Mouse.ScrollDown?.TriggerCapture(GetMouseArgs<ScrollDownArgs>());
+      if (MouseResponder.ScrollClickAfter)
+        Mouse.ScrollClicked?.TriggerCapture(GetMouseArgs<ScrollClickedArgs>());
       if (MouseResponder.ScrollUp)
         Mouse.ScrollUp?.TriggerCapture(GetMouseArgs<ScrollUpArgs>());
 

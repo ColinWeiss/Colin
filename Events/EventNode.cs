@@ -22,7 +22,7 @@
       return node;
     }
 
-    public static EventNode<T> operator -(EventNode<T> node, EventHandler<T> a)
+    public static EventNode<T> operator -(EventNode<T> node,  EventHandler<T> a)
     {
       node.Event -= a;
       return node;

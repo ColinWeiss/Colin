@@ -14,20 +14,22 @@
     public EventNode<RightDownArgs> RightDown;
     public EventNode<RightUpArgs> RightUp;
     public EventNode<ScrollDownArgs> ScrollDown;
+    public EventNode<ScrollClickedArgs> ScrollClicked;
     public EventNode<ScrollUpArgs> ScrollUp;
-
+    
     public MouseEventNode() : base()
     {
-      LeftClicked = new EventNode<LeftClickedArgs>();
-      LeftClicking = new EventNode<LeftClickingArgs>();
-      LeftDown = new EventNode<LeftDownArgs>();
-      LeftUp = new EventNode<LeftUpArgs>();
-      RightClicked = new EventNode<RightClickedArgs>();
-      RightClicking = new EventNode<RightClickingArgs>();
-      RightDown = new EventNode<RightDownArgs>();
-      RightUp = new EventNode<RightUpArgs>();
-      ScrollDown = new EventNode<ScrollDownArgs>();
-      ScrollUp = new EventNode<ScrollUpArgs>();
+      LeftClicked = new();
+      LeftClicking = new();
+      LeftDown = new();
+      LeftUp = new();
+      RightClicked = new();
+      RightClicking = new();
+      RightDown = new();
+      RightUp = new();
+      ScrollDown = new();
+      ScrollClicked = new();
+      ScrollUp = new();
     }
 
     public void Append(MouseEventNode node)
@@ -41,6 +43,7 @@
       RightDown.Append(node.RightDown);
       RightUp.Append(node.RightUp);
       ScrollDown.Append(node.ScrollDown);
+      ScrollClicked.Append(node.ScrollClicked);
       ScrollUp.Append(node.ScrollUp);
     }
 
@@ -55,6 +58,7 @@
       RightDown.Insert(index, node.RightDown);
       RightUp.Insert(index, node.RightUp);
       ScrollDown.Insert(index, node.ScrollDown);
+      ScrollClicked.Insert(index, node.ScrollClicked);
       ScrollUp.Insert(index, node.ScrollUp);
     }
 
@@ -69,6 +73,7 @@
       RightDown.Register(node.RightDown);
       RightUp.Register(node.RightUp);
       ScrollDown.Register(node.ScrollDown);
+      ScrollClicked.Register(node.ScrollClicked);
       ScrollUp.Register(node.ScrollUp);
     }
 
@@ -83,6 +88,7 @@
       RightDown.Remove(node.RightDown);
       RightUp.Remove(node.RightUp);
       ScrollDown.Remove(node.ScrollDown);
+      ScrollClicked.Remove(node.ScrollClicked);
       ScrollUp.Remove(node.ScrollUp);
     }
   }
