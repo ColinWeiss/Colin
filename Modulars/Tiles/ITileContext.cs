@@ -6,12 +6,10 @@
   /// </summary>
   public interface ITileContext
   {
-    public short TileWidth { get; set; }
+    public short TileLength { get; set; }
 
-    public short TileHeight { get; set; }
-
-    public Point TileSize => new Point(TileWidth, TileHeight);
-    public Vector2 TileSizeF => new Vector2(TileWidth, TileHeight);
+    public Point TileSize => new Point(TileLength, TileLength);
+    public Vector2 TileSizeF => new Vector2(TileLength, TileLength);
 
     public short ChunkWidth { get; set; }
 

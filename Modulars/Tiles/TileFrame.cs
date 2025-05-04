@@ -33,10 +33,10 @@
     public Rectangle GetRect(ITileContext tileOption)
     {
       return new Rectangle(
-            X * tileOption.TileWidth,
-            Y * tileOption.TileHeight,
-            Width * tileOption.TileWidth,
-            Height * tileOption.TileHeight);
+            X * tileOption.TileLength,
+            Y * tileOption.TileLength,
+            Width * tileOption.TileLength,
+            Height * tileOption.TileLength);
     }
 
     public TileFrame(int x, int y, int width = 1, int height = 1)

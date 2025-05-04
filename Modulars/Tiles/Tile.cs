@@ -253,8 +253,8 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public Point GetWorldCoordForPosition(Vector2 position)
     {
-      int coordX = (int)Math.Floor(position.X / Context.TileWidth);
-      int coordY = (int)Math.Floor(position.Y / Context.TileHeight);
+      int coordX = (int)Math.Floor(position.X / Context.TileLength);
+      int coordY = (int)Math.Floor(position.Y / Context.TileLength);
       return new Point(coordX, coordY);
     }
 
