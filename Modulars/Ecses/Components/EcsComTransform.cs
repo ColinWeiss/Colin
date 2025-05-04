@@ -17,7 +17,7 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// <summary>
     /// 指示实体的速度.
     /// </summary>
-    public Vector2 Velocity;
+    public Vector2 Vel;
 
     /// <summary>
     /// 指示实体的位置.
@@ -28,7 +28,7 @@ namespace Colin.Core.Modulars.Ecses.Components
       set => Translation = value;
     }
 
-    public Vector2 DeltaVelocity => Velocity * Time.DeltaTime;
+    public Vector2 DeltaVelocity => Vel * Time.DeltaTime;
 
     /// <summary>
     /// 获取 <see cref="Size"/> 的一半.
@@ -47,11 +47,11 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// <summary>
     /// 指示实体当前是否正在进行横向移动.
     /// </summary>
-    public bool OnHorizontalMove => Math.Abs(Velocity.X) > 0;
+    public bool OnHorizontalMove => Math.Abs(Vel.X) > 0;
     /// <summary>
     /// 指示实体当前是否正在进行纵向移动.
     /// </summary>
-    public bool OnLongitudinalMove => Math.Abs(Velocity.Y) > 0;
+    public bool OnLongitudinalMove => Math.Abs(Vel.Y) > 0;
     /// <summary>
     /// 指示实体当前是否正在移动.
     /// </summary>
@@ -66,9 +66,9 @@ namespace Colin.Core.Modulars.Ecses.Components
     {
       get
       {
-        if (Velocity.X > 0)
+        if (Vel.X > 0)
           _horizontalDirection = Direction.Right;
-        if (Velocity.X < 0)
+        if (Vel.X < 0)
           _horizontalDirection = Direction.Left;
         return _horizontalDirection;
       }
@@ -83,9 +83,9 @@ namespace Colin.Core.Modulars.Ecses.Components
     {
       get
       {
-        if (Velocity.Y > 0)
+        if (Vel.Y > 0)
           _longitudinalDirection = Direction.Down;
-        else if (Velocity.Y < 0)
+        else if (Vel.Y < 0)
           _longitudinalDirection = Direction.Up;
         return _longitudinalDirection;
       }

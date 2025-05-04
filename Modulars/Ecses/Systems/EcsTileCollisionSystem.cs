@@ -142,7 +142,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
             }
           }
         }
-        comTransform.Velocity = deltaVel / Time.DeltaTime;
+        comTransform.Vel = deltaVel / Time.DeltaTime;
       }
     }
 
