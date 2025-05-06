@@ -210,7 +210,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       Tile = tile;
       Builder = tile.Scene.GetModule<Business>().Get<TileBuilder>();
-      Refresher = tile.Scene.GetModule<TileRefresher>();
+      Refresher = tile.Scene.GetModule<Business>().Get<TileRefresher>();
       Depth = tile.Context.Depth;
       _coordX = coord.X;
       _coordY = coord.Y;
@@ -398,7 +398,7 @@ namespace Colin.Core.Modulars.Tiles
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
-        Refresher.Mark(info.GetWCoord3(), 0);
+        Refresher.MarkRefresh(info.GetWCoord3(), 0);
       }
     }
 
