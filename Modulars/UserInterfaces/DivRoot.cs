@@ -1,4 +1,5 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+﻿
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 用户交互界面中的根划分元素.
@@ -13,13 +14,7 @@
       Layout.Width = CoreInfo.ViewWidth;
       Layout.Height = CoreInfo.ViewHeight;
       ContainerInitialize();
-      Module.Scene.Events.ClientSizeChanged += Events_ClientSizeChanged;
       base.DivInit();
-    }
-    private void Events_ClientSizeChanged(object sender, EventArgs e)
-    {
-      Layout.Width = CoreInfo.ViewWidth;
-      Layout.Height = CoreInfo.ViewHeight;
     }
 
     /// <summary>
@@ -30,6 +25,12 @@
     {
       Remove(division);
       Register(division, true);
+    }
+    public override void OnUpdate(GameTime time)
+    {
+      Layout.Width = CoreInfo.ViewWidth;
+      Layout.Height = CoreInfo.ViewHeight;
+      base.OnUpdate(time);
     }
     public override bool Register(Div division, bool doInit = false)
     {

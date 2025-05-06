@@ -28,9 +28,9 @@ namespace Colin.Core.Modulars.UserInterfaces
       UICamera.Translate = CoreInfo.ViewCenter;
       Scene.Events.ClientSizeChanged += (s, e) =>
       {
-        UICamera.Translate = CoreInfo.ViewCenter;
-        UICamera.Position = CoreInfo.ViewCenter;
-        UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.Graphics.GraphicsDevice.Viewport.Width, CoreInfo.Graphics.GraphicsDevice.Viewport.Height, 0f, 0f, 1f);
+        UICamera.SetWidth(CoreInfo.ViewWidth);
+        UICamera.SetHeight(CoreInfo.ViewHeight);
+        UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.ViewWidth, CoreInfo.ViewHeight, 0f, 0f, 1f);
         UICamera.View = Matrix.Identity;
         UICamera.ResetCamera();
       };
@@ -72,9 +72,9 @@ namespace Colin.Core.Modulars.UserInterfaces
     public void BatchNormalBegin(Div div)
     {
       CoreInfo.Batch.Begin(
-        SpriteSortMode.Deferred, 
-        BlendState.AlphaBlend, 
-        SamplerState.PointClamp, 
+        SpriteSortMode.Deferred,
+        BlendState.AlphaBlend,
+        SamplerState.PointClamp,
         transformMatrix: div.UpperCanvas is not null ? null : UICamera.View);
     }
 
