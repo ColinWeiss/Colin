@@ -6,9 +6,8 @@ namespace Colin.Core.Modulars.Tiles
   /// <summary>
   /// 物块刷新器.
   /// </summary>
-  public class TileRefresher : ISceneModule
+  public class TileRefresher : BusinessLine
   {
-    public Scene Scene { get; set; }
     public bool Enable { get; set; }
 
     private Tile _tile;
@@ -29,38 +28,7 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public event Action<Point3> OnRefresh = null;
 
-    public void DoInitialize()
-    {
-    }
-
-    public void Start()
-    {
-    }
-
-    public void DoUpdate(GameTime time)
-    {
-      ConcurrentQueue<Point3> queue;
-      TileChunk chunk;
-      for (int i = 0; i < Tile.Chunks.Count; i++)
-      {
-        chunk = Tile.Chunks.ElementAt(i).Value;
-        if (chunk.InOperation)
-          continue;
-        else
-        {
-          if (RefreshQueue.ContainsKey(chunk.Coord))
-          {
-            queue = RefreshQueue[chunk.Coord];
-            while (queue.TryDequeue(out Point3 cCoord))
-            {
-              DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord));
-            }
-          }
-        }
-      }
-    }
-
-    public void Mark(Point3 wCoord, int radius = 0) //标记刷新方法
+    public void MarkRefresh(Point3 wCoord, int radius = 0) //标记刷新方法
     {
       Point3 refresh;
       for (int x = -radius; x <= radius; x++)
@@ -68,12 +36,12 @@ namespace Colin.Core.Modulars.Tiles
         for (int y = -radius; y <= radius; y++)
         {
           refresh = new Point3(wCoord.X + x, wCoord.Y + y, wCoord.Z);
-          Mark(refresh);
+          MarkRefresh(refresh);
         }
       }
     }
 
-    public void Mark(Point3 wCoord)
+    public void MarkRefresh(Point3 wCoord)
     {
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
       if (RefreshQueue.ContainsKey(coords.cCoord) is false)
@@ -113,7 +81,7 @@ namespace Colin.Core.Modulars.Tiles
           targetChunk = Tile.GetChunkCoordForWorldCoord(refresh.X, refresh.Y);
           if (targetChunk != coords.cCoord)
           {
-            Mark(refresh); //跨区块则放入主线程
+            MarkRefresh(refresh); //跨区块则放入主线程
           }
           else
             Handle(refresh); //本区块则立刻刷新
@@ -155,6 +123,29 @@ namespace Colin.Core.Modulars.Tiles
     public void Dispose()
     {
       OnRefresh = null;
+    }
+
+    protected override void OnPrepare()
+    {
+      ConcurrentQueue<Point3> queue;
+      TileChunk chunk;
+      for (int i = 0; i < Tile.Chunks.Count; i++)
+      {
+        chunk = Tile.Chunks.ElementAt(i).Value;
+        if (chunk.InOperation)
+          continue;
+        else
+        {
+          if (RefreshQueue.ContainsKey(chunk.Coord))
+          {
+            queue = RefreshQueue[chunk.Coord];
+            while (queue.TryDequeue(out Point3 cCoord))
+            {
+              DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord));
+            }
+          }
+        }
+      }
     }
   }
 }

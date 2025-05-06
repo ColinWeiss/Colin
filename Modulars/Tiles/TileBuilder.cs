@@ -73,7 +73,7 @@ namespace Colin.Core.Modulars.Tiles
     public Tile Tile => _tile ??= Scene.GetModule<Tile>();
 
     private TileRefresher _refresher;
-    public TileRefresher Refresher => _refresher ??= Scene.GetModule<TileRefresher>();
+    public TileRefresher Refresher => _refresher ??= Scene.GetModule<Business>().Get<TileRefresher>();
 
     public event EventHandler<TileBuildArgs> OnPlaceHandle;
 
@@ -121,7 +121,7 @@ namespace Colin.Core.Modulars.Tiles
         if (immediately)
           Refresher.DoRefresh(info.GetWCoord3(), doRefresh.Value);
         else
-          Refresher.Mark(info.GetWCoord3(), doRefresh.Value);
+          Refresher.MarkRefresh(info.GetWCoord3(), doRefresh.Value);
       }
     }
 
@@ -146,7 +146,7 @@ namespace Colin.Core.Modulars.Tiles
         if (immediately)
           Refresher.DoRefresh(info.GetWCoord3(), doRefresh.Value);
         else
-          Refresher.Mark(info.GetWCoord3(), doRefresh.Value);
+          Refresher.MarkRefresh(info.GetWCoord3(), doRefresh.Value);
       }
     }
 
