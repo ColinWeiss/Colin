@@ -16,6 +16,8 @@
     public float RotationVelocity;
     public float TargetRotation;
 
+    public static float GlobalMinimalZoom => 0.5f;
+    public float MinimalZoom => GlobalMinimalZoom;
     public Vector2 Zoom;
     public Vector2 ZoomVelocity;
     public Vector2 TargetZoom;
