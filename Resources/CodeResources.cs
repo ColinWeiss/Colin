@@ -40,7 +40,7 @@ namespace Colin.Core.Resources
   public class CodeResources<T0> where T0 : ICodeResource
   {
     public static Dictionary<Type, T0> Resources = new Dictionary<Type, T0>();
-    private static Dictionary<string, int> serToHashs = new Dictionary<string, int>();
+    public static Dictionary<string, int> serToHashs = new Dictionary<string, int>();
     private static Dictionary<int, string> hashToSers = new Dictionary<int, string>();
     private static Dictionary<string, Type> serToResourceTypes = new Dictionary<string, Type>();
 
@@ -60,15 +60,17 @@ namespace Colin.Core.Resources
 
     public static string GetTypeNameFromHash(int hashValue)
     {
-      if (CodeResources<TileKernel>.hashToSers.TryGetValue(hashValue, out string value))
+      if (hashToSers.TryGetValue(hashValue, out string value))
         return value;
       else
         return null;
     }
     public static int? GetHashFromTypeName(string typeName)
     {
-      if (CodeResources<TileKernel>.serToHashs.TryGetValue(typeName, out int value))
+      if (serToHashs.TryGetValue(typeName, out int value))
+      {
         return value;
+      }
       else
         return null;
     }

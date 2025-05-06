@@ -1,6 +1,11 @@
 ﻿using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
+using Colin.Core.IO;
+using Colin.Core.Modulars.Tiles;
 using Colin.Core.Resources;
+using DeltaMachine.Core;
+using System.Diagnostics;
+using System.Security.Policy;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -10,18 +15,8 @@ namespace Colin.Core.Modulars.Ecses
   /// <br>「环境控制实体」</br>
   /// <br>这一系列会影响到环境的游戏元素, 我们统称为 <see cref="Entity"/>.</br>
   /// </summary>
-  public class Ecs : ISceneModule, IRenderableISceneModule
+  public class Ecs : SceneRenderModule, IOStep
   {
-    public Scene Scene { get; set; }
-
-    public bool Enable { get; set; }
-
-    public bool RawRtVisible { get; set; }
-
-    public bool Presentation { get; set; }
-
-    public RenderTarget2D RawRt { get; set; }
-
     private Dictionary<Type, Entitiesystem> _systems;
     public Dictionary<Type, Entitiesystem> Systems => _systems;
 
@@ -39,14 +34,14 @@ namespace Colin.Core.Modulars.Ecses
 
     public KeysEventNode KeysEvent;
 
-    public void DoInitialize()
+    public override void DoInitialize()
     {
       KeysEvent = new KeysEventNode();
       Scene.Events.Keys.Register(KeysEvent);
       Entities = new Entity[2047];
       _systems = new Dictionary<Type, Entitiesystem>();
     }
-    public void Start()
+    public override void Start()
     {
       Entitiesystem _system;
       for (int sCount = 0; sCount < _systems.Values.Count; sCount++)
@@ -56,7 +51,7 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
-    public void DoUpdate(GameTime time)
+    public override void DoUpdate(GameTime time)
     {
       using (DebugProfiler.Tag("ECS System"))
       {
@@ -94,7 +89,7 @@ namespace Colin.Core.Modulars.Ecses
         }
       }
     }
-    public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
+    public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
       device.Clear(Color.Transparent);
       Entitiesystem _system;
@@ -104,7 +99,7 @@ namespace Colin.Core.Modulars.Ecses
         _system.DoRender(device, batch);
       }
     }
-    public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
+    public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
     {
       // device.SetRenderTarget(LightingAdpter.RawRt);
     }
@@ -170,13 +165,56 @@ namespace Colin.Core.Modulars.Ecses
       return null;
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       for (int count = 0; count < Entities.Length; count++)
       {
         if (Entities[count] is IDisposable disposable)
         {
           disposable.Dispose();
+        }
+      }
+      base.Dispose();
+    }
+
+    public void LoadStep(BinaryReader reader)
+    {
+      string typeName;
+      int hashValue;
+      for (int i = 0; i < Entities.Length; i++)
+      {
+        if (reader.ReadBoolean())
+        {
+          hashValue = reader.ReadInt32();
+          typeName = CodeResources<Entity>.GetTypeNameFromHash(hashValue);
+          Entities[i] = CodeResources<Entity>.GetFromTypeName(typeName);
+          Entities[i].NeedSaveAndLoad = true;
+          Entities[i].Ecs = this;
+          Entities[i].ID = i;
+          Entities[i].DoInitialize();
+          Entities[i].LoadStep(reader);
+        }
+      }
+    }
+
+    public void SaveStep(BinaryWriter writer)
+    {
+      int? hash;
+      Entity entity;
+      for (int i = 0; i < Entities.Length; i++)
+      {
+        entity = Entities[i];
+        if (entity is null)
+        {
+          writer.Write(false);
+          continue;
+        }
+        if (entity.NeedSaveAndLoad)
+        {
+          writer.Write(true);
+          hash = CodeResources<Entity>.GetHashFromTypeName(entity.Identifier);
+          writer.Write(hash.Value);
+          entity.SaveStep(writer);
         }
       }
     }

@@ -1,13 +1,27 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+﻿using Colin.Core.IO;
+using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
+using DeltaMachine.Core;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Ecses
 {
   /// <summary>
   /// 实体.
   /// </summary>
-  public abstract class Entity : IGameContent<Entity>, ICodeResource
+  public class Entity : IGameContent<Entity>, ICodeResource
   {
+    private string _identifier;
+    public string Identifier
+    {
+      get
+      {
+        if (_identifier is null || _identifier == string.Empty)
+          _identifier = GetType().FullName;
+        return _identifier;
+      }
+    }
+
     internal Dictionary<Type, IEntityCom> _components;
     /// <summary>
     /// 实体组件列表.
@@ -59,6 +73,11 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
+    /// <summary>
+    /// 指示该实体是否需要执行存储/读取操作.
+    /// </summary>
+    public bool NeedSaveAndLoad;
+
     public EcsComDoc _comDoc;
     public EcsComDoc Document => _comDoc;
 
@@ -92,5 +111,22 @@ namespace Colin.Core.Modulars.Ecses
     /// 在此处处理组件数据.
     /// </summary>
     public virtual void SetDefaults() { }
+
+    public void SaveStep(BinaryWriter writer)
+    {
+      for (int i = 0; i < Components.Count; i++)
+      {
+        if (Components.ElementAt(i).Value is IEcsComIO io)
+          io.SaveStep(writer);
+      }
+    }
+    public void LoadStep(BinaryReader reader)
+    {
+      for (int i = 0; i < Components.Count; i++)
+      {
+        if (Components.ElementAt(i).Value is IEcsComIO io)
+          io.LoadStep(reader);
+      }
+    }
   }
 }

@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// <br>提供关于位置/速度/旋转/缩放的字段.</br>
   /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComTransform : Transform2D, IEntityCom
+  public class EcsComTransform : Transform2D, IEcsComIO
   {
     /// <summary>
     /// 指示实体的大小.
@@ -93,6 +93,26 @@ namespace Colin.Core.Modulars.Ecses.Components
     public void DoInitialize()
     {
       Scale = Vector2.One;
+    }
+
+    public void SaveStep(BinaryWriter writer)
+    {
+      writer.Write(Translation.X);
+      writer.Write(Translation.Y);
+      writer.Write(Vel.X);
+      writer.Write(Vel.Y);
+      writer.Write(Size.X);
+      writer.Write(Size.Y);
+    }
+
+    public void LoadStep(BinaryReader reader)
+    {
+      Translation.X = reader.ReadSingle();
+      Translation.Y = reader.ReadSingle();
+      Vel.X = reader.ReadSingle();
+      Vel.Y = reader.ReadSingle();
+      Size.X = reader.ReadSingle();
+      Size.Y = reader.ReadSingle();
     }
   }
 }
