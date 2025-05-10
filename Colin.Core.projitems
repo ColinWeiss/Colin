@@ -15,6 +15,7 @@
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Content\obj\Windows\net8.0-windows7.0\Content\.mgstats" />
+    <None Include="$(MSBuildThisFileDirectory)Content\动画测试.fbx" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\Cyotek.Drawing.BitmapFont.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Base.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.MonoGame.dll" />
