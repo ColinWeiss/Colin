@@ -46,6 +46,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Models\GlbModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
