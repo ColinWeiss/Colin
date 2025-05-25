@@ -24,9 +24,23 @@ namespace Colin.Core.Modulars.Tiles
     public int Length => Tile.Context.ChunkWidth * Tile.Context.ChunkHeight * Tile.Context.Depth;
 
     /// <summary>
+    /// 在指定索引的物块格中启用该Handler.
+    /// <br>需要在初始化时确定该值.</br>
+    /// </summary>
+    public bool?[] Enable;
+
+    public virtual bool EnableInitValue => false;
+
+    /// <summary>
     /// 于处理方式被区块加载时执行.
     /// </summary>
     public virtual void DoInitialize() { }
+
+    /// <summary>
+    /// 执行于判断物块放置标记前.
+    /// <br>若结果为 <see langword="true"/>, 则允许进行标记, 否则不进行标记.</br>
+    /// </summary>
+    public virtual bool CanPlaceMark(int index, Point3 wCoord) => true;
 
     /// <summary>
     /// 于放置物块时执行.

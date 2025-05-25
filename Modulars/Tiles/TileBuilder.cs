@@ -109,7 +109,12 @@ namespace Colin.Core.Modulars.Tiles
       if (doEvent)
       {
         foreach (var handler in _chunk.Handler)
-          handler.OnPlaceHandle(this, info.Index, _chunk.ConvertWorld(cCoord));
+        {
+          if(handler.Enable[info.Index] is null)
+            handler.Enable[info.Index] = handler.EnableInitValue;
+          if (handler.Enable[info.Index].Value)
+            handler.OnPlaceHandle(this, info.Index, _chunk.ConvertWorld(cCoord));
+        }
         OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _chunk.TileKernel[info.Index]?.OnPlace(Tile, _chunk, info.Index, _chunk.ConvertWorld(cCoord));
       }
@@ -132,7 +137,10 @@ namespace Colin.Core.Modulars.Tiles
       {
         TileKernel _com = _chunk.TileKernel[info.Index];
         foreach (var handler in _chunk.Handler)
-          handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+        {
+          if (handler.Enable[info.Index] is not null && handler.Enable[info.Index].Value)
+            handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+        }
         OnDestructHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _com?.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());
       }

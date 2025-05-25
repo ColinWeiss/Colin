@@ -35,46 +35,55 @@ namespace Colin.Core.Modulars.Tiles
     public ConcurrentDictionary<Point, TileChunk> Chunks = new ConcurrentDictionary<Point, TileChunk>();
 
     /// <summary>
-    /// 获取指定坐标指针指向的引用; 若引用不存在, 则返回 <see cref="TileInfo.Null"/>.
-    /// <br>[!] 使用世界坐标.</br>
+    /// 指针缓存集合; 用于管理暂存的物块指针数据.
+    /// </summary>
+    public TilePointerSet PointerSet = new TilePointerSet();
+
+    /// <summary>
+    /// 获取指定坐标的物块格指针列表的末尾指针所指向的引用格; 若引用格为空, 则返回 <see cref="TileInfo.Null"/>.
     /// </summary>
     public ref TileInfo GetPointTo(Point3 wCoord)
     {
-      ref TileInfo info = ref this[wCoord];
-      if (info.IsPointer)
-        return ref this[info.GetPointTo()];
-      else
+      ref TileInfo info = ref TileInfo.Null;
+      TilePointer pointTo = PointerSet.Cache[wCoord].First();
+      info = ref this[pointTo.PointTo];
+      if (info.Empty)
         return ref TileInfo.Null;
+      else
+        return ref info;
     }
 
     /// <summary>
-    /// 根据目标坐标为指定坐标物块设置指针.
-    /// <br>[!] 使用世界坐标.</br>
+    /// 获取指定坐标的物块格的指针列表.
     /// </summary>
-    public void SetPointer(Point3 own, Point3 target)
+    public List<TilePointer> GetPointers(Point3 wCoord)
     {
-      ref TileInfo info = ref this[own];
-      info.SetPointTo(target);
+      return PointerSet.Cache[wCoord];
     }
 
     /// <summary>
-    /// 删除目标坐标物块指针.
+    /// 为指定坐标的物块格添加指针.
     /// <br>[!] 使用世界坐标.</br>
     /// </summary>
-    public void RemovePointer(Point3 wCoord)
+    public void AddPointer(Point3 own, TilePointer target)
     {
-      ref TileInfo info = ref this[wCoord];
-      info.RemovePointTo();
+      PointerSet.AddPointer(own, target);
     }
 
     /// <summary>
-    /// 检查指定坐标的物块是否为指针.
-    /// <br>[!] 使用世界坐标.</br>
+    /// 删除指定坐标的物块格内的指定指针.
     /// </summary>
-    public bool CheckPointer(Point3 wCoord)
+    public void RemovePointer(Point3 wCoord, TilePointer target)
     {
-      ref TileInfo info = ref this[wCoord];
-      return info.IsPointer;
+      PointerSet.RemovePointer(wCoord, target);
+    }
+
+    /// <summary>
+    /// 检查指定坐标的物块格是否拥有指针.
+    /// </summary>
+    public bool HasPointer(Point3 wCoord)
+    {
+      return PointerSet.Cache.ContainsKey(wCoord) && PointerSet.Cache[wCoord].Count > 0;
     }
 
     public void DoInitialize() { }
@@ -151,7 +160,7 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public ref TileInfo this[Point3 coord] => ref this[coord.X, coord.Y, coord.Z];
 
-    public TileKernel GetTileComport(int x, int y, int z, bool includeLoadingChunk = false)
+    public TileKernel GetHandler(int x, int y, int z, bool includeLoadingChunk = false)
     {
       int indexX = x >= 0 ? x % Context.ChunkWidth : ((x + 1) % Context.ChunkWidth) + (Context.ChunkWidth - 1);
       int indexY = y >= 0 ? y % Context.ChunkHeight : ((y + 1) % Context.ChunkHeight) + (Context.ChunkHeight - 1);
@@ -162,10 +171,10 @@ namespace Colin.Core.Modulars.Tiles
         return null;
     }
 
-    public TileKernel GetTileComport(Point3 coord)
-      => GetTileComport(coord.X, coord.Y, coord.Z);
+    public TileKernel GetHandler(Point3 coord)
+      => GetHandler(coord.X, coord.Y, coord.Z);
 
-    public T GetChunkComport<T>(ref TileInfo info) where T : TileHandler
+    public T GetHandler<T>(ref TileInfo info) where T : TileHandler
     {
       return GetChunk(ref info).GetHandler<T>();
     }
@@ -352,7 +361,6 @@ namespace Colin.Core.Modulars.Tiles
 
     public void SaveStep(BinaryWriter writer)
     {
-
     }
   }
 }

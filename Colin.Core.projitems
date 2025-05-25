@@ -56,6 +56,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePointer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePointerSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRelative.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\DivList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />

@@ -102,6 +102,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       handler.Tile = Tile;
       handler.Chunk = this;
+      handler.Enable = new bool?[handler.Length];
       int id = TileHandler.HandlerIDHelper<T>.HandlerID;
       if (id >= Handler.Count)
         Handler.AddRange(Enumerable.Repeat<TileHandler>(null, id - Handler.Count + 1));
@@ -114,37 +115,6 @@ namespace Colin.Core.Modulars.Tiles
     public T GetHandler<T>() where T : TileHandler
     {
       return Handler[TileHandler.HandlerIDHelper<T>.HandlerID] as T;
-    }
-
-    /// <summary>
-    /// 根据目标坐标为指定坐标物块设置指针.
-    /// <br>[!] own 使用内部坐标.</br>
-    /// <br>[!] target 使用世界坐标.</br>
-    /// </summary>
-    public void SetPointer(Point3 own, Point3 tar)
-    {
-      ref TileInfo info = ref this[own];
-      info.SetPointTo(tar);
-    }
-
-    /// <summary>
-    /// 删除目标坐标物块指针.
-    /// <br>[!] 使用内部坐标.</br>
-    /// </summary>
-    public void RemovePointer(Point3 iCoord)
-    {
-      ref TileInfo info = ref this[iCoord];
-      info.RemovePointTo();
-    }
-
-    /// <summary>
-    /// 检查指定坐标的物块是否为指针.
-    /// <br>[!] 使用内部坐标.</br>
-    /// </summary>
-    public bool CheckPointer(Point3 iCoord)
-    {
-      ref TileInfo info = ref this[iCoord];
-      return info.IsPointer;
     }
 
     /// <summary>
@@ -307,6 +277,14 @@ namespace Colin.Core.Modulars.Tiles
     public bool Place(TileKernel kernel, int x, int y, int z, bool doEvent = true, int? doRefresh = 1)
     {
       Point3 wCoord = ConvertWorld(new Point3(x, y, z));
+      bool result = true;
+      foreach (var handler in Handler)
+      {
+        if (result)
+          result = handler.CanPlaceMark(GetIndex(x, y, z), wCoord);
+        else
+          return result;
+      }
       if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), wCoord))
       {
         Builder.MarkPlace(wCoord, kernel, doEvent, doRefresh);
@@ -338,7 +316,7 @@ namespace Colin.Core.Modulars.Tiles
       if (info.IsNull)
         return;
       TileKernel comport = TileKernel[GetIndex(x, y, z)];
-      if (Tile.CheckPointer(info.GetWCoord3()))
+      if (Tile.HasPointer(info.GetWCoord3()))
       {
         info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
@@ -537,7 +515,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       else
       {
-        var tarCom = Tile.GetTileComport(tarCoord);
+        var tarCom = Tile.GetHandler(tarCoord);
         if (ownCom is null || tarCom is null)
           return false;
         else

@@ -60,12 +60,18 @@ namespace Colin.Core.Modulars.Tiles
         Debug.Assert(_com is not null);
       if (_com is null)
         return;
-      foreach (var script in chunk.Handler)
-        script.OnRefreshHandle(this, index, wCoord);
+      foreach (var handler in chunk.Handler)
+      {
+        handler.OnRefreshHandle(this, index, wCoord);
+        if (info.Empty)
+          handler.Enable[info.Index] = false;
+      }
       OnRefresh?.Invoke(wCoord);
       _com.OnRefresh(Tile, chunk, index, wCoord);
       if (info.Empty)
+      {
         chunk.TileKernel[index] = null;
+      }
     }
 
     public void DoRefresh(Point3 wCoord, int radius = 0) //立刻刷新方法
