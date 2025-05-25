@@ -187,12 +187,17 @@ namespace Colin.Core.Modulars.Ecses
         {
           hashValue = reader.ReadInt32();
           typeName = CodeResources<Entity>.GetTypeNameFromHash(hashValue);
-          Entities[i] = CodeResources<Entity>.GetFromTypeName(typeName);
-          Entities[i].NeedSaveAndLoad = true;
-          Entities[i].Ecs = this;
-          Entities[i].ID = i;
-          Entities[i].DoInitialize();
-          Entities[i].LoadStep(reader);
+          if (Entities[i] is null)
+          {
+            Entities[i] = CodeResources<Entity>.GetFromTypeName(typeName);
+            Entities[i].NeedSaveAndLoad = true;
+            Entities[i].Ecs = this;
+            Entities[i].ID = i;
+            Entities[i].DoInitialize();
+            Entities[i].LoadStep(reader);
+          }
+          else
+            Entities[i].LoadStep(reader);
         }
       }
     }
