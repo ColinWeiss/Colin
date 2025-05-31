@@ -209,7 +209,7 @@ namespace Colin.Core.Modulars.Ecses
       for (int i = 0; i < Entities.Length; i++)
       {
         entity = Entities[i];
-        if (entity is null)
+        if (entity is null || entity.NeedSaveAndLoad is false)
         {
           writer.Write(false);
           continue;
