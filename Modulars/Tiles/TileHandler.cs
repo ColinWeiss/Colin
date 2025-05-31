@@ -27,7 +27,7 @@ namespace Colin.Core.Modulars.Tiles
     /// 在指定索引的物块格中启用该Handler.
     /// <br>需要在初始化时确定该值.</br>
     /// </summary>
-    public bool?[] Enable;
+    public bool[] Enable;
 
     public virtual bool EnableInitValue => false;
 

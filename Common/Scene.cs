@@ -1,5 +1,6 @@
 ﻿using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
+using Colin.Core.Modulars;
 
 namespace Colin.Core.Common
 {
@@ -17,6 +18,11 @@ namespace Colin.Core.Common
     /// 获取场景模块列表.
     /// </summary>
     public SceneModuleList Modules => _components;
+
+    /// <summary>
+    /// 若为场景添加了 <see cref="Business"/> 模块, 则可通过该属性获取该模块引用.
+    /// </summary>
+    public Business Business => Modules.GetModule<Business>();
 
     /// <summary>
     /// 指示场景在切换时是否执行初始化的值.

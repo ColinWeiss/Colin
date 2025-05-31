@@ -73,7 +73,7 @@ namespace Colin.Core.Modulars.Tiles
     public Tile Tile => _tile ??= Scene.GetModule<Tile>();
 
     private TileRefresher _refresher;
-    public TileRefresher Refresher => _refresher ??= Scene.GetModule<Business>().Get<TileRefresher>();
+    public TileRefresher Refresher => _refresher ??= Scene.Business.Get<TileRefresher>();
 
     public event EventHandler<TileBuildArgs> OnPlaceHandle;
 
@@ -110,9 +110,7 @@ namespace Colin.Core.Modulars.Tiles
       {
         foreach (var handler in _chunk.Handler)
         {
-          if(handler.Enable[info.Index] is null)
-            handler.Enable[info.Index] = handler.EnableInitValue;
-          if (handler.Enable[info.Index].Value)
+          if (handler.Enable[info.Index])
             handler.OnPlaceHandle(this, info.Index, _chunk.ConvertWorld(cCoord));
         }
         OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
@@ -138,8 +136,7 @@ namespace Colin.Core.Modulars.Tiles
         TileKernel _com = _chunk.TileKernel[info.Index];
         foreach (var handler in _chunk.Handler)
         {
-          if (handler.Enable[info.Index] is not null && handler.Enable[info.Index].Value)
-            handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+          handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
         }
         OnDestructHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _com?.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());

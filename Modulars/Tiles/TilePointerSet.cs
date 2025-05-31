@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.PerformanceData;
+using System.Reflection;
 using System.Text;
 
 namespace Colin.Core.Modulars.Tiles
@@ -78,6 +79,17 @@ namespace Colin.Core.Modulars.Tiles
     public bool HasPointer(Point3 wCoord, TilePointer pointer)
     {
       return Cache[wCoord].Contains(pointer);
+    }
+
+    /// <summary>
+    /// 判断指定格中是否存在指针.
+    /// </summary>
+    public bool HasPointer(Point3 wCoord)
+    {
+      if (Cache.ContainsKey(wCoord))
+        return Cache[wCoord]?.Count > 0;
+      else
+        return false;
     }
   }
 }

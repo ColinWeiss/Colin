@@ -102,7 +102,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       handler.Tile = Tile;
       handler.Chunk = this;
-      handler.Enable = new bool?[handler.Length];
+      handler.Enable = new bool[handler.Length];
       int id = TileHandler.HandlerIDHelper<T>.HandlerID;
       if (id >= Handler.Count)
         Handler.AddRange(Enumerable.Repeat<TileHandler>(null, id - Handler.Count + 1));
@@ -179,8 +179,8 @@ namespace Colin.Core.Modulars.Tiles
     public TileChunk(Tile tile, Point coord)
     {
       Tile = tile;
-      Builder = tile.Scene.GetModule<Business>().Get<TileBuilder>();
-      Refresher = tile.Scene.GetModule<Business>().Get<TileRefresher>();
+      Builder = tile.Scene.Business.Get<TileBuilder>();
+      Refresher = tile.Scene.Business.Get<TileRefresher>();
       Depth = tile.Context.Depth;
       _coordX = coord.X;
       _coordY = coord.Y;
