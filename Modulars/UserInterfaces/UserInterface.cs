@@ -98,7 +98,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public void Remove(DivRoot container, bool dispose) => Container?.Remove(container);
 
-    public void SetContainer(DivRoot root)
+    public void SetRoot(DivRoot root)
     {
       root._module = this;
       _contianer = root;

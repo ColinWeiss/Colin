@@ -13,14 +13,14 @@ namespace Colin.Core.Modulars.UserInterfaces
       Interact.IsSelectable = false;
       Layout.Width = CoreInfo.ViewWidth;
       Layout.Height = CoreInfo.ViewHeight;
-      ContainerInitialize();
+      RootInitialize();
       base.DivInit();
     }
 
     /// <summary>
     /// 在此处进行容器初始化操作.
     /// </summary>
-    public virtual void ContainerInitialize() { }
+    public virtual void RootInitialize() { }
     public void SetTop(Div division)
     {
       Remove(division);
