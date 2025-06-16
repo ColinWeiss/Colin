@@ -84,11 +84,8 @@ namespace Colin.Core.Modulars.Ecses
     private EcsComTransform _comTransform;
     public EcsComTransform Transform => _comTransform;
 
-    private EcsComAdvancedRender _comAdvancedRender;
-    public EcsComAdvancedRender ComAdvancedRender => _comAdvancedRender;
-
-    private EcsComDeferredRender _comDeferredRender;
-    public EcsComDeferredRender ComDeferredRender => _comDeferredRender;
+    private EcsComRenderData _renderData;
+    public EcsComRenderData RenderData => _renderData ??= GetCom<EcsComRenderData>();
 
     public void SetSize(Vector2 size) => _comTransform.SetSize(size);
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);

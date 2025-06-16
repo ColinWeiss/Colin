@@ -101,10 +101,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComAdvancedRender.cs" />
+    <Compile Include="..\Colin\Modulars\Ecses\Components\EcsComRenderData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComBasic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComControlCore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDeferredRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDoc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComInteract.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\IEcsComIO.cs" />
