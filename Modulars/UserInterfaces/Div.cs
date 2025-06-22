@@ -440,6 +440,9 @@ namespace Colin.Core.Modulars.UserInterfaces
         return Layout.Bounds.Contains(point);
     }
 
+    public bool ContainsScreenPoint(Vector2 pos)
+      => ContainsScreenPoint(pos.ToPoint());
+
     public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
 
     private bool disposedValue;
