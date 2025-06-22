@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Events;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -221,11 +222,21 @@ namespace Colin.Core.Modulars.UserInterfaces
       Controller?.Layout(ref Layout);
       Controller?.Interact(ref Interact);
       Controller?.Design(ref Design);
+      LayoutCalculate(ref Layout);
+      InteractCalculate(ref Interact);
+      DesignCalculate(ref Design);
       DivLayout.Calculate(this);
       Events.DoUpdate();
       OnUpdate(time);
       UpdateChildren(time);
     }
+
+    public virtual void LayoutCalculate(ref DivLayout layout) { }
+
+    public virtual void InteractCalculate(ref InteractStyle interact) { }
+
+    public virtual void DesignCalculate(ref DivDesign design) { }
+
     /// <summary>
     /// 发生于 <see cref="DoUpdate(GameTime)"/> 第一帧执行时.
     /// </summary>
@@ -281,6 +292,14 @@ namespace Colin.Core.Modulars.UserInterfaces
 
       renderer?.DoRender(device, batch);//渲染器进行渲染.
 
+      batch.End();
+      OnRender(device, batch);
+      CoreInfo.Batch.Begin(
+        SpriteSortMode.Deferred,
+        BlendState.AlphaBlend,
+        SamplerState.PointClamp,
+        transformMatrix: Module.UICamera.View);
+
       Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
 
       if (Layout.ScissorEnable)
@@ -310,6 +329,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, root.Layout.ScissorEnable ? root.ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
       }
+    }
+
+    public virtual void OnRender(GraphicsDevice device, SpriteBatch batch)
+    {
+
     }
 
     /// <summary>
@@ -415,6 +439,8 @@ namespace Colin.Core.Modulars.UserInterfaces
       else
         return Layout.Bounds.Contains(point);
     }
+
+    public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
 
     private bool disposedValue;
     protected virtual void Dispose(bool disposing)

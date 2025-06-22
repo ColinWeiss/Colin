@@ -266,6 +266,10 @@ namespace Colin.Core
       else
         return null;
     }
+    public static Effect GetEffect(params string[] path)
+    {
+      return GetEffect(Path.Combine(path));
+    }
 
     public static ComputeShader GetComputeShader(string path)
     {
