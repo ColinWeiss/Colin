@@ -298,7 +298,10 @@ namespace Colin.Core
       else
         return null;
     }
-
+    public static SoundEffect GetSoundEffect(params string[] path)
+    {
+      return GetSoundEffect(Path.Combine(path));
+    }
     public static CsvFile GetCsv(string path)
     {
       path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
