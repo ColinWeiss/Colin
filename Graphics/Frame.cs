@@ -50,7 +50,7 @@
     public int Current;
 
     /// <summary>
-    /// 帧上限.
+    /// 帧上限; 下标从 0 开始.
     /// </summary>
     public int FrameMax;
 

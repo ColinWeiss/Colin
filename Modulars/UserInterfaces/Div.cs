@@ -298,6 +298,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         SpriteSortMode.Deferred,
         BlendState.AlphaBlend,
         SamplerState.PointClamp,
+        null,
+        ScissiorRasterizer,
         transformMatrix: Module.UICamera.View);
 
       Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
