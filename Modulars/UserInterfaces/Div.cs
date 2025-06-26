@@ -447,6 +447,8 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
 
+    public Vector2 RelativeMousePos => MousePos - Layout.ScreenLocation;
+
     private bool disposedValue;
     protected virtual void Dispose(bool disposing)
     {
