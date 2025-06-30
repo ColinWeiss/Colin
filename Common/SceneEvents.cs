@@ -28,6 +28,7 @@ namespace Colin.Core.Common
     }
     public void DoUpdate(GameTime time)
     {
+      Mouse.MouseHover?.TriggerCapture(GetMouseArgs<MouseHoverArgs>());
       if (MouseResponder.LeftClicked)
         Mouse.LeftClicked?.TriggerCapture(GetMouseArgs<LeftClickedArgs>());
       if (MouseResponder.LeftClicking)

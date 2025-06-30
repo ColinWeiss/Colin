@@ -3,7 +3,7 @@
   /// <summary>
   /// 鼠标事件参数.
   /// </summary>
-  public class MouseArgs : IEventBase
+  public record MouseArgs : IEventBase
   {
     public object Sender { get; set; }
     public bool IsCapture { get; set; }
@@ -21,59 +21,61 @@
     public int Wheel;
   }
 
+  public record MouseHoverArgs : MouseArgs;
+
   /// <summary>
   /// 鼠标左键单击前事件参数.
   /// </summary>
-  public class LeftClickingArgs : MouseArgs;
+  public record LeftClickingArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标左键长按事件参数.
   /// </summary>
-  public class LeftDownArgs : MouseArgs;
+  public record LeftDownArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标左键单击后事件参数.
   /// </summary>
-  public class LeftClickedArgs : MouseArgs;
+  public record LeftClickedArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标左键松开事件参数.
   /// </summary>
-  public class LeftUpArgs : MouseArgs;
+  public record LeftUpArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标右键单击前事件参数.
   /// </summary>
-  public class RightClickingArgs : MouseArgs;
+  public record RightClickingArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标右键长按事件参数.
   /// </summary>
-  public class RightDownArgs : MouseArgs;
+  public record RightDownArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标右键单击后事件参数.
   /// </summary>
-  public class RightClickedArgs : MouseArgs;
+  public record RightClickedArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标右键松开事件参数.
   /// </summary>
-  public class RightUpArgs : MouseArgs;
+  public record RightUpArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标滚轮上划事件参数.
   /// </summary>
-  public class ScrollUpArgs : MouseArgs;
+  public record ScrollUpArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标滚轮下划事件参数.
   /// </summary>
-  public class ScrollDownArgs : MouseArgs;
+  public record ScrollDownArgs : MouseArgs;
 
   /// <summary>
   /// 鼠标滚轮点击事件参数.
   /// </summary>
-  public class ScrollClickedArgs : MouseArgs;
+  public record ScrollClickedArgs : MouseArgs;
 
 }

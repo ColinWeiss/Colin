@@ -1,12 +1,14 @@
 ﻿using Colin.Core.Events;
+using System;
 
 namespace Colin.Core.Modulars.UserInterfaces.Events
 {
   public class DivEvents
   {
     public Div Div { get; }
-    public DivEventNode<LeftClickedArgs> LeftClicked;
+    public DivEventNode<MouseHoverArgs> MouseHover;
 
+    public DivEventNode<LeftClickedArgs> LeftClicked;
     public DivEventNode<LeftClickingArgs> LeftClicking;
     public DivEventNode<LeftDownArgs> LeftDown;
     public DivEventNode<LeftUpArgs> LeftUp;
@@ -24,6 +26,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public DivEvents(Div div) : base()
     {
       Div = div;
+      MouseHover = new DivEventNode<MouseHoverArgs>();
+      MouseHover.Div = div;
       LeftClicked = new DivEventNode<LeftClickedArgs>();
       LeftClicked.Div = div;
       LeftClicking = new DivEventNode<LeftClickingArgs>();
@@ -69,6 +73,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     private Vector2 _cachePos = new Vector2(-1, -1);
     public void DoBlockOut()
     {
+      MouseHover += MouseBlockOutEvent;
       LeftClicking += MouseBlockOutEvent;
       LeftClicking += (object s, LeftClickingArgs e) =>
       {
@@ -175,6 +180,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Append(DivEvents node)
     {
+      MouseHover.Append(node.MouseHover);
       LeftClicked.Append(node.LeftClicked);
       LeftClicking.Append(node.LeftClicking);
       LeftDown.Append(node.LeftDown);
@@ -192,6 +198,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Insert(int index, DivEvents node)
     {
+      MouseHover.Insert(index,node.MouseHover);
       LeftClicked.Insert(index, node.LeftClicked);
       LeftClicking.Insert(index, node.LeftClicking);
       LeftDown.Insert(index, node.LeftDown);
@@ -207,6 +214,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Register(DivEvents node)
     {
+      MouseHover.Register(node.MouseHover);
       LeftClicked.Register(node.LeftClicked);
       LeftClicking.Register(node.LeftClicking);
       LeftDown.Register(node.LeftDown);
@@ -224,6 +232,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Remove(DivEvents node)
     {
+      MouseHover.Register(node.MouseHover);
       LeftClicked.Remove(node.LeftClicked);
       LeftClicking.Remove(node.LeftClicking);
       LeftDown.Remove(node.LeftDown);

@@ -104,6 +104,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       _contianer = root;
       root.DoInitialize();
 
+      Scene.Events.Mouse.MouseHover.Register(root.Events.MouseHover);
       Scene.Events.Mouse.LeftClicked.Register(root.Events.LeftClicked);
       Scene.Events.Mouse.LeftClicking.Register(root.Events.LeftClicking);
       Scene.Events.Mouse.LeftDown.Register(root.Events.LeftDown);

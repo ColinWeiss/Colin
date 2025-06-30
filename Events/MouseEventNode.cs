@@ -1,10 +1,13 @@
-﻿namespace Colin.Core.Events
+﻿using System;
+
+namespace Colin.Core.Events
 {
   /// <summary>
   /// 鼠标事件的 EventNode 封装.
   /// </summary>
   public class MouseEventNode : Node<MouseEventNode>
   {
+    public EventNode<MouseHoverArgs> MouseHover;
     public EventNode<LeftClickedArgs> LeftClicked;
     public EventNode<LeftClickingArgs> LeftClicking;
     public EventNode<LeftDownArgs> LeftDown;
@@ -19,6 +22,7 @@
     
     public MouseEventNode() : base()
     {
+      MouseHover = new();
       LeftClicked = new();
       LeftClicking = new();
       LeftDown = new();
@@ -34,6 +38,7 @@
 
     public void Append(MouseEventNode node)
     {
+      MouseHover.Append(node.MouseHover);
       LeftClicked.Append(node.LeftClicked);
       LeftClicking.Append(node.LeftClicking);
       LeftDown.Append(node.LeftDown);
@@ -49,6 +54,7 @@
 
     public void Insert(int index, MouseEventNode node)
     {
+      MouseHover.Insert(index, node.MouseHover);
       LeftClicked.Insert(index, node.LeftClicked);
       LeftClicking.Insert(index, node.LeftClicking);
       LeftDown.Insert(index, node.LeftDown);
@@ -64,6 +70,7 @@
 
     public void Register(MouseEventNode node)
     {
+      MouseHover.Register(node.MouseHover);
       LeftClicked.Register(node.LeftClicked);
       LeftClicking.Register(node.LeftClicking);
       LeftDown.Register(node.LeftDown);
@@ -79,6 +86,7 @@
 
     public void Remove(MouseEventNode node)
     {
+      MouseHover.Remove(node.MouseHover);
       LeftClicked.Remove(node.LeftClicked);
       LeftClicking.Remove(node.LeftClicking);
       LeftDown.Remove(node.LeftDown);
