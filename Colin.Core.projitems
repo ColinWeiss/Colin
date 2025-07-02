@@ -50,7 +50,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Models\GlbModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLoopStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\Business.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\BusinessLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\IBusinessCase.cs" />
@@ -163,9 +162,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Line.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\Background.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundLayer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Backgrounds\BackgroundStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Networks\DataPackageTransfer.cs" />

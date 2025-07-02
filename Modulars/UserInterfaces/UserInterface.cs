@@ -21,6 +21,8 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public Camera UICamera;
 
+    public List<Div> Removes = new List<Div>();
+
     public override void DoInitialize()
     {
       UICamera = new Camera();

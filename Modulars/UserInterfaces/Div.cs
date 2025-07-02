@@ -388,10 +388,15 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       div.parent = null;
       div.root = null;
-      div._module = null;
       Events.Remove(div.Events);
       return Children.Remove(div);
     }
+
+    public void MarkRemove(Div div)
+    {
+      Module.Removes.Add(div);
+    }
+
 
     /// <summary>
     /// 移除所有子元素.
@@ -404,7 +409,10 @@ namespace Colin.Core.Modulars.UserInterfaces
         _div = Children[count];
         Remove(_div);
         if (dispose)
+        {
+          _div._module = null;
           _div.Dispose();
+        }
         count--;
       }
       //Clear();

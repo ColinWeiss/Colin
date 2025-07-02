@@ -11,7 +11,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         return false;
       if (typeof(T).IsSubclassOf(typeof(MouseArgs)))
       {
-        Point mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position).ToPoint();
+        Point mousePos = Point.Zero;
+        if (Div.Module is not null && Div is not null)
+        {
+          mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position).ToPoint();
+        }
         return Div.ContainsScreenPoint(mousePos);
       }
       else if (typeof(T).IsSubclassOf(typeof(KeysArgs)))
