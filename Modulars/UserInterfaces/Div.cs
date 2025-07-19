@@ -1,5 +1,7 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Events;
+using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -289,7 +291,6 @@ namespace Colin.Core.Modulars.UserInterfaces
         batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null);
         device.Clear(Color.Transparent);
       }
-
       renderer?.DoRender(device, batch);//渲染器进行渲染.
 
       batch.End();
@@ -397,7 +398,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       Module.Removes.Add(div);
     }
 
-
     /// <summary>
     /// 移除所有子元素.
     /// </summary>
@@ -453,9 +453,12 @@ namespace Colin.Core.Modulars.UserInterfaces
     public bool ContainsScreenPoint(Vector2 pos)
       => ContainsScreenPoint(pos.ToPoint());
 
-    public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
+    public Vector2 MousePos
+      => Module.UICamera.ConvertToWorld(MouseResponder.Position) / CoreInfo.ScreenSizeF * CoreInfo.ViewSizeF;
 
     public Vector2 RelativeMousePos => MousePos - Layout.ScreenLocation;
+
+    public Vector2 RelativeRenderMousePos => MousePos - Layout.RenderTargetLocation;
 
     private bool disposedValue;
     protected virtual void Dispose(bool disposing)

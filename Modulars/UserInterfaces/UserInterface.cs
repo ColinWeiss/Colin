@@ -55,7 +55,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (KeyboardResponder.IsKeyClickBefore(Keys.F12))
         UICamera.TargetPosition = CoreInfo.ViewCenter;
 
-      /*
+      
       if (KeyboardResponder.IsKeyClickBefore(Keys.F8))
         UICamera.TargetZoom = Vector2.One * 0.5f;
       if (KeyboardResponder.IsKeyClickBefore(Keys.F9))
@@ -65,8 +65,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.TargetRotation = 3.14f;
       if (KeyboardResponder.IsKeyClickBefore(Keys.F7))
         UICamera.TargetRotation = 0f;
-      */
-
+      
       UICamera.DoUpdate(time);
       Container?.DoUpdate(time);
     }
