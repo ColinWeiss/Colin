@@ -84,13 +84,15 @@ namespace Colin.Core.Modulars.UserInterfaces
       using (DebugProfiler.Tag("UI"))
       {
         device.Clear(Color.Transparent);
-        CoreInfo.Batch.Begin(
-          SpriteSortMode.Deferred,
-          BlendState.AlphaBlend,
-          SamplerState.PointClamp,
-          transformMatrix: UICamera.View);
+    //      CoreInfo.Batch.Begin(
+    //        SpriteSortMode.Deferred,
+    //        BlendState.AlphaBlend,
+    //        SamplerState.PointClamp,
+    //        transformMatrix: UICamera.View);
+    //      Container?.DoRender(device, batch);
+    //      batch.End();
+
         Container?.DoRender(device, batch);
-        batch.End();
       }
     }
     public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
