@@ -204,6 +204,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Libs\MGFXC\" />
     <Folder Include="$(MSBuildThisFileDirectory)Mathematical\" />
   </ItemGroup>
 </Project>

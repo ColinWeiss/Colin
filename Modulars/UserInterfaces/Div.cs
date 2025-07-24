@@ -296,6 +296,18 @@ namespace Colin.Core.Modulars.UserInterfaces
       ScissorTestEnable = true,
     };
 
+    public void BeginRender(GraphicsDevice device, SpriteBatch batch)
+    {
+      if (UpperScissor is not null)
+      {
+        UpperScissor.Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
+        device.ScissorRectangle = UpperScissor.Layout.ScissorRectangle;
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, UpperScissor.ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
+      }
+      else
+        Module.BatchNormalBegin(this);
+    }
+
     /// <summary>
     /// 执行划分元素的渲染.
     /// </summary>
@@ -309,14 +321,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         device.SetRenderTarget(Canvas);
         device.Clear(Color.Transparent);
       }
-      if (UpperScissor is not null)
-      {
-        UpperScissor.Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
-        device.ScissorRectangle = UpperScissor.Layout.ScissorRectangle;
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, UpperScissor.ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
-      }
-      else
-        Module.BatchNormalBegin(this);
+      BeginRender(device, batch);
+      OnRender(device, batch);
       renderer?.DoRender(device, batch);//渲染器进行渲染.
       batch.End();
       if (UpperScissor is not null)
@@ -332,6 +338,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
         batch.End();
       }
+    }
+
+    public virtual void OnRender(GraphicsDevice device, SpriteBatch batch)
+    {
+
     }
 
     /// <summary>
