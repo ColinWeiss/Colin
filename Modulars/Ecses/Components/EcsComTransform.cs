@@ -5,7 +5,6 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// <summary>
   /// [默认组件]
   /// <br>提供关于位置/速度/旋转/缩放的字段.</br>
-  /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
   public class EcsComTransform : Transform2D, IEcsComIO
   {
