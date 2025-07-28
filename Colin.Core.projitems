@@ -32,7 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\TextureAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\GameSoundEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
@@ -61,7 +60,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\DivList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="..\Colin\Events\MouseEventNode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\CsvFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileCheck\FileToMD5.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />

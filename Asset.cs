@@ -68,7 +68,6 @@ namespace Colin.Core
     private static Dictionary<string, ComputeShader> _computeShaders = new Dictionary<string, ComputeShader>();
     private static Dictionary<string, SoundEffect> _soundEffects = new Dictionary<string, SoundEffect>();
     private static Dictionary<string, Song> _songs = new Dictionary<string, Song>();
-    private static Dictionary<string, CsvFile> _tables = new Dictionary<string, CsvFile>();
 
     public static void LoadAssets()
     {
@@ -77,7 +76,6 @@ namespace Colin.Core
       LoadEffects();
       LoadComputeShaders();
       LoadSoundEffects();
-      LoadCsvFiles();
     }
     public static void LoadTextures()
     {
@@ -224,26 +222,6 @@ namespace Colin.Core
         _soundEffects.Add(fileName, target);
       }
     }
-    public static void LoadCsvFiles()
-    {
-      if (Directory.Exists(TableDir) is false)
-      {
-        Console.WriteLine("Error", "未检查到配表文件夹.");
-        return;
-      }
-      else
-        Console.WriteLine("正在加载配表资源.");
-      string[] fileFullName = Directory.GetFiles(TableDir, "*.csv*", SearchOption.AllDirectories);
-      string fileName;
-      CsvFile target;
-      for (int count = 0; count < fileFullName.Length; count++)
-      {
-        fileName = fileFullName[count];
-        target = new CsvFile(fileName);
-        fileName = OrganizePath(fileName);
-        _tables.Add(fileName, target);
-      }
-    }
 
     public static Texture2D GetTexture(string path)
     {
@@ -301,15 +279,6 @@ namespace Colin.Core
     public static SoundEffect GetSoundEffect(params string[] path)
     {
       return GetSoundEffect(Path.Combine(path));
-    }
-    public static CsvFile GetCsv(string path)
-    {
-      path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
-      if (_tables.TryGetValue(path, out CsvFile result))
-        return result;
-      else
-        return null;
-
     }
 
     private static string OrganizePath(string path)

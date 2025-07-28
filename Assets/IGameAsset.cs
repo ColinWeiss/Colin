@@ -1,12 +1,12 @@
 ﻿namespace Colin.Core.Assets
 {
   /// <summary>
-  /// 标识游戏资源.
+  /// 标识游戏资产.
   /// </summary>
   public interface IGameAsset
   {
     /// <summary>
-    /// 指示该游戏资源对象类型的名称.
+    /// 指示该游戏资产对象类型的名称.
     /// </summary>
     public string Name { get; }
 
