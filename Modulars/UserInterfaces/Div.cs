@@ -305,7 +305,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, UpperScissor.ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
       }
       else
-        Module.BatchNormalBegin(this);
+        Module.BatchNormalBegin(this, blendState);
     }
 
     /// <summary>

@@ -70,11 +70,11 @@ namespace Colin.Core.Modulars.UserInterfaces
       Container?.DoUpdate(time);
     }
 
-    public void BatchNormalBegin(Div div)
+    public void BatchNormalBegin(Div div, BlendState blendState)
     {
       CoreInfo.Batch.Begin(
         SpriteSortMode.Deferred,
-        BlendState.AlphaBlend,
+        blendState,
         SamplerState.PointClamp,
         transformMatrix: div.UpperCanvas is not null ? null : UICamera.View);
     }
