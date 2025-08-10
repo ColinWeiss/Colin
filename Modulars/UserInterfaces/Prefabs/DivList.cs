@@ -22,6 +22,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       base.Register(List);
       base.DivInit();
     }
+    public override void LayoutCalculate(ref DivLayout layout)
+    {
+      base.LayoutCalculate(ref layout);
+    }
     public void GetSlider(Slider slider)
     {
       slider.Bind(List, this);
