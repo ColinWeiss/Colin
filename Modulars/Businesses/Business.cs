@@ -1,10 +1,4 @@
 ﻿using Colin.Core.Modulars.Tiles;
-using DeltaMachine.Core.Common.GameSystems;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Colin.Core.Modulars
 {

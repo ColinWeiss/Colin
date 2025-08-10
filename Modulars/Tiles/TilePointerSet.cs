@@ -1,11 +1,4 @@
-﻿using Colin.Core.IO;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using System.Reflection;
-using System.Text;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 物块指针集合.

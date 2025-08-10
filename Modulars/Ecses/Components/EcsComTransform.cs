@@ -1,6 +1,4 @@
-﻿using Colin.Core.Modulars.Ecses.Systems;
-
-namespace Colin.Core.Modulars.Ecses.Components
+﻿namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
   /// [默认组件]

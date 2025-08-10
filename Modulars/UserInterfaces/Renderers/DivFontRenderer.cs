@@ -1,7 +1,6 @@
 ﻿using FontStashSharp;
 using FontStashSharp.Interfaces;
 using FontStashSharp.RichText;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {

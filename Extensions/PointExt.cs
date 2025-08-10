@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Extensions
+﻿namespace Colin.Core.Extensions
 {
   public static class PointExt
   {
@@ -11,7 +7,7 @@ namespace Colin.Core.Extensions
       point.X = reader.ReadInt32();
       point.Y = reader.ReadInt32();
     }
-    public static void SaveStep(this  Point point, BinaryWriter writer)
+    public static void SaveStep(this Point point, BinaryWriter writer)
     {
       writer.Write(point.X);
       writer.Write(point.Y);

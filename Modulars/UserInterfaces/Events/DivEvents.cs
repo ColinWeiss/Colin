@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using System;
 
 namespace Colin.Core.Modulars.UserInterfaces.Events
 {
@@ -198,7 +197,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Insert(int index, DivEvents node)
     {
-      MouseHover.Insert(index,node.MouseHover);
+      MouseHover.Insert(index, node.MouseHover);
       LeftClicked.Insert(index, node.LeftClicked);
       LeftClicking.Insert(index, node.LeftClicking);
       LeftDown.Insert(index, node.LeftDown);

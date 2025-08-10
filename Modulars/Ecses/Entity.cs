@@ -1,8 +1,5 @@
-﻿using Colin.Core.IO;
-using Colin.Core.Modulars.Ecses.Components;
+﻿using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
-using DeltaMachine.Core;
-using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Ecses
 {

@@ -1,7 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Events;
-using Colin.Core.Modulars.UserInterfaces.Prefabs;
-using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -139,18 +136,38 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       get
       {
-        if (parent is null)
+        if (parent is null || IsCanvas)
           return null;
         if (upperScissor is null)
         {
           Div result;
-          if (Parent.Layout.ScissorEnable)
+          if (Parent.Layout.ScissorEnable && !Parent.IsCanvas)
             result = Parent;
           else
             result = Parent.UpperScissor;
           upperScissor = result;
         }
         return upperScissor;
+      }
+    }
+
+    /// <summary>
+    /// 计算后的剪裁矩形; 当前剪裁矩形.
+    /// </summary>
+    public Rectangle ScissorBounds;
+    public void CalculateScissorBounds()
+    {
+      if (UpperScissor == null || UpperScissor == this)
+      {
+        ScissorBounds = Layout.ScissorRectangle;
+      }
+      else
+      {
+        var parentBounds = UpperScissor.ScissorBounds;
+        var current = Layout.ScissorRectangle;
+        ScissorBounds = Rectangle.Intersect(parentBounds, current);
+        if (ScissorBounds.IsEmpty)
+          ScissorBounds = parentBounds;
       }
     }
 
@@ -248,6 +265,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       InteractCalculate(ref Interact);
       DesignCalculate(ref Design);
       DivLayout.Calculate(this);
+      CalculateScissorBounds();
       Events.DoUpdate();
       OnUpdate(time);
       UpdateChildren(time);
@@ -301,7 +319,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (UpperScissor is not null)
       {
         UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
-        CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = UpperScissor.Layout.ScissorRectangle;
+        CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
         CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, UpperScissor.ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
       }
       else

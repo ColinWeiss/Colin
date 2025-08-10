@@ -188,7 +188,7 @@
     }
     public static Vector3 ToVector3(this Vector2 vec)
     {
-      return new Vector3(vec,0);
+      return new Vector3(vec, 0);
     }
   }
 }

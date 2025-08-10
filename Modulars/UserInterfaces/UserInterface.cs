@@ -1,7 +1,4 @@
-﻿using Colin.Core.Common;
-using Colin.Core.Common.Debugs;
-using DeltaMachine.Core.Common.Entities.Projectiles;
-using System.Windows.Forms;
+﻿using Colin.Core.Common.Debugs;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -55,7 +52,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (KeyboardResponder.IsKeyClickBefore(Keys.F12))
         UICamera.TargetPosition = CoreInfo.ViewCenter;
 
-      
+
       if (KeyboardResponder.IsKeyClickBefore(Keys.F8))
         UICamera.TargetZoom = Vector2.One * 0.5f;
       if (KeyboardResponder.IsKeyClickBefore(Keys.F9))
@@ -65,7 +62,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.TargetRotation = 3.14f;
       if (KeyboardResponder.IsKeyClickBefore(Keys.F7))
         UICamera.TargetRotation = 0f;
-      
+
       UICamera.DoUpdate(time);
       Container?.DoUpdate(time);
     }
@@ -84,13 +81,13 @@ namespace Colin.Core.Modulars.UserInterfaces
       using (DebugProfiler.Tag("UI"))
       {
         device.Clear(Color.Transparent);
-    //      CoreInfo.Batch.Begin(
-    //        SpriteSortMode.Deferred,
-    //        BlendState.AlphaBlend,
-    //        SamplerState.PointClamp,
-    //        transformMatrix: UICamera.View);
-    //      Container?.DoRender(device, batch);
-    //      batch.End();
+        //      CoreInfo.Batch.Begin(
+        //        SpriteSortMode.Deferred,
+        //        BlendState.AlphaBlend,
+        //        SamplerState.PointClamp,
+        //        transformMatrix: UICamera.View);
+        //      Container?.DoRender(device, batch);
+        //      batch.End();
 
         Container?.DoRender(device, batch);
       }

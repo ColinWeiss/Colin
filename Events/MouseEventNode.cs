@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Colin.Core.Events
+﻿namespace Colin.Core.Events
 {
   /// <summary>
   /// 鼠标事件的 EventNode 封装.
@@ -19,7 +17,7 @@ namespace Colin.Core.Events
     public EventNode<ScrollDownArgs> ScrollDown;
     public EventNode<ScrollClickedArgs> ScrollClicked;
     public EventNode<ScrollUpArgs> ScrollUp;
-    
+
     public MouseEventNode() : base()
     {
       MouseHover = new();

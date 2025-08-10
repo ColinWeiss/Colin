@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Graphics.Shaders;
-using Colin.Core.IO;
 using FontStashSharp;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;

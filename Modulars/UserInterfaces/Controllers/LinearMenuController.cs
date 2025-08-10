@@ -115,7 +115,7 @@
           division.Layout.Top = (int)Scroll.Y + division.Parent.Layout.Height - division.Layout.Height;
           break;
         case Direction.Center:
-          division.Layout.Top = (int)Scroll.Y + Div.Layout.Height / 2 - division.Layout.Height / 2;
+          division.Layout.Top = (int)Scroll.Y + TotalSize.Y / 2 - division.Layout.Height / 2;
           break;
       }
       lastDiv = division;

@@ -344,8 +344,6 @@
     /// </summary>
     public Rectangle ScissorRectangle => scissorRectangle;
 
-    private Rectangle interactiveRectangle;
-
     /// <summary>
     /// 更新计算指定划分元素的布局信息.
     /// </summary>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Modulars
+﻿namespace Colin.Core.Modulars
 {
   public interface IBusinessCase
   {

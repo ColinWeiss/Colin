@@ -1,8 +1,4 @@
-﻿using Assimp;
-using Assimp.Configs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Assimp.Configs;
 using AssimpModel = Assimp.Scene;
 
 namespace Colin.Core.Graphics.Models

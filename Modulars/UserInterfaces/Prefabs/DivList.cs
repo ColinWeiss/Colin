@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
-using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
@@ -10,20 +9,42 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       List = new Div("List");
     }
     public Div List;
+
+    public LinearMenuController Linear
+    {
+      get
+      {
+        if (List.Controller is null)
+        {
+          var linear = List.BindController<LinearMenuController>();
+          linear.AutoSetSize = true;
+          linear.DivInterval = 4;
+          return linear;
+        }
+        else
+          return List.GetController<LinearMenuController>();
+      }
+    }
+
     public override void DivInit()
     {
       Layout.ScissorEnable = true;
       Layout.ScissorWidth = (int)Layout.Width;
       Layout.ScissorHeight = (int)Layout.Height;
 
-      var linear = List.BindController<LinearMenuController>();
-      linear.AutoSetSize = true;
-      linear.DivInterval = 4;
+      if (List.Controller is null)
+      {
+        var linear = List.BindController<LinearMenuController>();
+        linear.AutoSetSize = true;
+        linear.DivInterval = 4;
+      }
       base.Register(List);
       base.DivInit();
     }
     public override void LayoutCalculate(ref DivLayout layout)
     {
+      Layout.ScissorWidth = (int)Layout.Width;
+      Layout.ScissorHeight = (int)Layout.Height;
       base.LayoutCalculate(ref layout);
     }
     public void GetSlider(Slider slider)

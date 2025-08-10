@@ -1,5 +1,4 @@
-﻿using Colin.Core.Modulars.Tiles;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
 
 namespace Colin.Core.Resources

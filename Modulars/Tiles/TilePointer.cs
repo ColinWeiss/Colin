@@ -1,9 +1,4 @@
-﻿using Colin.Core.IO;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Modulars.Tiles
+﻿namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 物块指针结构体.
@@ -39,7 +34,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public int CompareTo(TilePointer other)
     {
-      if(Sort != other.Sort)
+      if (Sort != other.Sort)
         return Sort.CompareTo(other.Sort);
       else
         return Index.CompareTo(other.Index);
