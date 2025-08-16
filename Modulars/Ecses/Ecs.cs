@@ -2,6 +2,7 @@
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Resources;
+using System.Security.Policy;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -175,48 +176,54 @@ namespace Colin.Core.Modulars.Ecses
 
     public void LoadStep(BinaryReader reader)
     {
-      string typeName;
-      int hashValue;
       for (int i = 0; i < Entities.Length; i++)
       {
-        if (reader.ReadBoolean())
-        {
-          hashValue = reader.ReadInt32();
-          typeName = CodeResources<Entity>.GetTypeNameFromHash(hashValue);
-          if (Entities[i] is null)
-          {
-            Entities[i] = CodeResources<Entity>.GetFromTypeName(typeName);
-            Entities[i].NeedSaveAndLoad = true;
-            Entities[i].Ecs = this;
-            Entities[i].ID = i;
-            Entities[i].DoInitialize();
-            Entities[i].LoadStep(reader);
-          }
-          else
-            Entities[i].LoadStep(reader);
-        }
+        LoadEntity(reader, ref Entities[i]);
       }
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public static void LoadEntity(BinaryReader reader, ref Entity entity)
+    {
+      string typeName;
+      int hashValue;
+      if (reader.ReadBoolean())
+      {
+        hashValue = reader.ReadInt32();
+        typeName = CodeResources<Entity>.GetTypeNameFromHash(hashValue);
+        if (entity is null)
+        {
+          entity = CodeResources<Entity>.GetFromTypeName(typeName);
+          entity.NeedSaveAndLoad = true;
+          entity.DoInitialize();
+          entity.LoadStep(reader);
+        }
+        else
+          entity.LoadStep(reader);
+      }
+    }
+    public static void SaveEntity(BinaryWriter writer, Entity entity)
     {
       int? hash;
+      if (entity is null || entity.NeedSaveAndLoad is false)
+      {
+        writer.Write(false);
+        return;
+      }
+      if (entity.NeedSaveAndLoad)
+      {
+        writer.Write(true);
+        hash = CodeResources<Entity>.GetHashFromTypeName(entity.Identifier);
+        writer.Write(hash.Value);
+        entity.SaveStep(writer);
+      }
+    }
+    public void SaveStep(BinaryWriter writer)
+    {
       Entity entity;
       for (int i = 0; i < Entities.Length; i++)
       {
         entity = Entities[i];
-        if (entity is null || entity.NeedSaveAndLoad is false)
-        {
-          writer.Write(false);
-          continue;
-        }
-        if (entity.NeedSaveAndLoad)
-        {
-          writer.Write(true);
-          hash = CodeResources<Entity>.GetHashFromTypeName(entity.Identifier);
-          writer.Write(hash.Value);
-          entity.SaveStep(writer);
-        }
+        SaveEntity(writer, entity);
       }
     }
   }
