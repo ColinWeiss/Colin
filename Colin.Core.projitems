@@ -91,7 +91,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\Preparator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IRenderableISceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ISceneModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\Perfmon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
@@ -202,7 +201,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Libs\MGFXC\" />
     <Folder Include="$(MSBuildThisFileDirectory)Mathematical\" />
   </ItemGroup>
 </Project>
