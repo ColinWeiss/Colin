@@ -52,10 +52,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     {
       base.OnDivInitialize();
     }
+
+    static DynamicSpriteFont font = Asset.GetFont("Unifont").GetFont(16);
     public override void OnBinded()
     {
       if (Font == null)
-        Font = Asset.GetFont("Unifont").GetFont(16);
+        Font = font;//Asset.GetFont("Unifont").GetFont(16);
       base.OnBinded();
     }
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
