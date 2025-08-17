@@ -2,9 +2,11 @@
 
 namespace Colin.Core.Modulars.UserInterfaces.Events
 {
-  public class DivEvents
+  public class DivEvents : IDisposable
   {
-    public Div Div { get; }
+    private Div _div;
+    public Div Div => _div;
+
     public DivEventNode<MouseHoverArgs> MouseHover;
 
     public DivEventNode<LeftClickedArgs> LeftClicked;
@@ -24,7 +26,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public DivEvents(Div div) : base()
     {
-      Div = div;
+      _div = div;
       MouseHover = new DivEventNode<MouseHoverArgs>();
       MouseHover.Div = div;
       LeftClicked = new DivEventNode<LeftClickedArgs>();
@@ -67,51 +69,54 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public bool DraggingState = false;
 
-    private Vector2 MousePos => Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
-
     private Vector2 _cachePos = new Vector2(-1, -1);
+
+    void Drag(object sender, MouseArgs args)
+    {
+      Vector2 mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
+      if (!DivLock)
+        DivLock = true;
+      Div.Module.Focus = Div;
+      if (!Div.Interact.IsDraggable)
+        return;
+      DraggingState = true;
+      if (Div.Parent != null)
+      {
+        Vector2 mouseForParentLocation = mousePos - Div.Parent.Layout.Location;
+        _cachePos = mouseForParentLocation - Div.Layout.Location;
+      }
+      else
+      {
+        _cachePos = mousePos - Div.Layout.Location;
+      }
+    }
+    void DragEnd(object sender, MouseArgs args)
+    {
+      if (DivLock)
+      {
+        if (!Div.Interact.IsDraggable)
+          return;
+        DraggingState = false;
+        _cachePos = new Vector2(-1, -1);
+      }
+    }
+    void Lock(object sender, MouseArgs args)
+    {
+      if (!DivLock)
+        DivLock = true;
+    }
     public void DoBlockOut()
     {
       MouseHover += MouseBlockOutEvent;
       LeftClicking += MouseBlockOutEvent;
-      LeftClicking += (object s, LeftClickingArgs e) =>
-      {
-        if (!DivLock)
-          DivLock = true;
-        Div.Module.Focus = Div;
-        if (!Div.Interact.IsDraggable)
-          return;
-        DraggingState = true;
-        if (Div.Parent != null)
-        {
-          Vector2 mouseForParentLocation = MousePos - Div.Parent.Layout.Location;
-          _cachePos = mouseForParentLocation - Div.Layout.Location;
-        }
-        else
-        {
-          _cachePos = MousePos - Div.Layout.Location;
-        }
-      };
+      LeftClicking += Drag;
       LeftDown += MouseBlockOutEvent;
       LeftClicked += MouseBlockOutEvent;
-      LeftClicked += (s, e) =>
-      {
-        if (DivLock)
-        {
-          if (!Div.Interact.IsDraggable)
-            return;
-          DraggingState = false;
-          _cachePos = new Vector2(-1, -1);
-        }
-      };
+      LeftClicked += DragEnd;
       LeftUp += MouseBlockOutEvent;
       RightClicked += MouseBlockOutEvent;
       RightClicking += MouseBlockOutEvent;
-      RightClicking += (s, e) =>
-      {
-        if (!DivLock)
-          DivLock = true;
-      };
+      RightClicking += Lock;
       RightDown += MouseBlockOutEvent;
       RightUp += MouseBlockOutEvent;
       ScrollDown += MouseBlockOutEvent;
@@ -119,25 +124,27 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       KeysClicked += KeysBlockOutEvent;
       KeysClicking += KeysBlockOutEvent;
       KeysDown += KeysBlockOutEvent;
-      void MouseBlockOutEvent(object sender, MouseArgs args)
-      {
-        if (MouseCapture)
-          args.IsCapture = true;
-        if (MouseBubbling)
-          args.StopBubbling = true;
-      }
-      void KeysBlockOutEvent(object sender, KeysArgs args)
-      {
-        if (KeysCapture)
-          args.IsCapture = true;
-        if (KeysBubbling)
-          args.StopBubbling = true;
-      }
     }
+    void MouseBlockOutEvent(object sender, MouseArgs args)
+    {
+      if (MouseCapture)
+        args.IsCapture = true;
+      if (MouseBubbling)
+        args.StopBubbling = true;
+    }
+    void KeysBlockOutEvent(object sender, KeysArgs args)
+    {
+      if (KeysCapture)
+        args.IsCapture = true;
+      if (KeysBubbling)
+        args.StopBubbling = true;
+    }
+
     public void DoUpdate()
     {
+      Vector2 mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
       Div.Interact.InteractionLast = Div.Interact.Interaction;
-      if (Div.ContainsScreenPoint(MousePos.ToPoint()) && Div.Interact.IsInteractive)
+      if (Div.ContainsScreenPoint(mousePos.ToPoint()) && Div.Interact.IsInteractive)
         Div.Interact.Interaction = true;
       else
         Div.Interact.Interaction = false;
@@ -149,13 +156,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
           return;
         if (Div.Parent != null)
         {
-          Vector2 _resultLocation = MousePos - Div.Parent.Layout.Location - _cachePos;
+          Vector2 _resultLocation = mousePos - Div.Parent.Layout.Location - _cachePos;
           Div.Layout.Left = _resultLocation.X;
           Div.Layout.Top = _resultLocation.Y;
         }
         else
         {
-          Vector2 _resultLocation = MousePos - _cachePos;
+          Vector2 _resultLocation = mousePos - _cachePos;
           Div.Layout.Left = _resultLocation.X;
           Div.Layout.Top = _resultLocation.Y;
         }
@@ -245,6 +252,42 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       KeysClicking.Remove(node.KeysClicking);
       KeysDown.Remove(node.KeysDown);
       KeysClicked.Remove(node.KeysClicked);
+    }
+
+    public void Dispose()
+    {
+      _div = null;
+      MouseHover -= MouseBlockOutEvent;
+      LeftClicking -= MouseBlockOutEvent;
+      LeftClicking -= Drag;
+      LeftDown -= MouseBlockOutEvent;
+      LeftClicked -= MouseBlockOutEvent;
+      LeftClicked -= DragEnd;
+      LeftUp -= MouseBlockOutEvent;
+      RightClicked -= MouseBlockOutEvent;
+      RightClicking -= MouseBlockOutEvent;
+      RightClicking -= Lock;
+      RightDown -= MouseBlockOutEvent;
+      RightUp -= MouseBlockOutEvent;
+      ScrollDown -= MouseBlockOutEvent;
+      ScrollUp -= MouseBlockOutEvent;
+      KeysClicked -= KeysBlockOutEvent;
+      KeysClicking -= KeysBlockOutEvent;
+      KeysDown -= KeysBlockOutEvent;
+      MouseHover.Div = null;
+      LeftClicked.Div = null;
+      LeftClicking.Div = null;
+      LeftDown.Div = null;
+      LeftUp.Div = null;
+      RightClicked.Div = null;
+      RightClicking.Div = null;
+      RightDown.Div = null;
+      RightUp.Div = null;
+      ScrollDown.Div = null;
+      ScrollUp.Div = null;
+      KeysClicked.Div = null;
+      KeysClicking.Div = null;
+      KeysDown.Div = null;
     }
   }
 }

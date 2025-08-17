@@ -269,6 +269,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       UpdateChildren(time);
     }
 
+
     public virtual void LayoutCalculate(ref DivLayout layout) { }
 
     public virtual void InteractCalculate(ref InteractStyle interact) { }
@@ -414,11 +415,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       return Children.Remove(div);
     }
 
-    public void MarkRemove(Div div)
-    {
-      Module.Removes.Add(div);
-    }
-
     /// <summary>
     /// 移除所有子元素.
     /// </summary>
@@ -488,6 +484,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       {
         if (disposing)
         {
+          Events?.Dispose();
           Canvas?.Dispose();
           for (int count = 0; count < Children.Count; count++)
             Children[count].Dispose();

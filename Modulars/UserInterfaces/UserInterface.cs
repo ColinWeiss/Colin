@@ -18,8 +18,6 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public Camera UICamera;
 
-    public List<Div> Removes = new List<Div>();
-
     public override void DoInitialize()
     {
       UICamera = new Camera();
@@ -95,8 +93,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
     public void Register(DivRoot container) => Container?.Register(container);
-
-    public void Remove(DivRoot container, bool dispose) => Container?.Remove(container);
 
     public void SetRoot(DivRoot root)
     {
