@@ -238,7 +238,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Remove(DivEvents node)
     {
-      MouseHover.Register(node.MouseHover);
+      MouseHover.Remove(node.MouseHover);
       LeftClicked.Remove(node.LeftClicked);
       LeftClicking.Remove(node.LeftClicking);
       LeftDown.Remove(node.LeftDown);
@@ -257,6 +257,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Dispose()
     {
       _div = null;
+      MouseHover.Div = null;
+      LeftClicked.Div = null;
+      LeftClicking.Div = null;
+      LeftDown.Div = null;
+      LeftUp.Div = null;
+      RightClicked.Div = null;
+      RightClicking.Div = null;
+      RightDown.Div = null;
+      RightUp.Div = null;
+      ScrollDown.Div = null;
+      ScrollUp.Div = null;
+      KeysClicked.Div = null;
+      KeysClicking.Div = null;
+      KeysDown.Div = null;
       MouseHover -= MouseBlockOutEvent;
       LeftClicking -= MouseBlockOutEvent;
       LeftClicking -= Drag;
@@ -274,20 +288,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       KeysClicked -= KeysBlockOutEvent;
       KeysClicking -= KeysBlockOutEvent;
       KeysDown -= KeysBlockOutEvent;
-      MouseHover.Div = null;
-      LeftClicked.Div = null;
-      LeftClicking.Div = null;
-      LeftDown.Div = null;
-      LeftUp.Div = null;
-      RightClicked.Div = null;
-      RightClicking.Div = null;
-      RightDown.Div = null;
-      RightUp.Div = null;
-      ScrollDown.Div = null;
-      ScrollUp.Div = null;
-      KeysClicked.Div = null;
-      KeysClicking.Div = null;
-      KeysDown.Div = null;
     }
   }
 }

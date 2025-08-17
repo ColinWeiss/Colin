@@ -59,54 +59,54 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public DivEvents Events;
 
-    private DivRenderer renderer;
+    private DivRenderer _renderer;
     /// <summary>
     /// 获取划分元素的渲染器实例对象.
     /// </summary>
-    public DivRenderer Renderer => renderer;
+    public DivRenderer Renderer => _renderer;
     public T BindRenderer<T>() where T : DivRenderer, new()
     {
-      renderer = new T();
-      renderer.div = this;
-      renderer.OnBinded();
-      return renderer as T;
+      _renderer = new T();
+      _renderer.div = this;
+      _renderer.OnBinded();
+      return _renderer as T;
     }
     public T GetRenderer<T>() where T : DivRenderer
     {
-      if (renderer is T)
-        return renderer as T;
+      if (_renderer is T)
+        return _renderer as T;
       else
         return null;
     }
-    public void ClearRenderer() => renderer = null;
+    public void ClearRenderer() => _renderer = null;
 
-    private DivController controller;
+    private DivController _controller;
     /// <summary>
     /// 获取划分元素的控制器实例对象.
     /// </summary>
-    public DivController Controller => controller;
+    public DivController Controller => _controller;
     public T BindController<T>() where T : DivController, new()
     {
-      controller = new T();
-      controller.div = this;
-      controller.OnBinded();
-      return controller as T;
+      _controller = new T();
+      _controller.div = this;
+      _controller.OnBinded();
+      return _controller as T;
     }
     public T GetController<T>() where T : DivController
     {
-      if (controller is T)
-        return controller as T;
+      if (_controller is T)
+        return _controller as T;
       else
         return null;
     }
 
-    private Div parent;
+    private Div _parent;
     /// <summary>
     /// 指示划分元素的父元素.
     /// </summary>
-    public Div Parent => parent;
+    public Div Parent => _parent;
 
-    private Div upperCanvas;
+    private Div _upperCanvas;
     /// <summary>
     /// 获取划分元素可溯到的最近的上一层画布元素.
     /// </summary>
@@ -114,38 +114,38 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       get
       {
-        if (parent is null)
+        if (_parent is null)
           return null;
-        if (upperCanvas is null)
+        if (_upperCanvas is null)
         {
           Div result;
           if (Parent.IsCanvas)
             result = Parent;
           else
             result = Parent.UpperCanvas;
-          upperCanvas = result;
+          _upperCanvas = result;
         }
-        return upperCanvas;
+        return _upperCanvas;
       }
     }
 
-    private Div upperScissor;
+    private Div _upperScissor;
     public Div UpperScissor
     {
       get
       {
-        if (parent is null || IsCanvas)
+        if (_parent is null || IsCanvas)
           return null;
-        if (upperScissor is null)
+        if (_upperScissor is null)
         {
           Div result;
           if (Parent.Layout.ScissorEnable && !Parent.IsCanvas)
             result = Parent;
           else
             result = Parent.UpperScissor;
-          upperScissor = result;
+          _upperScissor = result;
         }
-        return upperScissor;
+        return _upperScissor;
       }
     }
 
@@ -181,11 +181,11 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public UserInterface Module => _module;
 
-    internal DivRoot root;
+    internal DivRoot _root;
     /// <summary>
     /// 获取划分元素之「阈点」.
     /// </summary>
-    public DivRoot Root => root;
+    public DivRoot Root => _root;
 
     /// <summary>
     /// 指示该划分元素是否为可作为渲染目标的画布元素.
@@ -214,17 +214,17 @@ namespace Colin.Core.Modulars.UserInterfaces
     public void DoInitialize()
     {
       if (this is DivRoot divThreshold)
-        root = divThreshold;
+        _root = divThreshold;
       if (Parent is not null)
       {
-        _module = parent._module;
-        root = parent.root;
+        _module = _parent._module;
+        _root = _parent._root;
       }
       if (InitializationCompleted)
         return;
       DivInit();
-      controller?.OnDivInitialize();
-      renderer?.OnDivInitialize();
+      _controller?.OnDivInitialize();
+      _renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
       ForEach(child => child?.DoInitialize());
       InitializationCompleted = true;
@@ -249,7 +249,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (this is DivRoot is false)
       {
         _module = Parent?._module;
-        root = Parent?.root;
+        _root = Parent?._root;
       }
       if (!_started)
       {
@@ -307,7 +307,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       });
     }
 
-    public RasterizerState ScissiorRasterizer = new RasterizerState()
+    static RasterizerState ScissiorRasterizer = new RasterizerState()
     {
       CullMode = CullMode.None,
       ScissorTestEnable = true,
@@ -319,7 +319,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       {
         UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
         CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
-        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, UpperScissor.ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
+        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
       }
       else
         Module.BatchNormalBegin(this, blendState);
@@ -340,7 +340,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       }
       BeginRender(BlendState.AlphaBlend);
       OnRender(device, batch);
-      renderer?.DoRender(device, batch);//渲染器进行渲染.
+      _renderer?.DoRender(device, batch);//渲染器进行渲染.
       batch.End();
       if (UpperScissor is not null)
         device.ScissorRectangle = UpperScissor.Layout.ScissorRectangleCache;
@@ -351,7 +351,7 @@ namespace Colin.Core.Modulars.UserInterfaces
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
           device.SetRenderTarget(Module.RawRt);
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, root.Layout.ScissorEnable ? root.ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
         batch.End();
       }
@@ -392,9 +392,9 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public virtual bool Register(Div div, bool doInit = false)
     {
-      div.parent = this;
+      div._parent = this;
       div._module = _module;
-      div.root = root;
+      div._root = _root;
       Events.Register(div.Events);
       if (doInit)
         div.DoInitialize();
@@ -409,8 +409,8 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public virtual bool Remove(Div div)
     {
-      div.parent = null;
-      div.root = null;
+      div._parent = null;
+      div._root = null;
       Events.Remove(div.Events);
       return Children.Remove(div);
     }
@@ -428,6 +428,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         if (dispose)
         {
           _div._module = null;
+          _div._root = null;
           _div.Dispose();
         }
         count--;
@@ -444,12 +445,12 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <returns></returns>
     public bool DescendantsOf(Div div)
     {
-      if (div.parent is not null)
+      if (div._parent is not null)
       {
-        if (div.parent.Equals(div))
+        if (div._parent.Equals(div))
           return true;
         else
-          return div.parent.DescendantsOf(div);
+          return div._parent.DescendantsOf(div);
       }
       return false;
     }
@@ -477,32 +478,21 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public Vector2 RelativeRenderMousePos => MousePos - Layout.RenderTargetLocation;
 
-    private bool disposedValue;
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposedValue)
-      {
-        if (disposing)
-        {
-          Events?.Dispose();
-          Canvas?.Dispose();
-          for (int count = 0; count < Children.Count; count++)
-            Children[count].Dispose();
-          OnDispose?.Invoke();
-        }
-        renderer = null;
-        disposedValue = true;
-      }
-    }
     public event Action OnDispose;
-    ~Div()
+    public virtual void Dispose()
     {
-      Dispose(disposing: false);
-    }
-    public void Dispose()
-    {
-      Dispose(disposing: true);
-      GC.SuppressFinalize(this);
+      _parent = null;
+      _renderer = null;
+      _controller = null;
+      _module = null;
+      _root = null;
+      _upperCanvas = null;
+      _upperScissor = null;
+      Events?.Dispose();
+      Canvas?.Dispose();
+      for (int count = 0; count < Children.Count; count++)
+        Children[count].Dispose();
+      OnDispose?.Invoke();
     }
   }
 }

@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.UserInterfaces
   /// </summary>
   public class DivRoot : Div
   {
-    public DivRoot(string name) : base(name) => root = this;
+    public DivRoot(string name) : base(name) => _root = this;
     public override sealed void DivInit()
     {
       Interact.IsSelectable = false;
