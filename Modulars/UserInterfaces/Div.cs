@@ -37,8 +37,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       }
     }
 
-    public int Order;
-
     /// <summary>
     /// 用于存放该划分元素的子元素.
     /// </summary>
@@ -381,7 +379,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       for (int count = 0; count < Children.Count; count++)
       {
         _div = Children[count];
-        _div.Order = count;
         action.Invoke(_div);
       }
     }

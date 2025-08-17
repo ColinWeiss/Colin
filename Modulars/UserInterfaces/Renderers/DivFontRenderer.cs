@@ -8,6 +8,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
   {
     public GraphicsDevice GraphicsDevice => CoreInfo.Graphics.GraphicsDevice;
 
+    private static DivFontStashRenderer _renderer;
+    public static DivFontStashRenderer Instance => _renderer ??= new DivFontStashRenderer();
+
     public void Draw(Texture2D texture, Vector2 pos, Rectangle? src, Color color, float rotation, Vector2 scale, float depth)
     {
       if (texture is null)
@@ -25,8 +28,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
 
   public class DivFontRenderer : DivRenderer
   {
+    static RichTextLayout RichTextLayout = new RichTextLayout()
+    {
+      IgnoreColorCommand = false,
+    };
     public DynamicSpriteFont Font;
-    public DivFontStashRenderer FontStashRenderer;
     private string _text;
     public string Text
     {
@@ -44,7 +50,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     public FontSystemEffect FontSystemEffect;
     public override void OnDivInitialize()
     {
-      FontStashRenderer = new DivFontStashRenderer();
       base.OnDivInitialize();
     }
     public override void OnBinded()
@@ -55,13 +60,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     }
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      RichTextLayout rtl = new RichTextLayout
-      {
-        Font = Font,
-        IgnoreColorCommand = false,
-        Text = Text,
-      };
-      rtl.Draw(FontStashRenderer,
+      RichTextLayout.Font = Font;
+      RichTextLayout.Text = Text;
+      RichTextLayout.Draw(DivFontStashRenderer.Instance,
         Div.Layout.RenderTargetLocation,
         div.Design.Color,
         Div.Layout.Rotation,

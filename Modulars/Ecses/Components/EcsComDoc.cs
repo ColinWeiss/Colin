@@ -46,7 +46,10 @@
     /// <returns></returns>
     public bool HasTag(string tag) => Tags.Contains(tag);
 
-    public void DoInitialize() { }
+    public void DoInitialize() 
+    {
+      Name ??= "未配置名称";
+    }
 
     public bool Equals(IEntityCom other)
     {
