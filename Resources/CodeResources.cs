@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Colin.Core.Modulars.Ecses;
+using System.Reflection;
 using System.Text.Json;
 
 namespace Colin.Core.Resources
@@ -56,7 +57,6 @@ namespace Colin.Core.Resources
         return GetFromType(type);
       else return default;
     }
-
     public static string GetTypeNameFromHash(int hashValue)
     {
       if (hashToSers.TryGetValue(hashValue, out string value))
@@ -80,7 +80,12 @@ namespace Colin.Core.Resources
     }
     public static T0 CreateNewInstance(T0 t)
     {
-      return (T0)Activator.CreateInstance(typeof(T0));
+      return (T0)Activator.CreateInstance(t.GetType());
+    }
+    public static T0 CreateNewInstance(int hashValue)
+    {
+      string typeName = GetTypeNameFromHash(hashValue);
+      return (T0)Activator.CreateInstance(GetFromTypeName(typeName).GetType());
     }
 
     public void Load()

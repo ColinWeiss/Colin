@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Events;
+using SharpDX.XInput;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {

@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
+using SharpDX.Direct3D9;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {
@@ -26,6 +27,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       }
     }
 
+    public Slider Slider;
+
     public override void DivInit()
     {
       Layout.ScissorEnable = true;
@@ -45,11 +48,31 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     {
       Layout.ScissorWidth = (int)Layout.Width;
       Layout.ScissorHeight = (int)Layout.Height;
+
+      if (Slider is not null)
+      {
+        if (List.Layout.Width > Layout.Width)
+          List.Layout.Left = (int)-(Slider.Precent.X * (List.Layout.Width - Layout.Width)) + Layout.Left;
+        else
+          List.Layout.Left = 0;
+
+        if (List.Layout.Height > Layout.Height)
+          List.Layout.Top = (int)-(Slider.Precent.Y * (List.Layout.Height - Layout.Height)) + Layout.Top;
+        else
+          List.Layout.Top = 0;
+
+        if (List.Layout.Height <= 0 || Linear.TotalSize.Y < Layout.Height)
+          return;
+        else
+          Slider.Block.Layout.Height = (Layout.Height / Linear.TotalSize.Y) * Slider.Layout.Height;
+      }
       base.LayoutCalculate(ref layout);
     }
-    public void GetSlider(Slider slider)
+
+    public void BindSlider(Slider slider)
     {
-      slider.Bind(List, this);
+      Slider = slider;
+      Slider.Bind(List, this);
     }
     public override bool Register(Div div, bool doInit = false)
     {

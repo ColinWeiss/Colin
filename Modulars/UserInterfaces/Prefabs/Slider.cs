@@ -18,18 +18,18 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     public Vector2 Precent;
 
-    private Div Content;
-    private Div ContentContainer;
+    private Div List;
+    private Div View;
 
     private float WheelVelocity = 0;
 
-    public void Bind(Div content, Div contentContainer)
+    public void Bind(Div list, Div view)
     {
-      if (ContentContainer is not null)
-        ContentContainer.Events.LeftUp.Event -= WheelEvent;
-      Content = content;
-      ContentContainer = contentContainer;
-      ContentContainer.Events.LeftUp.Event += WheelEvent;
+      if (View is not null)
+        View.Events.LeftUp.Event -= WheelEvent;
+      List = list;
+      View = view;
+      View.Events.LeftUp.Event += WheelEvent;
     }
     private void WheelEvent(object sender, MouseArgs args)
     {
@@ -52,11 +52,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         if (Direction is Direction.Vertical)
         {
           Block.Layout.Width = Layout.Width;
-          Block.Layout.Height = 24;
+          if(Block.Layout.Height == 0)
+            Block.Layout.Height = 24;
         }
         if (Direction is Direction.Horizontal)
         {
-          Block.Layout.Width = 24;
+          if (Block.Layout.Width == 0)
+            Block.Layout.Width = 24;
           Block.Layout.Height = Layout.Height;
         }
       }
@@ -81,29 +83,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         /
         (Layout.Size - Block.Layout.Size - new Vector2(Layout.PaddingLeft + Layout.PaddingRight, Layout.PaddingTop + Layout.PaddingBottom));
 
-      if (Content is not null && ContentContainer is not null)
-      {
-        if (Content.Layout.Width > ContentContainer.Layout.Width)
-          Content.Layout.Left = (int)-(Precent.X * (Content.Layout.Width - ContentContainer.Layout.Width)) + ContentContainer.Layout.Left;
-        else
-          Content.Layout.Left = 0;
-
-        if (Content.Layout.Height > ContentContainer.Layout.Height)
-        {
-          Content.Layout.Top = (int)-(Precent.Y * (Content.Layout.Height - ContentContainer.Layout.Height)) + ContentContainer.Layout.Top;
-        }
-        else
-          Content.Layout.Top = 0;
-
-        if (Content.Controller is LinearMenuController controller)
-        {
-          if (Content.Layout.Height > ContentContainer.Layout.Height)
-            Content.Layout.Top = (int)-(Precent.Y * (controller.TotalSize.Y - ContentContainer.Layout.Height));
-          if (Content.Layout.Width > ContentContainer.Layout.Width)
-            Content.Layout.Left = (int)-(Precent.X * (controller.TotalSize.X - ContentContainer.Layout.Width));
-        }
-      }
       base.OnUpdate(time);
+    }
+    public override void LayoutCalculate(ref DivLayout layout)
+    {
+      base.LayoutCalculate(ref layout);
     }
   }
 }

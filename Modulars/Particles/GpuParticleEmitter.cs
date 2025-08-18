@@ -160,11 +160,9 @@ namespace Colin.Core.Modulars.Particles
 
     public void DoRender(SceneCamera camera)
     {
-      Perfmon.Start();
       DataWriteStep(camera.Scene);
       DoCompute();
       DoParticleRender(camera);
-      Perfmon.End("GpuParticle");
     }
     /// <summary>
     /// 在这一步, 发射器将读取 <see cref="DataBufferQueue"/> 的数据, 并将其全部写入 <see cref="DataRt"/>.

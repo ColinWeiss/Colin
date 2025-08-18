@@ -184,15 +184,13 @@ namespace Colin.Core.Modulars.Ecses
 
     public static void LoadEntity(BinaryReader reader, ref Entity entity)
     {
-      string typeName;
       int hashValue;
       if (reader.ReadBoolean())
       {
         hashValue = reader.ReadInt32();
-        typeName = CodeResources<Entity>.GetTypeNameFromHash(hashValue);
         if (entity is null)
         {
-          entity = CodeResources<Entity>.GetFromTypeName(typeName);
+          entity = CodeResources<Entity>.CreateNewInstance(hashValue);
           entity.NeedSaveAndLoad = true;
           entity.DoInitialize();
           entity.LoadStep(reader);
@@ -219,11 +217,9 @@ namespace Colin.Core.Modulars.Ecses
     }
     public void SaveStep(BinaryWriter writer)
     {
-      Entity entity;
       for (int i = 0; i < Entities.Length; i++)
       {
-        entity = Entities[i];
-        SaveEntity(writer, entity);
+        SaveEntity(writer, Entities[i]);
       }
     }
   }
