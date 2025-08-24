@@ -35,7 +35,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       KeysEvent = new KeysEventNode();
       Scene.Events.Keys.Register(KeysEvent);
-      Entities = new Entity[2047];
+      Entities = new Entity[2049];
       _systems = new Dictionary<Type, Entitiesystem>();
     }
     public override void Start()

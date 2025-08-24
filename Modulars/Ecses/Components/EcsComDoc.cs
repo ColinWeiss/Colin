@@ -31,12 +31,11 @@
     /// <summary>
     /// 指示实体标签.
     /// </summary>
-    public HashSet<string> Tags = new HashSet<string>();
+    public List<string> Tags = new List<string>();
 
     /// <summary>
     /// 为实体添加标签.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public void AddTag(string tag) => Tags.Add(tag);
 
     /// <summary>
@@ -57,7 +56,7 @@
       if (other is EcsComDoc doc)
       {
         result = Identifier.Equals(doc.Identifier);
-        return result && Tags.SetEquals(doc.Tags);
+        return result && Tags.SequenceEqual(doc.Tags);
       }
       return result;
     }

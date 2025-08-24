@@ -1,4 +1,5 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+﻿using Colin.Core.Mathematical;
+using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
 
 namespace Colin.Core.Modulars.Ecses
@@ -6,7 +7,7 @@ namespace Colin.Core.Modulars.Ecses
   /// <summary>
   /// 实体.
   /// </summary>
-  public class Entity : IGameContent<Entity>, ICodeResource
+  public class Entity : IGameContent<Entity>, ICodeResource, IDoBlockable
   {
     private string _identifier;
     public string Identifier
@@ -81,8 +82,13 @@ namespace Colin.Core.Modulars.Ecses
     private EcsComTransform _comTransform;
     public EcsComTransform Transform => _comTransform;
 
+    public RectangleF Bounds => Transform.LocalBound;
+
+    public Vector2 Pos => Transform.Pos;
+
     private EcsComRenderData _renderData;
     public EcsComRenderData RenderData => _renderData ??= GetCom<EcsComRenderData>();
+
 
     public void SetSize(Vector2 size) => _comTransform.SetSize(size);
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
@@ -121,6 +127,11 @@ namespace Colin.Core.Modulars.Ecses
         if (Components.ElementAt(i).Value is IEcsComIO io)
           io.LoadStep(reader);
       }
+    }
+
+    public float GetDistance(Entity entity)
+    {
+      return Vector2.Distance(Transform.Translation, entity.Transform.Translation);
     }
   }
 }
