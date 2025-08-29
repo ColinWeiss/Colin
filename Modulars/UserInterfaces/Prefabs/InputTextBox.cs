@@ -48,20 +48,19 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public override void DivInit()
     {
       Text = "";
-      Label.Interact.IsInteractive = false;
       Register(Label);
 
-      Events.GetFocus += () =>
-      {
-        CoreInfo.IMEHandler.StartTextComposition();
-        CoreInfo.IMEHandler.SetTextInputRect(ref InputRect);
-      };
-      Events.LoseFocus += () =>
-      {
-        CoreInfo.IMEHandler.StopTextComposition();
-        Label.SetText(Text);
-      };
-      UserInterface.Scene.Events.TextInput += IMEHandler_TextInput;
+      //   global::Colin.Core.Modulars.UserInterfaces.Events.GetFocus += () =>
+      //   {
+      //     global::Colin.Core.CoreInfo.IMEHandler.StartTextComposition();
+      //     global::Colin.Core.CoreInfo.IMEHandler.SetTextInputRect(ref InputRect);
+      //   };
+      //   global::Colin.Core.Modulars.UserInterfaces.Events.LoseFocus += () =>
+      //   {
+      //     global::Colin.Core.CoreInfo.IMEHandler.StopTextComposition();
+      //     Label.SetText(Text);
+      //   };
+      Module.Scene.Events.TextInput += IMEHandler_TextInput;
       base.DivInit();
     }
 
@@ -100,9 +99,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     public override void OnUpdate(GameTime time)
     {
-     // Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
+      // Label.Layout.Top = Layout.Height / 2 - Label.Layout.HalfHeight;
 
-      Editing = UserInterface.Focus == this;
+      Editing = Module.Focus == this;
       InputRect = Layout.RenderTargetBounds;
       InputRect.Y += 16;
       InputRect.X += 16;

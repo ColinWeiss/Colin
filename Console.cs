@@ -152,8 +152,13 @@ namespace Colin.Core
       for (int count = 0; count < cmdLine.Count; count++)
       {
         msg = CmdExecute(cmdLine[count]);
-        if(msg != "")
-          WriteLine("Error" , msg);
+        if (msg != "")
+        {
+          if (msg.Contains("warn"))
+            WriteLine("Warning", msg);
+          else
+            WriteLine("Error", msg);
+        }
         msg = "";
       }
     }

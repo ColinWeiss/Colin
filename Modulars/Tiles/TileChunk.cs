@@ -1,12 +1,13 @@
 ﻿using Colin.Core.Resources;
-using DeltaMachine.Core;
-using System;
-using System.Collections.Concurrent;
-using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
-
 namespace Colin.Core.Modulars.Tiles
 {
+  /// <summary>
+  /// 区块遍历委托.
+  /// </summary>
+  public delegate void TileChunkForEachDelegate(ref TileInfo info);
+
   /// <summary>
   /// 物块区块类.
   /// </summary>
@@ -18,118 +19,59 @@ namespace Colin.Core.Modulars.Tiles
     public readonly Tile Tile;
 
     /// <summary>
-    /// 获取物块区块所属的物块放置模块.
+    /// 获取物块模块的物块建造器.
     /// </summary>
-    public readonly TilePlacer Placer;
+    public readonly TileBuilder Builder;
 
     /// <summary>
-    /// 获取物块区块所属的物块破坏模块.
-    /// </summary>
-    public readonly TileDestructor Destructor;
-
-    /// <summary>
-    /// 获取物块区块所属的物块刷新模块.
+    /// 获取物块模块的物块刷新模块.
     /// </summary>
     public readonly TileRefresher Refresher;
 
     /// <summary>
     /// 获取区块的深度.
-    /// <br>它与 <see cref="Tile.Depth"/> 的值相等.</br>
     /// </summary>
     public readonly int Depth;
 
     /// <summary>
     /// 获取区块的宽度.
-    /// <br>它与 <see cref="TileOption.ChunkWidth"/> 的值相等.</br>
     /// </summary>
-    public int Width => TileOption.ChunkWidth;
+    public int Width => Tile.Context.ChunkWidth;
 
     /// <summary>
     /// 获取区块的宽度.
-    /// <br>它与 <see cref="TileOption.ChunkHeight"/> 的值相等.</br>
     /// </summary>
-    public int Height => TileOption.ChunkHeight;
+    public int Height => Tile.Context.ChunkHeight;
 
+    private int _coordX;
     /// <summary>
     /// 指示区块的横坐标.
     /// </summary>
-    public int CoordX;
+    public int CoordX => _coordX;
 
+    private int _coordY;
     /// <summary>
     /// 指示区块的纵坐标.
     /// </summary>
-    public int CoordY;
+    public int CoordY => _coordY;
 
+    private Point _coord;
     /// <summary>
-    /// 指示区块的量子层.
-    /// <br>同一二维位置可以存在不同量子层的区块，用于无缝子世界</br>
+    /// 获取区块坐标.
     /// </summary>
-    public int QuantumLayer;
+    public Point Coord => _coord;
 
-    public Point Coord => new Point(CoordX, CoordY);
-
-    private Rectangle? _tileRect;
-    public Rectangle TileRect =>
-      _tileRect ??=
+    private Rectangle? _bounds;
+    /// <summary>
+    /// 获取区块包围盒.
+    /// </summary>
+    public Rectangle Bounds =>
+      _bounds ??=
       new Rectangle(
-        CoordX * TileOption.ChunkWidth,
-        CoordY * TileOption.ChunkHeight,
-        TileOption.ChunkWidth,
-        TileOption.ChunkHeight);
-
-    private TileChunk temp;
-    public TileChunk Top
-    {
-      get
-      {
-        temp = GetOffset(0, -1);
-        if (temp is not null)
-          return temp;
-        else
-          return null;
-      }
-    }
-    public TileChunk Bottom
-    {
-      get
-      {
-        temp = GetOffset(0, 1);
-        if (temp is not null)
-          return temp;
-        else
-          return null;
-      }
-    }
-    public TileChunk Left
-    {
-      get
-      {
-        temp = GetOffset(-1, 0);
-        if (temp is not null)
-          return temp;
-        else
-          return null;
-      }
-    }
-    public TileChunk Right
-    {
-      get
-      {
-        temp = GetOffset(1, 0);
-        if (temp is not null)
-          return temp;
-        else
-          return null;
-      }
-    }
-
-    /// <summary>
-    /// 根据指定偏移量获取相对于该区块坐标偏移的区块.
-    /// </summary>
-    public TileChunk GetOffset(int offsetX, int offsetY)
-    {
-      return Tile.GetChunk(CoordX + offsetX, CoordY + offsetY);
-    }
+        CoordX * Tile.Context.ChunkWidth,
+        CoordY * Tile.Context.ChunkHeight,
+        Tile.Context.ChunkWidth,
+        Tile.Context.ChunkHeight);
 
     /// <summary>
     /// 区块内的物块信息.
@@ -137,51 +79,130 @@ namespace Colin.Core.Modulars.Tiles
     public TileInfo[] Infos;
 
     /// <summary>
+    /// 区块内的物块内核.
+    /// </summary>
+    public TileKernel[] TileKernel;
+
+    /// <summary>
+    /// 区块内的物块可编程行为.
+    /// </summary>
+    public List<TileHandler> Handler = new();
+
+    /// <summary>
+    /// 为区块添加指定类型的物块处理方式.
+    /// </summary>
+    public T AddHandler<T>() where T : TileHandler, new()
+    {
+      T handler = new T();
+      AddHandler(handler);
+      return handler;
+    }
+
+    public void AddHandler<T>(T handler) where T : TileHandler
+    {
+      handler.Tile = Tile;
+      handler.Chunk = this;
+      handler.Enable = new bool[handler.Length];
+      int id = TileHandler.HandlerIDHelper<T>.HandlerID;
+      if (id >= Handler.Count)
+        Handler.AddRange(Enumerable.Repeat<TileHandler>(null, id - Handler.Count + 1));
+      Handler[id] = handler;
+    }
+
+    /// <summary>
+    /// 获取指定类型的物块处理方式.
+    /// </summary>
+    public T GetHandler<T>() where T : TileHandler
+    {
+      return Handler[TileHandler.HandlerIDHelper<T>.HandlerID] as T;
+    }
+
+    /// <summary>
     /// 索引器: 根据索引获取物块信息.
     /// </summary>
-    public ref TileInfo this[int index] => ref Infos[index];
+    public ref TileInfo this[int index]
+      => ref Infos[index];
 
     /// <summary>
     /// 索引器: 根据索引获取物块信息.
     /// </summary>
     public ref TileInfo this[int x, int y, int z]
+      => ref Infos[z * Width * Height + x + y * Width];
+
+    /// <summary>
+    /// 索引器: 根据索引获取物块信息.
+    /// </summary>
+    public ref TileInfo this[Point3 coord]
+      => ref this[coord.X, coord.Y, coord.Z];
+
+    /// <summary>
+    /// 以坐标转换至索引.
+    /// </summary>
+    public int GetIndex(int x, int y, int z)
+      => z * Width * Height + x + y * Width;
+
+    /// <summary>
+    /// 以坐标转换至索引.
+    /// </summary>
+    public int GetIndex(Point3 cCoord)
+      => GetIndex(cCoord.X, cCoord.Y, cCoord.Z);
+
+    public ref TileInfo GetRelative(int index, TileRelative relative)
     {
-      get
+      ref TileInfo info = ref this[index];
+      Point3 temp = Point3.Zero;
+      switch (relative)
       {
-        return ref Infos[z * Width * Height + x + y * Width];
+        case TileRelative.Left:
+          temp = Point3.Left;
+          break;
+        case TileRelative.Right:
+          temp = Point3.Right;
+          break;
+        case TileRelative.Up:
+          temp = Point3.Up;
+          break;
+        case TileRelative.Down:
+          temp = Point3.Down;
+          break;
+        case TileRelative.Front:
+          temp = Point3.Front;
+          break;
+        case TileRelative.Behind:
+          temp = Point3.Behind;
+          break;
       }
+      temp = info.GetWCoord3() + temp;
+      return ref Tile[temp];
     }
 
-    public void ForEach(Action<TileInfo> info, int x, int y, int width, int height, int depth)
+    public TileChunk(Tile tile, Point coord)
     {
-      ref TileInfo _i = ref TileInfo.Null;
+      Tile = tile;
+      Builder = tile.Scene.Business.Get<TileBuilder>();
+      Refresher = tile.Scene.Business.Get<TileRefresher>();
+      Depth = tile.Context.Depth;
+      _coordX = coord.X;
+      _coordY = coord.Y;
+      _coord = coord;
+    }
+
+    public void ForEach(TileChunkForEachDelegate info, int x, int y, int width, int height, int depth)
+    {
+      ref TileInfo tileInfo = ref Infos[0];
       try
       {
         for (int cx = x; cx < x + width; cx++)
-        {
           for (int cy = y; cy < y + height; cy++)
           {
-            _i = ref this[cx, cy, depth];
-            info.Invoke(_i);
+            tileInfo = ref Infos[GetIndex(cx, cy, depth)];
+            info.Invoke(ref tileInfo);
           }
-        }
       }
       catch
       {
-        Console.WriteLine("Error","区块遍历异常, 请检查输入参数合理性.");
+        Console.WriteLine("Error", "区块遍历异常, 请检查输入参数合理性.");
       }
-    }
-
-    public TileChunk(Tile tile)
-    {
-      Tile = tile;
-      Placer = tile.Scene.GetModule<TilePlacer>();
-      Destructor = tile.Scene.GetModule<TileDestructor>();
-      Refresher = tile.Scene.GetModule<TileRefresher>();
-      Depth = tile.Depth;
-      CoordX = 0;
-      CoordY = 0;
-      Infos = new TileInfo[1];
     }
 
     /// <summary>
@@ -190,48 +211,83 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public void DoInitialize()
     {
-      Infos = new TileInfo[Width * Height * Depth];
-      for (int count = 0; count < Infos.Length; count++)
+      int length = Width * Height * Depth;
+      Infos = new TileInfo[length];
+      TileKernel = new TileKernel[length];
+      Handler = new List<TileHandler>();
+      for (int count = 0; count < length; count++)
         CreateInfo(count);
+      Tile.Context.DoTileHandleInit(this);
+      foreach (var item in Handler)
+        item.DoInitialize();
     }
 
-    /// <summary>
-    /// 清除区块.
-    /// </summary>
-    public void Clear() => DoInitialize();
-
-    /// <summary>
-    /// 在指定索引处创建空物块信息.
-    /// </summary>
     public void CreateInfo(int index)
     {
       Infos[index] = new TileInfo();
-      Infos[index].Tile = Tile;
-      Infos[index].Chunk = this;
       Infos[index].Empty = true;
       Infos[index].Index = index;
-      Infos[index].Scripts = new Dictionary<Type, TileScript>();
+      Infos[index].ICoordX = (short)(index % (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight) % Tile.Context.ChunkWidth);
+      Infos[index].ICoordY = (short)(index % (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight) / Tile.Context.ChunkWidth);
+      Infos[index].ICoordZ = (short)(index / (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight));
+      Infos[index].WCoordX = CoordX * Tile.Context.ChunkWidth + Infos[index].ICoordX;
+      Infos[index].WCoordY = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
     }
-    /// <summary>
-    /// 在指定坐标处创建物块信息.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
-    public void CreateInfo(int x, int y, int z) => CreateInfo(z * Width * Height + x + y * Width);
 
     /// <summary>
-    /// 根据坐标和指定类型放置物块.
+    /// 从区块内指定坐标转换至世界坐标.
     /// </summary>
-    /// <param name="doEvent">指示是否触发放置事件.</param>
-    /// <param name="doRefresh">指示是否触发物块刷新事件.</param>
-    public bool Place<T>(int x, int y, int z) where T : TileBehavior, new()
+    public Point3 ConvertWorld(Point3 iCoord)
     {
-      ref TileInfo info = ref this[x, y, z];
-      TileBehavior behavior = CodeResources<TileBehavior>.GetFromType(typeof(T));
-      if (behavior.CanPlaceMark(ref info))
+      Point3 result = new Point3();
+      result.X = CoordX * Tile.Context.ChunkWidth + iCoord.X;
+      result.Y = CoordY * Tile.Context.ChunkHeight + iCoord.Y;
+      result.Z = iCoord.Z;
+      return result;
+    }
+
+    /// <summary>
+    /// 从区块内指定索引转换至世界坐标.
+    /// </summary>
+    public Point3 ConvertWorld(int index)
+    {
+      return Infos[index].GetWCoord3();
+    }
+
+    /// <summary>
+    /// 判断指定世界坐标是否处于该区块内.
+    /// </summary>
+    public bool InChunk(Point wCoord)
+    {
+      int compX = wCoord.X >= 0 ? wCoord.X / Tile.Context.ChunkWidth : (wCoord.X + 1) / Tile.Context.ChunkWidth - 1;
+      int compY = wCoord.Y >= 0 ? wCoord.Y / Tile.Context.ChunkHeight : (wCoord.Y + 1) / Tile.Context.ChunkHeight - 1;
+      return Coord.Equals(new Point(compX, compY));
+    }
+
+    /// <summary>
+    /// 判断指定世界坐标是否处于该区块内.
+    /// </summary>
+    public bool InChunk(Point3 wCoord)
+      => InChunk(wCoord.ToPoint());
+
+    /// <summary>
+    /// 根据指定坐标和指定类型放置物块.
+    /// <br>[!] 使用内部坐标.</br>
+    /// </summary>
+    public bool Place(TileKernel kernel, int x, int y, int z, bool doEvent = true, int? doRefresh = 1)
+    {
+      Point3 wCoord = ConvertWorld(new Point3(x, y, z));
+      bool result = true;
+      foreach (var handler in Handler)
       {
-        Placer.Mark(info.WorldCoord3, behavior);
+        if (result)
+          result = handler.CanPlaceMark(GetIndex(x, y, z), wCoord);
+        else
+          return result;
+      }
+      if (kernel.CanPlaceMark(Tile, this, GetIndex(x, y, z), wCoord))
+      {
+        Builder.MarkPlace(wCoord, kernel, doEvent, doRefresh);
         return true;
       }
       else
@@ -239,18 +295,13 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
-    /// 根据坐标和指定类型放置物块.
+    /// 根据区块内坐标和指定类型放置物块.
+    /// [!] 使用内部坐标.
     /// </summary>
-    public bool Place(TileBehavior behavior, int x, int y, int z)
+    public bool Place<T>(int x, int y, int z, bool doEvent = true, int? doRefresh = 1) where T : TileKernel, new()
     {
-      ref TileInfo info = ref this[x, y, z];
-      if (behavior.CanPlaceMark(ref info))
-      {
-        Placer.Mark(info.WorldCoord3, behavior);
-        return true;
-      }
-      else
-        return false;
+      TileKernel behavior = CodeResources<TileKernel>.GetFromType(typeof(T));
+      return Place(behavior, x, y, z, doEvent, doRefresh);
     }
 
     /// <summary>
@@ -259,32 +310,46 @@ namespace Colin.Core.Modulars.Tiles
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="z"></param>
-    public void Destruct(int x, int y, int z, bool doEvent = true)
-      => Destruct(z * Width * Height + x + y * Width, doEvent);
-
-    public void Destruct(int index, bool doEvent = true)
+    public void Destruct(int x, int y, int z, bool doEvent = true, int? doRefresh = 1)
     {
-      TileInfo info = this[index];
+      ref TileInfo info = ref this[x, y, z];
       if (info.IsNull)
         return;
-      if (Tile.HasInfoReference(info.WorldCoord3))
+      TileKernel comport = TileKernel[GetIndex(x, y, z)];
+      if (Tile.HasPointer(info.GetWCoord3()))
       {
-        info = Tile.GetInfoReference(info.WorldCoord3);
+        info = Tile.GetPointTo(info.GetWCoord3());
         if (info.Empty is false && !info.IsNull)
-          Destructor.Mark(info.WorldCoord3, doEvent);
+          Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
-      else if (!Destructor.Queue.Contains((info.WorldCoord3, doEvent)))
+      else if (!Builder.Cases.Select(a => (a as TileBuildCommand).WorldCoord).Contains(info.GetWCoord3()))
       {
         if (!info.Empty)
-          Destructor.Mark(info.WorldCoord3, doEvent);
+          Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
     }
 
+    private bool _saving = false;
     private bool _loading = false;
-    public bool Loading => _loading;
-
-    private bool _saved = false;
-    public bool Saved => _saved;
+    private bool _operation = false;
+    public bool InOperation => _operation || _loading || _saving;
+    public void SetOperation(bool flag)
+    {
+      if (flag)
+      {
+        _operation = true;
+        Span<TileInfo> info = Infos;
+        for (int i = 0; i < Infos.Length; i++)
+          info[i].Loading = true;
+      }
+      else
+      {
+        _operation = false;
+        Span<TileInfo> info = Infos;
+        for (int i = 0; i < Infos.Length; i++)
+          info[i].Loading = false;
+      }
+    }
 
     public void AsyncLoadChunk(string path)
     {
@@ -293,6 +358,8 @@ namespace Colin.Core.Modulars.Tiles
       Task.Run(() =>
       {
         DoLoad(path);
+        DoRefreshAll();
+        _loading = false;
       });
     }
 
@@ -300,6 +367,27 @@ namespace Colin.Core.Modulars.Tiles
     {
       DoInitialize();
       DoLoad(path);
+      MarkRefreshAll();
+    }
+
+    public void MarkRefreshAll()
+    {
+      ref TileInfo info = ref this[0, 0, 0];
+      for (int count = 0; count < Infos.Length; count++)
+      {
+        info = ref this[count];
+        Refresher.MarkRefresh(info.GetWCoord3(), 0);
+      }
+    }
+
+    public void DoRefreshAll()
+    {
+      ref TileInfo info = ref this[0, 0, 0];
+      for (int count = 0; count < Infos.Length; count++)
+      {
+        info = ref this[count];
+        Refresher.DoRefresh(this, count, info.GetWCoord3());
+      }
     }
 
     private void DoLoad(string path)
@@ -310,27 +398,45 @@ namespace Colin.Core.Modulars.Tiles
         {
           ref TileInfo info = ref this[0, 0, 0];
           string typeName;
-          TileScript script;
+          int typehash = 0;
           for (int count = 0; count < Infos.Length; count++)
           {
             info = ref this[count];
             info.LoadStep(reader);
             if (!info.Empty)
             {
-              typeName = CodeResources<TileBehavior>.GetTypeNameFromHash(reader.ReadInt32());
+              typehash = reader.ReadInt32();
+              typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
+              Debug.Assert(typeName is not null);
               if (typeName is not null)
               {
-                info.Behavior = CodeResources<TileBehavior>.GetFromTypeName(typeName);
-                info.Behavior.Tile = Tile;
-                info.Behavior.OnInitialize(ref info); //执行行为初始化放置
-                info.Behavior.OnScriptAdded(ref info);
-                Refresher.Mark(info.WorldCoord3, 0);
+                TileKernel[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
+                Debug.Assert(TileKernel[count] is not null);
+                TileKernel[count].Tile = Tile;
+                TileKernel[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
               }
-              for (int i = 0; i < info.Scripts.Count; i++)
-              {
-                script = info.Scripts.Values.ElementAt(i);
-                script.LoadStep(reader);
-              }
+            }
+          }
+          // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取
+          int handlerCount = reader.ReadInt32();
+          Dictionary<string, TileHandler> namedTag = new();
+          for (int i = 0; i < Handler.Count; i++)
+            namedTag[Handler[i].GetType().Name] = Handler[i];
+          for (int i = 0; i < handlerCount; i++)
+          {
+            int check = reader.ReadInt32();
+            if (check != 20250225)
+            {
+              Debug.Fail("校验码失败，区块存档格式损坏");
+            }
+            string name = reader.ReadString();
+            if (namedTag.TryGetValue(name, out var matchedHandler))
+            {
+              matchedHandler.LoadStep(reader);
+            }
+            else
+            {
+              Debug.Fail("找不到Named Tag：" + name);
             }
           }
         }
@@ -339,24 +445,19 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
+      _saving = true;
       Task.Run(() =>
       {
         DoSave(path);
-        _saved = true;
+        _saving = false;
       });
     }
 
     public void SaveChunk(string path)
     {
-      try
-      {
-        DoSave(path);
-        _saved = true;
-      }
-      catch
-      {
-
-      }
+      _saving = true;
+      DoSave(path);
+      _saving = false;
     }
 
     private void DoSave(string path)
@@ -366,29 +467,59 @@ namespace Colin.Core.Modulars.Tiles
         using (BinaryWriter writer = new BinaryWriter(fileStream))
         {
           int? hash;
-          TileBehavior behavior;
-          TileScript script;
-          ref TileInfo info = ref TileInfo.Null;
-          for (int count = 0; count < Infos.Length; count++)
+          TileKernel tCom;
+          TileHandler cCom;
+          Span<TileInfo> infoSpan = Infos;
+          for (int count = 0; count < infoSpan.Length; count++)
           {
-            info = ref Infos[count];
-            behavior = info.Behavior;
-            info.SaveStep(writer);
-            if (!info.Empty && behavior is not null)
+            infoSpan[count].SaveStep(writer);
+            tCom = TileKernel[count];
+            if (!infoSpan[count].Empty)
             {
-              hash = CodeResources<TileBehavior>.GetHashFromTypeName(behavior.Identifier);
-              if (hash.HasValue)
-              {
-                writer.Write(hash.Value);
-              }
-              for (int i = 0; i < info.Scripts.Count; i++)
-              {
-                script = info.Scripts.Values.ElementAt(i);
-                script.SaveStep(writer);
-              }
+              Debug.Assert(tCom is not null);
+              hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
+              Debug.Assert(hash.HasValue);
+              writer.Write(hash.Value);
             }
           }
+          // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取
+          writer.Write(Handler.Count);
+          for (int i = 0; i < Handler.Count; i++)
+          {
+            writer.Write(20250225);
+            cCom = Handler.ElementAt(i);
+            string name = cCom.GetType().Name;
+            writer.Write(name);
+            cCom.SaveStep(writer);
+          }
+          //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
+          //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
         }
+      }
+    }
+
+    /// <summary>
+    /// 判断同层指定坐标的物块行为与具有指定偏移位置处的物块行为是否相同.
+    /// </summary>
+    public bool IsSame(Point3 own, Point3 offset)
+    {
+      var ownCom = TileKernel[GetIndex(own)];
+      Point3 tarCoord = ConvertWorld(own + offset);
+      if (InChunk(tarCoord))
+      {
+        var tarCom = TileKernel[GetIndex(own + offset)];
+        if (ownCom is null || tarCom is null)
+          return false;
+        else
+          return ownCom.Equals(tarCom);
+      }
+      else
+      {
+        var tarCom = Tile.GetHandler(tarCoord);
+        if (ownCom is null || tarCom is null)
+          return false;
+        else
+          return ownCom.Equals(tarCom);
       }
     }
   }

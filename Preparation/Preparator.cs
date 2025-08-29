@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Resources;
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -18,7 +17,6 @@ namespace Colin.Core.Preparation
 
     public override void SceneInit()
     {
-      CanDispose = false;
       if (CoreInfo.Debug)
         Console.WriteLine("Remind", "当前正以调试模式启动");
       Asset.LoadAssets();
@@ -36,7 +34,6 @@ namespace Colin.Core.Preparation
         CodeResources.Load();
         Console.WriteLine("Remind", "初始化加载完成.");
         OnLoadComplete?.Invoke();
-        CanDispose = true;
       }));
       base.SceneInit();
     }

@@ -1,21 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Modulars.Collisions
+﻿namespace Colin.Core.Modulars.Collisions
 {
   public class PolygonShape : Shape
   {
-    public Matrix View;
+    public static PolygonShape CreateRectangleShape(Vector2 position, Color color, int width, int height)
+    {
+      PolygonShape result = new PolygonShape(position, color, GenerateRectVertices(width, height));
+      return result;
+    }
+
+    /// <summary>
+    /// 生成矩形的顶点列表
+    /// </summary>
+    /// <param name="width">矩形的宽度</param>
+    /// <param name="height">矩形的高度</param>
+    /// <returns>矩形的顶点列表</returns>
+    private static List<Vector2> GenerateRectVertices(float width, float height)
+    {
+      return new List<Vector2>
+        {
+            new Vector2(0, 0),          // 左上角
+            new Vector2(width, 0),      // 右上角
+            new Vector2(width, height), // 右下角
+            new Vector2(0, height)      // 左下角
+        };
+    }
 
     /// <summary>
     /// 指示多边形的顶点列表.
     /// </summary>
     public List<Vector2> Vertices { get; private set; }
 
-    public PolygonShape(Vector2 position, Color color, List<Vector2> vertices) : base(position, color)
+    public PolygonShape(Vector2 position, Color color, List<Vector2> vertices, float rotation = 0, Vector2 anchor = default(Vector2)) : base(position, color)
     {
       Vertices = vertices;
+      Rotation = rotation; // 初始化 Rotation 字段
+      Anchor = anchor; // 初始化 Anchor 字段
     }
 
     public override void DoInitialize()
@@ -42,6 +61,9 @@ namespace Colin.Core.Modulars.Collisions
       for (int i = 0; i < Vertices.Count; i++)
       {
         Vector2 point = Vertices[i] + Position;
+
+        // 旋转点围绕 Anchor
+        point = RotatePointAroundAnchor(point, Rotation.RadiansF, Anchor);
 
         // 添加当前点
         short currentIndex = (short)vertices.Count;
@@ -81,22 +103,38 @@ namespace Colin.Core.Modulars.Collisions
       base.DoUpdate(gameTime);
     }
 
+    // 辅助方法：旋转点围绕 Anchor
+    private Vector2 RotatePointAroundAnchor(Vector2 point, float rotation, Vector2 anchor)
+    {
+      float cos = (float)Math.Cos(rotation);
+      float sin = (float)Math.Sin(rotation);
+      Vector2 rotatedPoint = new Vector2(
+          cos * (point.X - anchor.X) - sin * (point.Y - anchor.Y) + anchor.X,
+          sin * (point.X - anchor.X) + cos * (point.Y - anchor.Y) + anchor.Y
+      );
+      return rotatedPoint;
+    }
+
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
       // 设置图形设备状态
       device.RasterizerState = RasterizerState.CullNone;
       device.BlendState = BlendState.Additive;
 
-      // 使用BasicEffect绘制
+      // 使用 BasicEffect 绘制
       using (BasicEffect basicEffect = new BasicEffect(device))
       {
         basicEffect.VertexColorEnabled = true;
-        basicEffect.World = Matrix.Identity;
+        basicEffect.World = Matrix.CreateTranslation(-Anchor.X, -Anchor.Y, 0) * // 移动到 Anchor
+                            Matrix.CreateRotationZ(Rotation.RadiansF) *                   // 旋转
+                            Matrix.CreateTranslation(Anchor.X, Anchor.Y, 0);       // 移动回原点
         basicEffect.View = View;
         basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
             0, device.Viewport.Width, device.Viewport.Height, 0, 0, 1
         );
 
+        if (FillIndicesArray is null)
+          return;
         // 绘制填充多边形
         foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
         {
@@ -127,14 +165,14 @@ namespace Colin.Core.Modulars.Collisions
           );
         }
       }
-      base.DoRender( device, batch);
+      base.DoRender(device, batch);
     }
 
     /// <summary>
     /// 检测当前多边形与另一个多边形是否发生碰撞
     /// </summary>
     /// <param name="other">另一个多边形</param>
-    /// <returns>如果发生碰撞返回 true，否则返回 false</returns>
+    /// <returns>如果发生碰撞返回 true, 否则返回 false</returns>
     public bool CollidesWith(PolygonShape other)
     {
       // 获取当前多边形和另一个多边形的边法线
@@ -150,12 +188,12 @@ namespace Colin.Core.Modulars.Collisions
       {
         if (!OverlapOnAxis(axis, other))
         {
-          // 如果存在一个分离轴，说明两个多边形不相交
+          // 如果存在一个分离轴, 说明两个多边形不相交
           return false;
         }
       }
 
-      // 如果没有找到分离轴，说明两个多边形相交
+      // 如果没有找到分离轴, 说明两个多边形相交
       return true;
     }
 
@@ -190,7 +228,7 @@ namespace Colin.Core.Modulars.Collisions
     /// </summary>
     /// <param name="axis">分离轴</param>
     /// <param name="other">另一个多边形</param>
-    /// <returns>如果重叠返回 true，否则返回 false</returns>
+    /// <returns>如果重叠返回 true, 否则返回 false</returns>
     private bool OverlapOnAxis(Vector2 axis, PolygonShape other)
     {
       // 获取当前多边形在轴上的投影
@@ -206,7 +244,7 @@ namespace Colin.Core.Modulars.Collisions
     }
 
     /// <summary>
-    /// 将多边形投影到给定轴上，并计算投影的最小值和最大值
+    /// 将多边形投影到给定轴上, 并计算投影的最小值和最大值
     /// </summary>
     /// <param name="axis">投影轴</param>
     /// <param name="min">投影的最小值</param>
@@ -218,12 +256,51 @@ namespace Colin.Core.Modulars.Collisions
 
       foreach (Vector2 vertex in Vertices)
       {
+        Vector2 transformedVertex = vertex + Position;
+
         // 计算顶点在轴上的投影
-        float projection = Vector2.Dot(vertex + Position, axis);
+        float projection = Vector2.Dot(transformedVertex, axis);
 
         // 更新最小值和最大值
         if (projection < min) min = projection;
         if (projection > max) max = projection;
+      }
+    }
+
+    private RectangleF? _bounds;
+    public override RectangleF Bounds
+    {
+      get
+      {
+        if (_bounds is null)
+        {
+          if (Vertices.Count == 0)
+          {
+            throw new InvalidOperationException("多边形没有顶点, 无法计算 AABB。");
+          }
+
+          // 初始化最小值和最大值
+          float minX = float.MaxValue;
+          float minY = float.MaxValue;
+          float maxX = float.MinValue;
+          float maxY = float.MinValue;
+
+          // 遍历所有顶点以计算 AABB
+          foreach (Vector2 vertex in Vertices)
+          {
+            Vector2 transformedVertex = vertex;
+            transformedVertex = RotatePointAroundAnchor(transformedVertex, Rotation.RadiansF, Anchor);
+
+            if (transformedVertex.X < minX) minX = transformedVertex.X;
+            if (transformedVertex.Y < minY) minY = transformedVertex.Y;
+            if (transformedVertex.X > maxX) maxX = transformedVertex.X;
+            if (transformedVertex.Y > maxY) maxY = transformedVertex.Y;
+          }
+          _bounds = new RectangleF(minX, minY, (maxX - minX), (maxY - minY));
+        }
+        RectangleF result = _bounds.Value;
+        result.Offset(Position);
+        return result;
       }
     }
   }

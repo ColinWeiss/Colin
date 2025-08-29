@@ -1,4 +1,7 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+﻿using Colin.Core.Modulars.UserInterfaces.Events;
+using SharpDX.XInput;
+
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 指代用户交互界面中的一个划分元素.
@@ -35,8 +38,6 @@
       }
     }
 
-    public int Order;
-
     /// <summary>
     /// 用于存放该划分元素的子元素.
     /// </summary>
@@ -57,59 +58,56 @@
     /// </summary>
     public DivDesign Design;
 
-    /// <summary>
-    /// 划分元素的事件响应器.
-    /// </summary>
-    public DivEventResponder Events;
+    public DivEvents Events;
 
-    private DivRenderer renderer;
+    private DivRenderer _renderer;
     /// <summary>
     /// 获取划分元素的渲染器实例对象.
     /// </summary>
-    public DivRenderer Renderer => renderer;
+    public DivRenderer Renderer => _renderer;
     public T BindRenderer<T>() where T : DivRenderer, new()
     {
-      renderer = new T();
-      renderer.div = this;
-      renderer.OnBinded();
-      return renderer as T;
+      _renderer = new T();
+      _renderer.div = this;
+      _renderer.OnBinded();
+      return _renderer as T;
     }
     public T GetRenderer<T>() where T : DivRenderer
     {
-      if (renderer is T)
-        return renderer as T;
+      if (_renderer is T)
+        return _renderer as T;
       else
         return null;
     }
-    public void ClearRenderer() => renderer = null;
+    public void ClearRenderer() => _renderer = null;
 
-    private DivController controller;
+    private DivController _controller;
     /// <summary>
     /// 获取划分元素的控制器实例对象.
     /// </summary>
-    public DivController Controller => controller;
+    public DivController Controller => _controller;
     public T BindController<T>() where T : DivController, new()
     {
-      controller = new T();
-      controller.div = this;
-      controller.OnBinded();
-      return controller as T;
+      _controller = new T();
+      _controller.div = this;
+      _controller.OnBinded();
+      return _controller as T;
     }
     public T GetController<T>() where T : DivController
     {
-      if (controller is T)
-        return controller as T;
+      if (_controller is T)
+        return _controller as T;
       else
         return null;
     }
 
-    private Div parent;
+    private Div _parent;
     /// <summary>
     /// 指示划分元素的父元素.
     /// </summary>
-    public Div Parent => parent;
+    public Div Parent => _parent;
 
-    private Div upperCanvas;
+    private Div _upperCanvas;
     /// <summary>
     /// 获取划分元素可溯到的最近的上一层画布元素.
     /// </summary>
@@ -117,18 +115,58 @@
     {
       get
       {
-        if (parent is null)
+        if (_parent is null)
           return null;
-        if (upperCanvas is null)
+        if (_upperCanvas is null)
         {
           Div result;
           if (Parent.IsCanvas)
             result = Parent;
           else
             result = Parent.UpperCanvas;
-          upperCanvas = result;
+          _upperCanvas = result;
         }
-        return upperCanvas;
+        return _upperCanvas;
+      }
+    }
+
+    private Div _upperScissor;
+    public Div UpperScissor
+    {
+      get
+      {
+        if (_parent is null || IsCanvas)
+          return null;
+        if (_upperScissor is null)
+        {
+          Div result;
+          if (Parent.Layout.ScissorEnable && !Parent.IsCanvas)
+            result = Parent;
+          else
+            result = Parent.UpperScissor;
+          _upperScissor = result;
+        }
+        return _upperScissor;
+      }
+    }
+
+    /// <summary>
+    /// 计算后的剪裁矩形; 当前剪裁矩形.
+    /// </summary>
+    public Rectangle ScissorBounds;
+    public void CalculateScissorBounds()
+    {
+      if (UpperScissor == null || UpperScissor == this)
+      {
+        ScissorBounds = Layout.ScissorRectangle;
+      }
+      else
+      {
+        var parentBounds = UpperScissor.ScissorBounds;
+        var current = Layout.ScissorRectangle;
+        ScissorBounds = Rectangle.Intersect(parentBounds, current);
+        if (ScissorBounds.IsEmpty)
+          ScissorBounds = parentBounds;
       }
     }
 
@@ -138,17 +176,17 @@
     /// </summary>
     public RenderTarget2D Canvas;
 
-    internal UserInterface userInterface;
+    internal UserInterface _module;
     /// <summary>
     /// 获取划分元素所属的用户交互界面.
     /// </summary>
-    public UserInterface UserInterface => userInterface;
+    public UserInterface Module => _module;
 
-    internal DivThreshold threshold;
+    internal DivRoot _root;
     /// <summary>
     /// 获取划分元素之「阈点」.
     /// </summary>
-    public DivThreshold Threshold => threshold;
+    public DivRoot Root => _root;
 
     /// <summary>
     /// 指示该划分元素是否为可作为渲染目标的画布元素.
@@ -166,31 +204,30 @@
     {
       Name = name;
       Children = new List<Div>();
-      Events = new DivEventResponder(this);
+      Events = new DivEvents(this);
+      Events.DoBlockOut();
       Layout.Scale = Vector2.One;
       Interact.IsInteractive = true;
-      Interact.IsBubbling = true;
       Design.Color = Color.White;
       IsCanvas = isCanvas;
     }
 
     public void DoInitialize()
     {
-      if (this is DivThreshold divThreshold)
-        threshold = divThreshold;
+      if (this is DivRoot divThreshold)
+        _root = divThreshold;
       if (Parent is not null)
       {
-        userInterface = parent.userInterface;
-        threshold = parent.threshold;
+        _module = _parent._module;
+        _root = _parent._root;
       }
       if (InitializationCompleted)
         return;
       DivInit();
-      controller?.OnDivInitialize();
-      renderer?.OnDivInitialize();
+      _controller?.OnDivInitialize();
+      _renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
       ForEach(child => child?.DoInitialize());
-      Events.DoInitialize();
       InitializationCompleted = true;
     }
 
@@ -210,10 +247,10 @@
       PreUpdate(time);
       if (!IsVisible)
         return;
-      if (this is DivThreshold is false)
+      if (this is DivRoot is false)
       {
-        userInterface = Parent?.userInterface;
-        threshold = Parent?.threshold;
+        _module = Parent?._module;
+        _root = Parent?._root;
       }
       if (!_started)
       {
@@ -223,11 +260,23 @@
       Controller?.Layout(ref Layout);
       Controller?.Interact(ref Interact);
       Controller?.Design(ref Design);
+      LayoutCalculate(ref Layout);
+      InteractCalculate(ref Interact);
+      DesignCalculate(ref Design);
       DivLayout.Calculate(this);
+      CalculateScissorBounds();
       Events.DoUpdate();
       OnUpdate(time);
       UpdateChildren(time);
     }
+
+
+    public virtual void LayoutCalculate(ref DivLayout layout) { }
+
+    public virtual void InteractCalculate(ref InteractStyle interact) { }
+
+    public virtual void DesignCalculate(ref DivDesign design) { }
+
     /// <summary>
     /// 发生于 <see cref="DoUpdate(GameTime)"/> 第一帧执行时.
     /// </summary>
@@ -259,11 +308,23 @@
       });
     }
 
-    public RasterizerState ScissiorRasterizer = new RasterizerState()
+    static RasterizerState ScissiorRasterizer = new RasterizerState()
     {
       CullMode = CullMode.None,
       ScissorTestEnable = true,
     };
+
+    public void BeginRender(BlendState blendState)
+    {
+      if (UpperScissor is not null)
+      {
+        UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
+        CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
+        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
+      }
+      else
+        Module.BatchNormalBegin(this, blendState);
+    }
 
     /// <summary>
     /// 执行划分元素的渲染.
@@ -275,44 +336,31 @@
         return;
       if (IsCanvas)
       {
-        batch.End();
         device.SetRenderTarget(Canvas);
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null);
         device.Clear(Color.Transparent);
       }
-
-      renderer?.DoRender(device, batch);//渲染器进行渲染.
-
-      Layout.ScissorRectangleCache = device.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
-      if (Layout.ScissorEnable)
-      {
-        batch.End();
-        device.ScissorRectangle = Layout.ScissorRectangle;
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, ScissiorRasterizer);
-      }
+      BeginRender(BlendState.AlphaBlend);
+      OnRender(device, batch);
+      _renderer?.DoRender(device, batch);//渲染器进行渲染.
+      batch.End();
+      if (UpperScissor is not null)
+        device.ScissorRectangle = UpperScissor.Layout.ScissorRectangleCache;
       RenderChildren(device, batch);
-      if (Layout.ScissorEnable)
-      {
-        batch.End();
-        if (parent.Layout.ScissorEnable)
-          batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, parent.ScissiorRasterizer);
-        else
-          UserInterface.BatchNormalBegin(batch);
-      }
-      device.ScissorRectangle = Layout.ScissorRectangleCache;
-
       if (IsCanvas)
       {
-        batch.End();
         if (UpperCanvas is not null)
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
-          device.SetRenderTarget(UserInterface.RawRt);
-        if (threshold.Layout.ScissorEnable)
-          device.ScissorRectangle = threshold.Layout.ScissorRectangle;
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, threshold.Layout.ScissorEnable ? threshold.ScissiorRasterizer : null);
+          device.SetRenderTarget(Module.RawRt);
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
         batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
+        batch.End();
       }
+    }
+
+    public virtual void OnRender(GraphicsDevice device, SpriteBatch batch)
+    {
+
     }
 
     /// <summary>
@@ -333,7 +381,6 @@
       for (int count = 0; count < Children.Count; count++)
       {
         _div = Children[count];
-        _div.Order = count;
         action.Invoke(_div);
       }
     }
@@ -346,10 +393,10 @@
     /// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public virtual bool Register(Div div, bool doInit = false)
     {
-      div.parent = this;
-      div.userInterface = userInterface;
-      div.threshold = threshold;
-      Events.Register(div);
+      div._parent = this;
+      div._module = _module;
+      div._root = _root;
+      Events.Register(div.Events);
       if (doInit)
         div.DoInitialize();
       Children.Add(div);
@@ -363,10 +410,9 @@
     /// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public virtual bool Remove(Div div)
     {
-      div.parent = null;
-      div.threshold = null;
-      div.userInterface = null;
-      Events.Remove(div);
+      div._parent = null;
+      div._root = null;
+      Events.Remove(div.Events);
       return Children.Remove(div);
     }
 
@@ -381,7 +427,11 @@
         _div = Children[count];
         Remove(_div);
         if (dispose)
+        {
+          _div._module = null;
+          _div._root = null;
           _div.Dispose();
+        }
         count--;
       }
       //Clear();
@@ -396,12 +446,12 @@
     /// <returns></returns>
     public bool DescendantsOf(Div div)
     {
-      if (div.parent is not null)
+      if (div._parent is not null)
       {
-        if (div.parent.Equals(div))
+        if (div._parent.Equals(div))
           return true;
         else
-          return div.parent.DescendantsOf(div);
+          return div._parent.DescendantsOf(div);
       }
       return false;
     }
@@ -410,40 +460,40 @@
     /// 判断该划分元素是否包含屏幕上的指定点.
     /// </summary>
     /// <param name="point">输入的点.</param>
-    /// <returns>如果包含则返回 <see langword="true"/>，否则返回 <see langword="false"/>.</returns>
-    public bool ContainsScreenPoint(Point point)
+    /// <returns>如果包含则返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
+    public virtual bool ContainsScreenPoint(Point point)
     {
-      bool result = true;
-      if (parent is not null)
-        result = parent.ContainsScreenPoint(point);
-      return result && Layout.Bounds.Contains(point);
+      if (this == Root)
+        return true;
+      else
+        return Layout.Bounds.Contains(point);
     }
 
-    private bool disposedValue;
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposedValue)
-      {
-        if (disposing)
-        {
-          Canvas?.Dispose();
-          for (int count = 0; count < Children.Count; count++)
-            Children[count].Dispose();
-          OnDispose?.Invoke();
-        }
-        renderer = null;
-        disposedValue = true;
-      }
-    }
+    public bool ContainsScreenPoint(Vector2 pos)
+      => ContainsScreenPoint(pos.ToPoint());
+
+    public Vector2 MousePos
+      => Module.UICamera.ConvertToWorld(MouseResponder.Position) / CoreInfo.ScreenSizeF * CoreInfo.ViewSizeF;
+
+    public Vector2 RelativeMousePos => MousePos - Layout.ScreenLocation;
+
+    public Vector2 RelativeRenderMousePos => MousePos - Layout.RenderTargetLocation;
+
     public event Action OnDispose;
-    ~Div()
+    public virtual void Dispose()
     {
-      Dispose(disposing: false);
-    }
-    public void Dispose()
-    {
-      Dispose(disposing: true);
-      GC.SuppressFinalize(this);
+      _parent = null;
+      _renderer = null;
+      _controller = null;
+      _module = null;
+      _root = null;
+      _upperCanvas = null;
+      _upperScissor = null;
+      Events?.Dispose();
+      Canvas?.Dispose();
+      for (int count = 0; count < Children.Count; count++)
+        Children[count].Dispose();
+      OnDispose?.Invoke();
     }
   }
 }

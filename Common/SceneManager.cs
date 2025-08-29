@@ -83,17 +83,8 @@
             CoreInfo.Core.Window.OrientationChanged -= _currentScene.InitRenderTarget;
           }
           CoreInfo.Core.Components.Remove(_currentScene);
-          if(Loader is not null)
+          if (Loader is not null)
             CoreInfo.Core.Components.Remove(Loader);
-          while (!_currentScene.CanDispose)
-          {
-            _disposePromptTimer += Time.UnscaledDeltaTime;
-            if (_disposePromptTimer >= 1)
-            {
-              Console.WriteLine("正在保存场景: " + _currentScene.GetType().Name);
-              _disposePromptTimer -= 1;
-            }
-          }
           if (_permanentScenes.ContainsValue(_currentScene) is false)
             _currentScene?.Dispose();
         }

@@ -8,15 +8,11 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// </summary>
   public class EcsTileCollisionSystem : Entitiesystem
   {
-    private EnvironmentalController controller;
     private EcsComTransform comTransform;
-    private EcsComPhysic comPhysic;
+    private EcsComTileInteract comPhysic;
 
-    public override void DoInitialize()
-    {
-      controller = Ecs.Controller;
-      base.DoInitialize();
-    }
+    public Tile Tile => Ecs.Scene.GetModule<Tile>();
+
     public override void DoUpdate()
     {
       Entity _current;
@@ -26,16 +22,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
         if (_current is null)
           continue;
         comTransform = _current.GetCom<EcsComTransform>();
-        comPhysic = _current.GetCom<EcsComPhysic>();
+        comPhysic = _current.GetCom<EcsComTileInteract>();
         if (comTransform is null || comPhysic is null)
           continue;
         //安全性检查.
-        if (comPhysic is not null)
-        {
-          if (!comPhysic.IgnoreGravity)
-            comTransform.Velocity += controller.UniGravity.Value * Time.DeltaTime / comPhysic.UniGravitySpeedAttTime;
-        }
-        //添加重力.
         if (comPhysic is not null && comTransform is not null)
         {
           comPhysic.PreviousCollisionLeft = comPhysic.CollisionLeft;
@@ -50,20 +40,19 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
     public void HandleCollision(Entity Entity)
     {
-      Tile tile = Ecs.Scene.GetModule<Tile>();
-      if (tile is null)
+      if (Tile is null)
         return;
-      if (comPhysic.IgnoreTile.Value)
+      if (comPhysic.IgnoreTile)
         return;
 
       RectangleF bounds = GetHitBox(Entity);
       RectangleF previousBounds = bounds;
       previousBounds.Offset(-comTransform.DeltaVelocity);
 
-      int leftTile = (int)Math.Floor((float)bounds.Left / TileOption.TileSize.X);
-      int rightTile = (int)Math.Ceiling(((float)bounds.Right / TileOption.TileSize.X));
-      int topTile = (int)Math.Floor((float)bounds.Top / TileOption.TileSize.Y);
-      int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / TileOption.TileSizeF.Y);
+      int leftTile = (int)Math.Floor((float)bounds.Left / Tile.Context.TileSize.X);
+      int rightTile = (int)Math.Ceiling(((float)bounds.Right / Tile.Context.TileSize.X));
+      int topTile = (int)Math.Floor((float)bounds.Top / Tile.Context.TileSize.Y);
+      int bottomTile = (int)Math.Ceiling((float)bounds.Bottom / Tile.Context.TileSizeF.Y);
 
       Vector2 deltaVel = comTransform.DeltaVelocity;
 
@@ -85,7 +74,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       Vector2 depth;
       Vector2 v;
       Vector2 absV;
-      TileInfo info;
+      ref TileInfo info = ref TileInfo.Null;
       RectangleF target;
       RectangleF next = bounds;
       next.Location += comTransform.DeltaVelocity;
@@ -100,13 +89,16 @@ namespace Colin.Core.Modulars.Ecses.Systems
       {
         for (int y = positiveY ? topTile : bottomTile; positiveY ? y <= bottomTile : y >= topTile; y += positiveY ? 1 : -1)
         {
-          info = tile[x, y, comPhysic.Layer];
+          info = ref Tile[x, y, comPhysic.Layer];
+
           if (info.IsNull)
             return;
-          target = info.HitBox;
+
+          target = GetTileBounds(ref info);
+
           if (
             next.Intersects(target) &&
-            info.Collision != Tiles.TileCollision.Passable &&
+            (info.Collision != TileSolid.None || info.Loading) &&
             !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);
@@ -116,20 +108,17 @@ namespace Colin.Core.Modulars.Ecses.Systems
             absV = -v;
             if (absV.X < absV.Y)
             {
-              if (info.Collision != TileCollision.Platform)
+              if (deltaVel.X < 0 && next.Left < target.Right)
               {
-                if (deltaVel.X < 0 && next.Left < target.Right)
-                {
-                  xt = (bounds.Left - target.Right) / Math.Abs(deltaVel.X);
-                  comPhysic.CollisionLeft = true;
-                }
-                else if (deltaVel.X > 0 && next.Right > target.Left)
-                {
-                  xt = (target.Left - bounds.Right) / Math.Abs(deltaVel.X);
-                  comPhysic.CollisionRight = true;
-                }
-                deltaVel.X *= xt;
+                xt = (bounds.Left - target.Right) / Math.Abs(deltaVel.X);
+                comPhysic.CollisionLeft = true;
               }
+              else if (deltaVel.X > 0 && next.Right > target.Left)
+              {
+                xt = (target.Left - bounds.Right) / Math.Abs(deltaVel.X);
+                comPhysic.CollisionRight = true;
+              }
+              deltaVel.X *= xt;
               next = GetHitBox(Entity);
               next.Location += deltaVel;
               break;
@@ -153,15 +142,14 @@ namespace Colin.Core.Modulars.Ecses.Systems
             }
           }
         }
-
-        comTransform.Velocity = deltaVel / Time.DeltaTime;
+        comTransform.Vel = deltaVel / Time.DeltaTime;
       }
     }
 
     public RectangleF GetHitBox(Entity Entity)
     {
       EcsComTransform comTransform = Entity?.GetCom<EcsComTransform>();
-      EcsComPhysic comPhysic = Entity?.GetCom<EcsComPhysic>();
+      EcsComTileInteract comPhysic = Entity?.GetCom<EcsComTileInteract>();
       if (comTransform is not null && comPhysic is not null)
       {
         return new RectangleF(
@@ -173,6 +161,11 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
       else
         return RectangleF.Empty;
+    }
+
+    public RectangleF GetTileBounds(ref TileInfo info)
+    {
+      return new RectangleF(info.GetWCoord2().ToVector2() * Tile.Context.TileSizeF, Tile.Context.TileSizeF);
     }
 
     private Vector2 GetEmbed(RectangleF rectA, RectangleF rectB, Vector2 velocity)

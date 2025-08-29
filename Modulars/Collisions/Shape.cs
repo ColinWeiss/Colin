@@ -1,9 +1,4 @@
-﻿using DeltaMachine.Windows;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Modulars.Collisions
+﻿namespace Colin.Core.Modulars.Collisions
 {
   public class Shape
   {
@@ -16,6 +11,14 @@ namespace Colin.Core.Modulars.Collisions
     /// 指示颜色.
     /// </summary>
     public Color Color;
+
+    public Angle Rotation;
+
+    public Vector2 Anchor;
+
+    public virtual RectangleF Bounds { get; }
+
+    public Matrix View;
 
     public Shape(Vector2 position, Color color)
     {
@@ -37,7 +40,7 @@ namespace Colin.Core.Modulars.Collisions
 
     public virtual void DoRender(GraphicsDevice device, SpriteBatch batch) { }
 
-    public bool CollidesWith(Shape other)
+    public bool CheckCollision(Shape other)
     {
       return CollisionHandle.CheckCollision(this, other);
     }

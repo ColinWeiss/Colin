@@ -1,5 +1,4 @@
-﻿using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Controllers;
+﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Prefabs;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 
@@ -54,10 +53,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       BindController<DivGradientController>();
       Interact.IsDraggable = true;
       Interact.IsSelectable = false;
-      Interact.IsInteractive = true;
 
       Substrate = new Div("Substrate");
-      Substrate.Interact.IsInteractive = false;
       Substrate.Layout.Width = Layout.Width + 8;
       Substrate.Layout.Height = Layout.Height + _titleHeight + 8;
       base.Register(Substrate);
@@ -74,7 +71,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 
       TitleColumn = new Div("TitleColumn");
       TitleColumn.BindRenderer<DivPixelRenderer>();
-      TitleColumn.Interact.IsInteractive = false;
       TitleColumn.Design.Color = new Color(20, 22, 25);
       TitleColumn.Layout.Location = new Vector2(4, 4);
       TitleColumn.Layout.Width = Layout.Width;
@@ -82,14 +78,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       {
         _titleColumnDec = new Div("TitleColumn.Decoration");
         _titleColumnDec.BindRenderer<DivPixelRenderer>();
-        _titleColumnDec.Interact.IsInteractive = false;
         _titleColumnDec.Layout.Width = TitleColumn.Layout.Width;
         _titleColumnDec.Layout.Height = TitleColumn.Layout.Height;
         TitleColumn.Register(_titleColumnDec);
 
         Icon = new Div("Icon");
         Icon.BindRenderer<DivPixelRenderer>();
-        Icon.Interact.IsInteractive = true;
         Icon.Layout.Left = 8;
         Icon.Layout.Top = 6;
         Icon.Layout.Width = 24;
@@ -105,7 +99,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
 
         CloseButton = new Div("CloseButton");
         CloseButton.BindRenderer<DivPixelRenderer>();
-        CloseButton.Interact.IsInteractive = true;
         CloseButton.Layout.Left = TitleColumn.Layout.Width - 32;
         CloseButton.Layout.Top = 6;
         CloseButton.Layout.Width = 24;
@@ -127,12 +120,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.LeftClickBefore += (e) => UserInterface.Container.SetTop(this);
-      Events.KeyClickBefore += (object s, KeyEventArgs e) =>
+      Events.LeftClicked.Event += (s, e) => Module.Container.SetTop(this);
+      Events.KeysClicked.Event += (s, e) =>
       {
-        if (e.Key == Keys.Escape && IsVisible)
+        if (e.Keys == Keys.Escape && base.IsVisible)
         {
-          e.Captured = true;
+          e.IsCapture = true;
+          e.StopBubbling = true;
           Close();
         }
       };

@@ -1,4 +1,6 @@
-﻿using Colin.Core.IO;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.IO;
+using Colin.Core.Modulars;
 
 namespace Colin.Core.Common
 {
@@ -9,7 +11,7 @@ namespace Colin.Core.Common
   {
     public string Name { get; set; }
 
-    public SceneCamera SceneCamera;
+    public SceneCamera Camera;
 
     private SceneModuleList _components;
     /// <summary>
@@ -18,10 +20,9 @@ namespace Colin.Core.Common
     public SceneModuleList Modules => _components;
 
     /// <summary>
-    /// 指示场景是否可以被回收.
-    /// <br>[!] 默认为 <see langword="true"/>, 若需要控制 Dispose 时序, 则需要先设为 <see langword="false"/>, 再按需操作为 <see langword="true"/>.</br>
+    /// 若为场景添加了 <see cref="Business"/> 模块, 则可通过该属性获取该模块引用.
     /// </summary>
-    public bool CanDispose { get; set; }
+    public Business Business => Modules.GetModule<Business>();
 
     /// <summary>
     /// 指示场景在切换时是否执行初始化的值.
@@ -35,16 +36,15 @@ namespace Colin.Core.Common
 
     public ScreenReprocess ScreenReprocess = new ScreenReprocess();
 
-    public SceneEventResponder Events;
+    public SceneEvents Events;
 
     public Scene() : base(CoreInfo.Core)
     {
-      CanDispose = true;
-      Events = new SceneEventResponder();
-      // 仅此一处管理Game.Window事件，其他地方都用Scene.Event统一进行管理，不需要单独删除
+      Events = new SceneEvents();
+      // 仅此一处管理Game.Window事件, 其他地方都用Scene.Event统一进行管理, 不需要单独删除
     }
 
-    public override void Initialize()
+    public override sealed void Initialize()
     {
       Started = false;
       if (InitializeOnSwitch)
@@ -54,7 +54,7 @@ namespace Colin.Core.Common
         Events.ClientSizeChanged += InitRenderTarget;
         _components = new SceneModuleList(this);
         _components.Add(Events);
-        _components.Add(SceneCamera = new SceneCamera());
+        _components.Add(Camera = new SceneCamera());
         SceneInit();
         CoreInfo.Core.Window.ClientSizeChanged += Events.InvokeSizeChange;
         CoreInfo.Core.Window.OrientationChanged += Events.InvokeSizeChange;
@@ -77,16 +77,19 @@ namespace Colin.Core.Common
     internal bool Started = false;
     public override sealed void Update(GameTime gameTime)
     {
-      if (!Started)
+      using (DebugProfiler.Tag("Update-" + GetType().Name))
       {
-        Start();
-        Modules.DoStart();
-        Started = true;
+        if (!Started)
+        {
+          Start();
+          Modules.DoStart();
+          Started = true;
+        }
+        UpdatePreset();
+        Modules.DoUpdate(gameTime);
+        SceneUpdate();
+        base.Update(gameTime);
       }
-      UpdatePreset();
-      Modules.DoUpdate(gameTime);
-      SceneUpdate();
-      base.Update(gameTime);
     }
     public virtual void Start() { }
     public virtual void UpdatePreset() { }
@@ -96,24 +99,27 @@ namespace Colin.Core.Common
     private bool _renderStarted = false;
     public override sealed void Draw(GameTime gameTime)
     {
-      if (_skipRender is true)
+      using (DebugProfiler.Tag("Draw-" + GetType().Name))
       {
-        _skipRender = false;
-        return;
+        if (_skipRender is true)
+        {
+          _skipRender = false;
+          return;
+        }
+        else if (_renderStarted is false)
+        {
+          RenderStart();
+          _renderStarted = true;
+        }
+        SceneRenderPreset();
+        Modules.DoRender(CoreInfo.Batch);
+        SceneRender();
+        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
+        CoreInfo.Batch.Begin();
+        CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+        CoreInfo.Batch.End();
+        base.Draw(gameTime);
       }
-      else if (_renderStarted is false)
-      {
-        RenderStart();
-        _renderStarted = true;
-      }
-      SceneRenderPreset();
-      Modules.DoRender(CoreInfo.Batch);
-      SceneRender();
-      CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
-      CoreInfo.Batch.Begin();
-      CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-      CoreInfo.Batch.End();
-      base.Draw(gameTime);
     }
     public virtual void RenderStart() { }
     public virtual void SceneRenderPreset() { }

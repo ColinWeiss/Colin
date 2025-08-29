@@ -90,7 +90,7 @@ namespace Colin.Core.Graphics.Shaders
             throw new NotImplementedException($"无法将{objects[i].GetType().Name}导入CBuffer中");
         }
         // 需要对齐到16字节, 不能跨越
-        // 如果当前变量的末尾有一部分外露到下一个16字节区间，则改为对齐下一个区间，重新写入
+        // 如果当前变量的末尾有一部分外露到下一个16字节区间, 则改为对齐下一个区间, 重新写入
         if (((int)writer.BaseStream.Position - 1) / 16 > start / 16)
         {
           writer.BaseStream.Seek((start / 16 + 1) * 16, SeekOrigin.Begin);
@@ -103,7 +103,7 @@ namespace Colin.Core.Graphics.Shaders
     }
 
     /// <summary>
-    /// Batch式CBuffer数据导入，宝宝模式
+    /// Batch式CBuffer数据导入, 宝宝模式
     /// </summary>
     /// <param name="startPosition"></param>
     public void DataBatchBegin(int startPosition = 0)
@@ -146,7 +146,7 @@ namespace Colin.Core.Graphics.Shaders
           .GetMethod("GetShaderResourceView", BindingFlags.Instance | BindingFlags.NonPublic)
           .Invoke(texture, null) as ShaderResourceView);
     }
-    public void SetUnorderedTexture(int slot, UnorderedAccessTexture2D texture)
+    public void SetUnorderedTexture2D(int slot, UnorderedAccessTexture2D texture)
     {
       if (texture == null)
       {
@@ -156,6 +156,18 @@ namespace Colin.Core.Graphics.Shaders
       UnorderedAccessView uav = texture.GetUAV(D3dDevice);
       D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, uav);
     }
+
+    public void SetUnorderedTexture(int slot, UnorderedAccessTexture3D texture)
+    {
+      if (texture == null)
+      {
+        D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, null);
+        return;
+      }
+      UnorderedAccessView uav = texture.GetUAV(D3dDevice);
+      D3dDeviceContext.ComputeShader.SetUnorderedAccessView(slot, uav);
+    }
+
     public void Dispose()
     {
       if (CBuffer != null)

@@ -1,4 +1,4 @@
-﻿using Colin.Core.Modulars.Tiles;
+﻿using Colin.Core.Modulars.Ecses;
 using System.Reflection;
 using System.Text.Json;
 
@@ -40,7 +40,7 @@ namespace Colin.Core.Resources
   public class CodeResources<T0> where T0 : ICodeResource
   {
     public static Dictionary<Type, T0> Resources = new Dictionary<Type, T0>();
-    private static Dictionary<string, int> serToHashs = new Dictionary<string, int>();
+    public static Dictionary<string, int> serToHashs = new Dictionary<string, int>();
     private static Dictionary<int, string> hashToSers = new Dictionary<int, string>();
     private static Dictionary<string, Type> serToResourceTypes = new Dictionary<string, Type>();
 
@@ -57,18 +57,19 @@ namespace Colin.Core.Resources
         return GetFromType(type);
       else return default;
     }
-
     public static string GetTypeNameFromHash(int hashValue)
     {
-      if (CodeResources<TileBehavior>.hashToSers.TryGetValue(hashValue, out string value))
+      if (hashToSers.TryGetValue(hashValue, out string value))
         return value;
       else
         return null;
     }
     public static int? GetHashFromTypeName(string typeName)
     {
-      if (CodeResources<TileBehavior>.serToHashs.TryGetValue(typeName, out int value))
+      if (serToHashs.TryGetValue(typeName, out int value))
+      {
         return value;
+      }
       else
         return null;
     }
@@ -76,6 +77,15 @@ namespace Colin.Core.Resources
     public static T1 CreateNewInstance<T1>() where T1 : T0
     {
       return (T1)Activator.CreateInstance(typeof(T1));
+    }
+    public static T0 CreateNewInstance(T0 t)
+    {
+      return (T0)Activator.CreateInstance(t.GetType());
+    }
+    public static T0 CreateNewInstance(int hashValue)
+    {
+      string typeName = GetTypeNameFromHash(hashValue);
+      return (T0)Activator.CreateInstance(GetFromTypeName(typeName).GetType());
     }
 
     public void Load()

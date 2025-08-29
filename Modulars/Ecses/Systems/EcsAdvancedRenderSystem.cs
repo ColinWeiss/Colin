@@ -1,4 +1,5 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Modulars.Ecses.Components;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {
@@ -8,29 +9,60 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// </summary>
   public class EcsAdvancedRenderSystem : Entitiesystem
   {
+    public override void DoUpdate()
+    {
+      Entity entity;
+      EcsComRenderData renderData;
+      for (int count = 0; count < Ecs.Entities.Length; count++)
+      {
+        entity = Ecs.Entities[count];
+        if (entity is null)
+          continue;
+        renderData = entity.GetCom<EcsComRenderData>();
+        if (renderData is null)
+          continue;
+        foreach (var update in renderData.Updates)
+        {
+          update.Function.Invoke();
+        }
+      }
+      base.DoUpdate();
+    }
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      Entity _current;
-      batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.SceneCamera.View);
-      for (int count = 0; count < Ecs.Entities.Length; count++)
+      using (DebugProfiler.Tag("Entity"))
       {
-        _current = Ecs.Entities[count];
-        if (_current is null)
-          continue;
-        foreach (IEntityCom component in _current.Components.Values)
-          if (component is EcsComDeferredRender renderer && renderer.Visible)
-            renderer.DoRender(device, batch);
-      }
-      batch.End();
+        Entity entity;
+        EcsComRenderData renderData;
+        batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, rasterizerState: RasterizerState.CullNone, transformMatrix: Ecs.Scene.Camera.View);
+        for (int count = 0; count < Ecs.Entities.Length; count++)
+        {
+          entity = Ecs.Entities[count];
+          if (entity is null)
+            continue;
+          renderData = entity.GetCom<EcsComRenderData>();
+          if (renderData is null)
+            continue;
+          foreach (var deferred in renderData.Deferreds)
+          {
+            deferred.Function.Invoke(device, batch);
+          }
+        }
+        batch.End();
 
-      for (int count = 0; count < Ecs.Entities.Length; count++)
-      {
-        _current = Ecs.Entities[count];
-        if (_current is null)
-          continue;
-        foreach (IEntityCom component in _current.Components.Values)
-          if (component is EcsComAdvancedRender renderer && component is not EcsComDeferredRender && renderer.Visible)
-            renderer.DoRender(device, batch);
+        for (int count = 0; count < Ecs.Entities.Length; count++)
+        {
+          entity = Ecs.Entities[count];
+          if (entity is null)
+            continue;
+          renderData = entity.GetCom<EcsComRenderData>();
+          if (renderData is null)
+            continue;
+          foreach (var advanced in renderData.Advanceds)
+          {
+            advanced.Function.Invoke(device, batch);
+          }
+        }
       }
       base.DoRender(device, batch);
     }

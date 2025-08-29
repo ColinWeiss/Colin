@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Graphics.Shaders;
-using Colin.Core.IO;
 using FontStashSharp;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
@@ -68,7 +67,6 @@ namespace Colin.Core
     private static Dictionary<string, ComputeShader> _computeShaders = new Dictionary<string, ComputeShader>();
     private static Dictionary<string, SoundEffect> _soundEffects = new Dictionary<string, SoundEffect>();
     private static Dictionary<string, Song> _songs = new Dictionary<string, Song>();
-    private static Dictionary<string, CsvFile> _tables = new Dictionary<string, CsvFile>();
 
     public static void LoadAssets()
     {
@@ -77,7 +75,6 @@ namespace Colin.Core
       LoadEffects();
       LoadComputeShaders();
       LoadSoundEffects();
-      LoadCsvFiles();
     }
     public static void LoadTextures()
     {
@@ -143,7 +140,7 @@ namespace Colin.Core
         fileName = fileFullName[count];
         sourceFile = Path.Combine(EffectDir, fileName);
         targetFile = Path.ChangeExtension(Path.Combine(EffectDir, fileName), ".rShader");
-        if (Path.GetExtension(sourceFile) is not ".fx" || File.Exists(targetFile))
+        if (Path.GetExtension(sourceFile) is not ".fx" || File.Exists(targetFile) && File.GetLastWriteTime(targetFile) >= File.GetLastWriteTime(fileName))
           continue;
         cmdLine.Add($"mgfxc {sourceFile} {targetFile} /Profile:DirectX_11");
       }
@@ -181,7 +178,7 @@ namespace Colin.Core
       for (int count = 0; count < fileFullName.Length; count++)
       {
         fileName = Path.ChangeExtension(fileFullName[count], ComputeShader.FileExtension);
-        if (File.Exists(fileName) is false)
+        if (!File.Exists(fileName) || File.GetLastWriteTime(fileName) < File.GetLastWriteTime(fileFullName[count]))
           CompileShaders();
         effect = new ComputeShader(CoreInfo.Graphics.GraphicsDevice, File.ReadAllBytes(fileName));
         fileName = OrganizePath(fileName);
@@ -224,26 +221,6 @@ namespace Colin.Core
         _soundEffects.Add(fileName, target);
       }
     }
-    public static void LoadCsvFiles()
-    {
-      if (Directory.Exists(TableDir) is false)
-      {
-        Console.WriteLine("Error", "未检查到配表文件夹.");
-        return;
-      }
-      else
-        Console.WriteLine("正在加载配表资源.");
-      string[] fileFullName = Directory.GetFiles(TableDir, "*.csv*", SearchOption.AllDirectories);
-      string fileName;
-      CsvFile target;
-      for (int count = 0; count < fileFullName.Length; count++)
-      {
-        fileName = fileFullName[count];
-        target = new CsvFile(fileName);
-        fileName = OrganizePath(fileName);
-        _tables.Add(fileName, target);
-      }
-    }
 
     public static Texture2D GetTexture(string path)
     {
@@ -265,6 +242,10 @@ namespace Colin.Core
         return result;
       else
         return null;
+    }
+    public static Effect GetEffect(params string[] path)
+    {
+      return GetEffect(Path.Combine(path));
     }
 
     public static ComputeShader GetComputeShader(string path)
@@ -294,15 +275,9 @@ namespace Colin.Core
       else
         return null;
     }
-
-    public static CsvFile GetCsv(string path)
+    public static SoundEffect GetSoundEffect(params string[] path)
     {
-      path = path.Replace("/", Path.DirectorySeparatorChar.ToString());
-      if (_tables.TryGetValue(path, out CsvFile result))
-        return result;
-      else
-        return null;
-
+      return GetSoundEffect(Path.Combine(path));
     }
 
     private static string OrganizePath(string path)

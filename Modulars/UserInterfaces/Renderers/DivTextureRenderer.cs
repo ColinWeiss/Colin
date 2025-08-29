@@ -7,15 +7,8 @@
 
     public override void OnDivInitialize() { }
 
-    public bool Addtive = false;
-
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      if (Addtive)
-      {
-        batch.End();
-        batch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, div.Layout.ScissorEnable ? div.ScissiorRasterizer : null);
-      }
       if (_sprite is not null)
       {
         Frame currentFrame = _sprite.Frame;
@@ -29,11 +22,6 @@
           Div.Layout.Scale,
           SpriteEffects.None,
           _sprite.Depth);
-      }
-      if (Addtive)
-      {
-        batch.End();
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
       }
     }
     public DivTextureRenderer Bind(Sprite sprite)

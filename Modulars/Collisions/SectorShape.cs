@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Modulars.Collisions
+﻿namespace Colin.Core.Modulars.Collisions
 {
   public class SectorShape : Shape
   {
@@ -44,6 +40,8 @@ namespace Colin.Core.Modulars.Collisions
     {
       Vector3 center = new Vector3(Position, 0);
 
+      float startAngleOffsetResult = StartAngle + Rotation.RadiansF;
+
       // 初始化顶点列表和索引列表
       List<VertexPositionColor> vertices = new List<VertexPositionColor>();
       List<short> fillIndices = new List<short>();
@@ -55,8 +53,8 @@ namespace Colin.Core.Modulars.Collisions
 
       // 添加起始边缘点
       Vector2 previousPoint = new Vector2(
-          Position.X + Radius * (float)Math.Cos(StartAngle),
-          Position.Y + Radius * (float)Math.Sin(StartAngle)
+          Position.X + Radius * (float)Math.Cos(startAngleOffsetResult),
+          Position.Y + Radius * (float)Math.Sin(startAngleOffsetResult)
       );
       short previousIndex = (short)vertices.Count;
       vertices.Add(new VertexPositionColor(new Vector3(previousPoint, 0), new Color(Color, 0.5f)));
@@ -67,7 +65,7 @@ namespace Colin.Core.Modulars.Collisions
 
       for (int i = 0; i <= Segments; i++)
       {
-        float angle = StartAngle + (SweepAngle / Segments) * i;
+        float angle = startAngleOffsetResult + (SweepAngle / Segments) * i;
         Vector2 point = new Vector2(
             Position.X + Radius * (float)Math.Cos(angle),
             Position.Y + Radius * (float)Math.Sin(angle)
@@ -183,6 +181,40 @@ namespace Colin.Core.Modulars.Collisions
       while (angle < 0) angle += MathHelper.TwoPi;
       while (angle >= MathHelper.TwoPi) angle -= MathHelper.TwoPi;
       return angle;
+    }
+
+    private RectangleF? _bounds;
+    public override RectangleF Bounds
+    {
+      get
+      {
+        if (_bounds is null)
+        {
+          // 计算 AABB 的最小和最大坐标
+          float minX = -Radius;  // 从中心点开始计算
+          float minY = -Radius;  // 从中心点开始计算
+          float maxX = Radius;   // 从中心点开始计算
+          float maxY = Radius;   // 从中心点开始计算
+
+          // 根据起始角度和扫过角度计算扇形的边界
+          float endAngle = StartAngle + SweepAngle;
+
+          Vector2 point1 = new Vector2(Radius * (float)Math.Cos(StartAngle), Radius * (float)Math.Sin(StartAngle));
+          Vector2 point2 = new Vector2(Radius * (float)Math.Cos(endAngle), Radius * (float)Math.Sin(endAngle));
+
+          // 更新 AABB 的最小和最大坐标
+          minX = Math.Min(minX, Math.Min(point1.X, point2.X));
+          minY = Math.Min(minY, Math.Min(point1.Y, point2.Y));
+          maxX = Math.Max(maxX, Math.Max(point1.X, point2.X));
+          maxY = Math.Max(maxY, Math.Max(point1.Y, point2.Y));
+
+          // 创建并返回 AABB Rectangle
+          _bounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+        }
+        RectangleF result = _bounds.Value;
+        result.Offset(Position);
+        return result;
+      }
     }
   }
 }

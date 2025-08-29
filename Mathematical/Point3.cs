@@ -12,17 +12,17 @@
 
     private static readonly Point3 unitZ = new Point3(0, 0, 1);
 
-    private static readonly Point3 up = new Point3(0, 1, 0);
+    private static readonly Point3 up = new Point3(0, -1, 0);
 
-    private static readonly Point3 down = new Point3(0, -1, 0);
+    private static readonly Point3 down = new Point3(0, 1, 0);
 
     private static readonly Point3 right = new Point3(1, 0, 0);
 
     private static readonly Point3 left = new Point3(-1, 0, 0);
 
-    private static readonly Point3 forward = new Point3(0, 0, -1);
+    private static readonly Point3 front = new Point3(0, 0, 1);
 
-    private static readonly Point3 backward = new Point3(0, 0, 1);
+    private static readonly Point3 behind = new Point3(0, 0, -1);
 
     public int X;
 
@@ -48,9 +48,9 @@
 
     public static Point3 Left => left;
 
-    public static Point3 Forward => forward;
+    public static Point3 Front => front;
 
-    public static Point3 Backward => backward;
+    public static Point3 Behind => behind;
 
     internal string DebugDisplayString => X + "  " + Y + "  " + Z;
 
@@ -60,6 +60,7 @@
       Y = y;
       Z = z;
     }
+
     public Point3(float x, float y, float z)
     {
       X = (int)x;
@@ -80,7 +81,6 @@
       Y = (int)value;
       Z = (int)value;
     }
-
 
     public Point3(Point value, int z)
     {
@@ -128,7 +128,9 @@
       result.Z = (int)MathHelper.CatmullRom(value1.Z, value2.Z, value3.Z, value4.Z, amount);
     }
 
-    public Point GetPoint() => new Point(X, Y);
+    public Point ToPoint() => new Point(X, Y);
+
+    public Vector2 ToVector2() => new Vector2(X, Y);
 
     public void Ceiling()
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Modulars.Collisions
+﻿namespace Colin.Core.Modulars.Collisions
 {
   public class CircleShape : Shape
   {
@@ -16,19 +12,12 @@ namespace Colin.Core.Modulars.Collisions
     /// </summary>
     public const int Segments = 32;
 
-    public Matrix View;
-
     public CircleShape(Vector2 position, Color color, float radius) : base(position, color)
     {
       Radius = radius;
-    }
-
-    public override void DoInitialize()
-    {
       // 初始化顶点数组和索引数组
       FillVertices = new VertexPositionColor[Segments + 1]; // 中心点 + 分段数
       BorderVertices = new VertexPositionColor[Segments + 1]; // 描边圆形也有分段数 + 1 个顶点
-      base.DoInitialize();
     }
 
     public override void DoUpdate(GameTime gameTime)
@@ -95,6 +84,8 @@ namespace Colin.Core.Modulars.Collisions
             0, device.Viewport.Width, device.Viewport.Height, 0, 0, 1
         );
 
+        if (FillIndicesArray is null)
+          return;
         // 绘制填充圆形
         foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
         {
@@ -125,7 +116,20 @@ namespace Colin.Core.Modulars.Collisions
           );
         }
       }
-      base.DoRender( device, batch);
+      base.DoRender(device, batch);
+    }
+
+    private RectangleF? _bounds;
+    public override RectangleF Bounds
+    {
+      get
+      {
+        if (_bounds is null)
+          _bounds = new RectangleF(-Radius, -Radius, 2 * Radius, 2 * Radius);
+        RectangleF result = _bounds.Value;
+        result.Offset(Position);
+        return result;
+      }
     }
   }
 }

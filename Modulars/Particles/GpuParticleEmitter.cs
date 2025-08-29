@@ -160,11 +160,9 @@ namespace Colin.Core.Modulars.Particles
 
     public void DoRender(SceneCamera camera)
     {
-      Perfmon.Start();
       DataWriteStep(camera.Scene);
       DoCompute();
       DoParticleRender(camera);
-      Perfmon.End("GpuParticle");
     }
     /// <summary>
     /// 在这一步, 发射器将读取 <see cref="DataBufferQueue"/> 的数据, 并将其全部写入 <see cref="DataRt"/>.
@@ -200,11 +198,11 @@ namespace Colin.Core.Modulars.Particles
     public void DoCompute()
     {
       ParticleUpdateCompute.SetTexture(0, DataRt);
-      ParticleUpdateCompute.SetUnorderedTexture(0, DataResultRt);
+      ParticleUpdateCompute.SetUnorderedTexture2D(0, DataResultRt);
       ParticleUpdateCompute.Dispatch(2048, 1, 1);
 
       ParticleUpdateCompute.SetTexture(0, null);
-      ParticleUpdateCompute.SetUnorderedTexture(0, null);
+      ParticleUpdateCompute.SetUnorderedTexture2D(0, null);
     }
     /// <summary>
     /// 使用 ParticleInstancing 对粒子进行实例绘制.

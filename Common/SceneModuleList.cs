@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Common
+﻿using Colin.Core.Common.Debugs;
+
+namespace Colin.Core.Common
 {
   /// <summary>
   /// 场景模块集合.
@@ -39,7 +41,12 @@
       {
         _com = Components.Values.ElementAt(count);
         if (_com.Enable)
-          _com.DoUpdate(gameTime);
+        {
+          using (DebugProfiler.Tag("(Components)"))
+          {
+            _com.DoUpdate(gameTime);
+          }
+        }
       }
     }
 
@@ -49,33 +56,45 @@
       RenderTarget2D frameRenderLayer;
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-      for (int count = 0; count < RenderableComponents.Values.Count; count++)
+      using (DebugProfiler.Tag("(Raw)"))
       {
-        renderMode = RenderableComponents.Values.ElementAt(count);
-        frameRenderLayer = renderMode.RawRt;
-        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
-        CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-        if (renderMode.RawRtVisible)
+        for (int count = 0; count < RenderableComponents.Values.Count; count++)
         {
-          renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
+          renderMode = RenderableComponents.Values.ElementAt(count);
+          frameRenderLayer = renderMode.RawRt;
+          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
+          CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
+          if (renderMode.RawRtVisible)
+          {
+            // using (DebugProfiler.Tag(renderMode.GetType().Name))
+            {
+              renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
+            }
+          }
         }
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
-      for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
+      using (DebugProfiler.Tag("(Re-render)"))
       {
-        renderMode = RenderableComponents.Values.ElementAt(count);
-        frameRenderLayer = renderMode.RawRt;
-        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
-        if (renderMode.Presentation)
+        for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
         {
-          renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
-          if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
-            CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
-          else
-            CoreInfo.Batch.Begin(SpriteSortMode.Deferred);
-          CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-          CoreInfo.Batch.End();
+          renderMode = RenderableComponents.Values.ElementAt(count);
+          frameRenderLayer = renderMode.RawRt;
+          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+          if (renderMode.Presentation)
+          {
+            // using (DebugProfiler.Tag("(Re-render)"))
+            {
+              renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
+              if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
+                CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
+              else
+                CoreInfo.Batch.Begin(SpriteSortMode.Deferred);
+              CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              CoreInfo.Batch.End();
+            }
+          }
         }
       }
     }

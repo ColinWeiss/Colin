@@ -10,6 +10,11 @@
     private string identifier;
 
     /// <summary>
+    /// 名称.
+    /// </summary>
+    public string Name;
+
+    /// <summary>
     /// 指示实体的标识符.
     /// <br>实体判断相等的依据之一.</br>
     /// </summary>
@@ -26,12 +31,11 @@
     /// <summary>
     /// 指示实体标签.
     /// </summary>
-    public HashSet<string> Tags = new HashSet<string>();
+    public List<string> Tags = new List<string>();
 
     /// <summary>
     /// 为实体添加标签.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public void AddTag(string tag) => Tags.Add(tag);
 
     /// <summary>
@@ -41,7 +45,10 @@
     /// <returns></returns>
     public bool HasTag(string tag) => Tags.Contains(tag);
 
-    public void DoInitialize() { }
+    public void DoInitialize() 
+    {
+      Name ??= "未配置名称";
+    }
 
     public bool Equals(IEntityCom other)
     {
@@ -49,7 +56,7 @@
       if (other is EcsComDoc doc)
       {
         result = Identifier.Equals(doc.Identifier);
-        return result && Tags.SetEquals(doc.Tags);
+        return result && Tags.SequenceEqual(doc.Tags);
       }
       return result;
     }

@@ -37,13 +37,13 @@
         case GradientStyle.EaseOutExpo:
           _percentage = 1f - MathF.Pow(2, -10 * _timer / Time);
           break;
-      };
+      }
+      ;
       Current = Calculate();
       if (_timer > Time)
       {
         Current = Target;
         _isPlay = IsLoop;
-        _timer -= Time;
       }
       return Current;
     }

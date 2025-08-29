@@ -59,6 +59,14 @@ namespace Colin.Core
       }
     }
 
+    public static int ScreenWidth => Graphics.PreferredBackBufferWidth;
+
+    public static int ScreenHeight => Graphics.PreferredBackBufferHeight;
+
+    public static Point ScreenSize => new Point(ScreenWidth, ScreenHeight);
+
+    public static Vector2 ScreenSizeF => new Vector2(ScreenWidth, ScreenHeight);
+
     /// <summary>
     /// 视图分辨率宽度.
     /// </summary>
@@ -67,11 +75,6 @@ namespace Colin.Core
       get
       {
         return Graphics.GraphicsDevice.Viewport.Width;
-      }
-      set
-      {
-        Graphics.PreferredBackBufferWidth = value;
-        Graphics.ApplyChanges();
       }
     }
 
@@ -83,11 +86,6 @@ namespace Colin.Core
       get
       {
         return Graphics.GraphicsDevice.Viewport.Height;
-      }
-      set
-      {
-        Graphics.PreferredBackBufferHeight = value;
-        Graphics.ApplyChanges();
       }
     }
 
@@ -144,8 +142,6 @@ namespace Colin.Core
     /// 上一帧鼠标信息.
     /// </summary>
     public static MouseState MouseStateLast { get; private set; } = new MouseState();
-
-    public static Vector2 MousePositionF => MouseState.Position.ToVector2();
 
     /// <summary>
     /// 输入法处理.

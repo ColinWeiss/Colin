@@ -50,7 +50,7 @@
     public int Current;
 
     /// <summary>
-    /// 帧上限.
+    /// 帧上限; 下标从 0 开始.
     /// </summary>
     public int FrameMax;
 
@@ -87,7 +87,8 @@
           return new Rectangle(X * Width, Current * Height, Width, Height);
         case Direction.Horizontal:
           return new Rectangle(Current * Width, Y * Height, Width, Height);
-      };
+      }
+      ;
       return Rectangle.Empty;
     }
 

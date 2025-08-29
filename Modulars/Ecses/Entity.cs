@@ -1,14 +1,25 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+﻿using Colin.Core.Mathematical;
+using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
-using System.ComponentModel;
 
 namespace Colin.Core.Modulars.Ecses
 {
   /// <summary>
   /// 实体.
   /// </summary>
-  public abstract class Entity : IGameContent<Entity>, ICodeResource
+  public class Entity : IGameContent<Entity>, ICodeResource, IDoBlockable
   {
+    private string _identifier;
+    public string Identifier
+    {
+      get
+      {
+        if (_identifier is null || _identifier == string.Empty)
+          _identifier = GetType().FullName;
+        return _identifier;
+      }
+    }
+
     internal Dictionary<Type, IEntityCom> _components;
     /// <summary>
     /// 实体组件列表.
@@ -16,11 +27,11 @@ namespace Colin.Core.Modulars.Ecses
     public Dictionary<Type, IEntityCom> Components => _components;
     public bool HasCom<T>() where T : IEntityCom => _components.ContainsKey(typeof(T));
     public T GetCom<T>() where T : IEntityCom => (T)_components.GetValueOrDefault(typeof(T), null);
-    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegistCom(new T()) as T;
-    public IEntityCom RegistCom(IEntityCom component)
+    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegisterCom(new T()) as T;
+    public IEntityCom RegisterCom(IEntityCom component)
     {
-      if (component is EcsComScript script)
-        script.SetEntity(this);
+      if (component is IEntityBindableCom bind)
+        bind.Entity = this;
       if (Components.ContainsKey(component.GetType()) is false)
         Components.Add(component.GetType(), component);
       return component;
@@ -28,8 +39,8 @@ namespace Colin.Core.Modulars.Ecses
     public bool RemoveCom<T>() where T : IEntityCom => _components.Remove(typeof(T));
     public void AddCom(IEntityCom com)
     {
-      if (com is EcsComScript script)
-        script.SetEntity(this);
+      if (com is IEntityBindableCom bind)
+        bind.Entity = this;
       if (Components.ContainsKey(com.GetType()) is false)
         Components.Add(com.GetType(), com);
     }
@@ -60,17 +71,24 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
+    /// <summary>
+    /// 指示该实体是否需要执行存储/读取操作.
+    /// </summary>
+    public bool NeedSaveAndLoad;
+
     public EcsComDoc _comDoc;
     public EcsComDoc Document => _comDoc;
 
     private EcsComTransform _comTransform;
     public EcsComTransform Transform => _comTransform;
 
-    private EcsComAdvancedRender _comAdvancedRender;
-    public EcsComAdvancedRender ComAdvancedRender => _comAdvancedRender;
+    public RectangleF Bounds => Transform.LocalBound;
 
-    private EcsComDeferredRender _comDeferredRender;
-    public EcsComDeferredRender ComDeferredRender => _comDeferredRender;
+    public Vector2 Pos => Transform.Pos;
+
+    private EcsComRenderData _renderData;
+    public EcsComRenderData RenderData => _renderData ??= GetCom<EcsComRenderData>();
+
 
     public void SetSize(Vector2 size) => _comTransform.SetSize(size);
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
@@ -78,7 +96,6 @@ namespace Colin.Core.Modulars.Ecses
     {
       _components = new Dictionary<Type, IEntityCom>();
       _comDoc = RegisterCom<EcsComDoc>();
-      _comDoc.Entity = this;
       _comTransform = RegisterCom<EcsComTransform>();
       ComAdded();
       for (int count = 0; count < _components.Count; count++)
@@ -94,5 +111,27 @@ namespace Colin.Core.Modulars.Ecses
     /// 在此处处理组件数据.
     /// </summary>
     public virtual void SetDefaults() { }
+
+    public void SaveStep(BinaryWriter writer)
+    {
+      for (int i = 0; i < Components.Count; i++)
+      {
+        if (Components.ElementAt(i).Value is IEcsComIO io)
+          io.SaveStep(writer);
+      }
+    }
+    public void LoadStep(BinaryReader reader)
+    {
+      for (int i = 0; i < Components.Count; i++)
+      {
+        if (Components.ElementAt(i).Value is IEcsComIO io)
+          io.LoadStep(reader);
+      }
+    }
+
+    public float GetDistance(Entity entity)
+    {
+      return Vector2.Distance(Transform.Translation, entity.Transform.Translation);
+    }
   }
 }
