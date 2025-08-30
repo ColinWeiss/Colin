@@ -14,7 +14,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     private DivRoot _contianer = new DivRoot("NomalContainer");
 
-    public DivRoot Container => _contianer;
+    public DivRoot Root => _contianer;
 
     public Camera UICamera;
 
@@ -62,7 +62,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.TargetRotation = 0f;
 
       UICamera.DoUpdate(time);
-      Container?.DoUpdate(time);
+      Root?.DoUpdate(time);
     }
 
     public void BatchNormalBegin(Div div, BlendState blendState)
@@ -87,12 +87,12 @@ namespace Colin.Core.Modulars.UserInterfaces
         //      Container?.DoRender(device, batch);
         //      batch.End();
 
-        Container?.DoRender(device, batch);
+        Root?.DoRender(device, batch);
       }
     }
     public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
-    public void Register(DivRoot container) => Container?.Register(container);
+    public void Register(DivRoot container) => Root?.Register(container);
 
     public void SetRoot(DivRoot root)
     {
@@ -120,7 +120,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public override void Dispose()
     {
       Scene = null;
-      Container.Dispose();
+      Root.Dispose();
       base.Dispose();
     }
   }

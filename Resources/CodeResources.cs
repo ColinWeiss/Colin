@@ -64,6 +64,10 @@ namespace Colin.Core.Resources
       else
         return null;
     }
+    public static T0 GetFromHash(int hashValue)
+    {
+      return GetFromTypeName(GetTypeNameFromHash(hashValue));
+    }
     public static int? GetHashFromTypeName(string typeName)
     {
       if (serToHashs.TryGetValue(typeName, out int value))

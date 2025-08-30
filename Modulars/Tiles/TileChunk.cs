@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Resources;
+using DeltaMachine.Core.Repair;
 using System.Diagnostics;
 using System.Threading.Tasks;
 namespace Colin.Core.Modulars.Tiles
@@ -72,6 +73,15 @@ namespace Colin.Core.Modulars.Tiles
         CoordY * Tile.Context.ChunkHeight,
         Tile.Context.ChunkWidth,
         Tile.Context.ChunkHeight);
+
+    private Rectangle? _realBounds;
+    public Rectangle RealBounds =>
+      _realBounds ??=
+      new Rectangle(
+        CoordX * Tile.Context.ChunkWidth* Tile.Context.TileSize.X,
+        CoordY * Tile.Context.ChunkHeight * Tile.Context.TileSize.Y,
+        Tile.Context.ChunkWidth * Tile.Context.TileSize.X,
+        Tile.Context.ChunkHeight * Tile.Context.TileSize.Y);
 
     /// <summary>
     /// 区块内的物块信息.
@@ -234,6 +244,15 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].WCoordY = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
     }
 
+    public Point MouseChunk
+    {
+      get
+      {
+        var mouseT = (GameFramework.MouseWorld / Tile.Context.TileSizeF).ToPoint();
+        return mouseT - Bounds.Location;
+      }
+    }
+
     /// <summary>
     /// 从区块内指定坐标转换至世界坐标.
     /// </summary>
@@ -354,7 +373,6 @@ namespace Colin.Core.Modulars.Tiles
     public void AsyncLoadChunk(string path)
     {
       _loading = true;
-      DoInitialize();
       Task.Run(() =>
       {
         DoLoad(path);
@@ -365,7 +383,6 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadChunk(string path)
     {
-      DoInitialize();
       DoLoad(path);
       MarkRefreshAll();
     }

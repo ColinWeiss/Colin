@@ -196,7 +196,10 @@ namespace Colin.Core.Modulars.Ecses
           entity.LoadStep(reader);
         }
         else
+        {
+          entity.NeedSaveAndLoad = true;
           entity.LoadStep(reader);
+        }
       }
     }
     public static void SaveEntity(BinaryWriter writer, Entity entity)

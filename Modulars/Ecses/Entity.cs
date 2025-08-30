@@ -89,11 +89,16 @@ namespace Colin.Core.Modulars.Ecses
     private EcsComRenderData _renderData;
     public EcsComRenderData RenderData => _renderData ??= GetCom<EcsComRenderData>();
 
-
     public void SetSize(Vector2 size) => _comTransform.SetSize(size);
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
+
+    private bool _inited;
+    public bool Inited => _inited;
     public void DoInitialize()
     {
+      if (_inited)
+        return;
+      _inited = true;
       _components = new Dictionary<Type, IEntityCom>();
       _comDoc = RegisterCom<EcsComDoc>();
       _comTransform = RegisterCom<EcsComTransform>();
@@ -111,6 +116,38 @@ namespace Colin.Core.Modulars.Ecses
     /// 在此处处理组件数据.
     /// </summary>
     public virtual void SetDefaults() { }
+
+    public T Clone<T>() where T : Entity, new()
+    {
+      T t = new T();
+      t.DoInitialize();
+      Type type;
+      for (int i = 0; i < Components.Count; i++)
+      {
+        type = Components.Values.ElementAt(i).GetType();
+        if(t.Components[type] is IEntityCloneableCom cloneCom)
+        {
+          cloneCom.Clone(Components[type]);
+        }
+      }
+      return t;
+    }
+    public Entity Clone()
+    {
+      Entity result = CodeResources<Entity>.CreateNewInstance(this);
+      result.Ecs = Ecs;
+      result.DoInitialize();
+      Type type;
+      for (int i = 0; i < Components.Count; i++)
+      {
+        type = Components.Values.ElementAt(i).GetType();
+        if (result.Components[type] is IEntityCloneableCom cloneCom)
+        {
+          cloneCom.Clone(Components[type]);
+        }
+      }
+      return result;
+    }
 
     public void SaveStep(BinaryWriter writer)
     {

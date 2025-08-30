@@ -261,6 +261,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       Controller?.Interact(ref Interact);
       Controller?.Design(ref Design);
       LayoutCalculate(ref Layout);
+      LayoutEvent?.Invoke(this);
       InteractCalculate(ref Interact);
       DesignCalculate(ref Design);
       DivLayout.Calculate(this);
@@ -307,6 +308,8 @@ namespace Colin.Core.Modulars.UserInterfaces
           child?.DoUpdate(time);
       });
     }
+
+    public event Action<Div> LayoutEvent;
 
     static RasterizerState ScissiorRasterizer = new RasterizerState()
     {
