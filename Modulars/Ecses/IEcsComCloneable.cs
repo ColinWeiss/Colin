@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Colin.Core.Modulars.Ecses
 {
-  public interface IEntityCloneableCom
+  public interface IEcsComCloneable
   {
     public void Clone<T>(T com);
   }

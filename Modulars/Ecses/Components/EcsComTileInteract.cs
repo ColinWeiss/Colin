@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// 物块交互组件.
   /// <br>它将被 <see cref="EcsTileCollisionSystem"/> 解析.</br>
   /// </summary>
-  public class EcsComTileInteract : IEntityCom, IResetable
+  public class EcsComTileInteract : IEcsCom, IResetable
   {
 
     /// <summary>

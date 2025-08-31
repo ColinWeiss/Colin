@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
-  public interface IEntityUnloadableCom
+  public interface IEcsComUnloadable
   {
     public void OnClear();
   }

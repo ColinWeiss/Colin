@@ -3,7 +3,7 @@
   /// <summary>
   /// 实体文档.
   /// </summary>
-  public class EcsComDoc : IEntityBindableCom
+  public class EcsComDoc : IEcsComBindable
   {
     public Entity Entity { get; set; }
 
@@ -50,7 +50,7 @@
       Name ??= "未配置名称";
     }
 
-    public bool Equals(IEntityCom other)
+    public bool Equals(IEcsCom other)
     {
       bool result = false;
       if (other is EcsComDoc doc)

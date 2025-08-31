@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
-  public interface IEntityCom
+  public interface IEcsCom
   {
     /// <summary>
     /// 执行组件数据初始化.

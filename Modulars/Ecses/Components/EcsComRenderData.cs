@@ -21,7 +21,7 @@
   /// <br>包含Sprite、可见性等信息.</br>
   /// <br>需要自行订阅渲染方法.</br>
   /// </summary>
-  public class EcsComRenderData : IEntityCom
+  public class EcsComRenderData : IEcsCom
   {
     public List<Sprite> Sprites = new();
     public SpriteEffects SpriteEffects;

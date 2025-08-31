@@ -258,5 +258,9 @@
       float y = (float)rand.NextDouble() * size.Y;
       return new Vector2(x, y);
     }
+    public static Vector2 NextVectorRec(this Random rand, Rectangle rect)
+    {
+      return rect.Location.ToVector2() + rand.NextVectorRec(rect.Size);
+    }
   }
 }

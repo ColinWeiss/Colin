@@ -44,6 +44,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ArrayExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PointExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Models\GlbModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
@@ -52,7 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\Business.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\BusinessLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\IBusinessCase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityCloneableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsComCloneable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBuilder.cs" />
@@ -81,9 +82,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComNetwork.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EntitySystem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityBindableCom.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityRemovableCom.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityUnloadableCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsComBindable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsComRemovable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsComUnloadable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsMoveSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Ecs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Entrance.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEntityCom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsCom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsAdvancedRenderSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsTileCollisionSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />

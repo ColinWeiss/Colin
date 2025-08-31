@@ -1,6 +1,6 @@
 ﻿namespace Colin.Core.Modulars.Ecses
 {
-  public interface IEntityBindableCom : IEntityCom
+  public interface IEcsComBindable : IEcsCom
   {
     public Entity Entity { get; set; }
   }

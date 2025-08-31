@@ -4,6 +4,12 @@ using Colin.Core.Resources;
 
 namespace Colin.Core.Modulars.Ecses
 {
+  public static class Identifier<T>
+  {
+    public static string TypeName => typeof(T).FullName;
+
+    public static int Hash => TypeName.GetMsnHashCode();
+  }
   /// <summary>
   /// 实体.
   /// </summary>
@@ -20,26 +26,26 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
-    internal Dictionary<Type, IEntityCom> _components;
+    internal Dictionary<Type, IEcsCom> _components;
     /// <summary>
     /// 实体组件列表.
     /// </summary>
-    public Dictionary<Type, IEntityCom> Components => _components;
-    public bool HasCom<T>() where T : IEntityCom => _components.ContainsKey(typeof(T));
-    public T GetCom<T>() where T : IEntityCom => (T)_components.GetValueOrDefault(typeof(T), null);
-    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegisterCom(new T()) as T;
-    public IEntityCom RegisterCom(IEntityCom component)
+    public Dictionary<Type, IEcsCom> Components => _components;
+    public bool HasCom<T>() where T : IEcsCom => _components.ContainsKey(typeof(T));
+    public T GetCom<T>() where T : IEcsCom => (T)_components.GetValueOrDefault(typeof(T), null);
+    public T RegisterCom<T>() where T : class, IEcsCom, new() => RegisterCom(new T()) as T;
+    public IEcsCom RegisterCom(IEcsCom component)
     {
-      if (component is IEntityBindableCom bind)
+      if (component is IEcsComBindable bind)
         bind.Entity = this;
       if (Components.ContainsKey(component.GetType()) is false)
         Components.Add(component.GetType(), component);
       return component;
     }
-    public bool RemoveCom<T>() where T : IEntityCom => _components.Remove(typeof(T));
-    public void AddCom(IEntityCom com)
+    public bool RemoveCom<T>() where T : IEcsCom => _components.Remove(typeof(T));
+    public void AddCom(IEcsCom com)
     {
-      if (com is IEntityBindableCom bind)
+      if (com is IEcsComBindable bind)
         bind.Entity = this;
       if (Components.ContainsKey(com.GetType()) is false)
         Components.Add(com.GetType(), com);
@@ -99,7 +105,7 @@ namespace Colin.Core.Modulars.Ecses
       if (_inited)
         return;
       _inited = true;
-      _components = new Dictionary<Type, IEntityCom>();
+      _components = new Dictionary<Type, IEcsCom>();
       _comDoc = RegisterCom<EcsComDoc>();
       _comTransform = RegisterCom<EcsComTransform>();
       ComAdded();
@@ -125,7 +131,7 @@ namespace Colin.Core.Modulars.Ecses
       for (int i = 0; i < Components.Count; i++)
       {
         type = Components.Values.ElementAt(i).GetType();
-        if(t.Components[type] is IEntityCloneableCom cloneCom)
+        if(t.Components[type] is IEcsComCloneable cloneCom)
         {
           cloneCom.Clone(Components[type]);
         }
@@ -141,7 +147,7 @@ namespace Colin.Core.Modulars.Ecses
       for (int i = 0; i < Components.Count; i++)
       {
         type = Components.Values.ElementAt(i).GetType();
-        if (result.Components[type] is IEntityCloneableCom cloneCom)
+        if (result.Components[type] is IEcsComCloneable cloneCom)
         {
           cloneCom.Clone(Components[type]);
         }
