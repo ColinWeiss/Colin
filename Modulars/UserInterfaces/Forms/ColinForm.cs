@@ -120,8 +120,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.LeftClicked.Event += (s, e) => Module.Root.SetTop(this);
-      Events.KeysClicked.Event += (s, e) =>
+      Events.LeftClicked += (s, e) => Module.Root.SetTop(this);
+      Events.KeysClicked += (s, e) =>
       {
         if (e.Keys == Keys.Escape && base.IsVisible)
         {

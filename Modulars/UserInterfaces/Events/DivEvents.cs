@@ -70,7 +70,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public bool DraggingState = false;
 
     private Vector2 _cachePos = new Vector2(-1, -1);
-
+    
     void Drag(object sender, MouseArgs args)
     {
       Vector2 mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
@@ -257,6 +257,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Dispose()
     {
       _div = null;
+      MouseHover.Dispose();
+      LeftClicked.Dispose();
+      LeftClicking.Dispose();
+      LeftDown.Dispose();
+      LeftUp.Dispose();
+      RightClicked.Dispose();
+      RightClicking.Dispose();
+      RightDown.Dispose();
+      RightUp.Dispose();
+      ScrollDown.Dispose();
+      ScrollUp.Dispose();
+      KeysClicked.Dispose();
+      KeysClicking.Dispose();
+      KeysDown.Dispose();
       MouseHover.Div = null;
       LeftClicked.Div = null;
       LeftClicking.Div = null;

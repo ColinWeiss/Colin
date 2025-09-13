@@ -26,10 +26,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public void Bind(Div list, Div view)
     {
       if (View is not null)
-        View.Events.LeftUp.Event -= WheelEvent;
+        View.Events.LeftUp -= WheelEvent;
       List = list;
       View = view;
-      View.Events.LeftUp.Event += WheelEvent;
+      View.Events.LeftUp += WheelEvent;
     }
     private void WheelEvent(object sender, MouseArgs args)
     {

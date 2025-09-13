@@ -74,7 +74,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.KeysClicked.Event += (s, e) =>
+      Events.KeysClicked += (s, e) =>
       {
         if (e.Keys == Keys.Escape && base.IsVisible)
         {

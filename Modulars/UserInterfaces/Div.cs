@@ -149,7 +149,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         return _upperScissor;
       }
     }
-
+    
     /// <summary>
     /// 计算后的剪裁矩形; 当前剪裁矩形.
     /// </summary>
@@ -483,8 +483,12 @@ namespace Colin.Core.Modulars.UserInterfaces
     public Vector2 RelativeRenderMousePos => MousePos - Layout.RenderTargetLocation;
 
     public event Action OnDispose;
+
+    public bool Disposed = false;
+
     public virtual void Dispose()
     {
+      Disposed = true;
       _parent = null;
       _renderer = null;
       _controller = null;
