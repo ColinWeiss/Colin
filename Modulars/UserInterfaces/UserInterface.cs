@@ -1,4 +1,6 @@
 ﻿using Colin.Core.Common.Debugs;
+using DeltaMachine.Core.Common.Entities.Projectiles;
+using System.Windows.Forms;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -22,16 +24,15 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       UICamera = new Camera();
       UICamera.DoInitialize(CoreInfo.ViewWidth, CoreInfo.ViewHeight);
-      UICamera.Translate = CoreInfo.ViewCenter;
       Scene.Events.ClientSizeChanged += (s, e) =>
       {
-        UICamera.SetWidth(CoreInfo.ViewWidth);
-        UICamera.SetHeight(CoreInfo.ViewHeight);
-        UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.ViewWidth, CoreInfo.ViewHeight, 0f, 0f, 1f);
+        UICamera.Translate = CoreInfo.ViewCenter;
+        UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.Graphics.GraphicsDevice.Viewport.Width, CoreInfo.Graphics.GraphicsDevice.Viewport.Height, 0f, 0f, 1f);
         UICamera.View = Matrix.Identity;
         UICamera.ResetCamera();
+        UICamera.Position = CoreInfo.ViewCenter;
+        UICamera.TargetPosition = CoreInfo.ViewCenter;
       };
-
       base.DoInitialize();
     }
 

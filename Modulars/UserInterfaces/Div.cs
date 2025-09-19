@@ -475,8 +475,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public bool ContainsScreenPoint(Vector2 pos)
       => ContainsScreenPoint(pos.ToPoint());
 
-    public Vector2 MousePos
-      => Module.UICamera.ConvertToWorld(MouseResponder.Position) / CoreInfo.ScreenSizeF * CoreInfo.ViewSizeF;
+    public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
 
     public Vector2 RelativeMousePos => MousePos - Layout.ScreenLocation;
 
