@@ -176,5 +176,27 @@ namespace Colin.Core.Modulars.Ecses
     {
       return Vector2.Distance(Transform.Translation, entity.Transform.Translation);
     }
+
+    /// <summary>
+    /// 减速.
+    /// </summary>
+    /// <param name="speed"></param>
+    public void Decelerate(float speed)
+    {
+      if (Transform.HorizontalDirection == Direction.Left)
+      {
+        float _cache = Transform.Vel.X;
+        _cache += speed * Time.DeltaTime;
+        _cache = Math.Clamp(_cache, -int.MaxValue, 0);
+        Transform.Vel.X = _cache;
+      }
+      else if (Transform.HorizontalDirection == Direction.Right)
+      {
+        float _cache = Transform.Vel.X;
+        _cache -= speed * Time.DeltaTime;
+        _cache = Math.Clamp(_cache, 0, int.MaxValue);
+        Transform.Vel.X = _cache;
+      }
+    }
   }
 }
