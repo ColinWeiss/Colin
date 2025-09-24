@@ -2,6 +2,6 @@
 {
   public interface IEcsComRemovable
   {
-    public bool NeedClear { get; set; }
+    bool NeedClear { get; set; }
   }
 }

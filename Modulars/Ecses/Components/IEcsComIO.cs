@@ -2,7 +2,7 @@
 {
   public interface IEcsComIO : IEcsCom
   {
-    public void SaveStep(BinaryWriter writer);
-    public void LoadStep(BinaryReader reader);
+    void SaveStep(BinaryWriter writer);
+    void LoadStep(BinaryReader reader);
   }
 }

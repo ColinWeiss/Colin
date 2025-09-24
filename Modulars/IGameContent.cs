@@ -6,7 +6,7 @@
     /// 以该对象的类型实例化一个实例对象.
     /// </summary>
     /// <returns></returns>
-    public T CreateInstance()
+    T CreateInstance()
     {
       return (T)Activator.CreateInstance(GetType());
     }

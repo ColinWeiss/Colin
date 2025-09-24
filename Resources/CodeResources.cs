@@ -1,5 +1,4 @@
-﻿using Colin.Core.Modulars.Ecses;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
 
 namespace Colin.Core.Resources

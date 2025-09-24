@@ -5,6 +5,6 @@
     /// <summary>
     /// 执行组件数据初始化.
     /// </summary>
-    public void DoInitialize();
+    void DoInitialize();
   }
 }

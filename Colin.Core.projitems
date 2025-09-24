@@ -32,8 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Audios\GameSoundEffect.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Audios\Sound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEvents.cs" />

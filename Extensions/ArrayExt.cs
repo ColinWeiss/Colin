@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Colin.Core.Extensions
+﻿namespace Colin.Core.Extensions
 {
   public static class ArrayExt
   {

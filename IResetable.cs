@@ -9,7 +9,7 @@
     /// 启用重置功能.
     /// <br>[!] 该功能在启用后将每帧重置为 <see langword="true"/>.</br>
     /// </summary>
-    public bool ResetEnable { get; set; }
+    bool ResetEnable { get; set; }
     void Reset();
   }
 }

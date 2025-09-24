@@ -13,7 +13,7 @@ namespace Colin.Core
     [System.Runtime.InteropServices.DllImport("nvapi.dll", EntryPoint = "fake")]
     private static extern int LoadNvApi32();
 
-    void TryForceHighPerformanceGpu()
+    private void TryForceHighPerformanceGpu()
     {
       try
       {

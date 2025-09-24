@@ -20,7 +20,7 @@ namespace Colin.Core.Modulars.Tiles
     int? DoRefresh = 1,
     bool Immediately = false) : IBusinessCase
   {
-    static TileChunk _chunkCache;
+    private static TileChunk _chunkCache;
     public static void ResetCache()
     {
       _chunkCache = null;

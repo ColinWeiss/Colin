@@ -28,7 +28,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
 
   public class DivFontRenderer : DivRenderer
   {
-    static RichTextLayout RichTextLayout = new RichTextLayout()
+    private static RichTextLayout RichTextLayout = new RichTextLayout()
     {
       IgnoreColorCommand = false,
     };
@@ -53,7 +53,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       base.OnDivInitialize();
     }
 
-    static DynamicSpriteFont font = Asset.GetFont("Unifont").GetFont(16);
+    private static DynamicSpriteFont font = Asset.GetFont("Unifont").GetFont(16);
     public override void OnBinded()
     {
       if (Font == null)

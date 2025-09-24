@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
@@ -52,7 +51,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         if (Direction is Direction.Vertical)
         {
           Block.Layout.Width = Layout.Width;
-          if(Block.Layout.Height == 0)
+          if (Block.Layout.Height == 0)
             Block.Layout.Height = 24;
         }
         if (Direction is Direction.Horizontal)

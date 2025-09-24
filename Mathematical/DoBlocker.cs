@@ -2,7 +2,7 @@
 {
   public interface IDoBlockable
   {
-    public RectangleF Bounds { get; }
+    RectangleF Bounds { get; }
   }
   public class DoBlocker
   {

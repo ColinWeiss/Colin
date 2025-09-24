@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Events;
-using SharpDX.XInput;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -149,7 +148,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         return _upperScissor;
       }
     }
-    
+
     /// <summary>
     /// 计算后的剪裁矩形; 当前剪裁矩形.
     /// </summary>
@@ -311,7 +310,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public event Action<Div> LayoutEvent;
 
-    static RasterizerState ScissiorRasterizer = new RasterizerState()
+    private static RasterizerState ScissiorRasterizer = new RasterizerState()
     {
       CullMode = CullMode.None,
       ScissorTestEnable = true,

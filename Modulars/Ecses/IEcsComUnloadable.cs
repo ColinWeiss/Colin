@@ -2,6 +2,6 @@
 {
   public interface IEcsComUnloadable
   {
-    public void OnClear();
+    void OnClear();
   }
 }

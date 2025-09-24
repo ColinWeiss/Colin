@@ -131,7 +131,7 @@ namespace Colin.Core.Modulars.Ecses
       for (int i = 0; i < Components.Count; i++)
       {
         type = Components.Values.ElementAt(i).GetType();
-        if(t.Components[type] is IEcsComCloneable cloneCom)
+        if (t.Components[type] is IEcsComCloneable cloneCom)
         {
           cloneCom.Clone(Components[type]);
         }

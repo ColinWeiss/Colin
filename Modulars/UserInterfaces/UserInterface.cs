@@ -1,6 +1,4 @@
 ﻿using Colin.Core.Common.Debugs;
-using DeltaMachine.Core.Common.Entities.Projectiles;
-using System.Windows.Forms;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {

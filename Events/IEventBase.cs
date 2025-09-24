@@ -5,21 +5,21 @@
   /// </summary>
   public interface IEventBase
   {
-    public Type EventType => GetType();
+    Type EventType => GetType();
 
     /// <summary>
     /// 指示该事件的发出者.
     /// </summary>
-    public object Sender { get; set; }
+    object Sender { get; set; }
 
     /// <summary>
     /// 指示该事件是否已被捕获.
     /// </summary>
-    public bool IsCapture { get; set; }
+    bool IsCapture { get; set; }
 
     /// <summary>
     /// 指示该事件是否需要停止冒泡.
     /// </summary>
-    public bool StopBubbling { get; set; }
+    bool StopBubbling { get; set; }
   }
 }

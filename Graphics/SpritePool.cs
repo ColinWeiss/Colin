@@ -39,5 +39,6 @@ namespace Colin.Core.Graphics
         }
       }
     }
+    private SpritePool() { }
   }
 }

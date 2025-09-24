@@ -22,7 +22,7 @@ namespace Colin.Core.Preparation
       Asset.LoadAssets();
       Task assetLoadTask = null;
       assetLoadTask = Task.Run(
-      (Action)(() =>
+      () =>
       {
         LoadGameAssets();
         IPreExecution theTask;
@@ -34,7 +34,7 @@ namespace Colin.Core.Preparation
         CodeResources.Load();
         Console.WriteLine("Remind", "初始化加载完成.");
         OnLoadComplete?.Invoke();
-      }));
+      });
       base.SceneInit();
     }
 

@@ -2,7 +2,6 @@
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Resources;
-using System.Security.Policy;
 
 namespace Colin.Core.Modulars.Ecses
 {

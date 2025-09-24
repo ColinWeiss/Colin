@@ -2,6 +2,6 @@
 {
   public interface IEcsComBindable : IEcsCom
   {
-    public Entity Entity { get; set; }
+    Entity Entity { get; set; }
   }
 }

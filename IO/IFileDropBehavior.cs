@@ -2,6 +2,6 @@
 {
   public interface IFileDropBehavior
   {
-    public void OnFileDrop(string[] fileNames);
+    void OnFileDrop(string[] fileNames);
   }
 }
