@@ -5,6 +5,10 @@
   /// </summary>
   public class Node<T>
   {
+    public T Value;
+    public Node() { }
+    public Node(T value) => Value = value;
+
     /// <summary>
     /// 在层级树结构中表示父节点;
     /// <br>在链表结构中表示上一个节点.</br>

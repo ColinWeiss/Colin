@@ -48,6 +48,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\DoBlocker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\StrangeTreeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\Business.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\BusinessLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\IBusinessCase.cs" />
