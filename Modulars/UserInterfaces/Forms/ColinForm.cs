@@ -127,7 +127,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         {
           e.IsCapture = true;
           e.StopBubbling = true;
-          Close();
+          DoHibernate();
         }
       };
       base.DivInit();
@@ -135,30 +135,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
     public virtual void FormInit() { }
     public override bool Register(Div division, bool doInit = false) => Block.Register(division, doInit);
 
-    public event Action OnOpen;
-    public event Action OnFirstShow;
-
-    public event Action OnClose;
-
     public override void OnUpdate(GameTime time)
     {
       base.OnUpdate(time);
-    }
-    private bool _firstShow = false;
-    public void Show()
-    {
-      OnOpen?.Invoke();
-      if (!_firstShow)
-      {
-        OnFirstShow?.Invoke();
-        _firstShow = true;
-      }
-        (Controller as DivGradientController).Open();
-    }
-    public void Close()
-    {
-      OnClose?.Invoke();
-      (Controller as DivGradientController).Close();
     }
   }
 }

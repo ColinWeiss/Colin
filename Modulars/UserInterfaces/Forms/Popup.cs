@@ -79,14 +79,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
         if (e.Keys == Keys.Escape && base.IsVisible)
         {
           e.StopBubbling = true;
-          Close();
+          DoHibernate();
         }
       };
       base.DivInit();
     }
     public virtual void PopupInit() { }
     public override bool Register(Div division, bool doInit = false) => Block.Register(division, doInit);
-    public void Show() => (Controller as DivGradientController).Open();
-    public void Close() => (Controller as DivGradientController).Close();
   }
 }

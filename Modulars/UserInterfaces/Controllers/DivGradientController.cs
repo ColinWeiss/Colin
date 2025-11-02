@@ -15,7 +15,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
 
     public event Action OnClosed;
 
-    public override void OnBinded()
+    public override void OnBinded(Div div)
     {
       OpenColor = new ColorTween();
       OpenColor.Set(Color.Transparent);
@@ -38,22 +38,17 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
       CloseScale.Set(Vector2.One);
       CloseScale.Target = Vector2.One * 0.7f;
       CloseScale.Time = 2f;
-      base.OnBinded();
+      base.OnBinded(div);
     }
-    public override void OnDivInitialize()
-    {
-
-      base.OnDivInitialize();
-    }
-    public override void Layout(ref DivLayout layout)
+    public override void Layout(Div div, ref DivLayout layout)
     {
       if (_openState)
         layout.Scale = OpenScale.DoUpdate();
       if (_closeState)
         layout.Scale = CloseScale.DoUpdate();
-      base.Layout(ref layout);
+      base.Layout(div, ref layout);
     }
-    public override void Design(ref DivDesign design)
+    public override void Design(Div div, ref DivDesign design)
     {
       if (_openState)
         design.Color = OpenColor.DoUpdate();
@@ -62,29 +57,31 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
         design.Color = CloseColor.DoUpdate();
         if (design.Color.A <= 0)
         {
-          Div.IsVisible = false;
+          div.IsVisible = false;
           OnClosed?.Invoke();
         }
       }
-      base.Design(ref design);
+      base.Design(div, ref design);
     }
-    public void Open()
+    public override void DoWakeUp(Div div)
     {
-      if (!Div.IsVisible)
+      if (!div.IsVisible)
       {
         OpenColor.Play();
         OpenScale.Play();
         _openState = true;
         _closeState = false;
-        Div.IsVisible = true;
+        div.IsVisible = true;
       }
+      base.DoWakeUp(div);
     }
-    public void Close()
+    public override void DoHibernate(Div div)
     {
       CloseColor.Play();
       CloseScale.Play();
       _closeState = true;
       _openState = false;
+      base.DoHibernate(div);
     }
   }
 }

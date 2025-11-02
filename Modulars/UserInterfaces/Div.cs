@@ -26,6 +26,28 @@ namespace Colin.Core.Modulars.UserInterfaces
       }
     }
 
+    public event Action OnDoWakeUpStart;
+
+    public event Action OnDoHibernateStart;
+
+    public void DoWakeUp()
+    {
+      OnDoWakeUpStart?.Invoke();
+      if (Controller is null)
+        IsVisible = true;
+      else
+        Controller.DoWakeUp(this);
+    }
+
+    public void DoHibernate()
+    {
+      OnDoHibernateStart?.Invoke();
+      if (Controller is null)
+        IsVisible = false;
+      else
+        Controller.DoHibernate(this);
+    }
+
     private bool isHidden = false;
     public bool IsHidden
     {
@@ -88,8 +110,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public T BindController<T>() where T : DivController, new()
     {
       _controller = new T();
-      _controller.div = this;
-      _controller.OnBinded();
+      _controller.OnBinded(this);
       return _controller as T;
     }
     public T GetController<T>() where T : DivController
@@ -223,7 +244,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (InitializationCompleted)
         return;
       DivInit();
-      _controller?.OnDivInitialize();
+      _controller?.OnDivInitialize(this);
       _renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
       ForEach(child => child?.DoInitialize());
@@ -256,9 +277,9 @@ namespace Colin.Core.Modulars.UserInterfaces
         Start(time);
         _started = true;
       }
-      Controller?.Layout(ref Layout);
-      Controller?.Interact(ref Interact);
-      Controller?.Design(ref Design);
+      Controller?.Layout(this, ref Layout);
+      Controller?.Interact(this, ref Interact);
+      Controller?.Design(this, ref Design);
       LayoutCalculate(ref Layout);
       LayoutEvent?.Invoke(this);
       InteractCalculate(ref Interact);
