@@ -32,7 +32,7 @@ namespace Colin.Core.Modulars.Ecses
     /// </summary>
     public Dictionary<Type, IEcsCom> Components => _components;
     public bool HasCom<T>() where T : IEcsCom => _components.ContainsKey(typeof(T));
-    public T GetCom<T>() where T : IEcsCom => (T)_components.GetValueOrDefault(typeof(T), null);
+    public T GetCom<T>() where T : IEcsCom => (T)_components?.GetValueOrDefault(typeof(T), null);
     public T RegisterCom<T>() where T : class, IEcsCom, new() => RegisterCom(new T()) as T;
     public IEcsCom RegisterCom(IEcsCom component)
     {

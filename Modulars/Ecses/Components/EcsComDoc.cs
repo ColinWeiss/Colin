@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.Ecses.Components
+﻿using DeltaMachine.Configuration.Localization;
+
+namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
   /// 实体文档.
@@ -44,6 +46,12 @@
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public bool HasTag(string tag) => Tags.Contains(tag);
+
+    public string GetAffiliated(string target)
+    {
+      return string.Format(CommonLoc.Affiliated, Name, target);
+    }
+
 
     public void DoInitialize()
     {
