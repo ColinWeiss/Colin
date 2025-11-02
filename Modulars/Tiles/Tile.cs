@@ -240,13 +240,13 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 从世界坐标获取区块坐标与物块区块坐标.
     /// </summary>
-    public (Point cCoord, Point tCoord) GetCoords(int worldCoordX, int worldCoordY)
+    public (Point cCoord, Point tCoord) GetCoords(int wCoordX, int wCoordY)
     {
-      int chunkCoordX = worldCoordX >= 0 ? worldCoordX / Context.ChunkWidth : (worldCoordX + 1) / Context.ChunkWidth - 1;
-      int chunkCoordY = worldCoordY >= 0 ? worldCoordY / Context.ChunkHeight : (worldCoordY + 1) / Context.ChunkHeight - 1;
-      int tileCoordX = worldCoordX >= 0 ? worldCoordX % Context.ChunkWidth : (worldCoordX + 1) % Context.ChunkWidth + (Context.ChunkWidth - 1);
-      int tileCoordY = worldCoordY >= 0 ? worldCoordY % Context.ChunkHeight : (worldCoordY + 1) % Context.ChunkHeight + (Context.ChunkHeight - 1);
-      return (new Point(chunkCoordX, chunkCoordY), new Point(tileCoordX, tileCoordY));
+      int cCoordX = wCoordX >= 0 ? wCoordX / Context.ChunkWidth : (wCoordX + 1) / Context.ChunkWidth - 1;
+      int cCoordY = wCoordY >= 0 ? wCoordY / Context.ChunkHeight : (wCoordY + 1) / Context.ChunkHeight - 1;
+      int tCoordX = wCoordX >= 0 ? wCoordX % Context.ChunkWidth : (wCoordX + 1) % Context.ChunkWidth + (Context.ChunkWidth - 1);
+      int tCoordY = wCoordY >= 0 ? wCoordY % Context.ChunkHeight : (wCoordY + 1) % Context.ChunkHeight + (Context.ChunkHeight - 1);
+      return (new Point(cCoordX, cCoordY), new Point(tCoordX, tCoordY));
     }
 
     public TileChunk GetChunk(ref TileInfo info)
@@ -293,6 +293,18 @@ namespace Colin.Core.Modulars.Tiles
       else
         return false;
     }
+
+    /// <summary>
+    /// 从世界坐标获取对应物块在本身区块的索引.
+    /// </summary>
+    /// <returns></returns>
+    public int GetIndex(int wCoordX, int wCoordY, int z)
+    {
+      int tCoordX = wCoordX >= 0 ? wCoordX % Context.ChunkWidth : (wCoordX + 1) % Context.ChunkWidth + (Context.ChunkWidth - 1);
+      int tCoordY = wCoordY >= 0 ? wCoordY % Context.ChunkHeight : (wCoordY + 1) % Context.ChunkHeight + (Context.ChunkHeight - 1);
+      return z * Context.ChunkWidth * Context.ChunkHeight + tCoordX + tCoordY * Context.ChunkWidth;
+    }
+    public int GetIndex(Point3 wCoord) => GetIndex(wCoord.X, wCoord.Y, wCoord.Z);
 
     /// <summary>
     /// 使用世界物块坐标破坏指定位置的物块.

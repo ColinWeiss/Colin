@@ -31,6 +31,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Asset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\GIFAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
