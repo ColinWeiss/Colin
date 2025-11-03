@@ -11,7 +11,7 @@
       batch.DrawNineCut(
           _sprite.Source,
           Div.Design.Color,
-          Div.Layout.RenderTargetLocation,
+          Div.Layout.RenderTargetLocation + div.Layout.Anchor,
           Div.Layout.Size,
           Cut,
           _sprite.Depth);

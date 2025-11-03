@@ -4,7 +4,7 @@ using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
-  public class ColinForm : Canvas
+  public class ColinForm : Div
   {
     public Div Substrate;
 

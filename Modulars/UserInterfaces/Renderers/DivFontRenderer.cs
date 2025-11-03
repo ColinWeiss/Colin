@@ -65,7 +65,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       RichTextLayout.Font = Font;
       RichTextLayout.Text = Text;
       RichTextLayout.Draw(DivFontStashRenderer.Instance,
-        Div.Layout.RenderTargetLocation,
+        Div.Layout.RenderTargetLocation + div.Layout.Anchor,
         div.Design.Color,
         Div.Layout.Rotation,
         div.Layout.Anchor,

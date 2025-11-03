@@ -1,4 +1,6 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+﻿using System.Transactions;
+
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 划分元素的布局信息.
@@ -350,11 +352,8 @@
     /// <param name="div">要进行计算布局信息的划分元素.</param>
     public static void Calculate(Div div)
     {
-      div.Layout.renderTargetTransform =
-          Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
-          Matrix.CreateScale(1, 1, 0) *
-          Matrix.CreateRotationZ(div.Layout.rotation) *
-          Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
+        div.Layout.renderTargetTransform = CalculateTransform(div);
+
       if (div.Parent is not null)
         div.Layout.renderTargetTransform *= div.Parent.Layout.renderTargetTransform;
 
@@ -374,16 +373,37 @@
         div.Layout.scissorRectangle.Height = div.Layout.ScissorHeight;
       }
 
-      div.Layout.screenTransform =
-          Matrix.CreateScale(1, 1, 0) *
-          Matrix.CreateRotationZ(div.Layout.rotation) *
-          Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
+      div.Layout.screenTransform = CalculateTransform(div);
       if (div.Parent is not null)
         div.Layout.screenTransform *= div.Parent.Layout.screenTransform;
+
       div.Layout.bounds.X = div.Layout.screenLeft = (int)div.Layout.screenTransform.Translation.X;
       div.Layout.bounds.Y = div.Layout.screenTop = (int)div.Layout.screenTransform.Translation.Y;
       div.Layout.bounds.Width = (int)div.Layout.width;
       div.Layout.bounds.Height = (int)div.Layout.height;
+    }
+
+    private static Matrix CalculateTransform(Div div)
+    {
+      Matrix result;
+      if (div.IsCanvas is false)
+      {
+        result =
+          Matrix.CreateScale(div.Layout.Scale.X, div.Layout.Scale.Y, 0) *
+          Matrix.CreateTranslation(-div.Layout.anchor.X, -div.Layout.anchor.Y, 0) *
+          Matrix.CreateRotationZ(div.Layout.rotation) *
+          Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
+          Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
+      }
+      else
+      {
+        result =
+          Matrix.CreateTranslation(-div.Layout.anchor.X, -div.Layout.anchor.Y, 0) *
+          Matrix.CreateRotationZ(div.Layout.rotation) *
+          Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
+          Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
+      }
+      return result;
     }
   }
 }

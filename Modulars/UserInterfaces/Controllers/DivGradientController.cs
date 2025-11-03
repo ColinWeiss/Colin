@@ -63,7 +63,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
       }
       base.Design(div, ref design);
     }
-    public override void DoWakeUp(Div div)
+    protected override void OnWakeUp(Div div)
     {
       if (!div.IsVisible)
       {
@@ -73,15 +73,15 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
         _closeState = false;
         div.IsVisible = true;
       }
-      base.DoWakeUp(div);
+      base.OnWakeUp(div);
     }
-    public override void DoHibernate(Div div)
+    protected override void OnHibernate(Div div)
     {
       CloseColor.Play();
       CloseScale.Play();
       _closeState = true;
       _openState = false;
-      base.DoHibernate(div);
+      base.OnHibernate(div);
     }
   }
 }

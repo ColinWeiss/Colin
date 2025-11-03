@@ -69,7 +69,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       CoreInfo.Batch.Begin(
         SpriteSortMode.Deferred,
         blendState,
-        SamplerState.PointClamp,
+        SamplerState.PointWrap,
         transformMatrix: div.UpperCanvas is not null ? null : UICamera.View);
     }
 

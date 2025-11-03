@@ -232,6 +232,15 @@ namespace Colin.Core.Modulars.UserInterfaces
       IsCanvas = isCanvas;
     }
 
+    public void SetCanvas(float width, float height)
+    {
+      Layout.Width = width;
+      Layout.Height = height;
+      Layout.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
+      Canvas?.Dispose();
+      Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
+    }
+
     public void DoInitialize()
     {
       if (this is DivRoot divThreshold)
@@ -247,6 +256,14 @@ namespace Colin.Core.Modulars.UserInterfaces
       _controller?.OnDivInitialize(this);
       _renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
+      if (IsCanvas)
+      {
+        if (Layout.Width == 0)
+          Layout.Width = 1; 
+        if (Layout.Height == 0)
+          Layout.Height = 1;
+        SetCanvas(Layout.Width, Layout.Height);
+      }
       ForEach(child => child?.DoInitialize());
       InitializationCompleted = true;
     }
@@ -290,7 +307,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       OnUpdate(time);
       UpdateChildren(time);
     }
-
 
     public virtual void LayoutCalculate(ref DivLayout layout) { }
 
@@ -337,13 +353,13 @@ namespace Colin.Core.Modulars.UserInterfaces
       ScissorTestEnable = true,
     };
 
-    public void BeginRender(BlendState blendState)
+    public void BeginRender(BlendState blendState, SamplerState samplerState)
     {
       if (UpperScissor is not null)
       {
         UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
         CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
-        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
+        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointWrap, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
       }
       else
         Module.BatchNormalBegin(this, blendState);
@@ -362,7 +378,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         device.SetRenderTarget(Canvas);
         device.Clear(Color.Transparent);
       }
-      BeginRender(BlendState.AlphaBlend);
+      BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
       OnRender(device, batch);
       _renderer?.DoRender(device, batch);//渲染器进行渲染.
       batch.End();
@@ -375,8 +391,11 @@ namespace Colin.Core.Modulars.UserInterfaces
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
           device.SetRenderTarget(Module.RawRt);
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
-        batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
+        Vector2 canvasRenderPos = Layout.ScreenLocation + Layout.Anchor;
+        if (UpperCanvas is not null)
+          canvasRenderPos = Layout.RenderTargetLocation + Layout.Anchor;
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
+        batch.Draw(Canvas, canvasRenderPos, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
         batch.End();
       }
     }

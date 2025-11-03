@@ -4,7 +4,7 @@ using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
-  public class Popup : Canvas
+  public class Popup : Div
   {
     private int _titleHeight;
 

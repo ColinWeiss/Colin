@@ -21,7 +21,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       if (_pixel != null)
         batch.Draw(
           _pixel.Source,
-          Div.Layout.RenderTargetLocation,
+          Div.Layout.RenderTargetLocation + div.Layout.Anchor,
           new Rectangle(0, 0, (int)div.Layout.Width, (int)div.Layout.Height),
           Div.Design.Color,
           Div.Layout.Rotation,

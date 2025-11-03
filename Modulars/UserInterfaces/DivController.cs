@@ -21,8 +21,24 @@
     public virtual void OnBinded(Div div) { }
     public virtual void OnDivInitialize(Div div) { }
 
-    public virtual void DoWakeUp(Div div) { }
-    public virtual void DoHibernate(Div div) { }
+    public void DoWakeUp(Div div) 
+    {
+      if (_hibernating is false && _waking is false)
+      {
+        _waking = true;
+        OnWakeUp(div);
+      }
+    }
+    protected virtual void OnWakeUp(Div div) { }
+    public void DoHibernate(Div div) 
+    {
+      if (_hibernating is false && _waking is false)
+      {
+        _hibernating = true;
+        OnHibernate(div);
+      }
+    }
+    protected virtual void OnHibernate(Div div) { }
 
     public virtual void Layout(Div div, ref DivLayout layout) { }
     public virtual void Interact(Div div, ref InteractStyle interact) { }
