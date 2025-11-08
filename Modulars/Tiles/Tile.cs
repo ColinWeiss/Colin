@@ -45,6 +45,8 @@ namespace Colin.Core.Modulars.Tiles
     public ref TileInfo GetPointTo(Point3 wCoord)
     {
       ref TileInfo info = ref TileInfo.Null;
+      if (PointerSet.Cache.ContainsKey(wCoord) is false)
+        return ref TileInfo.Null;
       TilePointer pointTo = PointerSet.Cache[wCoord].First();
       info = ref this[pointTo.PointTo];
       if (info.Empty)
@@ -52,6 +54,8 @@ namespace Colin.Core.Modulars.Tiles
       else
         return ref info;
     }
+    public ref TileInfo GetPointTo(Point wCoord) => ref GetPointTo(new Point3(wCoord, 0));
+    public ref TileInfo GetPointTo(int wCoordX, int wCoordY) => ref GetPointTo(new Point3(wCoordX, wCoordY, 0));
 
     /// <summary>
     /// 获取指定坐标的物块格的指针列表.
