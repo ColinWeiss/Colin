@@ -28,9 +28,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
 
   public class DivFontRenderer : DivRenderer
   {
-    private static RichTextLayout RichTextLayout = new RichTextLayout()
+    public RichTextLayout RichTextLayout = new RichTextLayout()
     {
-      IgnoreColorCommand = false,
+      IgnoreColorCommand = false
     };
     public DynamicSpriteFont Font;
     private string _text;
@@ -62,6 +62,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     }
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
+      RichTextLayout.AutoEllipsisMethod = AutoEllipsisMethod.None;
       RichTextLayout.Font = Font;
       RichTextLayout.Text = Text;
       RichTextLayout.Draw(DivFontStashRenderer.Instance,
