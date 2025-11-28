@@ -3,8 +3,8 @@
 
 ## 使用方式
 1.本项目抛弃了MGCB-Editor, 请从本库下载源代码后以源码形式, 利用共享项目配置将其整合至你自己的项目.  
-2.在启动项目中的"生成后事件"命令行中添加如下指令:xcopy "$(SolutionDir)你的项目名称\Assets $(TargetDir)Assets /s/i/e/y"    
-3.再于指定路径下创建Asseta文件夹, 将资产文件移至其中.  
+2.在启动项目中的"生成后事件"命令行中添加如下指令:`xcopy $(SolutionDir)你的项目名称\Assets $(TargetDir)Assets /s/i/e/y`  
+3.再于指定路径下创建Assets文件夹, 将资产文件移至其中.  
 
 ## 套件 
 前文提到本项目提供了多样化的套件:    
