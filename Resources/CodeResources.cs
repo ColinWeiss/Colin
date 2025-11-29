@@ -18,6 +18,19 @@ namespace Colin.Core.Resources
         _codeResourceTypes.Add(typeof(T));
     }
 
+
+    /// <summary>
+    /// 注册代码资产类型.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public static void Register(Type type)
+    {
+      if (_codeResourceTypes.Contains(type) || type.IsNotPublic || type.IsGenericType || type.IsEnum || type.IsValueType)
+        Console.WriteLine("Error", "为代码资产列表注册类型失败: " + type.Name);
+      else
+        _codeResourceTypes.Add(type);
+    }
+
     internal static void Load()
     {
       foreach (Type item in Assembly.GetExecutingAssembly().GetTypes())
