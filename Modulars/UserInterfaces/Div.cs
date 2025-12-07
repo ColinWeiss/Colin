@@ -64,6 +64,11 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public List<Div> Children;
 
+    public Div GetChild(string name)
+    {
+      return Children.Find(a => a.Name == name);
+    }
+
     /// <summary>
     /// 指示划分元素的布局样式
     /// </summary>
