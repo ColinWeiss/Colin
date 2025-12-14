@@ -484,6 +484,12 @@ namespace Colin.Core.Modulars.UserInterfaces
       //Clear();
     }
 
+    public void SetTop(Div division)
+    {
+      Remove(division);
+      Register(division, true);
+    }
+
     public void Do(Action<Div> action) => action(this);
 
     /// <summary>
