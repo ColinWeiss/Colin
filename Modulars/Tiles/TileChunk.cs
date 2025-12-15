@@ -2,6 +2,7 @@
 using DeltaMachine.Core.Repair;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
@@ -538,6 +539,11 @@ namespace Colin.Core.Modulars.Tiles
         else
           return ownCom.Equals(tarCom);
       }
+    }
+
+    public int GetSeed()
+    {
+      return CoordX * 137 + CoordY;
     }
   }
 }
