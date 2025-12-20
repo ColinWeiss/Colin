@@ -198,5 +198,10 @@ namespace Colin.Core.Modulars.Ecses
         Transform.Vel.X = _cache;
       }
     }
+
+    public bool Equals(Entity other)
+    {
+      return Document.Equals(other.Document);
+    }
   }
 }

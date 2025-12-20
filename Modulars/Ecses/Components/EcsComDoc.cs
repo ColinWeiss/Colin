@@ -52,7 +52,6 @@ namespace Colin.Core.Modulars.Ecses.Components
       return string.Format(CommonLoc.Affiliated, Name, target);
     }
 
-
     public void DoInitialize()
     {
       Name ??= "未配置名称";

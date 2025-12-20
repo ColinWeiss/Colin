@@ -16,12 +16,12 @@
       int endX;
       int startY;
       int endY;
-      IEnumerable<T> interactLayer = list; //交互层
+      IEnumerable<T> interactLayer = list;
       if (list is null)
         return null;
       for (int c = 0; c < interactLayer.Count(); c++)
       {
-        target = interactLayer.ElementAt(c); // 获取目标碰撞器对象
+        target = interactLayer.ElementAt(c);
         if (target is null)
           continue;
         bounds = target.Bounds;
