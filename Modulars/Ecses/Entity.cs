@@ -98,13 +98,12 @@ namespace Colin.Core.Modulars.Ecses
     public void SetSize(Vector2 size) => _comTransform.SetSize(size);
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
 
-    private bool _inited;
-    public bool Inited => _inited;
+    public bool Inited;
     public void DoInitialize()
     {
-      if (_inited)
+      if (Inited)
         return;
-      _inited = true;
+      Inited = true;
       _components = new Dictionary<Type, IEcsCom>();
       _comDoc = RegisterCom<EcsComDoc>();
       _comTransform = RegisterCom<EcsComTransform>();

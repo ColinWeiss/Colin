@@ -7,8 +7,7 @@
   {
     public Entity Entity { get; set; }
 
-    private Ecs _ecs;
-    public Ecs Ecs => _ecs ??= Entity.Ecs;
+    public Ecs Ecs => Entity.Ecs;
 
     public bool ResetEnable { get; set; } = true;
 
