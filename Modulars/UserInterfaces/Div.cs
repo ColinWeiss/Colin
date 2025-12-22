@@ -373,7 +373,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 执行划分元素的渲染.
     /// </summary>
-    /// <param name="time">游戏计时状态快照.</param>
     public void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
       if (!IsVisible && !IsHidden)
@@ -413,7 +412,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoRender"/>.
     /// </summary>
-    /// <param name="time">游戏计时状态快照.</param>
     public virtual void RenderChildren(GraphicsDevice device, SpriteBatch batch)
     {
       ForEach(child =>

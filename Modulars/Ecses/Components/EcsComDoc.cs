@@ -43,8 +43,6 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// <summary>
     /// 判断该实体是否具有指定标签.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public bool HasTag(string tag) => Tags.Contains(tag);
 
     public string GetAffiliated(string target)
