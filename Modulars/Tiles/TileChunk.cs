@@ -344,7 +344,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       else if (!Builder.Cases.Select(a => (a as TileBuildCommand).WorldCoord).Contains(info.GetWCoord3()))
       {
-        if (!info.Empty)
+        if (!info.Empty && !info.IsNull)
           Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
     }
