@@ -12,41 +12,41 @@ namespace Colin.Core.Inputs
 
     public static bool LeftClicking =>
       State.LeftButton == ButtonState.Pressed &&
-      StateLast.LeftButton == ButtonState.Released;
+      StateLast.LeftButton == ButtonState.Released && Core.Focus;
 
     public static bool LeftDown =>
       State.LeftButton == ButtonState.Pressed &&
-      StateLast.LeftButton == ButtonState.Pressed;
+      StateLast.LeftButton == ButtonState.Pressed && Core.Focus;
 
     public static bool LeftUp =>
       State.LeftButton == ButtonState.Released &&
-      StateLast.LeftButton == ButtonState.Released;
+      StateLast.LeftButton == ButtonState.Released && Core.Focus;
 
     public static bool LeftClicked =>
       State.LeftButton == ButtonState.Released &&
-      StateLast.LeftButton == ButtonState.Pressed;
+      StateLast.LeftButton == ButtonState.Pressed && Core.Focus;
 
     public static bool RightClicking =>
       State.RightButton == ButtonState.Pressed &&
-      StateLast.RightButton == ButtonState.Released;
+      StateLast.RightButton == ButtonState.Released && Core.Focus;
 
     public static bool RightDown =>
       State.RightButton == ButtonState.Pressed &&
-      StateLast.RightButton == ButtonState.Pressed;
+      StateLast.RightButton == ButtonState.Pressed && Core.Focus;
 
     public static bool RightUp =>
       State.RightButton == ButtonState.Released &&
-      StateLast.RightButton == ButtonState.Released;
+      StateLast.RightButton == ButtonState.Released && Core.Focus;
 
     public static bool RightClicked =>
       State.RightButton == ButtonState.Released &&
-      StateLast.RightButton == ButtonState.Pressed;
+      StateLast.RightButton == ButtonState.Pressed && Core.Focus;
 
     public static bool ScrollUp =>
-      State.ScrollWheelValue < StateLast.ScrollWheelValue;
+      State.ScrollWheelValue < StateLast.ScrollWheelValue && Core.Focus;
 
     public static bool ScrollDown =>
-      State.ScrollWheelValue > StateLast.ScrollWheelValue;
+      State.ScrollWheelValue > StateLast.ScrollWheelValue && Core.Focus;
 
     public static int ScrollValue
     {
@@ -63,11 +63,11 @@ namespace Colin.Core.Inputs
 
     public static bool ScrollClickAfter =>
       State.MiddleButton == ButtonState.Released &&
-      StateLast.MiddleButton == ButtonState.Pressed;
+      StateLast.MiddleButton == ButtonState.Pressed && Core.Focus;
 
     public static bool ScrollClickBefore =>
       State.MiddleButton == ButtonState.Pressed &&
-      StateLast.MiddleButton == ButtonState.Released;
+      StateLast.MiddleButton == ButtonState.Released && Core.Focus;
 
     public bool Enable { get; set; }
 

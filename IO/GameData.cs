@@ -41,9 +41,8 @@
     /// <summary>
     /// 实例化一个 <seealso cref="GameData"/> 文件.
     /// </summary>
-    /// <param name="name">文件名称.</param>
+    /// <param name="path">文件路径.</param>
     /// <param name="length">文件大小.</param>
-    /// <param name="bytes">文件字节.</param>
     public GameData(string path, int length)
     {
       this.path = path;

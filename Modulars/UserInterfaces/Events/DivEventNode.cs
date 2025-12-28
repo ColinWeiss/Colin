@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public Div Div { get; set; }
     public override bool CheckCondition()
     {
-      if (Div is null || Div.IsVisible is false || Div.Interact.IsInteractive is false)
+      if (Div is null || Div.Disposed || Div.IsVisible is false || Div.Interact.IsInteractive is false)
         return false;
       if (typeof(T).IsSubclassOf(typeof(MouseArgs)))
       {

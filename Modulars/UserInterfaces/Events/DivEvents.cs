@@ -71,7 +71,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     private Vector2 _cachePos = new Vector2(-1, -1);
 
-    void Drag(object sender, MouseArgs args)
+    private void Drag(object sender, MouseArgs args)
     {
       Vector2 mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
       if (!DivLock)
@@ -90,7 +90,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         _cachePos = mousePos - Div.Layout.Location;
       }
     }
-    void DragEnd(object sender, MouseArgs args)
+    private void DragEnd(object sender, MouseArgs args)
     {
       if (DivLock)
       {
@@ -100,7 +100,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         _cachePos = new Vector2(-1, -1);
       }
     }
-    void Lock(object sender, MouseArgs args)
+    private void Lock(object sender, MouseArgs args)
     {
       if (!DivLock)
         DivLock = true;
@@ -125,14 +125,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       KeysClicking += KeysBlockOutEvent;
       KeysDown += KeysBlockOutEvent;
     }
-    void MouseBlockOutEvent(object sender, MouseArgs args)
+    private void MouseBlockOutEvent(object sender, MouseArgs args)
     {
       if (MouseCapture)
         args.IsCapture = true;
       if (MouseBubbling)
         args.StopBubbling = true;
     }
-    void KeysBlockOutEvent(object sender, KeysArgs args)
+    private void KeysBlockOutEvent(object sender, KeysArgs args)
     {
       if (KeysCapture)
         args.IsCapture = true;
@@ -257,6 +257,20 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Dispose()
     {
       _div = null;
+      MouseHover.Dispose();
+      LeftClicked.Dispose();
+      LeftClicking.Dispose();
+      LeftDown.Dispose();
+      LeftUp.Dispose();
+      RightClicked.Dispose();
+      RightClicking.Dispose();
+      RightDown.Dispose();
+      RightUp.Dispose();
+      ScrollDown.Dispose();
+      ScrollUp.Dispose();
+      KeysClicked.Dispose();
+      KeysClicking.Dispose();
+      KeysDown.Dispose();
       MouseHover.Div = null;
       LeftClicked.Div = null;
       LeftClicking.Div = null;

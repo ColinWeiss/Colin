@@ -1,6 +1,8 @@
 ﻿using Colin.Core.Resources;
+using DeltaMachine.Core.Repair;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
@@ -72,6 +74,15 @@ namespace Colin.Core.Modulars.Tiles
         CoordY * Tile.Context.ChunkHeight,
         Tile.Context.ChunkWidth,
         Tile.Context.ChunkHeight);
+
+    private Rectangle? _realBounds;
+    public Rectangle RealBounds =>
+      _realBounds ??=
+      new Rectangle(
+        CoordX * Tile.Context.ChunkWidth * Tile.Context.TileSize.X,
+        CoordY * Tile.Context.ChunkHeight * Tile.Context.TileSize.Y,
+        Tile.Context.ChunkWidth * Tile.Context.TileSize.X,
+        Tile.Context.ChunkHeight * Tile.Context.TileSize.Y);
 
     /// <summary>
     /// 区块内的物块信息.
@@ -234,6 +245,15 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].WCoordY = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
     }
 
+    public Point MouseChunk
+    {
+      get
+      {
+        var mouseT = (GameFramework.MouseWorld / Tile.Context.TileSizeF).ToPoint();
+        return mouseT - Bounds.Location;
+      }
+    }
+
     /// <summary>
     /// 从区块内指定坐标转换至世界坐标.
     /// </summary>
@@ -324,7 +344,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       else if (!Builder.Cases.Select(a => (a as TileBuildCommand).WorldCoord).Contains(info.GetWCoord3()))
       {
-        if (!info.Empty)
+        if (!info.Empty && !info.IsNull)
           Builder.MarkDestruct(info.GetWCoord3(), doEvent, doRefresh);
       }
     }
@@ -354,7 +374,6 @@ namespace Colin.Core.Modulars.Tiles
     public void AsyncLoadChunk(string path)
     {
       _loading = true;
-      DoInitialize();
       Task.Run(() =>
       {
         DoLoad(path);
@@ -365,7 +384,6 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadChunk(string path)
     {
-      DoInitialize();
       DoLoad(path);
       MarkRefreshAll();
     }
@@ -521,6 +539,11 @@ namespace Colin.Core.Modulars.Tiles
         else
           return ownCom.Equals(tarCom);
       }
+    }
+
+    public int GetSeed()
+    {
+      return CoordX * 137 + CoordY;
     }
   }
 }

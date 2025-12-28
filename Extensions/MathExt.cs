@@ -761,7 +761,7 @@ namespace Colin.Core.Extensions
     /// <returns>The around.</returns>
     /// <param name="point">Point.</param>
     /// <param name="center">Center.</param>
-    /// <param name="angleInDegrees">Angle in radians.</param>
+    /// <param name="angleInRadians">Angle in radians.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 RotateAroundRadians(Vector2 point, Vector2 center, float angleInRadians)
     {
@@ -799,7 +799,7 @@ namespace Colin.Core.Extensions
     /// <returns>The on circle.</returns>
     /// <param name="circleCenter">Circle center.</param>
     /// <param name="radius">Radius.</param>
-    /// <param name="angleInDegrees">Angle in radians.</param>
+    /// <param name="angleInRadians">Angle in radians.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 PointOnCircleRadians(Vector2 circleCenter, float radius, float angleInRadians)
     {

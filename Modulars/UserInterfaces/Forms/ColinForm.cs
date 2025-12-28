@@ -4,7 +4,7 @@ using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
-  public class ColinForm : Canvas
+  public class ColinForm : Div
   {
     public Div Substrate;
 
@@ -120,14 +120,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.LeftClicked.Event += (s, e) => Module.Container.SetTop(this);
-      Events.KeysClicked.Event += (s, e) =>
+      Events.LeftClicked += (s, e) => Module.Root.SetTop(this);
+      Events.KeysClicked += (s, e) =>
       {
         if (e.Keys == Keys.Escape && base.IsVisible)
         {
           e.IsCapture = true;
           e.StopBubbling = true;
-          Close();
+          DoHibernate();
         }
       };
       base.DivInit();
@@ -135,30 +135,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
     public virtual void FormInit() { }
     public override bool Register(Div division, bool doInit = false) => Block.Register(division, doInit);
 
-    public event Action OnOpen;
-    public event Action OnFirstShow;
-
-    public event Action OnClose;
-
     public override void OnUpdate(GameTime time)
     {
       base.OnUpdate(time);
-    }
-    private bool _firstShow = false;
-    public void Show()
-    {
-      OnOpen?.Invoke();
-      if (!_firstShow)
-      {
-        OnFirstShow?.Invoke();
-        _firstShow = true;
-      }
-        (Controller as DivGradientController).Open();
-    }
-    public void Close()
-    {
-      OnClose?.Invoke();
-      (Controller as DivGradientController).Close();
     }
   }
 }

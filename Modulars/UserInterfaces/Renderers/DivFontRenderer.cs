@@ -28,9 +28,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
 
   public class DivFontRenderer : DivRenderer
   {
-    static RichTextLayout RichTextLayout = new RichTextLayout()
+    public RichTextLayout RichTextLayout = new RichTextLayout()
     {
-      IgnoreColorCommand = false,
+      IgnoreColorCommand = false
     };
     public DynamicSpriteFont Font;
     private string _text;
@@ -53,7 +53,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       base.OnDivInitialize();
     }
 
-    static DynamicSpriteFont font = Asset.GetFont("Unifont").GetFont(16);
+    private static DynamicSpriteFont font = Asset.GetFont("Unifont").GetFont(16);
     public override void OnBinded()
     {
       if (Font == null)
@@ -62,10 +62,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     }
     public override void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
+      RichTextLayout.AutoEllipsisMethod = AutoEllipsisMethod.None;
       RichTextLayout.Font = Font;
       RichTextLayout.Text = Text;
       RichTextLayout.Draw(DivFontStashRenderer.Instance,
-        Div.Layout.RenderTargetLocation,
+        Div.Layout.RenderTargetLocation + div.Layout.Anchor,
         div.Design.Color,
         Div.Layout.Rotation,
         div.Layout.Anchor,

@@ -1,5 +1,4 @@
-﻿using Colin.Core.Modulars.Ecses;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
 
 namespace Colin.Core.Resources
@@ -63,6 +62,10 @@ namespace Colin.Core.Resources
         return value;
       else
         return null;
+    }
+    public static T0 GetFromHash(int hashValue)
+    {
+      return GetFromTypeName(GetTypeNameFromHash(hashValue));
     }
     public static int? GetHashFromTypeName(string typeName)
     {

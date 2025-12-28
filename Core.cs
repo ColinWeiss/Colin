@@ -13,7 +13,7 @@ namespace Colin.Core
     [System.Runtime.InteropServices.DllImport("nvapi.dll", EntryPoint = "fake")]
     private static extern int LoadNvApi32();
 
-    void TryForceHighPerformanceGpu()
+    private void TryForceHighPerformanceGpu()
     {
       try
       {
@@ -152,16 +152,16 @@ namespace Colin.Core
       base.OnExiting(sender, args);
     }
 
-    public static bool OnActive = true;
+    public static bool Focus = true;
 
     protected override void OnActivated(object sender, EventArgs args)
     {
-      OnActive = true;
+      Focus = true;
       base.OnActivated(sender, args);
     }
     protected override void OnDeactivated(object sender, EventArgs args)
     {
-      OnActive = false;
+      Focus = false;
       base.OnDeactivated(sender, args);
     }
   }

@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Events;
-using SharpDX.XInput;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -27,6 +26,28 @@ namespace Colin.Core.Modulars.UserInterfaces
       }
     }
 
+    public event Action OnDoWakeUpStart;
+
+    public event Action OnDoHibernateStart;
+
+    public void DoWakeUp()
+    {
+      OnDoWakeUpStart?.Invoke();
+      if (Controller is null)
+        IsVisible = true;
+      else
+        Controller.DoWakeUp(this);
+    }
+
+    public void DoHibernate()
+    {
+      OnDoHibernateStart?.Invoke();
+      if (Controller is null)
+        IsVisible = false;
+      else
+        Controller.DoHibernate(this);
+    }
+
     private bool isHidden = false;
     public bool IsHidden
     {
@@ -42,6 +63,11 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// 用于存放该划分元素的子元素.
     /// </summary>
     public List<Div> Children;
+
+    public Div GetChild(string name)
+    {
+      return Children.Find(a => a.Name == name);
+    }
 
     /// <summary>
     /// 指示划分元素的布局样式
@@ -89,8 +115,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public T BindController<T>() where T : DivController, new()
     {
       _controller = new T();
-      _controller.div = this;
-      _controller.OnBinded();
+      _controller.OnBinded(this);
       return _controller as T;
     }
     public T GetController<T>() where T : DivController
@@ -212,6 +237,15 @@ namespace Colin.Core.Modulars.UserInterfaces
       IsCanvas = isCanvas;
     }
 
+    public void SetCanvas(float width, float height)
+    {
+      Layout.Width = width;
+      Layout.Height = height;
+      Layout.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
+      Canvas?.Dispose();
+      Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
+    }
+
     public void DoInitialize()
     {
       if (this is DivRoot divThreshold)
@@ -224,9 +258,17 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (InitializationCompleted)
         return;
       DivInit();
-      _controller?.OnDivInitialize();
+      _controller?.OnDivInitialize(this);
       _renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
+      if (IsCanvas)
+      {
+        if (Layout.Width == 0)
+          Layout.Width = 1; 
+        if (Layout.Height == 0)
+          Layout.Height = 1;
+        SetCanvas(Layout.Width, Layout.Height);
+      }
       ForEach(child => child?.DoInitialize());
       InitializationCompleted = true;
     }
@@ -257,10 +299,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         Start(time);
         _started = true;
       }
-      Controller?.Layout(ref Layout);
-      Controller?.Interact(ref Interact);
-      Controller?.Design(ref Design);
+      Controller?.Layout(this, ref Layout);
+      Controller?.Interact(this, ref Interact);
+      Controller?.Design(this, ref Design);
       LayoutCalculate(ref Layout);
+      LayoutEvent?.Invoke(this);
       InteractCalculate(ref Interact);
       DesignCalculate(ref Design);
       DivLayout.Calculate(this);
@@ -269,7 +312,6 @@ namespace Colin.Core.Modulars.UserInterfaces
       OnUpdate(time);
       UpdateChildren(time);
     }
-
 
     public virtual void LayoutCalculate(ref DivLayout layout) { }
 
@@ -308,19 +350,21 @@ namespace Colin.Core.Modulars.UserInterfaces
       });
     }
 
-    static RasterizerState ScissiorRasterizer = new RasterizerState()
+    public event Action<Div> LayoutEvent;
+
+    private static RasterizerState ScissiorRasterizer = new RasterizerState()
     {
       CullMode = CullMode.None,
       ScissorTestEnable = true,
     };
 
-    public void BeginRender(BlendState blendState)
+    public void BeginRender(BlendState blendState, SamplerState samplerState)
     {
       if (UpperScissor is not null)
       {
         UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
         CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
-        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
+        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointWrap, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
       }
       else
         Module.BatchNormalBegin(this, blendState);
@@ -329,7 +373,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 执行划分元素的渲染.
     /// </summary>
-    /// <param name="time">游戏计时状态快照.</param>
     public void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
       if (!IsVisible && !IsHidden)
@@ -339,7 +382,7 @@ namespace Colin.Core.Modulars.UserInterfaces
         device.SetRenderTarget(Canvas);
         device.Clear(Color.Transparent);
       }
-      BeginRender(BlendState.AlphaBlend);
+      BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
       OnRender(device, batch);
       _renderer?.DoRender(device, batch);//渲染器进行渲染.
       batch.End();
@@ -352,8 +395,11 @@ namespace Colin.Core.Modulars.UserInterfaces
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
           device.SetRenderTarget(Module.RawRt);
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
-        batch.Draw(Canvas, Layout.ScreenLocation + Layout.Anchor, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
+        Vector2 canvasRenderPos = Layout.ScreenLocation + Layout.Anchor;
+        if (UpperCanvas is not null)
+          canvasRenderPos = Layout.RenderTargetLocation + Layout.Anchor;
+        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
+        batch.Draw(Canvas, canvasRenderPos, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
         batch.End();
       }
     }
@@ -366,7 +412,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <summary>
     /// 为 <see cref="Children"/> 内元素执行其 <see cref="DoRender"/>.
     /// </summary>
-    /// <param name="time">游戏计时状态快照.</param>
     public virtual void RenderChildren(GraphicsDevice device, SpriteBatch batch)
     {
       ForEach(child =>
@@ -437,6 +482,12 @@ namespace Colin.Core.Modulars.UserInterfaces
       //Clear();
     }
 
+    public void SetTop(Div division)
+    {
+      Remove(division);
+      Register(division, true);
+    }
+
     public void Do(Action<Div> action) => action(this);
 
     /// <summary>
@@ -472,16 +523,19 @@ namespace Colin.Core.Modulars.UserInterfaces
     public bool ContainsScreenPoint(Vector2 pos)
       => ContainsScreenPoint(pos.ToPoint());
 
-    public Vector2 MousePos
-      => Module.UICamera.ConvertToWorld(MouseResponder.Position) / CoreInfo.ScreenSizeF * CoreInfo.ViewSizeF;
+    public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
 
     public Vector2 RelativeMousePos => MousePos - Layout.ScreenLocation;
 
     public Vector2 RelativeRenderMousePos => MousePos - Layout.RenderTargetLocation;
 
     public event Action OnDispose;
+
+    public bool Disposed = false;
+
     public virtual void Dispose()
     {
+      Disposed = true;
       _parent = null;
       _renderer = null;
       _controller = null;

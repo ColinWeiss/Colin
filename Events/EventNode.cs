@@ -4,8 +4,13 @@
   /// 事件节点.
   /// 包含触发事件/事件处理办法.
   /// </summary>
-  public class EventNode<T> : Node<T> where T : IEventBase
+  public class EventNode<T> : Node<T>, IDisposable where T : IEventBase
   {
+    public EventNode()
+    {
+      EventList = new List<EventHandler<T>>();
+    }
+
     /// <summary>
     /// 获取该节点对应的事件类型.
     /// </summary>
@@ -14,17 +19,21 @@
     /// <summary>
     /// 指示该节点对应的事件.
     /// </summary>
-    public event EventHandler<T> Event;
+    protected event EventHandler<T> Event;
+
+    public List<EventHandler<T>> EventList;
 
     public static EventNode<T> operator +(EventNode<T> node, EventHandler<T> a)
     {
-      node.Event += a;
+      node.EventList.Add(a);
+      node.Event += node.EventList[node.EventList.Count - 1];
       return node;
     }
 
     public static EventNode<T> operator -(EventNode<T> node, EventHandler<T> a)
     {
       node.Event -= a;
+      node.EventList.Remove(a);
       return node;
     }
 
@@ -83,5 +92,18 @@
 
     public void Remove(EventNode<T> node)
       => DoRemove(node);
+
+    public void Dispose()
+    {
+      for (int i = 0; i < EventList.Count; i++)
+      {
+        Event -= EventList[i];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        if (Children[i] is EventNode<T> sub)
+          sub.Dispose();
+      }
+    }
   }
 }

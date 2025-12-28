@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Modulars.UserInterfaces.Controllers;
-using SharpDX.Direct3D9;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 {

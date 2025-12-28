@@ -27,9 +27,6 @@ namespace Colin.Core
     /// </summary>
     public static GameTime GameTimeCache { get; set; }
 
-    /// <summary>
-    /// 指示当前 <see cref="Colin.Engine"/> 对象.
-    /// </summary>
     public static Core Core { get; set; }
 
     /// <summary>
@@ -39,7 +36,7 @@ namespace Colin.Core
 
     private static string _engineName = string.Empty;
     /// <summary>
-    /// 指示当前 <see cref="Colin.Engine"/> 程序集的名称.
+    /// 指示当前程序集的名称.
     /// </summary>
     public static string EngineName
     {

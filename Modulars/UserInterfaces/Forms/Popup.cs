@@ -4,7 +4,7 @@ using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Forms
 {
-  public class Popup : Canvas
+  public class Popup : Div
   {
     private int _titleHeight;
 
@@ -74,19 +74,17 @@ namespace Colin.Core.Modulars.UserInterfaces.Forms
       Layout.Width += 8;
       Layout.Height += _titleHeight + 8;
 
-      Events.KeysClicked.Event += (s, e) =>
+      Events.KeysClicked += (s, e) =>
       {
         if (e.Keys == Keys.Escape && base.IsVisible)
         {
           e.StopBubbling = true;
-          Close();
+          DoHibernate();
         }
       };
       base.DivInit();
     }
     public virtual void PopupInit() { }
     public override bool Register(Div division, bool doInit = false) => Block.Register(division, doInit);
-    public void Show() => (Controller as DivGradientController).Open();
-    public void Close() => (Controller as DivGradientController).Close();
   }
 }

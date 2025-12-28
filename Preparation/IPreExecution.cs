@@ -8,13 +8,13 @@
     /// <summary>
     /// 指示该预工作项的名称.
     /// </summary>
-    public string Name { get; }
+    string Name { get; }
 
     /// <summary>
     /// 指示该预工作项的当前进度.
     /// </summary>
-    public float Progress { get; set; }
+    float Progress { get; set; }
 
-    public void Prepare() { }
+    void Prepare() { }
   }
 }

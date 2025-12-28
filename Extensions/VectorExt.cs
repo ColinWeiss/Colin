@@ -190,5 +190,196 @@
     {
       return new Vector3(vec, 0);
     }
+
+    /// <summary>
+    /// 创建带有指定索引处值的Vector4
+    /// </summary>
+    public static Vector4 WithElement(this Vector4 vector, int index, float value)
+    {
+      if (index < 0 || index > 3)
+        throw new ArgumentOutOfRangeException(nameof(index), "索引必须在0-3之间");
+
+      switch (index)
+      {
+        case 0: return new Vector4(value, vector.Y, vector.Z, vector.W);
+        case 1: return new Vector4(vector.X, value, vector.Z, vector.W);
+        case 2: return new Vector4(vector.X, vector.Y, value, vector.W);
+        case 3: return new Vector4(vector.X, vector.Y, vector.Z, value);
+        default: return vector;
+      }
+    }
+
+    /// <summary>
+    /// 获取Vector4指定索引处的值
+    /// </summary>
+    public static float GetElement(this Vector4 vector, int index)
+    {
+      if (index < 0 || index > 3)
+        throw new ArgumentOutOfRangeException(nameof(index), "索引必须在0-3之间");
+
+      switch (index)
+      {
+        case 0: return vector.X;
+        case 1: return vector.Y;
+        case 2: return vector.Z;
+        case 3: return vector.W;
+        default: return 0;
+      }
+    }
+
+    /// <summary>
+    /// 创建一个从数组或列表填充的Vector4
+    /// </summary>
+    public static Vector4 CreateFromArray(float[] values, int startIndex = 0)
+    {
+      if (values == null)
+        throw new ArgumentNullException(nameof(values));
+
+      return new Vector4(
+          startIndex < values.Length ? values[startIndex] : 0,
+          startIndex + 1 < values.Length ? values[startIndex + 1] : 0,
+          startIndex + 2 < values.Length ? values[startIndex + 2] : 0,
+          startIndex + 3 < values.Length ? values[startIndex + 3] : 0
+      );
+    }
+
+    /// <summary>
+    /// 创建一个从列表填充的Vector4
+    /// </summary>
+    public static Vector4 CreateFromList<T>(System.Collections.Generic.List<T> list,
+        Func<T, float> selector, int startIndex = 0)
+    {
+      if (list == null)
+        throw new ArgumentNullException(nameof(list));
+      if (selector == null)
+        throw new ArgumentNullException(nameof(selector));
+
+      return new Vector4(
+          startIndex < list.Count ? selector(list[startIndex]) : 0,
+          startIndex + 1 < list.Count ? selector(list[startIndex + 1]) : 0,
+          startIndex + 2 < list.Count ? selector(list[startIndex + 2]) : 0,
+          startIndex + 3 < list.Count ? selector(list[startIndex + 3]) : 0
+      );
+    }
+
+    /// <summary>
+    /// 标准化Vector4，使所有分量之和为1
+    /// </summary>
+    public static Vector4 NormalizeWeights(this Vector4 weights)
+    {
+      float sum = weights.X + weights.Y + weights.Z + weights.W;
+      if (sum > 0)
+      {
+        return new Vector4(
+            weights.X / sum,
+            weights.Y / sum,
+            weights.Z / sum,
+            weights.W / sum
+        );
+      }
+      return Vector4.Zero;
+    }
+
+    /// <summary>
+    /// 检查权重向量是否有效（所有分量在0-1之间，总和接近1）
+    /// </summary>
+    public static bool IsValidWeightVector(this Vector4 weights, float tolerance = 0.01f)
+    {
+      // 检查每个分量是否在合理范围内
+      if (weights.X < 0 || weights.Y < 0 || weights.Z < 0 || weights.W < 0)
+        return false;
+      if (weights.X > 1 || weights.Y > 1 || weights.Z > 1 || weights.W > 1)
+        return false;
+
+      // 检查总和是否接近1
+      float sum = weights.X + weights.Y + weights.Z + weights.W;
+      return Math.Abs(sum - 1.0f) <= tolerance;
+    }
+
+    /// <summary>
+    /// 将Vector4转换为数组
+    /// </summary>
+    public static float[] ToArray(this Vector4 vector)
+    {
+      return new float[] { vector.X, vector.Y, vector.Z, vector.W };
+    }
+
+    /// <summary>
+    /// 检查Vector4是否为有效骨骼索引（所有分量>=0）
+    /// </summary>
+    public static bool IsValidBoneIndexVector(this Vector4 indices)
+    {
+      return indices.X >= 0 && indices.Y >= 0 && indices.Z >= 0 && indices.W >= 0;
+    }
+
+    /// <summary>
+    /// 获取Vector4中最大的分量索引
+    /// </summary>
+    public static int MaxComponentIndex(this Vector4 vector)
+    {
+      float max = vector.X;
+      int index = 0;
+
+      if (vector.Y > max) { max = vector.Y; index = 1; }
+      if (vector.Z > max) { max = vector.Z; index = 2; }
+      if (vector.W > max) { max = vector.W; index = 3; }
+
+      return index;
+    }
+
+    /// <summary>
+    /// 获取Vector4中最大的分量值
+    /// </summary>
+    public static float MaxComponent(this Vector4 vector)
+    {
+      return Math.Max(Math.Max(vector.X, vector.Y), Math.Max(vector.Z, vector.W));
+    }
+
+    /// <summary>
+    /// Vector3的类似扩展方法
+    /// </summary>
+    public static Vector3 WithElement(this Vector3 vector, int index, float value)
+    {
+      if (index < 0 || index > 2)
+        throw new ArgumentOutOfRangeException(nameof(index), "索引必须在0-2之间");
+
+      switch (index)
+      {
+        case 0: return new Vector3(value, vector.Y, vector.Z);
+        case 1: return new Vector3(vector.X, value, vector.Z);
+        case 2: return new Vector3(vector.X, vector.Y, value);
+        default: return vector;
+      }
+    }
+
+    public static float GetElement(this Vector3 vector, int index)
+    {
+      if (index < 0 || index > 2)
+        throw new ArgumentOutOfRangeException(nameof(index), "索引必须在0-2之间");
+
+      switch (index)
+      {
+        case 0: return vector.X;
+        case 1: return vector.Y;
+        case 2: return vector.Z;
+        default: return 0;
+      }
+    }
+
+    /// <summary>
+    /// 将Vector3转换为Vector4（W分量设为0或指定值）
+    /// </summary>
+    public static Vector4 ToVector4(this Vector3 vector, float w = 0)
+    {
+      return new Vector4(vector.X, vector.Y, vector.Z, w);
+    }
+
+    /// <summary>
+    /// 将Vector4转换为Vector3（丢弃W分量）
+    /// </summary>
+    public static Vector3 ToVector3(this Vector4 vector)
+    {
+      return new Vector3(vector.X, vector.Y, vector.Z);
+    }
   }
 }

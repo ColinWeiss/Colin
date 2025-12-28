@@ -5,7 +5,7 @@
   /// </summary>
   public interface IOStep
   {
-    public void LoadStep(BinaryReader reader);
-    public void SaveStep(BinaryWriter writer);
+    void LoadStep(BinaryReader reader);
+    void SaveStep(BinaryWriter writer);
   }
 }

@@ -74,7 +74,7 @@
     private Direction _longitudinalDirection;
     /// <summary>
     /// 获取实体当前纵向方向的值.
-    /// <br<see cref="Direction.Up"/> 和 <see cref="Direction.Down"/>.</br>
+    /// <br><see cref="Direction.Up"/> 和 <see cref="Direction.Down"/>.</br>
     /// </summary>
     public Direction LongitudinalDirection
     {

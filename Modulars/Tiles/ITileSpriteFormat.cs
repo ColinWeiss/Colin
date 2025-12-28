@@ -2,10 +2,10 @@
 {
   public interface ITileSpriteFormat
   {
-    public Point Solid { get; }
-    public Point Border { get; }
-    public Point Corner { get; }
-    public int LineHeight { get; }
+    Point Solid { get; }
+    Point Border { get; }
+    Point Corner { get; }
+    int LineHeight { get; }
   }
 
   /// <summary>

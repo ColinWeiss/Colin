@@ -14,7 +14,7 @@
         Frame currentFrame = _sprite.Frame;
         batch.Draw(
           _sprite.Source,
-          Div.Layout.RenderTargetLocation,
+          Div.Layout.RenderTargetLocation + div.Layout.Anchor,
           currentFrame.GetFrame(),
           Div.Design.Color,
           Div.Layout.Rotation,

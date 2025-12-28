@@ -164,7 +164,6 @@ namespace Colin.Core
     }
     public static string CmdExecute(string command)
     {
-      bool flag = true;
       string result;
       Process p = new Process();
       p.StartInfo.FileName = "cmd.exe";

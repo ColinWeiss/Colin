@@ -21,11 +21,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// 在此处进行容器初始化操作.
     /// </summary>
     public virtual void RootInitialize() { }
-    public void SetTop(Div division)
-    {
-      Remove(division);
-      Register(division, true);
-    }
     public override void OnUpdate(GameTime time)
     {
       Layout.Width = CoreInfo.ViewWidth;

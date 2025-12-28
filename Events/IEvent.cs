@@ -8,14 +8,14 @@
     /// <summary>
     /// 指示该事件是否被捕获.
     /// </summary>
-    public bool Captured { get; set; }
+    bool Captured { get; set; }
     /// <summary>
     /// 指示该事件的名称.
     /// </summary>
-    public string Name { get; set; }
+    string Name { get; set; }
     /// <summary>
     /// 指示该事件是否属于后序遍历事件.
     /// </summary>
-    public bool Postorder { get; set; }
+    bool Postorder { get; set; }
   }
 }

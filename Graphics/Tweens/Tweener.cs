@@ -16,6 +16,7 @@
     public bool IsPlay => _isPlay;
     public float Time;
     private float _timer;
+    public bool Over;
 
     private float _percentage;
     public float Percentage => _percentage;
@@ -25,25 +26,30 @@
     public GradientStyle GradientStyle = GradientStyle.Linear;
     public T DoUpdate()
     {
-      if (_isPlay)
-      {
-        _timer += TimeAffected ? Colin.Core.Time.DeltaTime : Colin.Core.Time.UnscaledDeltaTime;
-      }
+      _timer = Math.Clamp(_timer, 0 , Time);
+      Over = false;
       switch (GradientStyle)
       {
         case GradientStyle.Linear:
           _percentage = _timer / Time;
           break;
         case GradientStyle.EaseOutExpo:
-          _percentage = 1f - MathF.Pow(2, -10 * _timer / Time);
+          {
+            float x = _timer / Time;
+            _percentage = x >= 0.999999f ? 1 : 1f - MathF.Pow(2, -10 * x);
+          }
           break;
       }
-      ;
       Current = Calculate();
-      if (_timer > Time)
+      if (_timer >= Time)
       {
         Current = Target;
         _isPlay = IsLoop;
+        Over = true;
+      }
+      if (_isPlay)
+      {
+        _timer += TimeAffected ? Colin.Core.Time.DeltaTime : Colin.Core.Time.UnscaledDeltaTime;
       }
       return Current;
     }

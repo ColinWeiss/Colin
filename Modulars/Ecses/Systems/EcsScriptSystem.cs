@@ -1,5 +1,5 @@
 ﻿using Colin.Core.Modulars.Ecses.Components;
-using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.IEntityCom>;
+using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.IEcsCom>;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {
@@ -16,7 +16,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
-        foreach (IEntityCom component in _current.Components.Values)
+        foreach (IEcsCom component in _current.Components.Values)
         {
           if (component is IResetable resetableCom && resetableCom.ResetEnable)
           {
@@ -30,8 +30,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
     public override void DoUpdate()
     {
       Entity _current;
-      IEntityCom _EntityCom;
-      Dictionary<Type, IEntityCom> comDic;
+      IEcsCom _EntityCom;
+      Dictionary<Type, IEcsCom> comDic;
       ValueCollection coms;
       for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
@@ -40,7 +40,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
           continue;
         comDic = _current.Components;
         coms = comDic.Values;
-        foreach (IEntityCom component in coms)
+        foreach (IEcsCom component in coms)
         {
           if (component is EcsComScript script && script._updateStarted is false)
           {
@@ -48,7 +48,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
             script._updateStarted = true;
           }
         }
-        foreach (IEntityCom component in coms)
+        foreach (IEcsCom component in coms)
           if (component is EcsComScript script && script.UpdateEnable)
             script.DoUpdate();
       }
@@ -62,7 +62,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         for (int comCount = 0; comCount < coms.Count; comCount++)
         {
           _EntityCom = coms.ElementAt(comCount);
-          if (_EntityCom is IEntityRemovableCom removableCom && removableCom.NeedClear)
+          if (_EntityCom is IEcsComRemovable removableCom && removableCom.NeedClear)
           {
             comDic.Remove(_EntityCom.GetType());
             comCount--;

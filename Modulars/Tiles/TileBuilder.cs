@@ -20,7 +20,7 @@ namespace Colin.Core.Modulars.Tiles
     int? DoRefresh = 1,
     bool Immediately = false) : IBusinessCase
   {
-    static TileChunk _chunkCache;
+    private static TileChunk _chunkCache;
     public static void ResetCache()
     {
       _chunkCache = null;
@@ -111,7 +111,7 @@ namespace Colin.Core.Modulars.Tiles
         foreach (var handler in _chunk.Handler)
         {
           if (handler.Enable[info.Index])
-            handler.OnPlaceHandle(this, info.Index, _chunk.ConvertWorld(cCoord));
+            handler.OnPlaceHandle(_chunk, info.Index, _chunk.ConvertWorld(cCoord));
         }
         OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _chunk.TileKernel[info.Index]?.OnPlace(Tile, _chunk, info.Index, _chunk.ConvertWorld(cCoord));
@@ -136,7 +136,7 @@ namespace Colin.Core.Modulars.Tiles
         TileKernel _com = _chunk.TileKernel[info.Index];
         foreach (var handler in _chunk.Handler)
         {
-          handler.OnDestructHandle(this, info.Index, info.GetWCoord3());
+          handler.OnDestructHandle(_chunk, info.Index, info.GetWCoord3());
         }
         OnDestructHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
         _com?.OnDestruction(Tile, _chunk, info.Index, info.GetWCoord3());

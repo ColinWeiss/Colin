@@ -1,9 +1,11 @@
-﻿namespace Colin.Core.Modulars.Ecses.Components
+﻿using DeltaMachine.Configuration.Localization;
+
+namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
   /// 实体文档.
   /// </summary>
-  public class EcsComDoc : IEntityBindableCom
+  public class EcsComDoc : IEcsComBindable
   {
     public Entity Entity { get; set; }
 
@@ -41,16 +43,19 @@
     /// <summary>
     /// 判断该实体是否具有指定标签.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public bool HasTag(string tag) => Tags.Contains(tag);
 
-    public void DoInitialize() 
+    public string GetAffiliated(string target)
+    {
+      return string.Format(CommonLoc.Affiliated, Name, target);
+    }
+
+    public void DoInitialize()
     {
       Name ??= "未配置名称";
     }
 
-    public bool Equals(IEntityCom other)
+    public bool Equals(IEcsCom other)
     {
       bool result = false;
       if (other is EcsComDoc doc)

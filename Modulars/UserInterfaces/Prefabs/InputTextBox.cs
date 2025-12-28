@@ -107,14 +107,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       InputRect.X += 16;
       if (Text != string.Empty && Editing)
       {
-        if (KeyboardResponder.IsKeyClickBefore(Keys.Left))
+        if (KeyboardResponder.Clicked(Keys.Left))
           CursorPosition = Math.Clamp(CursorPosition - 1, 0, Text.Length);
-        if (KeyboardResponder.IsKeyClickBefore(Keys.Right))
+        if (KeyboardResponder.Clicked(Keys.Right))
           CursorPosition = Math.Clamp(CursorPosition + 1, 0, Text.Length);
 
-        if (KeyboardResponder.IsKeyClickBefore(Keys.PageDown))
+        if (KeyboardResponder.Clicked(Keys.PageDown))
           CursorPosition = Text.Length;
-        if (KeyboardResponder.IsKeyClickBefore(Keys.PageUp))
+        if (KeyboardResponder.Clicked(Keys.PageUp))
           CursorPosition = 0;
       }
       else

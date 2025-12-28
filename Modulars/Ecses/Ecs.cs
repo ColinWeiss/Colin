@@ -2,7 +2,6 @@
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Resources;
-using System.Security.Policy;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -48,6 +47,11 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
+    /// <summary>
+    /// 当一个实体格被真正地赋为 Null 时发生.
+    /// </summary>
+    public event Action<Entity> OnNull;
+
     public override void DoUpdate(GameTime time)
     {
       using (DebugProfiler.Tag("ECS System"))
@@ -64,8 +68,8 @@ namespace Colin.Core.Modulars.Ecses
           _currentSystem = Systems.ElementAt(count).Value;
           _currentSystem.DoUpdate();
         }
-        Dictionary<Type, IEntityCom>.ValueCollection coms;
-        IEntityCom com;
+        Dictionary<Type, IEcsCom>.ValueCollection coms;
+        IEcsCom com;
         for (int count = 0; count < Entities.Length; count++)
         {
           _Entity = Entities[count];
@@ -77,9 +81,10 @@ namespace Colin.Core.Modulars.Ecses
             for (int i = 0; i < coms.Count; i++)
             {
               com = coms.ElementAt(i);
-              if (com is IEntityUnloadableCom unLoadCom)
+              if (com is IEcsComUnloadable unLoadCom)
                 unLoadCom.OnClear();
             }
+            OnNull?.Invoke(Entities[count]);
             Entities[count] = null;
             continue;
           }
@@ -109,6 +114,12 @@ namespace Colin.Core.Modulars.Ecses
     {
       Entities[index].NeedClear = true;
     }
+
+    /// <summary>
+    /// 当一个实体通过该系统创建时发生.
+    /// </summary>
+    public event Action<Entity> OnCreate;
+
     public T Create<T>() where T : Entity, new()
     {
       T result;
@@ -122,6 +133,7 @@ namespace Colin.Core.Modulars.Ecses
           result.Ecs = this;
           result.ID = count;
           result.DoInitialize();
+          OnCreate?.Invoke(result);
           Entities[count] = result;
           return result;
         }
@@ -129,17 +141,23 @@ namespace Colin.Core.Modulars.Ecses
       return null;
     }
 
-    public Entity Put(Entity Entity)
+    /// <summary>
+    /// 当一个实体被放入该系统时发生.
+    /// </summary>
+    public event Action<Entity> OnPut;
+
+    public Entity Put(Entity target)
     {
       for (int count = 0; count < Entities.Length; count++)
       {
         if (Entities[count] is null)
         {
-          Entities[count] = Entity;
-          Entity.ID = count;
-          Entity.Ecs = this;
-          Entity.DoInitialize();
-          return Entity;
+          Entities[count] = target;
+          target.ID = count;
+          target.Ecs = this;
+          target.DoInitialize();
+          OnPut?.Invoke(target);
+          return target;
         }
       }
       return null;
@@ -196,7 +214,10 @@ namespace Colin.Core.Modulars.Ecses
           entity.LoadStep(reader);
         }
         else
+        {
+          entity.NeedSaveAndLoad = true;
           entity.LoadStep(reader);
+        }
       }
     }
     public static void SaveEntity(BinaryWriter writer, Entity entity)

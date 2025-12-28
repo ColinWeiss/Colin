@@ -8,6 +8,6 @@
     /// <summary>
     /// 执行检查.
     /// </summary>
-    public void Check();
+    void Check();
   }
 }

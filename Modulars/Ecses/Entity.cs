@@ -4,6 +4,12 @@ using Colin.Core.Resources;
 
 namespace Colin.Core.Modulars.Ecses
 {
+  public static class Identifier<T>
+  {
+    public static string TypeName => typeof(T).FullName;
+
+    public static int Hash => TypeName.GetMsnHashCode();
+  }
   /// <summary>
   /// 实体.
   /// </summary>
@@ -20,26 +26,26 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
-    internal Dictionary<Type, IEntityCom> _components;
+    internal Dictionary<Type, IEcsCom> _components;
     /// <summary>
     /// 实体组件列表.
     /// </summary>
-    public Dictionary<Type, IEntityCom> Components => _components;
-    public bool HasCom<T>() where T : IEntityCom => _components.ContainsKey(typeof(T));
-    public T GetCom<T>() where T : IEntityCom => (T)_components.GetValueOrDefault(typeof(T), null);
-    public T RegisterCom<T>() where T : class, IEntityCom, new() => RegisterCom(new T()) as T;
-    public IEntityCom RegisterCom(IEntityCom component)
+    public Dictionary<Type, IEcsCom> Components => _components;
+    public bool HasCom<T>() where T : IEcsCom => _components.ContainsKey(typeof(T));
+    public T GetCom<T>() where T : IEcsCom => (T)_components?.GetValueOrDefault(typeof(T), null);
+    public T RegisterCom<T>() where T : class, IEcsCom, new() => RegisterCom(new T()) as T;
+    public IEcsCom RegisterCom(IEcsCom component)
     {
-      if (component is IEntityBindableCom bind)
+      if (component is IEcsComBindable bind)
         bind.Entity = this;
       if (Components.ContainsKey(component.GetType()) is false)
         Components.Add(component.GetType(), component);
       return component;
     }
-    public bool RemoveCom<T>() where T : IEntityCom => _components.Remove(typeof(T));
-    public void AddCom(IEntityCom com)
+    public bool RemoveCom<T>() where T : IEcsCom => _components.Remove(typeof(T));
+    public void AddCom(IEcsCom com)
     {
-      if (com is IEntityBindableCom bind)
+      if (com is IEcsComBindable bind)
         bind.Entity = this;
       if (Components.ContainsKey(com.GetType()) is false)
         Components.Add(com.GetType(), com);
@@ -89,12 +95,16 @@ namespace Colin.Core.Modulars.Ecses
     private EcsComRenderData _renderData;
     public EcsComRenderData RenderData => _renderData ??= GetCom<EcsComRenderData>();
 
-
     public void SetSize(Vector2 size) => _comTransform.SetSize(size);
     public void SetSize(int width, int height) => _comTransform.SetSize(width, height);
+
+    public bool Inited;
     public void DoInitialize()
     {
-      _components = new Dictionary<Type, IEntityCom>();
+      if (Inited)
+        return;
+      Inited = true;
+      _components = new Dictionary<Type, IEcsCom>();
       _comDoc = RegisterCom<EcsComDoc>();
       _comTransform = RegisterCom<EcsComTransform>();
       ComAdded();
@@ -111,6 +121,38 @@ namespace Colin.Core.Modulars.Ecses
     /// 在此处处理组件数据.
     /// </summary>
     public virtual void SetDefaults() { }
+
+    public T Clone<T>() where T : Entity, new()
+    {
+      T t = new T();
+      t.DoInitialize();
+      Type type;
+      for (int i = 0; i < Components.Count; i++)
+      {
+        type = Components.Values.ElementAt(i).GetType();
+        if (t.Components[type] is IEcsComCloneable cloneCom)
+        {
+          cloneCom.Clone(Components[type]);
+        }
+      }
+      return t;
+    }
+    public Entity Clone()
+    {
+      Entity result = CodeResources<Entity>.CreateNewInstance(this);
+      result.Ecs = Ecs;
+      result.DoInitialize();
+      Type type;
+      for (int i = 0; i < Components.Count; i++)
+      {
+        type = Components.Values.ElementAt(i).GetType();
+        if (result.Components[type] is IEcsComCloneable cloneCom)
+        {
+          cloneCom.Clone(Components[type]);
+        }
+      }
+      return result;
+    }
 
     public void SaveStep(BinaryWriter writer)
     {
@@ -132,6 +174,33 @@ namespace Colin.Core.Modulars.Ecses
     public float GetDistance(Entity entity)
     {
       return Vector2.Distance(Transform.Translation, entity.Transform.Translation);
+    }
+
+    /// <summary>
+    /// 减速.
+    /// </summary>
+    /// <param name="speed"></param>
+    public void Decelerate(float speed)
+    {
+      if (Transform.HorizontalDirection == Direction.Left)
+      {
+        float _cache = Transform.Vel.X;
+        _cache += speed * Time.DeltaTime;
+        _cache = Math.Clamp(_cache, -int.MaxValue, 0);
+        Transform.Vel.X = _cache;
+      }
+      else if (Transform.HorizontalDirection == Direction.Right)
+      {
+        float _cache = Transform.Vel.X;
+        _cache -= speed * Time.DeltaTime;
+        _cache = Math.Clamp(_cache, 0, int.MaxValue);
+        Transform.Vel.X = _cache;
+      }
+    }
+
+    public bool Equals(Entity other)
+    {
+      return Document.Equals(other.Document);
     }
   }
 }

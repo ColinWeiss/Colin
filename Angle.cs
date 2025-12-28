@@ -190,7 +190,7 @@
     public override string ToString() =>
         _degrees.ToString();
 
-    void Normalize() =>
+    private void Normalize() =>
         _degrees = (_degrees % 360.0 + 360.0) % 360.0;
   }
 }

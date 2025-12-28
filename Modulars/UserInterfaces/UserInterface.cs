@@ -14,7 +14,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     private DivRoot _contianer = new DivRoot("NomalContainer");
 
-    public DivRoot Container => _contianer;
+    public DivRoot Root => _contianer;
 
     public Camera UICamera;
 
@@ -22,16 +22,15 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       UICamera = new Camera();
       UICamera.DoInitialize(CoreInfo.ViewWidth, CoreInfo.ViewHeight);
-      UICamera.Translate = CoreInfo.ViewCenter;
       Scene.Events.ClientSizeChanged += (s, e) =>
       {
-        UICamera.SetWidth(CoreInfo.ViewWidth);
-        UICamera.SetHeight(CoreInfo.ViewHeight);
-        UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.ViewWidth, CoreInfo.ViewHeight, 0f, 0f, 1f);
+        UICamera.Translate = CoreInfo.ViewCenter;
+        UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.Graphics.GraphicsDevice.Viewport.Width, CoreInfo.Graphics.GraphicsDevice.Viewport.Height, 0f, 0f, 1f);
         UICamera.View = Matrix.Identity;
         UICamera.ResetCamera();
+        UICamera.Position = CoreInfo.ViewCenter;
+        UICamera.TargetPosition = CoreInfo.ViewCenter;
       };
-
       base.DoInitialize();
     }
 
@@ -45,24 +44,24 @@ namespace Colin.Core.Modulars.UserInterfaces
     }
     public override void DoUpdate(GameTime time)
     {
-      if (KeyboardResponder.IsKeyClickBefore(Keys.F11))
+      if (KeyboardResponder.Clicked(Keys.F11))
         UICamera.TargetPosition = CoreInfo.ViewCenter + Vector2.UnitY * 2000;
-      if (KeyboardResponder.IsKeyClickBefore(Keys.F12))
+      if (KeyboardResponder.Clicked(Keys.F12))
         UICamera.TargetPosition = CoreInfo.ViewCenter;
 
 
-      if (KeyboardResponder.IsKeyClickBefore(Keys.F8))
+      if (KeyboardResponder.Clicked(Keys.F8))
         UICamera.TargetZoom = Vector2.One * 0.5f;
-      if (KeyboardResponder.IsKeyClickBefore(Keys.F9))
+      if (KeyboardResponder.Clicked(Keys.F9))
         UICamera.TargetZoom = Vector2.One;
 
-      if (KeyboardResponder.IsKeyClickBefore(Keys.F6))
+      if (KeyboardResponder.Clicked(Keys.F6))
         UICamera.TargetRotation = 3.14f;
-      if (KeyboardResponder.IsKeyClickBefore(Keys.F7))
+      if (KeyboardResponder.Clicked(Keys.F7))
         UICamera.TargetRotation = 0f;
 
       UICamera.DoUpdate(time);
-      Container?.DoUpdate(time);
+      Root?.DoUpdate(time);
     }
 
     public void BatchNormalBegin(Div div, BlendState blendState)
@@ -70,7 +69,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       CoreInfo.Batch.Begin(
         SpriteSortMode.Deferred,
         blendState,
-        SamplerState.PointClamp,
+        SamplerState.PointWrap,
         transformMatrix: div.UpperCanvas is not null ? null : UICamera.View);
     }
 
@@ -87,12 +86,12 @@ namespace Colin.Core.Modulars.UserInterfaces
         //      Container?.DoRender(device, batch);
         //      batch.End();
 
-        Container?.DoRender(device, batch);
+        Root?.DoRender(device, batch);
       }
     }
     public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
 
-    public void Register(DivRoot container) => Container?.Register(container);
+    public void Register(DivRoot container) => Root?.Register(container);
 
     public void SetRoot(DivRoot root)
     {
@@ -120,7 +119,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public override void Dispose()
     {
       Scene = null;
-      Container.Dispose();
+      Root.Dispose();
       base.Dispose();
     }
   }

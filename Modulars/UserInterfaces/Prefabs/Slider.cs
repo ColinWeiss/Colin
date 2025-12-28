@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Events;
-using Colin.Core.Modulars.UserInterfaces.Controllers;
 using Colin.Core.Modulars.UserInterfaces.Renderers;
 
 namespace Colin.Core.Modulars.UserInterfaces.Prefabs
@@ -26,10 +25,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public void Bind(Div list, Div view)
     {
       if (View is not null)
-        View.Events.LeftUp.Event -= WheelEvent;
+        View.Events.LeftUp -= WheelEvent;
       List = list;
       View = view;
-      View.Events.LeftUp.Event += WheelEvent;
+      View.Events.LeftUp += WheelEvent;
     }
     private void WheelEvent(object sender, MouseArgs args)
     {
@@ -52,7 +51,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         if (Direction is Direction.Vertical)
         {
           Block.Layout.Width = Layout.Width;
-          if(Block.Layout.Height == 0)
+          if (Block.Layout.Height == 0)
             Block.Layout.Height = 24;
         }
         if (Direction is Direction.Horizontal)

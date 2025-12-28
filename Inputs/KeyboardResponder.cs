@@ -26,13 +26,12 @@ namespace Colin.Core.Inputs
       State = Keyboard.GetState();
     }
 
-    public static bool IsKeyDown(Keys keys) => State.IsKeyDown(keys);
+    public static bool Down(Keys keys) => State.IsKeyDown(keys) && Core.Focus;
 
-    public static bool IsKeyUp(Keys keys) => State.IsKeyUp(keys);
+    public static bool Up(Keys keys) => State.IsKeyUp(keys) && Core.Focus;
 
-    public static bool IsKeyClickBefore(Keys keys) => StateLast.IsKeyUp(keys) && State.IsKeyDown(keys);
+    public static bool Clicking(Keys keys) => StateLast.IsKeyUp(keys)&& State.IsKeyDown(keys) && Core.Focus;
 
-    public static bool IsKeyClickAfter(Keys keys) => StateLast.IsKeyDown(keys) && State.IsKeyUp(keys);
-
+    public static bool Clicked(Keys keys) => StateLast.IsKeyDown(keys) && State.IsKeyUp(keys) && Core.Focus;
   }
 }

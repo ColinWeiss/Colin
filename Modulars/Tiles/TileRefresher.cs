@@ -62,7 +62,7 @@ namespace Colin.Core.Modulars.Tiles
         return;
       foreach (var handler in chunk.Handler)
       {
-        handler.OnRefreshHandle(this, index, wCoord);
+        handler.OnRefreshHandle(chunk, index, wCoord);
         if (info.Empty)
           handler.Enable[info.Index] = false;
       }
