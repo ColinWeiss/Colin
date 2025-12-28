@@ -36,5 +36,10 @@
     /// </summary>
     public static string LocalizationDir => Path.Combine(ProgramDir, "Localizations");
 
+    /// <summary>
+    /// 指示配置相关内容文件夹路径.
+    /// </summary>
+    public static string ConfigDir => Path.Combine(ProgramDir, "Configs");
+
   }
 }
