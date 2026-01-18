@@ -8,6 +8,9 @@ namespace Colin.Core.Modulars.Ecses.Components
   /// </summary>
   public class EcsComTileInteract : IEcsCom, IResetable
   {
+    public bool IsOnSlope { get; set; }
+
+    public Vector2 SlopeNormal { get; set; }
 
     /// <summary>
     /// 指示实体当前所处的层.
@@ -40,6 +43,8 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// </summary>
     public bool CollisionTop;
 
+    public bool SlopeCollision;
+
     public bool IsCollision => CollisionLeft || CollisionRight || CollisionBottom || CollisionTop;
 
     public bool ResetEnable { get; set; } = true;
@@ -51,6 +56,8 @@ namespace Colin.Core.Modulars.Ecses.Components
     public bool PreviousCollisionTop;
 
     public bool PreviousCollisionBottom;
+
+    public bool PreviousSlopeCollision;
 
     /// <summary>
     /// 指示基础碰撞盒.

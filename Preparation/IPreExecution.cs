@@ -15,6 +15,6 @@
     /// </summary>
     float Progress { get; set; }
 
-    void Prepare() { }
+    public void Prepare();
   }
 }

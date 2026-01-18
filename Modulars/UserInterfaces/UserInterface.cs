@@ -44,15 +44,9 @@ namespace Colin.Core.Modulars.UserInterfaces
     }
     public override void DoUpdate(GameTime time)
     {
-      if (KeyboardResponder.Clicked(Keys.F11))
-        UICamera.TargetPosition = CoreInfo.ViewCenter + Vector2.UnitY * 2000;
-      if (KeyboardResponder.Clicked(Keys.F12))
-        UICamera.TargetPosition = CoreInfo.ViewCenter;
-
-
-      if (KeyboardResponder.Clicked(Keys.F8))
-        UICamera.TargetZoom = Vector2.One * 0.5f;
-      if (KeyboardResponder.Clicked(Keys.F9))
+      if(CoreInfo.ScreenSizeF.X >= 1921 || CoreInfo.ScreenSizeF.Y >= 1081)
+        UICamera.TargetZoom = CoreInfo.ScreenSizeF / new Vector2(1920, 1080);
+      else
         UICamera.TargetZoom = Vector2.One;
 
       if (KeyboardResponder.Clicked(Keys.F6))

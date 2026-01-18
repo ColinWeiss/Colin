@@ -25,20 +25,18 @@ namespace Colin.Core.Modulars.Ecses.Systems
         comPhysic = _current.GetCom<EcsComTileInteract>();
         if (comTransform is null || comPhysic is null)
           continue;
-        //安全性检查.
         if (comPhysic is not null && comTransform is not null)
         {
           comPhysic.PreviousCollisionLeft = comPhysic.CollisionLeft;
           comPhysic.PreviousCollisionRight = comPhysic.CollisionRight;
           comPhysic.PreviousCollisionTop = comPhysic.CollisionTop;
           comPhysic.PreviousCollisionBottom = comPhysic.CollisionBottom;
-          HandleCollision(_current);
-          //处理速度.
+          VerticalCollision(_current);
         }
       }
       base.DoUpdate();
     }
-    public void HandleCollision(Entity Entity)
+    public void VerticalCollision(Entity Entity)
     {
       if (Tile is null)
         return;
@@ -98,7 +96,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
           if (
             next.Intersects(target) &&
-            (info.Collision != TileSolid.None || info.Loading) &&
+            (info.Collision == TileSolid.Sturdy || info.Loading) &&
             !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);

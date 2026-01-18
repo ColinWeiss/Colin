@@ -352,7 +352,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="div">要进行计算布局信息的划分元素.</param>
     public static void Calculate(Div div)
     {
-        div.Layout.renderTargetTransform = CalculateTransform(div);
+      div.Layout.renderTargetTransform = CalculateTransform(div);
 
       if (div.Parent is not null)
         div.Layout.renderTargetTransform *= div.Parent.Layout.renderTargetTransform;

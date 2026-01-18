@@ -17,13 +17,11 @@ namespace Colin.Core.Preparation
 
     public override void SceneInit()
     {
-      if (CoreInfo.Debug)
-        Console.WriteLine("Remind", "当前正以调试模式启动");
-      Asset.LoadAssets();
       Task assetLoadTask = null;
       assetLoadTask = Task.Run(
       () =>
       {
+        Asset.LoadAssets();
         LoadGameAssets();
         IPreExecution theTask;
         for (int count = 0; count < _preparatoryTasks.Count; count++)
@@ -35,6 +33,9 @@ namespace Colin.Core.Preparation
         Console.WriteLine("Remind", "初始化加载完成.");
         OnLoadComplete?.Invoke();
       });
+
+      if (CoreInfo.Debug)
+        Console.WriteLine("Remind", "当前正以调试模式启动");
       base.SceneInit();
     }
 
@@ -58,6 +59,12 @@ namespace Colin.Core.Preparation
         Console.WriteLine(e);
       }
     }
+
+    public override void Start()
+    {
+      base.Start();
+    }
+
     public override void SceneRender()
     {
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Gray);
