@@ -1,6 +1,7 @@
 ﻿using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using Colin.Core.Modulars;
+using DeltaMachine.Core;
 
 namespace Colin.Core.Common
 {

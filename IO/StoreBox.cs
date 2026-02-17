@@ -8,6 +8,8 @@ namespace Colin.Core.IO
     private Dictionary<string, object> _datas;
     // public Dictionary<string, object> Datas => _datas;
 
+    public string RootPath = "";
+
     public object this[int index] => _datas.ElementAt(index).Value;
     public object this[string key]
     {
@@ -31,11 +33,10 @@ namespace Colin.Core.IO
 
     /// <summary>
     ///  将存储箱中的数据保存为文件.
-    ///  <br>[!] 保存的数据将会保存至 <see cref="BasicsDirectory.DataDir"/>.</br>
     /// </summary>
     public void Save(string fileName)
     {
-      string _fullPath = Path.Combine(BasicsDirectory.DataDir, fileName);
+      string _fullPath = Path.Combine(BasicsDirectory.ProgramDir, RootPath, fileName);
       using (FileStream fileStream = new FileStream(_fullPath, FileMode.OpenOrCreate))
       {
         JsonSerializerOptions options = new JsonSerializerOptions();
@@ -49,7 +50,7 @@ namespace Colin.Core.IO
     /// </summary>
     public void Load(string fileName)
     {
-      string _fullPath = Path.Combine(BasicsDirectory.DataDir, fileName);
+      string _fullPath = Path.Combine(BasicsDirectory.ProgramDir, RootPath, fileName);
       using (FileStream fileStream = new FileStream(_fullPath, FileMode.Open))
       {
         _datas = (Dictionary<string, object>)JsonSerializer.Deserialize(fileStream, typeof(Dictionary<string, object>));

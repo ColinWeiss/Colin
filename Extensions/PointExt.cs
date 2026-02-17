@@ -24,5 +24,9 @@
       writer.Write(point.Y);
       writer.Write(point.Z);
     }
+    public static Point3 ToPoint3(this Point point)
+    {
+      return new Point3(point.X, point.Y, 0);
+    }
   }
 }

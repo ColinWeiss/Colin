@@ -45,10 +45,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\MouseArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ArrayExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PointExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Models\GlbModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\INBT.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\IOBoxStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\NBTContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\DoBlocker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\StrangeTreeGenerator.cs" />
