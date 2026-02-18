@@ -1,4 +1,5 @@
-﻿using Colin.Core.Resources;
+﻿using Colin.Core.IO;
+using Colin.Core.Resources;
 using DeltaMachine.Core.Repair;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -408,56 +409,70 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    private void DoSave(string path)
+    {
+      StoreBox box = new StoreBox();
+      box.RootPath = path;
+
+      int? hash;
+      TileKernel tCom;
+      Span<TileInfo> infoSpan = Infos;
+      for (int i = 0; i < infoSpan.Length; i++)
+      {
+        box.Add(i.ToString(), infoSpan[i].SaveStep());
+        tCom = TileKernel[i];
+        if (infoSpan[i].Empty is false && infoSpan[i].IsNull is false)
+        {
+          Debug.Assert(tCom is not null);
+          hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
+          Debug.Assert(hash.HasValue);
+          box.Add("K" + i.ToString(), hash.Value);
+        }
+      }
+
+      TileHandler handler;
+      for (int i = 0; i < Handler.Count; i++)
+      {
+        handler = Handler.ElementAt(i);
+        box.Add("H" + i.ToString(), handler.SaveStep());
+      }
+      //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
+      //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
+      box.Save();
+    }
+
     private void DoLoad(string path)
     {
-      using (FileStream fileStream = new FileStream(path, FileMode.Open))
+      StoreBox box = new StoreBox();
+      box.RootPath = path;
+      box.Load();
+
+      ref TileInfo info = ref this[0, 0, 0];
+      string typeName;
+      int typehash = 0;
+      for (int i = 0; i < Infos.Length; i++)
       {
-        using (BinaryReader reader = new BinaryReader(fileStream))
+        info = ref this[i];
+        info.LoadStep(box.GetBox(i.ToString()));
+        if (!info.Empty)
         {
-          ref TileInfo info = ref this[0, 0, 0];
-          string typeName;
-          int typehash = 0;
-          for (int count = 0; count < Infos.Length; count++)
+          typehash = box.GetInt("K" + i.ToString());
+          typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
+          Debug.Assert(typeName is not null);
+          if (typeName is not null)
           {
-            info = ref this[count];
-            info.LoadStep(reader);
-            if (!info.Empty)
-            {
-              typehash = reader.ReadInt32();
-              typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
-              Debug.Assert(typeName is not null);
-              if (typeName is not null)
-              {
-                TileKernel[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
-                Debug.Assert(TileKernel[count] is not null);
-                TileKernel[count].Tile = Tile;
-                TileKernel[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
-              }
-            }
-          }
-          // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取
-          int handlerCount = reader.ReadInt32();
-          Dictionary<string, TileHandler> namedTag = new();
-          for (int i = 0; i < Handler.Count; i++)
-            namedTag[Handler[i].GetType().Name] = Handler[i];
-          for (int i = 0; i < handlerCount; i++)
-          {
-            int check = reader.ReadInt32();
-            if (check != 20250225)
-            {
-              Debug.Fail("校验码失败，区块存档格式损坏");
-            }
-            string name = reader.ReadString();
-            if (namedTag.TryGetValue(name, out var matchedHandler))
-            {
-              matchedHandler.LoadStep(reader);
-            }
-            else
-            {
-              Debug.Fail("找不到Named Tag：" + name);
-            }
+            TileKernel[i] = CodeResources<TileKernel>.GetFromTypeName(typeName);
+            Debug.Assert(TileKernel[i] is not null);
+            TileKernel[i].Tile = Tile;
+            TileKernel[i].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
           }
         }
+      }
+      TileHandler handler;
+      for (int i = 0; i < Handler.Count; i++)
+      {
+        handler = Handler[i];
+        handler.LoadStep(box.GetBox("H" + i.ToString()));
       }
     }
 
@@ -478,43 +493,6 @@ namespace Colin.Core.Modulars.Tiles
       _saving = false;
     }
 
-    private void DoSave(string path)
-    {
-      using (FileStream fileStream = new FileStream(path, FileMode.Create))
-      {
-        using (BinaryWriter writer = new BinaryWriter(fileStream))
-        {
-          int? hash;
-          TileKernel tCom;
-          TileHandler cCom;
-          Span<TileInfo> infoSpan = Infos;
-          for (int count = 0; count < infoSpan.Length; count++)
-          {
-            infoSpan[count].SaveStep(writer);
-            tCom = TileKernel[count];
-            if (!infoSpan[count].Empty)
-            {
-              Debug.Assert(tCom is not null);
-              hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
-              Debug.Assert(hash.HasValue);
-              writer.Write(hash.Value);
-            }
-          }
-          // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取
-          writer.Write(Handler.Count);
-          for (int i = 0; i < Handler.Count; i++)
-          {
-            writer.Write(20250225);
-            cCom = Handler.ElementAt(i);
-            string name = cCom.GetType().Name;
-            writer.Write(name);
-            cCom.SaveStep(writer);
-          }
-          //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
-          //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
-        }
-      }
-    }
 
     /// <summary>
     /// 判断同层指定坐标的物块行为与具有指定偏移位置处的物块行为是否相同.

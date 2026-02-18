@@ -1,7 +1,7 @@
-﻿using Colin.Core.Common.Debugs;
-using Colin.Core.IO;
-using Colin.Core.Modulars;
+﻿using Colin.Core.IO;
 using DeltaMachine.Core;
+using Colin.Core.Common.Debugs;
+using Colin.Core.Modulars;
 
 namespace Colin.Core.Common
 {
@@ -166,7 +166,7 @@ namespace Colin.Core.Common
       base.Dispose(disposing);
     }
 
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(StoreBox box)
     {
       ISceneModule module;
       for (int count = 0; count < Modules.Count; count++)
@@ -174,22 +174,24 @@ namespace Colin.Core.Common
         module = Modules.ElementAt(count).Value;
         if (module is IOStep io)
         {
-          io.LoadStep(reader);
+          io.LoadStep(box.GetBox(module.GetType().Name));
         }
       }
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public StoreBox SaveStep()
     {
+      StoreBox box = new StoreBox();
       ISceneModule module;
       for (int count = 0; count < Modules.Count; count++)
       {
         module = Modules.ElementAt(count).Value;
         if (module is IOStep io)
         {
-          io.SaveStep(writer);
+          box.Add(module.GetType().Name, io.SaveStep());
         }
       }
+      return box;
     }
   }
 }

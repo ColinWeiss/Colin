@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.Tiles
   /// 物块模块.
   /// <br>提供基于区块化的物块管理办法.</br>
   /// </summary>
-  public class Tile : ISceneModule, IRenderableISceneModule, IOStep
+  public class Tile : ISceneModule, IRenderableISceneModule
   {
     public Scene Scene { get; set; }
 
@@ -368,14 +368,6 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     public void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
-    {
-    }
-
-    public void LoadStep(BinaryReader reader)
-    {
-    }
-
-    public void SaveStep(BinaryWriter writer)
     {
     }
   }

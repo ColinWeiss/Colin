@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using Colin.Core.IO;
+using System.Threading;
 
 namespace Colin.Core.Modulars.Tiles
 {
@@ -6,7 +7,7 @@ namespace Colin.Core.Modulars.Tiles
   /// 物块行动处理方式.
   /// <br>[!] 按 SOA 组织一个区块内的物块数据.</br>
   /// </summary>
-  public abstract class TileHandler
+  public abstract class TileHandler : IOStep
   {
     private static int _countOfHandlerTypes = 0;
     /// <summary>
@@ -63,9 +64,9 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public virtual void OnBuildProcess(TileBuilder builder, bool placeOrDestruct, int index, Point3 wCoord) { }
 
-    public virtual void LoadStep(BinaryReader reader) { }
+    public virtual StoreBox SaveStep() => new StoreBox();
 
-    public virtual void SaveStep(BinaryWriter writer) { }
+    public virtual void LoadStep(StoreBox box) { }
 
     /// <summary>
     /// 判断指定相对于该物块坐标具有指定偏移位置处的物块是否具有相同的行为方式.
@@ -75,5 +76,6 @@ namespace Colin.Core.Modulars.Tiles
     {
       return Chunk.IsSame(own, target);
     }
+
   }
 }

@@ -1,8 +1,8 @@
-﻿namespace Colin.Core.Modulars.Ecses.Components
+﻿using Colin.Core.IO;
+
+namespace Colin.Core.Modulars.Ecses.Components
 {
-  public interface IEcsComIO : IEcsCom
+  public interface IEcsComIO : IEcsCom, IOStep
   {
-    void SaveStep(BinaryWriter writer);
-    void LoadStep(BinaryReader reader);
   }
 }

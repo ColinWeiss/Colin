@@ -1,9 +1,11 @@
-﻿namespace Colin.Core.Modulars.Tiles
+﻿using Colin.Core.IO;
+
+namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 表示瓦片地图中的单个瓦片的基本信息.
   /// </summary>
-  public struct TileInfo
+  public struct TileInfo : IOStep
   {
     public TileSolid Collision;
 
@@ -34,28 +36,30 @@
     private bool _isNull;
     public bool IsNull => _isNull;
 
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(StoreBox box)
     {
-      Collision = (TileSolid)reader.ReadInt32();
-      WCoordX = reader.ReadInt32();
-      WCoordY = reader.ReadInt32();
-      ICoordX = reader.ReadInt16();
-      ICoordY = reader.ReadInt16();
-      ICoordZ = reader.ReadInt16();
-      Empty = reader.ReadBoolean();
-      Index = reader.ReadInt32();
+      Collision = (TileSolid)box.GetInt("C");
+      WCoordX = box.GetInt("WX");
+      WCoordY = box.GetInt("WY");
+      ICoordX = box.GetShort("IX");
+      ICoordY = box.GetShort("IY");
+      ICoordZ = box.GetShort("IZ");
+      Empty = box.GetBool("E");
+      Index = box.GetInt("I");
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public StoreBox SaveStep()
     {
-      writer.Write((int)Collision);
-      writer.Write(WCoordX);
-      writer.Write(WCoordY);
-      writer.Write(ICoordX);
-      writer.Write(ICoordY);
-      writer.Write(ICoordZ);
-      writer.Write(Empty);
-      writer.Write(Index);
+      StoreBox box = new StoreBox();
+      box.Add("C", (int)Collision);
+      box.Add("WX", WCoordX);
+      box.Add("WY", WCoordY);
+      box.Add("IX", ICoordX);
+      box.Add("IY", ICoordY);
+      box.Add("IZ", ICoordZ);
+      box.Add("E", Empty);
+      box.Add("I", Index);
+      return box;
     }
 
     internal static TileInfo _null = new TileInfo()

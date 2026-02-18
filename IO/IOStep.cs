@@ -5,7 +5,7 @@
   /// </summary>
   public interface IOStep
   {
-    void LoadStep(BinaryReader reader);
-    void SaveStep(BinaryWriter writer);
+    StoreBox SaveStep();
+    void LoadStep(StoreBox box);
   }
 }

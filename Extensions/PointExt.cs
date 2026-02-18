@@ -1,28 +1,34 @@
-﻿namespace Colin.Core.Extensions
+﻿using Colin.Core.IO;
+
+namespace Colin.Core.Extensions
 {
   public static class PointExt
   {
-    public static void LoadStep(this ref Point point, BinaryReader reader)
+    public static void LoadStep(this ref Point point, StoreBox box)
     {
-      point.X = reader.ReadInt32();
-      point.Y = reader.ReadInt32();
+      point.X = box.GetInt("X");
+      point.Y = box.GetInt("Y");
     }
-    public static void SaveStep(this Point point, BinaryWriter writer)
+    public static StoreBox SaveStep(this Point point)
     {
-      writer.Write(point.X);
-      writer.Write(point.Y);
+      StoreBox box = new StoreBox();
+      box.Add("X", point.X);
+      box.Add("Y", point.Y);
+      return box;
     }
-    public static void LoadStep(this ref Point3 point, BinaryReader reader)
+    public static void LoadStep(this ref Point3 point, StoreBox box)
     {
-      point.X = reader.ReadInt32();
-      point.Y = reader.ReadInt32();
-      point.Z = reader.ReadInt32();
+      point.X = box.GetInt("X");
+      point.Y = box.GetInt("Y");
+      point.Z = box.GetInt("Z");
     }
-    public static void SaveStep(this Point3 point, BinaryWriter writer)
+    public static StoreBox SaveStep(this Point3 point)
     {
-      writer.Write(point.X);
-      writer.Write(point.Y);
-      writer.Write(point.Z);
+      StoreBox box = new StoreBox();
+      box.Add("X", point.X);
+      box.Add("Y", point.Y);
+      box.Add("Z", point.Z);
+      return box;
     }
     public static Point3 ToPoint3(this Point point)
     {

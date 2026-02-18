@@ -1,4 +1,7 @@
-﻿namespace Colin.Core.Modulars.Ecses.Components
+﻿using Colin.Core.IO;
+using DeltaMachine.Core;
+
+namespace Colin.Core.Modulars.Ecses.Components
 {
   /// <summary>
   /// [默认组件]
@@ -92,24 +95,26 @@
       Scale = Vector2.One;
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public StoreBox SaveStep()
     {
-      writer.Write(Translation.X);
-      writer.Write(Translation.Y);
-      writer.Write(Vel.X);
-      writer.Write(Vel.Y);
-      writer.Write(Size.X);
-      writer.Write(Size.Y);
+      StoreBox box = new StoreBox();
+      box.Add("TX", Translation.X);
+      box.Add("TY", Translation.Y);
+      box.Add("VX",Vel.X);
+      box.Add("VY",Vel.Y);
+      box.Add("SX",Size.X);
+      box.Add("SY",Size.Y);
+      return box;
     }
 
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(StoreBox box)
     {
-      Translation.X = reader.ReadSingle();
-      Translation.Y = reader.ReadSingle();
-      Vel.X = reader.ReadSingle();
-      Vel.Y = reader.ReadSingle();
-      Size.X = reader.ReadSingle();
-      Size.Y = reader.ReadSingle();
+      Translation.X = box.GetFloat("TX");
+      Translation.Y = box.GetFloat("TY");
+      Vel.X = box.GetFloat("VX");
+      Vel.Y = box.GetFloat("VX");
+      Size.X = box.GetFloat("SX");
+      Size.Y = box.GetFloat("SY");
     }
   }
 }
