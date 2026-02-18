@@ -93,7 +93,7 @@ namespace Colin.Core.IO
     public void Save()
     {
       using (var fs = new FileStream(RootPath, FileMode.Create))
-      using (var gs = new GZipStream(fs, CompressionLevel.SmallestSize))
+      using (var gs = new GZipStream(fs, CompressionLevel.Optimal))
       {
         using (var writer = new BinaryWriter(gs))
         {
