@@ -170,7 +170,7 @@ namespace Colin.Core.Modulars.Tiles
       int indexY = y >= 0 ? y % Context.ChunkHeight : ((y + 1) % Context.ChunkHeight) + (Context.ChunkHeight - 1);
       TileChunk target = GetChunkForWorldCoord(x, y);
       if (target is not null && (includeLoadingChunk || !target.InOperation))
-        return target.TileKernel[target.GetIndex(indexX, indexY, z)];
+        return target.Kernals[target.GetIndex(indexX, indexY, z)];
       else
         return null;
     }
@@ -314,13 +314,18 @@ namespace Colin.Core.Modulars.Tiles
     /// 使用世界物块坐标破坏指定位置的物块.
     /// <br>如果该坐标为物块指针, 则针对其指向的物块操作.</br>
     /// </summary>
-    public void Destruction(int x, int y, int z)
+    public void Destruct(int x, int y, int z)
     {
       var coords = GetCoords(x, y);
       TileChunk targetChunk = GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (targetChunk is not null)
         targetChunk.Destruct(coords.tCoord.X, coords.tCoord.Y, z);
     }
+
+    public void Destruct(Point p)
+      => Destruct(p.X, p.Y, 0);
+
+
 
     public void CreateEmptyChunk(Point coord, int? quantumLayer = null) => CreateEmptyChunk(coord.X, coord.Y, quantumLayer);
 

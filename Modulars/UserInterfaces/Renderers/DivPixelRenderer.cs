@@ -16,7 +16,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     {
       _pixel = Sprite.Get("Pixel");
     }
-    public override void DoRender(GraphicsDevice device, SpriteBatch batch)
+    public override void RenderStep(GraphicsDevice device, SpriteBatch batch)
     {
       if (_pixel != null)
         batch.Draw(

@@ -56,9 +56,9 @@ namespace Colin.Core
       }
     }
 
-    public static int ScreenWidth => Graphics.PreferredBackBufferWidth;
+    public static int ScreenWidth => Graphics.IsFullScreen ? ViewWidth : Graphics.PreferredBackBufferWidth;
 
-    public static int ScreenHeight => Graphics.PreferredBackBufferHeight;
+    public static int ScreenHeight => Graphics.IsFullScreen ? ViewHeight : Graphics.PreferredBackBufferHeight;
 
     public static Point ScreenSize => new Point(ScreenWidth, ScreenHeight);
 

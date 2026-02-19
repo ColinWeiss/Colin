@@ -10,7 +10,7 @@
       CoreInfo.ViewHeight,
       false,
       SurfaceFormat.Color,
-      DepthFormat.None,
+      DepthFormat.Depth16,
       0,
       RenderTargetUsage.PreserveContents);
       return renderTarget;

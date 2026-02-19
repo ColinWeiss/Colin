@@ -54,8 +54,6 @@ namespace Colin.Core.Common
     {
       IRenderableISceneModule renderMode;
       RenderTarget2D frameRenderLayer;
-      CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
-      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
       using (DebugProfiler.Tag("(Raw)"))
       {
         for (int count = 0; count < RenderableComponents.Values.Count; count++)
@@ -74,23 +72,21 @@ namespace Colin.Core.Common
         }
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
-      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
+     // CoreInfo.Graphics.GraphicsDevice.Clear(Color.Black);
       using (DebugProfiler.Tag("(Re-render)"))
       {
         for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
         {
           renderMode = RenderableComponents.Values.ElementAt(count);
           frameRenderLayer = renderMode.RawRt;
-          CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
           if (renderMode.Presentation)
           {
-            // using (DebugProfiler.Tag("(Re-render)"))
             {
               renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
               if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
                 CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
               else
-                CoreInfo.Batch.Begin(SpriteSortMode.Deferred);
+                CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
               CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
               CoreInfo.Batch.End();
             }

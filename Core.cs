@@ -131,7 +131,7 @@ namespace Colin.Core
     {
       if (!Visiable)
         return;
-      GraphicsDevice.Clear(Color.Black);
+      //GraphicsDevice.Clear(Color.Transparent);
 
       /*  CoreModule module;
         for (int count = 0; count < Modules.Count; count++)

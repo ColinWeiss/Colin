@@ -34,5 +34,20 @@ namespace Colin.Core.Extensions
     {
       return new Point3(point.X, point.Y, 0);
     }
+
+    extension(Point p)
+    {
+      public static Point Left => new Point(-1, 0);
+      public static Point Top => new Point(0, -1);
+      public static Point Right => new Point(1, 0);
+      public static Point Down => new Point(0, 1);
+      public static Point[] Around => new Point[]
+      {
+        Point.Left,
+        Point.Top,
+        Point.Right,
+        Point.Down
+      };
+    }
   }
 }

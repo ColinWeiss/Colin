@@ -93,7 +93,7 @@ namespace Colin.Core.Modulars.Tiles
     /// <summary>
     /// 区块内的物块内核.
     /// </summary>
-    public TileKernel[] TileKernel;
+    public TileKernel[] Kernals;
 
     /// <summary>
     /// 区块内的物块可编程行为.
@@ -225,7 +225,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       int length = Width * Height * Depth;
       Infos = new TileInfo[length];
-      TileKernel = new TileKernel[length];
+      Kernals = new TileKernel[length];
       Handler = new List<TileHandler>();
       for (int count = 0; count < length; count++)
         CreateInfo(count);
@@ -336,7 +336,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref this[x, y, z];
       if (info.IsNull)
         return;
-      TileKernel comport = TileKernel[GetIndex(x, y, z)];
+      TileKernel comport = Kernals[GetIndex(x, y, z)];
       if (Tile.HasPointer(info.GetWCoord3()))
       {
         info = Tile.GetPointTo(info.GetWCoord3());
@@ -420,7 +420,7 @@ namespace Colin.Core.Modulars.Tiles
       for (int i = 0; i < infoSpan.Length; i++)
       {
         box.Add(i.ToString(), infoSpan[i].SaveStep());
-        tCom = TileKernel[i];
+        tCom = Kernals[i];
         if (infoSpan[i].Empty is false && infoSpan[i].IsNull is false)
         {
           Debug.Assert(tCom is not null);
@@ -461,10 +461,10 @@ namespace Colin.Core.Modulars.Tiles
           Debug.Assert(typeName is not null);
           if (typeName is not null)
           {
-            TileKernel[i] = CodeResources<TileKernel>.GetFromTypeName(typeName);
-            Debug.Assert(TileKernel[i] is not null);
-            TileKernel[i].Tile = Tile;
-            TileKernel[i].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
+            Kernals[i] = CodeResources<TileKernel>.GetFromTypeName(typeName);
+            Debug.Assert(Kernals[i] is not null);
+            Kernals[i].Tile = Tile;
+            Kernals[i].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
           }
         }
       }
@@ -493,17 +493,16 @@ namespace Colin.Core.Modulars.Tiles
       _saving = false;
     }
 
-
     /// <summary>
     /// 判断同层指定坐标的物块行为与具有指定偏移位置处的物块行为是否相同.
     /// </summary>
     public bool IsSame(Point3 own, Point3 offset)
     {
-      var ownCom = TileKernel[GetIndex(own)];
+      var ownCom = Kernals[GetIndex(own)];
       Point3 tarCoord = ConvertWorld(own + offset);
       if (InChunk(tarCoord))
       {
-        var tarCom = TileKernel[GetIndex(own + offset)];
+        var tarCom = Kernals[GetIndex(own + offset)];
         if (ownCom is null || tarCom is null)
           return false;
         else

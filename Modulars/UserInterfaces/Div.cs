@@ -175,6 +175,26 @@ namespace Colin.Core.Modulars.UserInterfaces
       }
     }
 
+    private Div _upperBatch;
+    public Div UpperBatch
+    {
+      get
+      {
+        if (_parent is null)
+          return null;
+        if (_upperBatch is null)
+        {
+          Div result;
+          if (Parent.UseBatch)
+            result = Parent;
+          else
+            result = Parent.UpperBatch;
+          _upperBatch = result;
+        }
+        return _upperBatch;
+      }
+    }
+
     /// <summary>
     /// 计算后的剪裁矩形; 当前剪裁矩形.
     /// </summary>
@@ -264,7 +284,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (IsCanvas)
       {
         if (Layout.Width == 0)
-          Layout.Width = 1; 
+          Layout.Width = 1;
         if (Layout.Height == 0)
           Layout.Height = 1;
         SetCanvas(Layout.Width, Layout.Height);
@@ -358,17 +378,21 @@ namespace Colin.Core.Modulars.UserInterfaces
       ScissorTestEnable = true,
     };
 
-    public void BeginRender(BlendState blendState, SamplerState samplerState)
+    public void BeginRender(BlendState blendState, SamplerState samplerState, SpriteSortMode mode = SpriteSortMode.Deferred)
     {
+      if (UpperBatch is not null)
+        return;
       if (UpperScissor is not null)
       {
         UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
         CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
-        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointWrap, null, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
+        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, samplerState, DepthStencilState.Default, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
       }
       else
         Module.BatchNormalBegin(this, blendState);
     }
+
+    public bool UseBatch = false;
 
     /// <summary>
     /// 执行划分元素的渲染.
@@ -380,15 +404,23 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (IsCanvas)
       {
         device.SetRenderTarget(Canvas);
-        device.Clear(Color.Transparent);
+        device.Clear(Color.Black);
       }
+
       BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
       OnRender(device, batch);
       _renderer?.DoRender(device, batch);//渲染器进行渲染.
-      batch.End();
+      if (UpperBatch is null && UseBatch is false)
+      {
+        batch.End();
+      }
       if (UpperScissor is not null)
         device.ScissorRectangle = UpperScissor.Layout.ScissorRectangleCache;
       RenderChildren(device, batch);
+      if (UpperBatch is null && UseBatch)
+      {
+        batch.End();
+      }
       if (IsCanvas)
       {
         if (UpperCanvas is not null)

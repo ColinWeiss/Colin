@@ -44,8 +44,8 @@ namespace Colin.Core.Modulars.UserInterfaces
     }
     public override void DoUpdate(GameTime time)
     {
-      if(CoreInfo.ScreenSizeF.X >= 1921 || CoreInfo.ScreenSizeF.Y >= 1081)
-        UICamera.TargetZoom = CoreInfo.ScreenSizeF / new Vector2(1920, 1080);
+      if(CoreInfo.ViewSizeF.X >= 1921 || CoreInfo.ViewSizeF.Y >= 1081)
+        UICamera.TargetZoom = CoreInfo.ViewSizeF / new Vector2(1920, 1080);
       else
         UICamera.TargetZoom = Vector2.One;
 
@@ -71,7 +71,10 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       using (DebugProfiler.Tag("UI"))
       {
-        device.Clear(Color.Transparent);
+       // device.Clear(Color.Black);
+        Root?.DoRender(device, batch);
+
+        // 
         //      CoreInfo.Batch.Begin(
         //        SpriteSortMode.Deferred,
         //        BlendState.AlphaBlend,
@@ -80,10 +83,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         //      Container?.DoRender(device, batch);
         //      batch.End();
 
-        Root?.DoRender(device, batch);
       }
     }
-    public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch) { }
+    public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
+    {
+    }
 
     public void Register(DivRoot container) => Root?.Register(container);
 

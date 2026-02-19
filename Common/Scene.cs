@@ -116,7 +116,7 @@ namespace Colin.Core.Common
         Modules.DoRender(CoreInfo.Batch);
         SceneRender();
         CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
-        CoreInfo.Batch.Begin();
+        CoreInfo.Batch.Begin(blendState:BlendState.AlphaBlend);
         CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
         CoreInfo.Batch.End();
         base.Draw(gameTime);

@@ -60,7 +60,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         Font = font;//Asset.GetFont("Unifont").GetFont(16);
       base.OnBinded();
     }
-    public override void DoRender(GraphicsDevice device, SpriteBatch batch)
+    public override void RenderStep(GraphicsDevice device, SpriteBatch batch)
     {
       RichTextLayout.AutoEllipsisMethod = AutoEllipsisMethod.None;
       RichTextLayout.Font = Font;
@@ -71,6 +71,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         Div.Layout.Rotation,
         div.Layout.Anchor,
         div.Layout.Scale);
+      base.RenderStep(device, batch);
     }
   }
 }

@@ -55,7 +55,7 @@ namespace Colin.Core.Modulars.Tiles
       if (info.IsNull)
         return;
       TileKernel _com;
-      _com = chunk.TileKernel[index];
+      _com = chunk.Kernals[index];
       if (!info.Empty)
         Debug.Assert(_com is not null);
       if (_com is null)
@@ -70,7 +70,7 @@ namespace Colin.Core.Modulars.Tiles
       _com.OnRefresh(Tile, chunk, index, wCoord);
       if (info.Empty)
       {
-        chunk.TileKernel[index] = null;
+        chunk.Kernals[index] = null;
       }
     }
 

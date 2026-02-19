@@ -102,10 +102,10 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref _chunk[cCoord.X, cCoord.Y, cCoord.Z];
       Debug.Assert(info.GetICoord3() == cCoord);
       info.Empty = false;
-      _chunk.TileKernel[info.Index] = kernel;
-      _chunk.TileKernel[info.Index].Tile = Tile;
-      _chunk.TileKernel[info.Index].OnInitialize(Tile, _chunk, info.Index);
-      Debug.Assert(_chunk.TileKernel[info.Index] == kernel);
+      _chunk.Kernals[info.Index] = kernel;
+      _chunk.Kernals[info.Index].Tile = Tile;
+      _chunk.Kernals[info.Index].OnInitialize(Tile, _chunk, info.Index);
+      Debug.Assert(_chunk.Kernals[info.Index] == kernel);
       if (doEvent)
       {
         foreach (var handler in _chunk.Handler)
@@ -114,7 +114,7 @@ namespace Colin.Core.Modulars.Tiles
             handler.OnPlaceHandle(_chunk, info.Index, _chunk.ConvertWorld(cCoord));
         }
         OnPlaceHandle?.Invoke(this, new TileBuildArgs(_chunk, info.Index, _chunk.ConvertWorld(cCoord)));
-        _chunk.TileKernel[info.Index]?.OnPlace(Tile, _chunk, info.Index, _chunk.ConvertWorld(cCoord));
+        _chunk.Kernals[info.Index]?.OnPlace(Tile, _chunk, info.Index, _chunk.ConvertWorld(cCoord));
       }
       foreach (var handler in _chunk.Handler)
         handler.OnBuildProcess(this, true, info.Index, info.GetWCoord3());
@@ -133,7 +133,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref _chunk[cCoord.X, cCoord.Y, cCoord.Z];
       if (doEvent)
       {
-        TileKernel _com = _chunk.TileKernel[info.Index];
+        TileKernel _com = _chunk.Kernals[info.Index];
         foreach (var handler in _chunk.Handler)
         {
           handler.OnDestructHandle(_chunk, info.Index, info.GetWCoord3());
