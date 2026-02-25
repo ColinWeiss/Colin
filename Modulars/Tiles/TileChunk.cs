@@ -2,6 +2,8 @@
 using Colin.Core.Resources;
 using DeltaMachine.Core.Repair;
 using System.Diagnostics;
+using System.IO.Compression;
+using System.Threading;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace Colin.Core.Modulars.Tiles
@@ -374,6 +376,8 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncLoadChunk(string path)
     {
+      if (_loading)
+        return;
       _loading = true;
       Task.Run(() =>
       {
@@ -385,8 +389,12 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadChunk(string path)
     {
+      if (_loading)
+        return;
+      _loading = true;
       DoLoad(path);
       MarkRefreshAll();
+      _loading = false;
     }
 
     public void MarkRefreshAll()
@@ -409,7 +417,7 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private void DoSave(string path)
+    private async Task DoSave(string path)
     {
       StoreBox box = new StoreBox();
       box.RootPath = path;
@@ -438,7 +446,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
       //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
-      box.Save();
+      await box.SaveAsync();
     }
 
     private void DoLoad(string path)
@@ -478,19 +486,14 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
+      if (_saving)
+        return;
       _saving = true;
-      Task.Run(() =>
+      Task.Run(async () =>
       {
-        DoSave(path);
+        await DoSave(path);
         _saving = false;
       });
-    }
-
-    public void SaveChunk(string path)
-    {
-      _saving = true;
-      DoSave(path);
-      _saving = false;
     }
 
     /// <summary>

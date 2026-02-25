@@ -361,7 +361,7 @@ namespace Colin.Core.Modulars.Tiles
     {
       TileChunk chunk = GetChunk(x, y);
       if (chunk is not null)
-        chunk.SaveChunk(path);
+        chunk.AsyncSaveChunk(path);
       else
         Console.WriteLine("Error", string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
     }
