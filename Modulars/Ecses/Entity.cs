@@ -1,8 +1,6 @@
-﻿using Colin.Core.IO;
-using Colin.Core.Mathematical;
+﻿using Colin.Core.Mathematical;
 using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
-using DeltaMachine.Core;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -15,7 +13,7 @@ namespace Colin.Core.Modulars.Ecses
   /// <summary>
   /// 实体.
   /// </summary>
-  public class Entity : IGameContent<Entity>, ICodeResource, IDoBlockable, IOStep
+  public class Entity : IGameContent<Entity>, ICodeResource, IDoBlockable
   {
     private string _identifier;
     public string Identifier
@@ -156,23 +154,20 @@ namespace Colin.Core.Modulars.Ecses
       return result;
     }
 
-    public StoreBox SaveStep()
+    public void SaveStep(BinaryWriter writer)
     {
-      StoreBox box = new StoreBox();
       for (int i = 0; i < Components.Count; i++)
       {
         if (Components.ElementAt(i).Value is IEcsComIO io)
-          box.Add(io.GetType().Name, io.SaveStep());
+          io.SaveStep(writer);
       }
-      return box;
     }
-
-    public void LoadStep(StoreBox box)
+    public void LoadStep(BinaryReader reader)
     {
       for (int i = 0; i < Components.Count; i++)
       {
         if (Components.ElementAt(i).Value is IEcsComIO io)
-          io.LoadStep(box.GetBox(io.GetType().Name));
+          io.LoadStep(reader);
       }
     }
 

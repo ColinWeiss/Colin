@@ -2,7 +2,6 @@
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Resources;
-using DeltaMachine.Core;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -193,57 +192,56 @@ namespace Colin.Core.Modulars.Ecses
       base.Dispose();
     }
 
-    public static void LoadEntity(StoreBox box, ref Entity entity)
+    public void LoadStep(BinaryReader reader)
+    {
+      for (int i = 0; i < Entities.Length; i++)
+      {
+        LoadEntity(reader, ref Entities[i]);
+      }
+    }
+
+    public static void LoadEntity(BinaryReader reader, ref Entity entity)
     {
       int hashValue;
-      if (box.GetBool("A"))
+      if (reader.ReadBoolean())
       {
-        hashValue = box.GetInt("H");
+        hashValue = reader.ReadInt32();
         if (entity is null)
         {
           entity = CodeResources<Entity>.CreateNewInstance(hashValue);
           entity.NeedSaveAndLoad = true;
           entity.DoInitialize();
-          entity.LoadStep(box.GetBox("D"));
+          entity.LoadStep(reader);
         }
         else
         {
           entity.NeedSaveAndLoad = true;
-          entity.LoadStep(box.GetBox("D"));
+          entity.LoadStep(reader);
         }
       }
     }
-    public static StoreBox SaveEntity(Entity entity)
+    public static void SaveEntity(BinaryWriter writer, Entity entity)
     {
-      StoreBox box = new StoreBox();
       int? hash;
       if (entity is null || entity.NeedSaveAndLoad is false)
       {
-        box.Add("A", false);
-        return box;
+        writer.Write(false);
+        return;
       }
       if (entity.NeedSaveAndLoad)
       {
-        box.Add("A", true);
+        writer.Write(true);
         hash = CodeResources<Entity>.GetHashFromTypeName(entity.Identifier);
-        box.Add("H", hash.Value);
-        box.Add("D", entity.SaveStep());
+        writer.Write(hash.Value);
+        entity.SaveStep(writer);
       }
-      return box;
     }
-
-    public StoreBox SaveStep()
-    {
-      StoreBox box = new StoreBox();
-      for (int i = 0; i < Entities.Length; i++)
-        box.Add(i.ToString(), SaveEntity(Entities[i]));
-      return box;
-    }
-
-    public void LoadStep(StoreBox box)
+    public void SaveStep(BinaryWriter writer)
     {
       for (int i = 0; i < Entities.Length; i++)
-        LoadEntity(box.GetBox(i.ToString()), ref Entities[i]);
+      {
+        SaveEntity(writer, Entities[i]);
+      }
     }
   }
 }

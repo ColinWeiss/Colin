@@ -1,11 +1,16 @@
-﻿namespace Colin.Core.IO
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Colin.Core.IO
 {
   /// <summary>
-  /// 指示一个可进行文件保存/读取的对象.
+  /// 指示一个可通过二进制流参与 IO 的对象.
+  /// <br>适用于性能要求高的场景.</br>
   /// </summary>
   public interface IOStep
   {
-    StoreBox SaveStep();
-    void LoadStep(StoreBox box);
+    void SaveStep(BinaryWriter writer);
+    void LoadStep(BinaryReader reader);
   }
 }

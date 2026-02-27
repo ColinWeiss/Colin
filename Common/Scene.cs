@@ -1,7 +1,7 @@
-﻿using Colin.Core.IO;
-using DeltaMachine.Core;
-using Colin.Core.Common.Debugs;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.IO;
 using Colin.Core.Modulars;
+using DeltaMachine.Core;
 
 namespace Colin.Core.Common
 {
@@ -116,7 +116,7 @@ namespace Colin.Core.Common
         Modules.DoRender(CoreInfo.Batch);
         SceneRender();
         CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
-        CoreInfo.Batch.Begin(blendState:BlendState.AlphaBlend);
+        CoreInfo.Batch.Begin();
         CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
         CoreInfo.Batch.End();
         base.Draw(gameTime);
@@ -166,32 +166,38 @@ namespace Colin.Core.Common
       base.Dispose(disposing);
     }
 
-    public void LoadStep(StoreBox box)
+    public void LoadStep(BinaryReader reader)
     {
+      LoadScene(reader);
       ISceneModule module;
       for (int count = 0; count < Modules.Count; count++)
       {
         module = Modules.ElementAt(count).Value;
         if (module is IOStep io)
         {
-          io.LoadStep(box.GetBox(module.GetType().Name));
+          io.LoadStep(reader);
         }
       }
+      LoadModulesPost(reader);
     }
+    public virtual void LoadScene(BinaryReader reader) { }
+    public virtual void LoadModulesPost(BinaryReader reader) { }
 
-    public StoreBox SaveStep()
+    public void SaveStep(BinaryWriter writer)
     {
-      StoreBox box = new StoreBox();
+      SaveScene(writer);
       ISceneModule module;
       for (int count = 0; count < Modules.Count; count++)
       {
         module = Modules.ElementAt(count).Value;
         if (module is IOStep io)
         {
-          box.Add(module.GetType().Name, io.SaveStep());
+          io.SaveStep(writer);
         }
       }
-      return box;
+      SaveModulesPost(writer);
     }
+    public virtual void SaveScene(BinaryWriter writer) { }
+    public virtual void SaveModulesPost(BinaryWriter writer) { }
   }
 }

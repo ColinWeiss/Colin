@@ -95,26 +95,24 @@ namespace Colin.Core.Modulars.Ecses.Components
       Scale = Vector2.One;
     }
 
-    public StoreBox SaveStep()
+    public void SaveStep(BinaryWriter writer)
     {
-      StoreBox box = new StoreBox();
-      box.Add("TX", Translation.X);
-      box.Add("TY", Translation.Y);
-      box.Add("VX",Vel.X);
-      box.Add("VY",Vel.Y);
-      box.Add("SX",Size.X);
-      box.Add("SY",Size.Y);
-      return box;
+      writer.Write(Translation.X);
+      writer.Write(Translation.Y);
+      writer.Write(Vel.X);
+      writer.Write(Vel.Y);
+      writer.Write(Size.X);
+      writer.Write(Size.Y);
     }
 
-    public void LoadStep(StoreBox box)
+    public void LoadStep(BinaryReader reader)
     {
-      Translation.X = box.GetFloat("TX");
-      Translation.Y = box.GetFloat("TY");
-      Vel.X = box.GetFloat("VX");
-      Vel.Y = box.GetFloat("VX");
-      Size.X = box.GetFloat("SX");
-      Size.Y = box.GetFloat("SY");
+      Translation.X = reader.ReadSingle();
+      Translation.Y = reader.ReadSingle();
+      Vel.X = reader.ReadSingle();
+      Vel.Y = reader.ReadSingle();
+      Size.X = reader.ReadSingle();
+      Size.Y = reader.ReadSingle();
     }
   }
 }

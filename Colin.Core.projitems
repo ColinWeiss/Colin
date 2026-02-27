@@ -48,7 +48,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\XNAExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\Variant.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\DataBlockIDHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\DataIO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\DoBlocker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\StrangeTreeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\Business.cs" />
@@ -66,7 +68,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="..\Colin\Events\MouseEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileCheck\FileToMD5.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
@@ -160,7 +161,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\GameDataFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFileDropBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IProgramChecker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\StoreBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISingleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Line.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEvent.cs" />

@@ -354,17 +354,6 @@ namespace Colin.Core.Modulars.Tiles
       else
         Console.WriteLine("Error", string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
     }
-    /// <summary>
-    /// 保存指定坐标的区块至指定路径.
-    /// </summary>
-    public void SaveChunk(int x, int y, string path)
-    {
-      TileChunk chunk = GetChunk(x, y);
-      if (chunk is not null)
-        chunk.AsyncSaveChunk(path);
-      else
-        Console.WriteLine("Error", string.Concat("卸载 (", x, ",", y, ") 处的区块时出现异常."));
-    }
 
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {

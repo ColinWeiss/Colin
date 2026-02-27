@@ -2,8 +2,6 @@
 using Colin.Core.Resources;
 using DeltaMachine.Core.Repair;
 using System.Diagnostics;
-using System.IO.Compression;
-using System.Threading;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace Colin.Core.Modulars.Tiles
@@ -16,7 +14,7 @@ namespace Colin.Core.Modulars.Tiles
   /// <summary>
   /// 物块区块类.
   /// </summary>
-  public class TileChunk
+  public class TileChunk : IOStep
   {
     /// <summary>
     /// 获取物块区块所属的世界物块模块.
@@ -352,9 +350,9 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private bool _saving = false;
-    private bool _loading = false;
-    private bool _operation = false;
+    internal bool _saving = false;
+    internal bool _loading = false;
+    internal bool _operation = false;
     public bool InOperation => _operation || _loading || _saving;
     public void SetOperation(bool flag)
     {
@@ -376,12 +374,10 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncLoadChunk(string path)
     {
-      if (_loading)
-        return;
       _loading = true;
       Task.Run(() =>
       {
-        DoLoad(path);
+        DataIO.DoLoad(path, this, true);
         DoRefreshAll();
         _loading = false;
       });
@@ -389,10 +385,8 @@ namespace Colin.Core.Modulars.Tiles
 
     public void LoadChunk(string path)
     {
-      if (_loading)
-        return;
       _loading = true;
-      DoLoad(path);
+      DataIO.DoLoad(path, this); //同步执行, 不使用 await.
       MarkRefreshAll();
       _loading = false;
     }
@@ -417,83 +411,100 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    private async Task DoSave(string path)
+    public void LoadStep(BinaryReader reader)
     {
-      StoreBox box = new StoreBox();
-      box.RootPath = path;
-
-      int? hash;
-      TileKernel tCom;
-      Span<TileInfo> infoSpan = Infos;
-      for (int i = 0; i < infoSpan.Length; i++)
-      {
-        box.Add(i.ToString(), infoSpan[i].SaveStep());
-        tCom = Kernals[i];
-        if (infoSpan[i].Empty is false && infoSpan[i].IsNull is false)
-        {
-          Debug.Assert(tCom is not null);
-          hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
-          Debug.Assert(hash.HasValue);
-          box.Add("K" + i.ToString(), hash.Value);
-        }
-      }
-
-      TileHandler handler;
-      for (int i = 0; i < Handler.Count; i++)
-      {
-        handler = Handler.ElementAt(i);
-        box.Add("H" + i.ToString(), handler.SaveStep());
-      }
-      //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
-      //例如之前不允许空物块存储数据, 但现在允许于 ChunkScript 存储.
-      await box.SaveAsync();
-    }
-
-    private void DoLoad(string path)
-    {
-      StoreBox box = new StoreBox();
-      box.RootPath = path;
-      box.Load();
-
       ref TileInfo info = ref this[0, 0, 0];
       string typeName;
       int typehash = 0;
-      for (int i = 0; i < Infos.Length; i++)
+      for (int count = 0; count < Infos.Length; count++)
       {
-        info = ref this[i];
-        info.LoadStep(box.GetBox(i.ToString()));
+        info = ref this[count];
+        info.LoadStep(reader);
         if (!info.Empty)
         {
-          typehash = box.GetInt("K" + i.ToString());
+          typehash = reader.ReadInt32();
           typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
           Debug.Assert(typeName is not null);
           if (typeName is not null)
           {
-            Kernals[i] = CodeResources<TileKernel>.GetFromTypeName(typeName);
-            Debug.Assert(Kernals[i] is not null);
-            Kernals[i].Tile = Tile;
-            Kernals[i].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
+            Kernals[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
+            Debug.Assert(Kernals[count] is not null);
+            Kernals[count].Tile = Tile;
+            Kernals[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
           }
         }
       }
-      TileHandler handler;
+      // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取
+      int handlerCount = reader.ReadInt32();
+      Dictionary<string, TileHandler> namedTag = new();
       for (int i = 0; i < Handler.Count; i++)
+        namedTag[Handler[i].GetType().Name] = Handler[i];
+      for (int i = 0; i < handlerCount; i++)
       {
-        handler = Handler[i];
-        handler.LoadStep(box.GetBox("H" + i.ToString()));
+        int check = reader.ReadInt32();
+        if (check != 20250225)
+        {
+          Debug.Fail("校验码失败，区块存档格式损坏");
+        }
+        string name = reader.ReadString();
+        if (namedTag.TryGetValue(name, out var matchedHandler))
+        {
+          matchedHandler.LoadStep(reader);
+        }
+        else
+        {
+          Debug.Fail("找不到Named Tag：" + name);
+        }
       }
     }
 
     public void AsyncSaveChunk(string path)
     {
-      if (_saving)
-        return;
       _saving = true;
-      Task.Run(async () =>
+      Task.Run(() =>
       {
-        await DoSave(path);
+        DataIO.DoSave(path, this, true);
         _saving = false;
       });
+    }
+
+    public void SaveChunk(string path)
+    {
+      _saving = true;
+      DataIO.DoSave(path, this);
+      _saving = false;
+    }
+
+    public void SaveStep(BinaryWriter writer)
+    {
+      int? hash;
+      TileKernel tCom;
+      TileHandler cCom;
+      Span<TileInfo> infoSpan = Infos;
+      for (int count = 0; count < infoSpan.Length; count++)
+      {
+        infoSpan[count].SaveStep(writer);
+        tCom = Kernals[count];
+        if (!infoSpan[count].Empty)
+        {
+          Debug.Assert(tCom is not null);
+          hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
+          Debug.Assert(hash.HasValue);
+          writer.Write(hash.Value);
+        }
+      }
+      // 加入Named Tag，保证TileHandler变动时其他模块能够正常读取
+      writer.Write(Handler.Count);
+      for (int i = 0; i < Handler.Count; i++)
+      {
+        writer.Write(20250225);
+        cCom = Handler.ElementAt(i);
+        string name = cCom.GetType().Name;
+        writer.Write(name);
+        cCom.SaveStep(writer);
+      }
+      //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
+      //例如之前不允许空物块存储数据, 但现在允许于 TileHandler 存储.
     }
 
     /// <summary>
