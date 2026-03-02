@@ -36,6 +36,11 @@ namespace Colin.Core.Modulars.Tiles
     private bool _isNull;
     public bool IsNull => _isNull;
 
+    public int GetSeed()
+    {
+      return WCoordX * 17 + WCoordY + ICoordX * 137 + ICoordY;
+    }
+
     public void LoadStep(BinaryReader reader)
     {
       Collision = (TileSolid)reader.ReadInt32();
