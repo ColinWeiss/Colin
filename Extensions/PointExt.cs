@@ -5,7 +5,7 @@ namespace Colin.Core.Extensions
 {
   public static class PointExt
   {
-    extension(Point p)
+    extension(ref Point p)
     {
       public static Point Left => new Point(-1, 0);
       public static Point Top => new Point(0, -1);
@@ -19,15 +19,17 @@ namespace Colin.Core.Extensions
         Point.Down
       };
 
-      public Point3 ToPoint3()
-      {
-        return new Point3(p.X, p.Y, 0);
-      }
-
       public void LoadStep(BinaryReader reader)
       {
         p.X = reader.ReadInt32();
         p.Y = reader.ReadInt32();
+      }
+    }
+    extension(Point p)
+    {
+      public Point3 ToPoint3()
+      {
+        return new Point3(p.X, p.Y, 0);
       }
       public void SaveStep(BinaryWriter writer)
       {
@@ -35,7 +37,7 @@ namespace Colin.Core.Extensions
         writer.Write(p.Y);
       }
     }
-    extension(Point3 p)
+    extension(ref Point3 p)
     {
       public void LoadStep(BinaryReader reader)
       {
@@ -43,6 +45,9 @@ namespace Colin.Core.Extensions
         p.Y = reader.ReadInt32();
         p.Z = reader.ReadInt32();
       }
+    }
+    extension(Point3 p)
+    {
       public void SaveStep(BinaryWriter writer)
       {
         writer.Write(p.X);

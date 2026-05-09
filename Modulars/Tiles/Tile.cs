@@ -90,7 +90,10 @@ namespace Colin.Core.Modulars.Tiles
       return PointerSet.Cache.ContainsKey(wCoord) && PointerSet.Cache[wCoord].Count > 0;
     }
 
-    public void DoInitialize() { }
+    public void DoInitialize() 
+    {
+      PointerSet = new TilePointerSet();
+    }
 
     public void Start()
     {
