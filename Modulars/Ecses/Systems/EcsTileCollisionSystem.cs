@@ -31,13 +31,12 @@ namespace Colin.Core.Modulars.Ecses.Systems
           comPhysic.PreviousCollisionRight = comPhysic.CollisionRight;
           comPhysic.PreviousCollisionTop = comPhysic.CollisionTop;
           comPhysic.PreviousCollisionBottom = comPhysic.CollisionBottom;
-          comPhysic.PreviousSlopeCollision = comPhysic.SlopeCollision;
-          HandleCollision(_current);
+          VerticalCollision(_current);
         }
       }
       base.DoUpdate();
     }
-    public void HandleCollision(Entity Entity)
+    public void VerticalCollision(Entity Entity)
     {
       if (Tile is null)
         return;
@@ -59,7 +58,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
       comPhysic.CollisionRight = false;
       comPhysic.CollisionBottom = false;
       comPhysic.CollisionTop = false;
-      comPhysic.SlopeCollision = false;
 
       if (deltaVel.X > 0)
         rightTile += (int)(deltaVel.X / 16);
@@ -92,33 +90,14 @@ namespace Colin.Core.Modulars.Ecses.Systems
           info = ref Tile[x, y, comPhysic.Layer];
 
           if (info.IsNull)
-            continue;
+            return;
 
           target = GetTileBounds(ref info);
 
-          if (!next.Intersects(target))
-            continue;
-
-          bool isSlope = info.Collision == TileSolid.SlopeLeftUp ||
-                         info.Collision == TileSolid.SlopeRightUp ||
-                         info.Collision == TileSolid.SlopeLeftDown ||
-                         info.Collision == TileSolid.SlopeRightDown;
-
-          if (isSlope)
-          {
-            bool firstContact = !previousBounds.Intersects(target);
-            if (HandleSlopeCollision(ref info, ref deltaVel, ref next, bounds, previousBounds, target, firstContact))
-            {
-              comTransform.Vel = deltaVel / Time.DeltaTime;
-              continue;
-            }
-            // 斜坡条件不满足，回退到方块碰撞处理（仅首帧接触时）
-            if (!firstContact)
-              continue;
-          }
-
-          if ((isSlope || info.Collision == TileSolid.Sturdy || info.Loading) &&
-              !previousBounds.Intersects(target))
+          if (
+            next.Intersects(target) &&
+            (info.Collision == TileSolid.Sturdy || info.Loading) &&
+            !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);
             v = depth / comTransform.DeltaVelocity;
@@ -162,264 +141,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
           }
         }
         comTransform.Vel = deltaVel / Time.DeltaTime;
-      }
-    }
-
-    /// <summary>
-    /// 处理斜坡碰撞。
-    /// </summary>
-    /// <param name="firstContact">是否为首帧接触（previousBounds 不与 target 相交）。</param>
-    /// <returns>如果斜坡碰撞成功处理则返回 <c>true</c>；否则返回 <c>false</c> 表示应回退到方块碰撞处理。</returns>
-    private bool HandleSlopeCollision(ref TileInfo info, ref Vector2 deltaVel, ref RectangleF next,
-      RectangleF bounds, RectangleF previousBounds, RectangleF target, bool firstContact)
-    {
-      TileSolid slopeType = info.Collision;
-      // 使用 next（预计下帧位置）计算坡面高度
-      float slopeSurfaceY = GetSlopeSurfaceY(slopeType, target, next);
-
-      if (firstContact)
-      {
-        // 首帧接触：做实心侧和上坡起点检测（用当前 bounds 和上一帧 previousBounds 判定来向）
-        if (IsOnSolidSideOfSlope(slopeType, target, bounds, previousBounds, deltaVel))
-          return false;
-
-        if (!CanStartClimbingSlope(slopeType, target, bounds, previousBounds, deltaVel))
-          return false;
-      }
-
-      // 斜坡碰撞：根据斜坡表面高度调整实体Y位置
-      if (slopeType == TileSolid.SlopeLeftUp || slopeType == TileSolid.SlopeRightUp)
-      {
-        // 地面斜坡
-        float penetration = next.Bottom - slopeSurfaceY;
-
-        // 实体在坡面上方且正在向上移动（跳跃）→ 不贴合，允许跳离
-        if (penetration <= 0 && deltaVel.Y <= 0)
-        {
-          comPhysic.IsOnSlope = false;
-          return true;
-        }
-
-        // 否则始终贴合坡面：穿透时推上去，悬空时拉下来（下坡跟随）
-        if (penetration != 0)
-        {
-          deltaVel.Y -= penetration;
-          next = bounds;
-          next.Location += deltaVel;
-        }
-        comPhysic.SlopeCollision = true;
-        comPhysic.CollisionBottom = true;
-        comPhysic.IsOnSlope = true;
-        comPhysic.SlopeNormal = GetSlopeNormal(slopeType);
-        return true;
-      }
-      else if (slopeType == TileSolid.SlopeLeftDown || slopeType == TileSolid.SlopeRightDown)
-      {
-        // 天花板斜坡
-        float penetration = slopeSurfaceY - next.Top;
-
-        // 实体在坡面下方且正在向下移动 → 不贴合，允许脱离
-        if (penetration <= 0 && deltaVel.Y >= 0)
-        {
-          comPhysic.IsOnSlope = false;
-          return true;
-        }
-
-        // 始终贴合坡面
-        if (penetration != 0)
-        {
-          deltaVel.Y += penetration;
-          next = bounds;
-          next.Location += deltaVel;
-        }
-        comPhysic.SlopeCollision = true;
-        comPhysic.CollisionTop = true;
-        comPhysic.IsOnSlope = true;
-        comPhysic.SlopeNormal = GetSlopeNormal(slopeType);
-        return true;
-      }
-
-      return false;
-    }
-
-    /// <summary>
-    /// 获取斜坡表面在实体水平位置处的 Y 坐标。
-    /// </summary>
-    private float GetSlopeSurfaceY(TileSolid slopeType, RectangleF target, RectangleF bounds)
-    {
-      float tileLeft = target.Left;
-      float tileRight = target.Right;
-      float tileTop = target.Top;
-      float tileBottom = target.Bottom;
-
-      switch (slopeType)
-      {
-        case TileSolid.SlopeLeftUp:
-          // '/' 左下→右上: y = tileBottom - (x - tileLeft)
-          return tileBottom - (bounds.Right - tileLeft);
-
-        case TileSolid.SlopeRightUp:
-          // '\' 右下→左上: y = tileBottom - (tileRight - x)
-          return tileBottom - (tileRight - bounds.Left);
-
-        case TileSolid.SlopeLeftDown:
-          // 天花板 '\' 左上→右下: y = tileTop + (x - tileLeft)
-          return tileTop + (bounds.Right - tileLeft);
-
-        case TileSolid.SlopeRightDown:
-          // 天花板 '/' 右上→左下: y = tileTop + (tileRight - x)
-          return tileTop + (tileRight - bounds.Left);
-
-        default:
-          return 0;
-      }
-    }
-
-    /// <summary>
-    /// 判定实体是否从斜坡的实心侧试图通过。
-    /// 实心侧即斜坡三角形填充的一侧（地面斜坡为线下方，天花板斜坡为线上方）。
-    /// </summary>
-    private bool IsOnSolidSideOfSlope(TileSolid slopeType, RectangleF target,
-      RectangleF bounds, RectangleF previousBounds, Vector2 deltaVel)
-    {
-      float tileLeft = target.Left;
-      float tileRight = target.Right;
-      float tileTop = target.Top;
-      float tileBottom = target.Bottom;
-
-      switch (slopeType)
-      {
-        case TileSolid.SlopeLeftUp:
-        {
-          // '/' 实心侧在左下三角（线下方）
-          // 判断前一刻实体底部是否在实心侧，即线下方
-          float slopeYAtPrevBottom = tileBottom - (previousBounds.Right - tileLeft);
-          // 前一刻底部在实心侧（线下方）→ 从实心侧来
-          if (previousBounds.Bottom > slopeYAtPrevBottom)
-            return true;
-          // 当前底部深陷实心侧 → 实心侧
-          float slopeYAtBoundsBottom = tileBottom - (bounds.Right - tileLeft);
-          if (bounds.Bottom > slopeYAtBoundsBottom)
-            return true;
-          return false;
-        }
-
-        case TileSolid.SlopeRightUp:
-        {
-          // '\' 实心侧在右下三角（线下方）
-          float slopeYAtPrevBottom = tileBottom - (tileRight - previousBounds.Left);
-          if (previousBounds.Bottom > slopeYAtPrevBottom)
-            return true;
-          float slopeYAtBoundsBottom = tileBottom - (tileRight - bounds.Left);
-          if (bounds.Bottom > slopeYAtBoundsBottom)
-            return true;
-          return false;
-        }
-
-        case TileSolid.SlopeLeftDown:
-        {
-          // 天花板 '\' 实心侧在左上三角（线上方）
-          float slopeYAtPrevTop = tileTop + (previousBounds.Right - tileLeft);
-          if (previousBounds.Top < slopeYAtPrevTop)
-            return true;
-          float slopeYAtBoundsTop = tileTop + (bounds.Right - tileLeft);
-          if (bounds.Top < slopeYAtBoundsTop)
-            return true;
-          return false;
-        }
-
-        case TileSolid.SlopeRightDown:
-        {
-          // 天花板 '/' 实心侧在右上三角（线上方）
-          float slopeYAtPrevTop = tileTop + (tileRight - previousBounds.Left);
-          if (previousBounds.Top < slopeYAtPrevTop)
-            return true;
-          float slopeYAtBoundsTop = tileTop + (tileRight - bounds.Left);
-          if (bounds.Top < slopeYAtBoundsTop)
-            return true;
-          return false;
-        }
-
-        default:
-          return false;
-      }
-    }
-
-    /// <summary>
-    /// 判定实体是否能从斜坡底部开始上坡。
-    /// 首帧接触时：实体必须处于斜坡起点（底端）且沿正确方向移动，否则无法上坡。
-    /// 如果实体正在下落（deltaVel.Y > 0）则允许落在斜面上。
-    /// </summary>
-    private bool CanStartClimbingSlope(TileSolid slopeType, RectangleF target,
-      RectangleF bounds, RectangleF previousBounds, Vector2 deltaVel)
-    {
-      float tileLeft = target.Left;
-      float tileRight = target.Right;
-      float tileTop = target.Top;
-      float tileBottom = target.Bottom;
-
-      const float startThreshold = 2f;
-
-      switch (slopeType)
-      {
-        case TileSolid.SlopeLeftUp:
-        {
-          // '/' 起点在左下角 (tileLeft, tileBottom)
-          // 下落中 → 允许落在斜面上
-          if (deltaVel.Y > 0)
-            return true;
-          return previousBounds.Right <= tileLeft + startThreshold;
-        }
-
-        case TileSolid.SlopeRightUp:
-        {
-          // '\' 起点在右下角 (tileRight, tileBottom)
-          if (deltaVel.Y > 0)
-            return true;
-          float entryX = previousBounds.Left;
-          return entryX >= tileRight - startThreshold;
-        }
-
-        case TileSolid.SlopeLeftDown:
-        {
-          // 天花板 '\' 起点在左上角
-          if (deltaVel.Y < 0)
-            return true;
-          float entryX = previousBounds.Right;
-          return entryX <= tileLeft + startThreshold;
-        }
-
-        case TileSolid.SlopeRightDown:
-        {
-          // 天花板 '/' 起点在右上角
-          if (deltaVel.Y < 0)
-            return true;
-          float entryX = previousBounds.Left;
-          return entryX >= tileRight - startThreshold;
-        }
-
-        default:
-          return false;
-      }
-    }
-
-    /// <summary>
-    /// 获取斜坡的法线方向。
-    /// </summary>
-    private Vector2 GetSlopeNormal(TileSolid slopeType)
-    {
-      switch (slopeType)
-      {
-        case TileSolid.SlopeLeftUp:
-          return Vector2.Normalize(new Vector2(1, 1));    // 法线指向左上
-        case TileSolid.SlopeRightUp:
-          return Vector2.Normalize(new Vector2(-1, 1));   // 法线指向右上
-        case TileSolid.SlopeLeftDown:
-          return Vector2.Normalize(new Vector2(-1, -1));  // 法线指向左下
-        case TileSolid.SlopeRightDown:
-          return Vector2.Normalize(new Vector2(1, -1));   // 法线指向右下
-        default:
-          return Vector2.UnitY;
       }
     }
 
