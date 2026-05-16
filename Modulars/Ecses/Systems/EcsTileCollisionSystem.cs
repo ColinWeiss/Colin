@@ -203,6 +203,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
         // 否则始终贴合坡面：穿透时推上去，悬空时拉下来（下坡跟随）
         if (penetration != 0)
         {
+          if (!firstContact && comPhysic.PreviousSlopeCollision)
+          {
+            penetration = 0;
+          }
           deltaVel.Y -= penetration;
           next = GetHitBox(Entity);
           next.Location += deltaVel;
@@ -230,6 +234,12 @@ namespace Colin.Core.Modulars.Ecses.Systems
         // 始终贴合坡面
         if (penetration != 0)
         {
+          // 容灾：若上一帧在斜坡上，限制修正量防止深度穿透导致高速弹射
+          if (!firstContact && comPhysic.PreviousSlopeCollision)
+          {
+            float maxPen = Math.Max(Math.Abs(deltaVel.Y), Tile.Context.TileSizeF.Y * 0.25f);
+            penetration = Math.Clamp(penetration, -maxPen, maxPen);
+          }
           deltaVel.Y += penetration;
           next = bounds;
           next.Location += deltaVel;
