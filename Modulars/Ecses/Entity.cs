@@ -59,11 +59,6 @@ namespace Colin.Core.Modulars.Ecses
     public int ID;
 
     /// <summary>
-    /// 指示该实体需要从Ecs中被清除.
-    /// </summary>
-    public bool NeedClear;
-
-    /// <summary>
     /// 指示该实体是否还存在于Ecs系统的对象池 中.
     /// </summary>
     public bool Active
@@ -75,6 +70,11 @@ namespace Colin.Core.Modulars.Ecses
         else
           return false;
       }
+    }
+
+    public void SetNeedClear()
+    {
+      Ecs.NeedClear[ID] = true;
     }
 
     /// <summary>

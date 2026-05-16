@@ -28,6 +28,8 @@ namespace Colin.Core.Modulars.Ecses
 
     public Entity[] Entities;
 
+    public bool[] NeedClear;
+
     public KeysEventNode KeysEvent;
 
     public override void DoInitialize()
@@ -35,6 +37,7 @@ namespace Colin.Core.Modulars.Ecses
       KeysEvent = new KeysEventNode();
       Scene.Events.Keys.Register(KeysEvent);
       Entities = new Entity[2049];
+      NeedClear = new bool[2049];
       _systems = new Dictionary<Type, Entitiesystem>();
     }
     public override void Start()
@@ -56,7 +59,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       using (DebugProfiler.Tag("ECS System"))
       {
-        Entity _Entity;
+        Entity _entity;
         Entitiesystem _currentSystem;
         for (int count = 0; count < Systems.Count; count++)
         {
@@ -72,12 +75,12 @@ namespace Colin.Core.Modulars.Ecses
         IEcsCom com;
         for (int count = 0; count < Entities.Length; count++)
         {
-          _Entity = Entities[count];
-          if (_Entity is null)
+          _entity = Entities[count];
+          if (_entity is null)
             continue;
-          if (_Entity.NeedClear)
+          if (NeedClear[_entity.ID])
           {
-            coms = _Entity._components.Values;
+            coms = _entity._components.Values;
             for (int i = 0; i < coms.Count; i++)
             {
               com = coms.ElementAt(i);
@@ -86,6 +89,7 @@ namespace Colin.Core.Modulars.Ecses
             }
             OnNull?.Invoke(Entities[count]);
             Entities[count] = null;
+            NeedClear[count] = false;
             continue;
           }
         }
@@ -112,7 +116,7 @@ namespace Colin.Core.Modulars.Ecses
     /// <param name="index"></param>
     public void SetNull(int index)
     {
-      Entities[index].NeedClear = true;
+      NeedClear[index] = true;
     }
 
     /// <summary>
