@@ -203,10 +203,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
         // 否则始终贴合坡面：穿透时推上去，悬空时拉下来（下坡跟随）
         if (penetration != 0)
         {
-          if (!firstContact && comPhysic.PreviousSlopeCollision)
-          {
-            penetration = 0;
-          }
           deltaVel.Y -= penetration;
           next = GetHitBox(Entity);
           next.Location += deltaVel;
