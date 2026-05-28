@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//d/Codes/DeltaMachine/Colin/IO/**)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}

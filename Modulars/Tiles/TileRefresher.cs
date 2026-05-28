@@ -96,12 +96,6 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     /// <summary>
-    /// 用于缓存区块;
-    /// <br>若本次操作放置的物块与上次放置的物块属于同一个区块则不需要重新获取.</br>
-    /// </summary>
-    private TileChunk _chunk;
-
-    /// <summary>
     /// 在刷新环节, 进行物块刷新的处理.
     /// <br>在此处会触发 <see cref="OnRefresh"/> 事件.</br>
     /// </summary>
@@ -109,13 +103,7 @@ namespace Colin.Core.Modulars.Tiles
     public void Handle(Point3 wCoord)
     {
       var coords = Tile.GetCoords(wCoord.X, wCoord.Y);
-      if (_chunk is not null)
-      {
-        if (_chunk.Coord.Equals(coords.cCoord) is false)
-          _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      }
-      else
-        _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      TileChunk _chunk = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
 
       if (_chunk is null)
         return;

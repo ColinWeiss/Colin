@@ -82,6 +82,11 @@ namespace Colin.Core.Modulars.Tiles
       PointerSet.RemovePointer(wCoord, target);
     }
 
+    public void ClearPointer(Point3 wCoord)
+    {
+      PointerSet.ClearPointer(wCoord);
+    }
+
     /// <summary>
     /// 检查指定坐标的物块格是否拥有指针.
     /// </summary>

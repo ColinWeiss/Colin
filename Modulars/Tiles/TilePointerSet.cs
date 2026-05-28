@@ -66,6 +66,14 @@
         return true;
     }
 
+    public void ClearPointer(Point3 wCoord)
+    {
+      if (Cache.ContainsKey(wCoord) is false)
+        return;
+      Cache.Remove(wCoord);
+    }
+
+
     /// <summary>
     /// 判断指定格中是否存在指定指针.
     /// </summary>
