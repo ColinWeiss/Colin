@@ -141,5 +141,13 @@ namespace Colin.Core.Modulars.Tiles
         }
       }
     }
+
+    /// <summary>
+    /// 移除指定区块坐标对应在刷新队列中的缓存, 配合区块卸载时调用, 防止残留.
+    /// </summary>
+    public void RemoveChunkRefresh(Point chunkCoord)
+    {
+      RefreshQueue.TryRemove(chunkCoord, out _);
+    }
   }
 }
