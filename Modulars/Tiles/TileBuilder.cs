@@ -20,21 +20,10 @@ namespace Colin.Core.Modulars.Tiles
     int? DoRefresh = 1,
     bool Immediately = false) : IBusinessCase
   {
-    private static TileChunk _chunkCache;
-    public static void ResetCache()
-    {
-      _chunkCache = null;
-    }
     public void Execute()
     {
       var coords = Tile.GetCoords(WorldCoord.X, WorldCoord.Y);
-      if (_chunkCache is not null)
-      {
-        if (_chunkCache.Coord.Equals(coords.cCoord) is false)
-          _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
-      }
-      else
-        _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
+      TileChunk _chunkCache = Tile.GetChunk(coords.cCoord.X, coords.cCoord.Y);
       if (_chunkCache is null)
         return;
 

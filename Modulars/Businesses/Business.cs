@@ -50,7 +50,6 @@ namespace Colin.Core.Modulars
 
     public override void Dispose()
     {
-      TileBuildCommand.ResetCache();
       base.Dispose();
     }
   }
