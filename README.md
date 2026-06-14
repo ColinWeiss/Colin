@@ -15,20 +15,20 @@
 · 用户交互界面库 UserInterface  
 
 ## Tile
-请优先查看 `TileInfo.cs`、`TileKernel.cs`、`TileChunk.cs`类。    
-TileInfo是物块的最小组成单位, TileKernel则通过享元模式提供了可定制化的物块行为，而TileChunk代表一个区块。    
+请优先查看 `TileInfo.cs`、`TileKernel.cs`、`TileChunk.cs`类.    
+TileInfo是物块的最小组成单位, TileKernel则通过享元模式提供了可定制化的物块行为, 而TileChunk代表一个区块.    
 
 ## Scene
-直接查看`Scene.cs`，它被作为`SceneModule.cs`的集合以利用模块化制作一个场景。
+直接查看`Scene.cs`, 它被作为`SceneModule.cs`的集合以利用模块化制作一个场景.
 
 ## ECS
-直接查看`Ecs.cs`。
+直接查看`Ecs.cs`.
 
 ## 设备输入
-查看`MouseResponder.cs`与`KeyboardResponder.cs`。
+查看`MouseResponder.cs`与`KeyboardResponder.cs`.
 
 ## UI
-查看`Div.cs`。
+查看`Div.cs`.
 
 ## 示例
 将对应套件的场景模块加入场景即可自由构建具有对应功能的场景.

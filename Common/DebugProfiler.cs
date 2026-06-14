@@ -60,7 +60,7 @@ namespace Colin.Core.Common.Debugs
     }
 
     /// <summary>
-    /// 进行运行时长分析，使用方式如下：
+    /// 进行运行时长分析, 使用方式如下：
     /// <code>
     /// using (DebugProfiler.Tag("tagname"))
     /// {
@@ -98,7 +98,7 @@ namespace Colin.Core.Common.Debugs
     {
       if (!stopwatch.Equals(Instance.stopwatchStack[^1]))
       {
-        throw new InvalidOperationException("性能分析栈异常，请确保性能分析只在主线程上运行");
+        throw new InvalidOperationException("性能分析栈异常, 请确保性能分析只在主线程上运行");
       }
       stopwatch.stopwatch.Stop();
       stopwatch.report.count += 1;

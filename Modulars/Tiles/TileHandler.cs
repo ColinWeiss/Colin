@@ -11,7 +11,7 @@ namespace Colin.Core.Modulars.Tiles
   {
     private static int _countOfHandlerTypes = 0;
     /// <summary>
-    /// 类-ID分配器，摒弃Dictionary(Type, TileHandler)的查询开销
+    /// 类-ID分配器, 摒弃Dictionary(Type, TileHandler)的查询开销
     /// </summary>
     public static class HandlerIDHelper<T> where T : TileHandler
     {

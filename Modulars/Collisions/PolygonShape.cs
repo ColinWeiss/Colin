@@ -276,7 +276,7 @@
         {
           if (Vertices.Count == 0)
           {
-            throw new InvalidOperationException("多边形没有顶点, 无法计算 AABB。");
+            throw new InvalidOperationException("多边形没有顶点, 无法计算 AABB.");
           }
 
           // 初始化最小值和最大值

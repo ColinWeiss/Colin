@@ -85,7 +85,7 @@
       Point point = mainTrunk[i];
       int thickness = 0;
 
-      // 底部最厚，向上逐渐变细
+      // 底部最厚, 向上逐渐变细
       if (i == 0) thickness = 2; // 最底部最厚
       else if (i == 1) thickness = 1; // 第二层中等厚度
       else if (i == 2) thickness = 1; // 第三层较薄
@@ -294,7 +294,7 @@
           {
             double probability = Math.Max(0, 1.0 - distance / clusterSize);
 
-            // 边缘概率较低，中心概率较高
+            // 边缘概率较低, 中心概率较高
             if (random.NextDouble() < probability * 0.8)
             {
               map[x, y] = 2;

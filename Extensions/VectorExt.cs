@@ -263,7 +263,7 @@
     }
 
     /// <summary>
-    /// 标准化Vector4，使所有分量之和为1
+    /// 标准化Vector4, 使所有分量之和为1
     /// </summary>
     public static Vector4 NormalizeWeights(this Vector4 weights)
     {
@@ -281,7 +281,7 @@
     }
 
     /// <summary>
-    /// 检查权重向量是否有效（所有分量在0-1之间，总和接近1）
+    /// 检查权重向量是否有效（所有分量在0-1之间, 总和接近1）
     /// </summary>
     public static bool IsValidWeightVector(this Vector4 weights, float tolerance = 0.01f)
     {

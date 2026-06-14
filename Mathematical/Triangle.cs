@@ -90,7 +90,7 @@
     /// <returns>若包含, 则返回 <see href="true"/>, 否则返回 <see href="false"/>.</returns>
     public bool Contain(Vector2 point)
     {
-      //当P=Ax+By+Cz(x+y+z=1)求得x、y、z全部大于0时点被三角形包含。此处使用行列式求解
+      //当P=Ax+By+Cz(x+y+z=1)求得x、y、z全部大于0时点被三角形包含.此处使用行列式求解
       float d = 1 * VertexB.X * VertexC.Y + 1 * VertexC.X * VertexA.Y + 1 * VertexA.X * VertexB.Y - 1 * VertexB.X * VertexA.Y - 1 * VertexA.X * VertexC.Y - 1 * VertexC.X * VertexB.Y,
           d1 = 1 * VertexB.X * VertexC.Y + 1 * VertexC.X * point.Y + 1 * point.X * VertexB.Y - 1 * VertexB.X * point.Y - 1 * point.X * VertexC.Y - 1 * VertexC.X * VertexB.Y,
           d2 = 1 * point.X * VertexC.Y + 1 * VertexC.X * VertexA.Y + 1 * VertexA.X * point.Y - 1 * point.X * VertexA.Y - 1 * VertexA.X * VertexC.Y - 1 * VertexC.X * point.Y,

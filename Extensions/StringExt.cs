@@ -2,6 +2,16 @@
 {
   public static class StringExt
   {
+    public static int GetMsnHashCode(this object obj)
+    {
+      return obj.GetType().GetMsnHashCode();
+    }
+
+    public static int GetMsnHashCode(this Type type)
+    {
+      return type.FullName.GetMsnHashCode();
+    }
+
     public static int GetMsnHashCode(this string str)
     {
       int result = 0;

@@ -112,7 +112,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
               comTransform.Vel = deltaVel / Time.DeltaTime;
               continue;
             }
-            // 斜坡条件不满足，回退到方块碰撞处理（仅首帧接触时）
+            // 斜坡条件不满足, 回退到方块碰撞处理（仅首帧接触时）
             if (!firstContact)
               continue;
           }
@@ -166,10 +166,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
 
     /// <summary>
-    /// 处理斜坡碰撞。
+    /// 处理斜坡碰撞.
     /// </summary>
-    /// <param name="firstContact">是否为首帧接触（previousBounds 不与 target 相交）。</param>
-    /// <returns>如果斜坡碰撞成功处理则返回 <c>true</c>；否则返回 <c>false</c> 表示应回退到方块碰撞处理。</returns>
+    /// <param name="firstContact">是否为首帧接触（previousBounds 不与 target 相交）.</param>
+    /// <returns>如果斜坡碰撞成功处理则返回 <c>true</c>；否则返回 <c>false</c> 表示应回退到方块碰撞处理.</returns>
     private bool HandleSlopeCollision(ref TileInfo info, ref Vector2 deltaVel, ref RectangleF next,
       RectangleF bounds, RectangleF previousBounds, RectangleF target, bool firstContact, Entity Entity)
     {
@@ -192,13 +192,13 @@ namespace Colin.Core.Modulars.Ecses.Systems
       {
         // 地面斜坡
         float penetration = next.Bottom - slopeSurfaceY;
-        // 实体在坡面上方且正在向上移动（跳跃）→ 不贴合，允许跳离
+        // 实体在坡面上方且正在向上移动（跳跃）→ 不贴合, 允许跳离
         if (penetration <= 0)
         {
           comPhysic.IsOnSlope = false;
           return true;
         }
-        // 否则始终贴合坡面：穿透时推上去，悬空时拉下来（下坡跟随）
+        // 否则始终贴合坡面：穿透时推上去, 悬空时拉下来（下坡跟随）
         if (penetration != 0)
         {
           deltaVel.Y -= penetration;
@@ -217,7 +217,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         // 天花板斜坡
         float penetration = slopeSurfaceY - next.Top;
 
-        // 实体在坡面下方且正在向下移动 → 不贴合，允许脱离
+        // 实体在坡面下方且正在向下移动 → 不贴合, 允许脱离
         if (penetration <= 0 && deltaVel.Y >= 0)
         {
           comPhysic.IsOnSlope = false;
@@ -242,7 +242,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
 
     /// <summary>
-    /// 获取斜坡表面在实体水平位置处的 Y 坐标。
+    /// 获取斜坡表面在实体水平位置处的 Y 坐标.
     /// </summary>
     private float GetSlopeSurfaceY(TileSolid slopeType, RectangleF target, RectangleF bounds)
     {
@@ -275,8 +275,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
 
     /// <summary>
-    /// 判定实体是否从斜坡的实心侧试图通过。
-    /// 实心侧即斜坡三角形填充的一侧（地面斜坡为线下方，天花板斜坡为线上方）。
+    /// 判定实体是否从斜坡的实心侧试图通过.
+    /// 实心侧即斜坡三角形填充的一侧（地面斜坡为线下方, 天花板斜坡为线上方）.
     /// </summary>
     private bool IsOnSolidSideOfSlope(TileSolid slopeType, RectangleF target,
       RectangleF bounds, RectangleF previousBounds, Vector2 deltaVel)
@@ -291,7 +291,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         case TileSolid.SlopeLeftUp:
           {
             // '/' 实心侧在左下三角（线下方）
-            // 判断前一刻实体底部是否在实心侧，即线下方
+            // 判断前一刻实体底部是否在实心侧, 即线下方
             float slopeYAtPrevBottom = tileBottom - (previousBounds.Right - tileLeft);
             // 前一刻底部在实心侧（线下方）→ 从实心侧来
             if (previousBounds.Bottom > slopeYAtPrevBottom)
@@ -345,9 +345,9 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
 
     /// <summary>
-    /// 判定实体是否能从斜坡底部开始上坡。
-    /// 首帧接触时：实体必须处于斜坡起点（底端）且沿正确方向移动，否则无法上坡。
-    /// 如果实体正在下落（deltaVel.Y > 0）则允许落在斜面上。
+    /// 判定实体是否能从斜坡底部开始上坡.
+    /// 首帧接触时：实体必须处于斜坡起点（底端）且沿正确方向移动, 否则无法上坡.
+    /// 如果实体正在下落（deltaVel.Y > 0）则允许落在斜面上.
     /// </summary>
     private bool CanStartClimbingSlope(TileSolid slopeType, RectangleF target,
       RectangleF bounds, RectangleF previousBounds, Vector2 deltaVel)
@@ -403,8 +403,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
 
     /// <summary>
-    /// 防头顶穿透：贴合地面坡面后，检查并修正头部是否嵌入上方物块。
-    /// 上坡时 deltaVel.Y 被斜坡调整后，next.Top 可能落入 topTile 扫描范围之外的 tile 行。
+    /// 防头顶穿透：贴合地面坡面后, 检查并修正头部是否嵌入上方物块.
+    /// 上坡时 deltaVel.Y 被斜坡调整后, next.Top 可能落入 topTile 扫描范围之外的 tile 行.
     /// </summary>
     private void PreventCeilingPenetration(ref Vector2 deltaVel, ref RectangleF next, RectangleF bounds, Entity Entity)
     {
@@ -464,7 +464,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
     }
 
     /// <summary>
-    /// 获取斜坡的法线方向。
+    /// 获取斜坡的法线方向.
     /// </summary>
     private Vector2 GetSlopeNormal(TileSolid slopeType)
     {
