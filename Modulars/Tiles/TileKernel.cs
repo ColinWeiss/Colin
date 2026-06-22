@@ -57,5 +57,12 @@ namespace Colin.Core.Modulars.Tiles
     /// 执行于物块被破坏时.
     /// </summary>
     public virtual void OnDestruction(Tile tile, TileChunk chunk, int index, Point3 wCoord) { }
+
+    public object Clone()
+    {
+      return this; // 物块内核使用享元模式.
+    }
+
+    public void DoInitialize() { }
   }
 }

@@ -18,6 +18,11 @@ namespace Colin.Core.Modulars.UserInterfaces
       set => location.X = left = value;
     }
 
+    /// <summary>
+    /// 获取划分元素的右侧坐标.
+    /// </summary>
+    public float Right => Left + Width;
+
     private float top;
     /// <summary>
     /// 指示划分元素相对于父元素的顶部坐标.

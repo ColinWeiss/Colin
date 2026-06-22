@@ -5,5 +5,6 @@
   /// </summary>
   public interface ICodeResource
   {
+    public void DoInitialize();
   }
 }

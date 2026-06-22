@@ -202,5 +202,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       return Document.Equals(other.Document);
     }
+
+    public static Entity CreatFromHash(int hash) => CodeResources<Entity>.CreateNewInstance(hash);
   }
 }

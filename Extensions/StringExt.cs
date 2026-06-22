@@ -2,9 +2,14 @@
 {
   public static class StringExt
   {
-    public static int GetMsnHashCode(this object obj)
+    extension(object obj)
     {
-      return obj.GetType().GetMsnHashCode();
+      public int MsnHash => obj.GetType().GetMsnHashCode();
+    }
+
+    extension(Type type)
+    {
+      public int MsnHash => type.FullName.GetMsnHashCode();
     }
 
     public static int GetMsnHashCode(this Type type)

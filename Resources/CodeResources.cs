@@ -30,11 +30,6 @@ namespace Colin.Core.Resources
         }
       }
     }
-
-    public static T1 Get<T0, T1>() where T0 : ICodeResource where T1 : T0
-    {
-      return CodeResources<T0>.Get<T1>();
-    }
   }
   public class CodeResources<T0> where T0 : ICodeResource
   {
@@ -56,16 +51,17 @@ namespace Colin.Core.Resources
         return GetFromType(type);
       else return default;
     }
+    public static T0 GetFromHash(int hashValue)
+    {
+      return GetFromTypeName(GetTypeNameFromHash(hashValue));
+    }
+
     public static string GetTypeNameFromHash(int hashValue)
     {
       if (hashToSers.TryGetValue(hashValue, out string value))
         return value;
       else
         return null;
-    }
-    public static T0 GetFromHash(int hashValue)
-    {
-      return GetFromTypeName(GetTypeNameFromHash(hashValue));
     }
     public static int? GetHashFromTypeName(string typeName)
     {
