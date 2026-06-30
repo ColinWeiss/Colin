@@ -177,6 +177,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       // 使用 next（预计下帧位置）计算坡面高度
       float slopeSurfaceY = GetSlopeSurfaceY(slopeType, target, next);
 
+      
       if (firstContact)
       {
         // 首帧接触：做实心侧和上坡起点检测（用当前 bounds 和上一帧 previousBounds 判定来向）
@@ -184,6 +185,13 @@ namespace Colin.Core.Modulars.Ecses.Systems
           return false;
 
         if (!CanStartClimbingSlope(slopeType, target, bounds, previousBounds, deltaVel))
+          return false;
+      }
+      else
+      {
+        // 非首帧接触：检测实体是否本就处于斜坡实心侧（即被直接放入体内，而非从前一帧骑坡而来）
+        // 仅用 previousBounds 判定，避免重力微弱穿透导致的误判
+        if (WasPreviousInSolidSideOfSlope(slopeType, target, previousBounds))
           return false;
       }
 
@@ -337,6 +345,53 @@ namespace Colin.Core.Modulars.Ecses.Systems
             if (bounds.Top < slopeYAtBoundsTop)
               return true;
             return false;
+          }
+
+        default:
+          return false;
+      }
+    }
+
+    /// <summary>
+    /// 判定实体上一帧位置是否处于斜坡的实心侧.
+    /// <br>仅使用 previousBounds 判定, 不参考当前帧 bounds.
+    /// 用于在非首帧接触时区分"被直接放入体内"与"合法骑坡".</br>
+    /// </summary>
+    private bool WasPreviousInSolidSideOfSlope(TileSolid slopeType, RectangleF target, RectangleF previousBounds)
+    {
+      float tileLeft = target.Left;
+      float tileRight = target.Right;
+      float tileTop = target.Top;
+      float tileBottom = target.Bottom;
+
+      switch (slopeType)
+      {
+        case TileSolid.SlopeLeftUp:
+          {
+            // '/' 实心侧在线下方
+            float slopeYAtPrevBottom = tileBottom - (previousBounds.Right - tileLeft);
+            return previousBounds.Bottom > slopeYAtPrevBottom;
+          }
+
+        case TileSolid.SlopeRightUp:
+          {
+            // '\\' 实心侧在线下方
+            float slopeYAtPrevBottom = tileBottom - (tileRight - previousBounds.Left);
+            return previousBounds.Bottom > slopeYAtPrevBottom;
+          }
+
+        case TileSolid.SlopeLeftDown:
+          {
+            // 天花板 '\\' 实心侧在线上方
+            float slopeYAtPrevTop = tileTop + (previousBounds.Right - tileLeft);
+            return previousBounds.Top < slopeYAtPrevTop;
+          }
+
+        case TileSolid.SlopeRightDown:
+          {
+            // 天花板 '/' 实心侧在线上方
+            float slopeYAtPrevTop = tileTop + (tileRight - previousBounds.Left);
+            return previousBounds.Top < slopeYAtPrevTop;
           }
 
         default:
