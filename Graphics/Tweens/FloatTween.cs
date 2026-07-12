@@ -1,10 +1,8 @@
-﻿namespace Colin.Core.Graphics.Tweens
+namespace Colin.Core.Graphics.Tweens
 {
-  public class FloatTween : Tweener<float>
+  public class FloatTween : Tween<float, FloatTween>
   {
-    public override float Calculate()
-    {
-      return MathHelper.Lerp(Target, Start, Percentage);
-    }
+    protected override float Lerp(float a, float b, float t)
+      => a + (b - a) * t;
   }
 }

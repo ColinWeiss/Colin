@@ -1,4 +1,6 @@
-﻿using Colin.Core.Graphics.Tweens;
+using Colin.Core.Graphics.Tweens;
+using Microsoft.Xna.Framework;
+using System;
 
 namespace Colin.Core.Modulars.UserInterfaces.Controllers
 {
@@ -10,51 +12,44 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
     public ColorTween OpenColor;
     public ColorTween CloseColor;
 
-    public VectorTween OpenScale;
-    public VectorTween CloseScale;
+    public Vector2Tween OpenScale;
+    public Vector2Tween CloseScale;
 
     public event Action OnClosed;
 
     public override void OnBinded(Div div)
     {
-      OpenColor = new ColorTween();
-      OpenColor.Set(Color.Transparent);
-      OpenColor.Target = new Color(255, 255, 255, 255);
-      OpenColor.Time = 0.08f;
+      OpenColor = new ColorTween()
+        .SetFrom(Color.Transparent).SetTo(Color.White).SetDuration(0.08f);
 
-      CloseColor = new ColorTween();
-      CloseColor.Set(Color.White);
-      CloseColor.Target = Color.Transparent;
-      CloseColor.Time = 0.12f;
+      CloseColor = new ColorTween()
+        .SetFrom(Color.White).SetTo(Color.Transparent).SetDuration(0.12f);
 
-      OpenScale = new VectorTween();
-      OpenScale.GradientStyle = GradientStyle.EaseOutExpo;
-      OpenScale.Set(Vector2.One * 0.7f);
-      OpenScale.Target = Vector2.One;
-      OpenScale.Time = 0.4f;
+      OpenScale = new Vector2Tween()
+        .SetFrom(Vector2.One * 0.7f).SetTo(Vector2.One).SetDuration(0.4f).SetEase(Ease.ExpoOut);
 
-      CloseScale = new VectorTween();
-      CloseScale.GradientStyle = GradientStyle.EaseOutExpo;
-      CloseScale.Set(Vector2.One);
-      CloseScale.Target = Vector2.One * 0.7f;
-      CloseScale.Time = 2f;
+      CloseScale = new Vector2Tween()
+        .SetFrom(Vector2.One).SetTo(Vector2.One * 0.7f).SetDuration(2f).SetEase(Ease.ExpoOut);
+
       base.OnBinded(div);
     }
+
     public override void Layout(Div div, ref DivLayout layout)
     {
       if (_openState)
-        layout.Scale = OpenScale.DoUpdate();
+        layout.Scale = OpenScale.CurrentValue;
       if (_closeState)
-        layout.Scale = CloseScale.DoUpdate();
+        layout.Scale = CloseScale.CurrentValue;
       base.Layout(div, ref layout);
     }
+
     public override void Design(Div div, ref DivDesign design)
     {
       if (_openState)
-        design.Color = OpenColor.DoUpdate();
+        design.Color = OpenColor.CurrentValue;
       if (_closeState)
       {
-        design.Color = CloseColor.DoUpdate();
+        design.Color = CloseColor.CurrentValue;
         if (design.Color.A <= 0)
         {
           div.IsVisible = false;
@@ -63,6 +58,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
       }
       base.Design(div, ref design);
     }
+
     protected override void OnWakeUp(Div div)
     {
       if (!div.IsVisible)
@@ -75,6 +71,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Controllers
       }
       base.OnWakeUp(div);
     }
+
     protected override void OnHibernate(Div div)
     {
       CloseColor.Play();

@@ -48,7 +48,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PointExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\XNAExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Ease.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\IntTween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ITween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\LoopMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Parallel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Sequence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\TweenManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Vector2Tween.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Vector3Tween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\DataBlockIDHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\DataIO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IOStep.cs" />
@@ -74,8 +85,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Tweener.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\VectorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CircleShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Collision.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CollisionHandle.cs" />
@@ -146,8 +155,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\VectorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\DirectoryChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\GradientStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Frame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />

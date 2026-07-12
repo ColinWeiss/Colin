@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Graphics.Tweens;
 using Colin.Core.IO;
 using Colin.Core.Preparation;
 using System.Reflection;
@@ -114,6 +115,7 @@ namespace Colin.Core
       if (!Enable)
         return;
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+      TweenManager.Update();
       DebugProfiler.NextTick();
       if (!Started)
       {

@@ -1,10 +1,10 @@
-﻿namespace Colin.Core.Graphics.Tweens
+using Microsoft.Xna.Framework;
+
+namespace Colin.Core.Graphics.Tweens
 {
-  public class ColorTween : Tweener<Color>
+  public class ColorTween : Tween<Color, ColorTween>
   {
-    public override Color Calculate()
-    {
-      return Current.Closer(Target, Percentage, 1f);
-    }
+    protected override Color Lerp(Color a, Color b, float t)
+      => Color.Lerp(a, b, t);
   }
 }
