@@ -121,6 +121,11 @@ namespace Colin.Core.Graphics.Tweens
       _registered = false;
     }
 
+    public void Exchange()
+    {
+      (From, To) = (To, From);
+    }
+
     // Fluent API
     public TSelf SetFrom(T value) { From = value; return (TSelf)this; }
     public TSelf SetTo(T value) { To = value; return (TSelf)this; }
