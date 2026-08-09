@@ -115,7 +115,7 @@
       {
         basicEffect.VertexColorEnabled = true;
         basicEffect.World = Matrix.Identity;
-        basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 1), Vector3.Zero, Vector3.Up);
+        basicEffect.View = View;
         basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
             0, device.Viewport.Width, device.Viewport.Height, 0, 0, 1
         );
