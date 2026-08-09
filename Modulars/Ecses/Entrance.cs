@@ -25,7 +25,11 @@ namespace Colin.Core.Modulars.Ecses
     {
       Value = Default;
     }
-    public void SetDefault(T defaultT) => Default = defaultT;
+    public void SetDefault(T defaultT)
+    {
+      Default = defaultT;
+      Value = defaultT;
+    }
     public static implicit operator T(Entrance<T> d) => d.Value;
     public static Entrance<T> operator +(Entrance<T> d, T b)
     {
