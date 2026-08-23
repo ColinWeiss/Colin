@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\Business.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\BusinessLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\IBusinessCase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComVelLimit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsComCloneable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\IEcsComparable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />

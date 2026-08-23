@@ -30,6 +30,10 @@ namespace Colin.Core.Modulars.Ecses
       Default = defaultT;
       Value = defaultT;
     }
+    /// <summary>
+    /// 为 Value 赋值.
+    /// </summary>
+    /// <param name="d"></param>
     public static implicit operator T(Entrance<T> d) => d.Value;
     public static Entrance<T> operator +(Entrance<T> d, T b)
     {
