@@ -68,9 +68,7 @@ namespace Colin.Core.Common
         }
       }
     }
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
     public void InvokeSizeChange(object sender, EventArgs e)
     {

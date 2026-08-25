@@ -84,9 +84,11 @@ namespace Colin.Core.Modulars.Ecses
             for (int i = 0; i < coms.Count; i++)
             {
               com = coms.ElementAt(i);
-              if (com is IEcsComUnloadable unLoadCom)
-                unLoadCom.OnClear();
+              if (com is IEcsComFinalize unLoadCom)
+                unLoadCom.DoFinalize();
             }
+            if (NeedClear[_entity.ID] is false) //OnFinalize 有可能拒绝 Clear.
+              continue;
             OnNull?.Invoke(Entities[count]);
             Entities[count] = null;
             NeedClear[count] = false;
