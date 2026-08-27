@@ -1,7 +1,34 @@
-﻿namespace Colin.Core.Inputs
+using Microsoft.Xna.Framework.Input;
+
+namespace Colin.Core.Inputs
 {
   public class Input
   {
+    /// <summary>
+    /// 当前鼠标状态; 坐标为游戏坐标系 (backbuffer 像素).
+    /// </summary>
+    public static MouseState MouseState { get; internal set; } = new MouseState();
+
+    /// <summary>
+    /// 上一帧的鼠标状态.
+    /// </summary>
+    public static MouseState MouseStateLast { get; internal set; } = new MouseState();
+
+    /// <summary>
+    /// 鼠标状态来源; 嵌入宿主 (如 Avalonia) 时由宿主设置,
+    /// 产出游戏坐标系下的状态; 为 null 时回退到 MonoGame 原生轮询.
+    /// </summary>
+    public static Func<MouseState>? MouseStateSource { get; set; }
+
+    /// <summary>
+    /// 推进一帧鼠标状态; 每帧只应调用一次 (目前由 <see cref="CoreInfo"/> 在游戏刻开头调用).
+    /// </summary>
+    public static void UpdateMouseState()
+    {
+      MouseStateLast = MouseState;
+      MouseState = MouseStateSource?.Invoke() ?? Mouse.GetState();
+    }
+
     private static List<Keys> _numbers = new List<Keys>
     {
        Keys.D0,

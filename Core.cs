@@ -147,6 +147,23 @@ namespace Colin.Core
     }
     public virtual void DoRender() { }
 
+    /// <summary>
+    /// 请求退出程序.
+    /// <br>嵌入宿主模式下不会调用 MonoGame 的 <see cref="Game.Exit"/> (它会销毁引擎的独立窗口,
+    /// 导致宿主渲染循环崩溃), 而是保存设置后通知宿主关闭宿主窗口.</br>
+    /// </summary>
+    public void RequestExit()
+    {
+      // 原生模式下 Exit 也会经 OnExiting 再存一次, 重复保存无害.
+      CoreInfo.Config?.Save();
+      if (CoreInfo.IsEmbedded)
+      {
+        CoreInfo.RaiseEmbeddedExitRequested();
+        return;
+      }
+      Exit();
+    }
+
     protected override void OnExiting(object sender, ExitingEventArgs args)
     {
       CoreInfo.Config.Save();

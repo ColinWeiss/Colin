@@ -74,12 +74,12 @@ namespace Colin.Core.Inputs
     /// <summary>
     /// 当前鼠标状态.
     /// </summary>
-    public static MouseState State = new MouseState();
+    public static MouseState State => Input.MouseState;
 
     /// <summary>
     /// 上一帧鼠标状态.
     /// </summary>
-    public static MouseState StateLast = new MouseState();
+    public static MouseState StateLast => Input.MouseStateLast;
 
     /// <summary>
     /// 鼠标位置.
@@ -88,15 +88,13 @@ namespace Colin.Core.Inputs
 
     public override void Update(GameTime gameTime)
     {
-      StateLast = State;
-      State = Mouse.GetState();
+      // 状态推进统一由 Input.UpdateMouseState 在游戏刻开头完成, 此处不再重复读取.
       base.Update(gameTime);
     }
 
     public static void StaticUpdate()
     {
-      StateLast = State;
-      State = Mouse.GetState();
+      Input.UpdateMouseState();
     }
   }
 }

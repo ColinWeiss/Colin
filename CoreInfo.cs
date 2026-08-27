@@ -150,6 +150,21 @@ namespace Colin.Core
     /// </summary>
     public static bool Debug = false;
 
+    /// <summary>
+    /// 指示引擎是否运行于嵌入宿主 (如 Avalonia 控件) 之中;
+    /// 此时画面由宿主呈现, 独立游戏窗口相关行为 (如全屏切换) 应当被屏蔽.
+    /// <br>原生运行模式下本质无作用.</br>
+    /// </summary>
+    public static bool IsEmbedded = false;
+
+    /// <summary>
+    /// 嵌入模式下引擎请求退出; 宿主应当关闭宿主窗口以结束程序.
+    /// <br>原生运行模式下本质无作用.</br>
+    /// </summary>
+    public static event Action? EmbeddedExitRequested;
+
+    internal static void RaiseEmbeddedExitRequested() => EmbeddedExitRequested?.Invoke();
+
     internal static void Init(Core engine)
     {
       Core = engine;
@@ -166,8 +181,9 @@ namespace Colin.Core
     internal static void GetInformationFromDevice(GameTime gameTime)
     {
       GameTimeCache = gameTime;
-      MouseStateLast = MouseState;
-      MouseState = Mouse.GetState();
+      Input.UpdateMouseState();
+      MouseStateLast = Input.MouseStateLast;
+      MouseState = Input.MouseState;
     }
   }
 }
