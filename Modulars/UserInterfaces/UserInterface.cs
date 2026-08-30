@@ -61,11 +61,9 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public void BatchNormalBegin(Div div, BlendState blendState)
     {
-      CoreInfo.Batch.Begin(
-        SpriteSortMode.Deferred,
-        blendState,
-        SamplerState.PointWrap,
-        transformMatrix: div.UpperCanvas is not null ? null : UICamera.View);
+      //兼容入口; 实际批次已由 UIBatch 状态机接管, 状态一致时不产生提交.
+      Matrix transform = div.UpperCanvas is not null ? Matrix.Identity : UICamera.View;
+      UIBatch.Request(blendState, SamplerState.PointWrap, DepthStencilState.None, UIBatch.DefaultRasterizer, default, transform);
     }
 
     public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
@@ -74,16 +72,8 @@ namespace Colin.Core.Modulars.UserInterfaces
       {
        // device.Clear(Color.Black);
         Root?.DoRender(device, batch);
-
-        // 
-        //      CoreInfo.Batch.Begin(
-        //        SpriteSortMode.Deferred,
-        //        BlendState.AlphaBlend,
-        //        SamplerState.PointClamp,
-        //        transformMatrix: UICamera.View);
-        //      Container?.DoRender(device, batch);
-        //      batch.End();
-
+        //离开界面渲染阶段前提交批次, 避免其他模块使用批次时状态冲突.
+        UIBatch.Flush();
       }
     }
     public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)

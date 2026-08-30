@@ -497,14 +497,8 @@
       }
     }
 
-    public static Stack<Rectangle> scissors = new Stack<Rectangle>();
-
-    /// <summary>
-    /// 用于暂存划分元素本次剪裁矩形的字段.
-    /// </summary>
-    public Rectangle ScissorRectangleCache;
-
     private Rectangle scissorRectangle;
+
     /// <summary>
     /// 指示该划分元素的剪裁矩形.
     /// <br>剪裁矩形的坐标相对于划分元素进行计算.</br>

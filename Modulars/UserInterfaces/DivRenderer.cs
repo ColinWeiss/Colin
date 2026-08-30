@@ -9,7 +9,12 @@
     public Div Div => div;
     public bool Adaptive = false;
 
-    public bool UseTranslucent;
+    /// <summary>
+    /// 指示渲染器内容是否经由独立的直通 alpha 混合批次绘制.
+    /// <br>文本等需要直通 alpha 混合的内容应保持 <see langword="true"/> (默认);</br>
+    /// <br>内容与普通混合批次视觉等价时置为 <see langword="false"/>, 可避免批次的来回切换.</br>
+    /// </summary>
+    public bool UseTranslucent = true;
 
     public virtual void OnBinded() { }
     public virtual void OnDivInitialize() { }
@@ -22,14 +27,18 @@
 
     public void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      batch.End();
-      div.BeginRender(BlendState.HumanityTranslucent, SamplerState.PointWrap);
-      RenderStep(device, batch);
-      batch.End();
-      if(div.UpperBatch is not null)
-        div.UpperBatch.BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
-      else
+      if (UseTranslucent)
+      {
+        //半透明批次: 状态机于状态一致时不产生提交.
+        div.BeginRender(BlendState.HumanityTranslucent, SamplerState.PointWrap);
+        RenderStep(device, batch);
         div.BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
+      }
+      else
+      {
+        //直接绘制于当前批次, 避免批次来回切换.
+        RenderStep(device, batch);
+      }
     }
     public virtual void RenderStep(GraphicsDevice device, SpriteBatch batch)
     {

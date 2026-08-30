@@ -211,20 +211,19 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// 计算后的剪裁矩形; 当前剪裁矩形.
     /// </summary>
     public Rectangle ScissorBounds;
+
+    /// <summary>
+    /// 计算当前剪裁矩形.
+    /// <br>未启用自身剪裁时沿用最近剪裁祖先的区域; 启用时与祖先区域取交集.</br>
+    /// </summary>
     public void CalculateScissorBounds()
     {
-      if (UpperScissor == null || UpperScissor == this)
-      {
+      if (UpperScissor is null)
         ScissorBounds = Layout.ScissorRectangle;
-      }
+      else if (Layout.ScissorEnable is false)
+        ScissorBounds = UpperScissor.ScissorBounds;
       else
-      {
-        var parentBounds = UpperScissor.ScissorBounds;
-        var current = Layout.ScissorRectangle;
-        ScissorBounds = Rectangle.Intersect(parentBounds, current);
-        if (ScissorBounds.IsEmpty)
-          ScissorBounds = parentBounds;
-      }
+        ScissorBounds = Rectangle.Intersect(UpperScissor.ScissorBounds, Layout.ScissorRectangle);
     }
 
     /// <summary>
@@ -432,24 +431,19 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public event Action<Div> LayoutEvent;
 
-    private static RasterizerState ScissiorRasterizer = new RasterizerState()
-    {
-      CullMode = CullMode.None,
-      ScissorTestEnable = true,
-    };
-
+    /// <summary>
+    /// 请求以指定混合状态开始绘制.
+    /// <br>实际批次由 <see cref="UIBatch"/> 状态机管理: 请求状态与激活状态一致时不会重新开启批次.</br>
+    /// </summary>
     public void BeginRender(BlendState blendState, SamplerState samplerState, SpriteSortMode mode = SpriteSortMode.Deferred)
     {
       if (UpperBatch is not null)
-        return;
+        return; //位于批次容器内: 直接绘制于上级批次, 不自行开启.
+      Matrix transform = UpperCanvas is null ? Module.UICamera.View : Matrix.Identity;
       if (UpperScissor is not null)
-      {
-        UpperScissor.Layout.ScissorRectangleCache = CoreInfo.Graphics.GraphicsDevice.ScissorRectangle; //针对剪裁测试进行剪裁矩形暂存
-        CoreInfo.Graphics.GraphicsDevice.ScissorRectangle = ScissorBounds;
-        CoreInfo.Batch.Begin(SpriteSortMode.Deferred, blendState, samplerState, DepthStencilState.Default, ScissiorRasterizer, transformMatrix: UpperCanvas is null ? Module.UICamera.View : null);
-      }
+        UIBatch.Request(blendState, samplerState, DepthStencilState.Default, UIBatch.ScissorTestRasterizer, ScissorBounds, transform);
       else
-        Module.BatchNormalBegin(this, blendState);
+        UIBatch.Request(blendState, samplerState, DepthStencilState.None, UIBatch.DefaultRasterizer, default, transform);
     }
 
     public bool UseBatch = false;
@@ -463,6 +457,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         return;
       if (IsCanvas)
       {
+        //切换渲染目标前提交既有批次内容.
+        UIBatch.Flush();
         device.SetRenderTarget(Canvas);
         device.Clear(Color.Black);
       }
@@ -470,19 +466,13 @@ namespace Colin.Core.Modulars.UserInterfaces
       BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
       OnRender(device, batch);
       _renderer?.DoRender(device, batch);//渲染器进行渲染.
-      if (UpperBatch is null && UseBatch is false)
-      {
-        batch.End();
-      }
-      if (UpperScissor is not null)
-        device.ScissorRectangle = UpperScissor.Layout.ScissorRectangleCache;
       RenderChildren(device, batch);
-      if (UpperBatch is null && UseBatch)
-      {
-        batch.End();
-      }
+      if (UseBatch)
+        UIBatch.Flush(); //批次容器: 子树绘制完毕后一并提交.
       if (IsCanvas)
       {
+        //切回上级渲染目标, 将画布内容合成绘制; 提交顺序保持与绘制顺序一致.
+        UIBatch.Flush();
         if (UpperCanvas is not null)
           device.SetRenderTarget(UpperCanvas.Canvas);
         else
@@ -490,9 +480,14 @@ namespace Colin.Core.Modulars.UserInterfaces
         Vector2 canvasRenderPos = Layout.ScreenLocation + Layout.Anchor;
         if (UpperCanvas is not null)
           canvasRenderPos = Layout.RenderTargetLocation + Layout.Anchor;
-        batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, _root.Layout.ScissorEnable ? ScissiorRasterizer : null, transformMatrix: UpperCanvas is not null ? null : Module.UICamera.View);
+        bool rootScissor = _root.Layout.ScissorEnable;
+        UIBatch.Request(
+          BlendState.AlphaBlend, SamplerState.PointWrap,
+          DepthStencilState.None,
+          rootScissor ? UIBatch.ScissorTestRasterizer : UIBatch.DefaultRasterizer,
+          rootScissor ? _root.ScissorBounds : default,
+          UpperCanvas is not null ? Matrix.Identity : Module.UICamera.View);
         batch.Draw(Canvas, canvasRenderPos, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
-        batch.End();
       }
     }
 
