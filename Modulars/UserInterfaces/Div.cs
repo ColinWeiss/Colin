@@ -21,7 +21,10 @@ namespace Colin.Core.Modulars.UserInterfaces
       get => isVisible;
       set
       {
-        ForEach(a => a.IsVisible = value);
+        //遍历改用 for 循环而非 ForEach 委托, 避免逐帧闭包分配.
+        List<Div> children = Children;
+        for (int count = 0; count < children.Count; count++)
+          children[count].IsVisible = value;
         isVisible = value;
       }
     }
@@ -54,7 +57,10 @@ namespace Colin.Core.Modulars.UserInterfaces
       get => isHidden;
       set
       {
-        ForEach(a => a.isHidden = value);
+        //遍历改用 for 循环而非 ForEach 委托, 避免逐帧闭包分配.
+        List<Div> children = Children;
+        for (int count = 0; count < children.Count; count++)
+          children[count].isHidden = value;
         isHidden = value;
       }
     }
@@ -418,7 +424,10 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="time">游戏计时状态快照.</param>
     public virtual void UpdateChildren(GameTime time)
     {
-      ForEach(child => child?.DoUpdate(time));
+      //遍历改用 for 循环而非 ForEach 委托, 避免每帧每元素一次的闭包分配.
+      List<Div> children = Children;
+      for (int count = 0; count < children.Count; count++)
+        children[count]?.DoUpdate(time);
     }
 
     public event Action<Div> LayoutEvent;
@@ -497,10 +506,10 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public virtual void RenderChildren(GraphicsDevice device, SpriteBatch batch)
     {
-      ForEach(child =>
-      {
-        child?.DoRender(device, batch);
-      });
+      //遍历改用 for 循环而非 ForEach 委托, 避免每帧每元素一次的闭包分配.
+      List<Div> children = Children;
+      for (int count = 0; count < children.Count; count++)
+        children[count]?.DoRender(device, batch);
     }
 
     public void ForEach(Action<Div> action)

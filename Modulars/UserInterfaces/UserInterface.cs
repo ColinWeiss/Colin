@@ -55,7 +55,8 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.TargetRotation = 0f;
 
       UICamera.DoUpdate(time);
-      Root?.DoUpdate(time);
+      using (DebugProfiler.Tag("UIUpdate"))
+        Root?.DoUpdate(time);
     }
 
     public void BatchNormalBegin(Div div, BlendState blendState)
