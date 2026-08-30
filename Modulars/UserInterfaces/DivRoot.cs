@@ -21,20 +21,15 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// 在此处进行容器初始化操作.
     /// </summary>
     public virtual void RootInitialize() { }
-    public override void OnUpdate(GameTime time)
+
+    /// <summary>
+    /// 于每帧布局计算前同步视口尺寸, 确保本帧布局与渲染使用的是最新尺寸.
+    /// </summary>
+    public override void LayoutCalculate(ref DivLayout layout)
     {
       Layout.Width = CoreInfo.ViewWidth;
       Layout.Height = CoreInfo.ViewHeight;
-      base.OnUpdate(time);
-    }
-    public override bool Register(Div division, bool doInit = false)
-    {
-      if (base.Register(division, doInit))
-      {
-        return true;
-      }
-      else
-        return false;
+      base.LayoutCalculate(ref layout);
     }
   }
 }

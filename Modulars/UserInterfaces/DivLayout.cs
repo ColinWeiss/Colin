@@ -1,9 +1,8 @@
-﻿using System.Transactions;
-
-namespace Colin.Core.Modulars.UserInterfaces
+﻿namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 划分元素的布局信息.
+  /// <br>布局数据采用脏标记与版本戳管理: 仅当自身输入或父级变换发生变化时才会重新计算.</br>
   /// </summary>
   public struct DivLayout
   {
@@ -15,13 +14,24 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float Left
     {
       get => left;
-      set => location.X = left = value;
+      set
+      {
+        if (left == value)
+          return;
+        left = value;
+        dirty = true;
+      }
     }
 
     /// <summary>
     /// 获取划分元素的右侧坐标.
     /// </summary>
     public float Right => Left + Width;
+
+    /// <summary>
+    /// 获取划分元素的底部坐标.
+    /// </summary>
+    public float Bottom => Top + Height;
 
     private float top;
     /// <summary>
@@ -31,7 +41,13 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float Top
     {
       get => top;
-      set => location.Y = top = value;
+      set
+      {
+        if (top == value)
+          return;
+        top = value;
+        dirty = true;
+      }
     }
 
     private float paddingLeft;
@@ -74,14 +90,31 @@ namespace Colin.Core.Modulars.UserInterfaces
       set => paddingBottom = value;
     }
 
-    private Vector2 location;
     /// <summary>
-    /// 指示划分元素相对于父元素的坐标.
+    /// 为划分元素设置四边等值的填充.
+    /// </summary>
+    /// <param name="padding">四边填充值.</param>
+    public void SetPadding(float padding)
+      => paddingLeft = paddingRight = paddingTop = paddingBottom = padding;
+
+    /// <summary>
+    /// 为划分元素设置填充.
+    /// </summary>
+    /// <param name="horizontal">左右填充值.</param>
+    /// <param name="vertical">上下填充值.</param>
+    public void SetPadding(float horizontal, float vertical)
+    {
+      paddingLeft = paddingRight = horizontal;
+      paddingTop = paddingBottom = vertical;
+    }
+
+    /// <summary>
+    /// 获取划分元素相对于父元素的坐标.
     /// <br>若划分元素没有父元素 (即其属于DivView), 则指示其为相对于屏幕起点的偏移.</br>
     /// </summary>
     public Vector2 Location
     {
-      get => location;
+      get => new Vector2(left, top);
       set => SetLocation(value);
     }
     /// <summary>
@@ -90,8 +123,10 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public void SetLocation(float leftAndTop)
     {
-      location.X = left = leftAndTop;
-      location.Y = top = leftAndTop;
+      if (left == leftAndTop && top == leftAndTop)
+        return;
+      left = top = leftAndTop;
+      dirty = true;
     }
     /// <summary>
     /// 设置划分元素相对于父元素的坐标.
@@ -101,8 +136,11 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="top">顶部坐标.</param>
     public void SetLocation(float left, float top)
     {
-      location.X = this.left = left;
-      location.Y = this.top = top;
+      if (this.left == left && this.top == top)
+        return;
+      this.left = left;
+      this.top = top;
+      dirty = true;
     }
     /// <summary>
     /// 设置划分元素相对于父元素的坐标.
@@ -111,7 +149,25 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="location">相对坐标.</param>
     public void SetLocation(Vector2 location) => SetLocation(location.X, location.Y);
 
-    public void SetLocation(Point point) => SetLocation(location.X, location.Y);
+    public void SetLocation(Point point) => SetLocation(point.X, point.Y);
+
+    /// <summary>
+    /// 将划分元素居中于指定布局范围.
+    /// </summary>
+    /// <param name="container">作为居中参照的布局信息.</param>
+    public void CenterIn(DivLayout container) => SetLocation(container.Half - Half);
+
+    /// <summary>
+    /// 将划分元素于指定布局范围内水平居中.
+    /// </summary>
+    /// <param name="container">作为居中参照的布局信息.</param>
+    public void CenterInX(DivLayout container) => Left = container.HalfWidth - HalfWidth;
+
+    /// <summary>
+    /// 将划分元素于指定布局范围内垂直居中.
+    /// </summary>
+    /// <param name="container">作为居中参照的布局信息.</param>
+    public void CenterInY(DivLayout container) => Top = container.HalfHeight - HalfHeight;
 
     private float width;
     /// <summary>
@@ -120,7 +176,14 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float Width
     {
       get => width;
-      set => size.X = width = Math.Clamp(value, 0, int.MaxValue);
+      set
+      {
+        value = Math.Clamp(value, 0, int.MaxValue);
+        if (width == value)
+          return;
+        width = value;
+        dirty = true;
+      }
     }
 
     private float height;
@@ -130,7 +193,14 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float Height
     {
       get => height;
-      set => size.Y = height = Math.Clamp(value, 0, int.MaxValue);
+      set
+      {
+        value = Math.Clamp(value, 0, int.MaxValue);
+        if (height == value)
+          return;
+        height = value;
+        dirty = true;
+      }
     }
 
     public Vector2 Half => new Vector2(width / 2, height / 2);
@@ -139,45 +209,41 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public float HalfHeight => height / 2;
 
-    private Vector2 size;
     /// <summary>
     /// 获取划分元素的大小.
     /// </summary>
     public Vector2 Size
     {
-      get => size;
+      get => new Vector2(width, height);
       set => SetSize(value);
     }
 
-    public Point SizeP => size.ToPoint();
+    public Point SizeP => new Point((int)width, (int)height);
 
     /// <summary>
     /// 设置划分元素的大小.
-    /// <br>[!] 使用损失精度的参数.</br>
     /// </summary>
     /// <param name="width">宽度.</param>
     /// <param name="height">高度.</param>
     public void SetSize(float width, float height)
     {
-      size.X = this.width = (int)width;
-      size.Y = this.height = (int)height;
+      Width = width;
+      Height = height;
     }
     /// <summary>
     /// 设置划分元素的大小.
-    /// <br>[!] 使用损失精度的参数.</br>
     /// </summary>
     /// <param name="size">宽高.</param>
     public void SetSize(float size)
     {
-      this.size.X = width = (int)size;
-      this.size.Y = height = (int)size;
+      Width = size;
+      Height = size;
     }
     /// <summary>
     /// 设置划分元素的大小.
-    /// <br>[!] 使用损失精度的参数.</br>
     /// </summary>
     /// <param name="size">大小.</param>
-    public void SetSize(Vector2 size) => SetSize((int)size.X, (int)size.Y);
+    public void SetSize(Vector2 size) => SetSize(size.X, size.Y);
 
     private float rotation;
     /// <summary>
@@ -186,43 +252,68 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float Rotation
     {
       get => rotation;
-      set => rotation = value;
+      set
+      {
+        if (rotation == value)
+          return;
+        rotation = value;
+        dirty = true;
+      }
     }
     /// <summary>
     /// 顺时针旋转指定的弧度.
     /// </summary>
     /// <param name="radian">弧度</param>
-    public void ClockwiseRad(float radian) => rotation += radian;
+    public void ClockwiseRad(float radian)
+    {
+      rotation += radian;
+      dirty = true;
+    }
     /// <summary>
     /// 逆时针旋转指定的弧度.
     /// </summary>
     /// <param name="radian">弧度</param>
-    public void AntiClockwiseRad(float radian) => rotation -= radian;
+    public void AntiClockwiseRad(float radian)
+    {
+      rotation -= radian;
+      dirty = true;
+    }
 
     private float anchorX;
     public float AnchorX
     {
       get => anchorX;
-      set => anchor.X = anchorX = value;
+      set
+      {
+        if (anchorX == value)
+          return;
+        anchorX = value;
+        dirty = true;
+      }
     }
     private float anchorY;
     public float AnchorY
     {
       get => anchorY;
-      set => anchor.Y = anchorY = value;
-    }
-
-    private Vector2 anchor;
-    public Vector2 Anchor
-    {
-      get => anchor;
       set
       {
-        if (anchor != value)
-        {
-          anchor.X = anchorX = value.X;
-          anchor.Y = anchorY = value.Y;
-        }
+        if (anchorY == value)
+          return;
+        anchorY = value;
+        dirty = true;
+      }
+    }
+
+    public Vector2 Anchor
+    {
+      get => new Vector2(anchorX, anchorY);
+      set
+      {
+        if (anchorX == value.X && anchorY == value.Y)
+          return;
+        anchorX = value.X;
+        anchorY = value.Y;
+        dirty = true;
       }
     }
 
@@ -233,7 +324,13 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float ScaleX
     {
       get => scaleX;
-      set => scale.X = scaleX = value;
+      set
+      {
+        if (scaleX == value)
+          return;
+        scaleX = value;
+        dirty = true;
+      }
     }
 
     private float scaleY;
@@ -243,23 +340,28 @@ namespace Colin.Core.Modulars.UserInterfaces
     public float ScaleY
     {
       get => scaleY;
-      set => scale.Y = scaleY = value;
+      set
+      {
+        if (scaleY == value)
+          return;
+        scaleY = value;
+        dirty = true;
+      }
     }
 
-    private Vector2 scale;
     /// <summary>
     /// 指示划分元素的缩放.
     /// </summary>
     public Vector2 Scale
     {
-      get => scale;
+      get => new Vector2(scaleX, scaleY);
       set
       {
-        if (scale != value)
-        {
-          scale.X = scaleX = value.X;
-          scale.Y = scaleY = value.Y;
-        }
+        if (scaleX == value.X && scaleY == value.Y)
+          return;
+        scaleX = value.X;
+        scaleY = value.Y;
+        dirty = true;
       }
     }
     /// <summary>
@@ -269,8 +371,8 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="scaleY">纵向缩放值.</param>
     public void SetScale(int scaleX, int scaleY)
     {
-      scale.X = this.scaleX = scaleX;
-      scale.Y = this.scaleY = scaleY;
+      ScaleX = scaleX;
+      ScaleY = scaleY;
     }
     /// <summary>
     /// 设置划分元素的缩放.
@@ -330,12 +432,70 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public Rectangle Bounds => bounds;
 
-    public bool ScissorEnable;
+    private bool scissorEnable;
+    public bool ScissorEnable
+    {
+      get => scissorEnable;
+      set
+      {
+        if (scissorEnable == value)
+          return;
+        scissorEnable = value;
+        dirty = true;
+      }
+    }
 
-    public int ScissorLeft;
-    public int ScissorTop;
-    public int ScissorWidth;
-    public int ScissorHeight;
+    private int scissorLeft;
+    public int ScissorLeft
+    {
+      get => scissorLeft;
+      set
+      {
+        if (scissorLeft == value)
+          return;
+        scissorLeft = value;
+        dirty = true;
+      }
+    }
+
+    private int scissorTop;
+    public int ScissorTop
+    {
+      get => scissorTop;
+      set
+      {
+        if (scissorTop == value)
+          return;
+        scissorTop = value;
+        dirty = true;
+      }
+    }
+
+    private int scissorWidth;
+    public int ScissorWidth
+    {
+      get => scissorWidth;
+      set
+      {
+        if (scissorWidth == value)
+          return;
+        scissorWidth = value;
+        dirty = true;
+      }
+    }
+
+    private int scissorHeight;
+    public int ScissorHeight
+    {
+      get => scissorHeight;
+      set
+      {
+        if (scissorHeight == value)
+          return;
+        scissorHeight = value;
+        dirty = true;
+      }
+    }
 
     public static Stack<Rectangle> scissors = new Stack<Rectangle>();
 
@@ -352,17 +512,60 @@ namespace Colin.Core.Modulars.UserInterfaces
     public Rectangle ScissorRectangle => scissorRectangle;
 
     /// <summary>
+    /// 指示布局输入是否发生变更, 需要于下一次 <see cref="Calculate(Div)"/> 时重新计算.
+    /// </summary>
+    public bool IsDirty => dirty;
+
+    /// <summary>
+    /// 标记布局为脏, 使其于下一次 <see cref="Calculate(Div)"/> 时强制重新计算.
+    /// </summary>
+    public void Invalidate() => dirty = true;
+
+    /// <summary>
+    /// 布局版本号; 每当有划分元素的布局计算结果发生实际变化时递增.
+    /// </summary>
+    private static uint layoutVersion = 1;
+
+    /// <summary>
+    /// 获取划分元素布局变换的当前版本.
+    /// </summary>
+    internal uint TransformStamp => transformStamp;
+
+    /// <summary>
+    /// 获取上次布局计算所依据的父级变换版本.
+    /// </summary>
+    internal uint ParentStamp => parentStamp;
+
+    private bool dirty;
+    private bool calculated;
+    private uint transformStamp;
+    private uint parentStamp;
+
+    /// <summary>
     /// 更新计算指定划分元素的布局信息.
+    /// <br>若划分元素的布局输入与父级变换均未发生变化, 则跳过计算.</br>
     /// </summary>
     /// <param name="div">要进行计算布局信息的划分元素.</param>
     public static void Calculate(Div div)
     {
-      div.Layout.renderTargetTransform = CalculateTransform(div);
+      Div parent = div.Parent;
+      uint currentParentStamp = parent is null ? 0u : parent.Layout.transformStamp;
+      if (div.Layout.calculated && div.Layout.dirty is false && div.Layout.parentStamp == currentParentStamp)
+        return;
 
-      if (div.Parent is not null)
-        div.Layout.renderTargetTransform *= div.Parent.Layout.renderTargetTransform;
+      Matrix oldRenderTargetTransform = div.Layout.renderTargetTransform;
+      Matrix oldScreenTransform = div.Layout.screenTransform;
+      Rectangle oldRenderTargetBounds = div.Layout.renderTargetBounds;
+      Rectangle oldBounds = div.Layout.bounds;
+      Rectangle oldScissorRectangle = div.Layout.scissorRectangle;
 
-      if (div.Parent is not null && div.Parent.IsCanvas)
+      Matrix local = CalculateTransform(div);
+
+      div.Layout.renderTargetTransform = local;
+      if (parent is not null)
+        div.Layout.renderTargetTransform *= parent.Layout.renderTargetTransform;
+
+      if (parent is not null && parent.IsCanvas)
         div.Layout.renderTargetTransform.Translation = new Vector3(div.Layout.left, div.Layout.top, 0);
 
       div.Layout.renderTargetBounds.X = div.Layout.renderTargetLeft = (int)div.Layout.renderTargetTransform.Translation.X;
@@ -378,14 +581,45 @@ namespace Colin.Core.Modulars.UserInterfaces
         div.Layout.scissorRectangle.Height = div.Layout.ScissorHeight;
       }
 
-      div.Layout.screenTransform = CalculateTransform(div);
-      if (div.Parent is not null)
-        div.Layout.screenTransform *= div.Parent.Layout.screenTransform;
+      div.Layout.screenTransform = local;
+      if (parent is not null)
+        div.Layout.screenTransform *= parent.Layout.screenTransform;
 
-      div.Layout.bounds.X = div.Layout.screenLeft = (int)div.Layout.screenTransform.Translation.X;
-      div.Layout.bounds.Y = div.Layout.screenTop = (int)div.Layout.screenTransform.Translation.Y;
-      div.Layout.bounds.Width = (int)div.Layout.width;
-      div.Layout.bounds.Height = (int)div.Layout.height;
+      div.Layout.screenLeft = (int)div.Layout.screenTransform.Translation.X;
+      div.Layout.screenTop = (int)div.Layout.screenTransform.Translation.Y;
+
+      //以变换后四角的包围盒作为屏幕包围盒, 使缩放与旋转参与命中判定.
+      Vector2 corner0 = Vector2.Transform(Vector2.Zero, div.Layout.screenTransform);
+      Vector2 corner1 = Vector2.Transform(new Vector2(div.Layout.width, 0), div.Layout.screenTransform);
+      Vector2 corner2 = Vector2.Transform(new Vector2(0, div.Layout.height), div.Layout.screenTransform);
+      Vector2 corner3 = Vector2.Transform(new Vector2(div.Layout.width, div.Layout.height), div.Layout.screenTransform);
+      Vector2 min = Vector2.Min(Vector2.Min(corner0, corner1), Vector2.Min(corner2, corner3));
+      Vector2 max = Vector2.Max(Vector2.Max(corner0, corner1), Vector2.Max(corner2, corner3));
+
+      div.Layout.bounds.X = (int)min.X;
+      div.Layout.bounds.Y = (int)min.Y;
+      div.Layout.bounds.Width = (int)(max.X - min.X);
+      div.Layout.bounds.Height = (int)(max.Y - min.Y);
+
+      bool changed = div.Layout.calculated is false
+          || oldRenderTargetTransform != div.Layout.renderTargetTransform
+          || oldScreenTransform != div.Layout.screenTransform
+          || oldRenderTargetBounds != div.Layout.renderTargetBounds
+          || oldBounds != div.Layout.bounds
+          || oldScissorRectangle != div.Layout.scissorRectangle;
+
+      div.Layout.calculated = true;
+      div.Layout.dirty = false;
+      div.Layout.parentStamp = currentParentStamp;
+
+      if (changed)
+      {
+        div.Layout.transformStamp = ++layoutVersion;
+        //计算结果发生实际变化, 下级元素的布局随之失效.
+        List<Div> children = div.Children;
+        for (int count = 0; count < children.Count; count++)
+          children[count].Layout.dirty = true;
+      }
     }
 
     private static Matrix CalculateTransform(Div div)
@@ -394,18 +628,18 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (div.IsCanvas is false)
       {
         result =
-          Matrix.CreateScale(div.Layout.Scale.X, div.Layout.Scale.Y, 0) *
-          Matrix.CreateTranslation(-div.Layout.anchor.X, -div.Layout.anchor.Y, 0) *
+          Matrix.CreateScale(div.Layout.ScaleX, div.Layout.ScaleY, 0) *
+          Matrix.CreateTranslation(-div.Layout.AnchorX, -div.Layout.AnchorY, 0) *
           Matrix.CreateRotationZ(div.Layout.rotation) *
-          Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
+          Matrix.CreateTranslation(div.Layout.AnchorX, div.Layout.AnchorY, 0) *
           Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
       }
       else
       {
         result =
-          Matrix.CreateTranslation(-div.Layout.anchor.X, -div.Layout.anchor.Y, 0) *
+          Matrix.CreateTranslation(-div.Layout.AnchorX, -div.Layout.AnchorY, 0) *
           Matrix.CreateRotationZ(div.Layout.rotation) *
-          Matrix.CreateTranslation(div.Layout.anchor.X, div.Layout.anchor.Y, 0) *
+          Matrix.CreateTranslation(div.Layout.AnchorX, div.Layout.AnchorY, 0) *
           Matrix.CreateTranslation(div.Layout.left, div.Layout.top, 0);
       }
       return result;

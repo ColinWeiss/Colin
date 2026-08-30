@@ -39,7 +39,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       get => _text;
       set
       {
+        if (_text == value)
+          return;
         _text = value;
+        if (div is null || Font is null)
+          return;
         Div.Layout.SetSize(Font.MeasureString(_text));
         Div.Layout.Anchor = Div.Layout.Half;
       }

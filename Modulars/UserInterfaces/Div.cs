@@ -361,13 +361,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="time">游戏计时状态快照.</param>
     public virtual void UpdateChildren(GameTime time)
     {
-      ForEach(child =>
-      {
-        if (child.Layout.RenderTargetBounds.Intersects(Layout.RenderTargetBounds))
-          child?.DoUpdate(time);
-        else
-          child?.DoUpdate(time);
-      });
+      ForEach(child => child?.DoUpdate(time));
     }
 
     public event Action<Div> LayoutEvent;
@@ -473,6 +467,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       div._parent = this;
       div._module = _module;
       div._root = _root;
+      div.Layout.Invalidate(); //重挂载后强制重算, 防止版本戳巧合时沿用旧父级的布局结果.
       Events.Register(div.Events);
       if (doInit)
         div.DoInitialize();
