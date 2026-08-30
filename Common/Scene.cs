@@ -115,8 +115,7 @@ namespace Colin.Core.Common
         SceneRenderPreset();
         Modules.DoRender(CoreInfo.Batch);
         SceneRender();
-        // 嵌入宿主时"后备缓冲"由宿主提供 (CoreInfo.PresentOverride), 否则画面会画进引擎隐藏窗口的交换链.
-        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(CoreInfo.PresentOverride);
+        CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
         CoreInfo.Batch.Begin();
         CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
         CoreInfo.Batch.End();

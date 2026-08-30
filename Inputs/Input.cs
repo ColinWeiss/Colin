@@ -15,7 +15,7 @@ namespace Colin.Core.Inputs
     public static MouseState MouseStateLast { get; internal set; } = new MouseState();
 
     /// <summary>
-    /// 鼠标状态来源; 嵌入宿主 (如 WPF) 时由宿主设置,
+    /// 鼠标状态来源; 嵌入宿主 (如 Avalonia) 时由宿主设置,
     /// 产出游戏坐标系下的状态; 为 null 时回退到 MonoGame 原生轮询.
     /// </summary>
     public static Func<MouseState>? MouseStateSource { get; set; }
