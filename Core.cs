@@ -133,7 +133,8 @@ namespace Colin.Core
     {
       if (!Visiable)
         return;
-      //GraphicsDevice.Clear(Color.Transparent);
+      // 每帧清成透明：嵌入宿主时渲染到共享 RenderTarget，不清会把上一帧/初始脏数据留在画面上。
+      GraphicsDevice.Clear(Color.Transparent);
 
       /*  CoreModule module;
         for (int count = 0; count < Modules.Count; count++)

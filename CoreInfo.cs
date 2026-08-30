@@ -30,6 +30,12 @@ namespace Colin.Core
     public static Core Core { get; set; }
 
     /// <summary>
+    /// 宿主呈现目标覆盖：非空时, 引擎把"原本画到后备缓冲"的最终合成画到它上面 (编辑器嵌入模式).
+    /// 独立运行保持 null, 行为与原来完全一致.
+    /// </summary>
+    public static Microsoft.Xna.Framework.Graphics.RenderTarget2D PresentOverride;
+
+    /// <summary>
     /// 指示当前程序设置.
     /// </summary>
     public static Config Config { get; set; }
@@ -151,7 +157,7 @@ namespace Colin.Core
     public static bool Debug = false;
 
     /// <summary>
-    /// 指示引擎是否运行于嵌入宿主 (如 Avalonia 控件) 之中;
+    /// 指示引擎是否运行于嵌入宿主 (如 WPF 控件) 之中;
     /// 此时画面由宿主呈现, 独立游戏窗口相关行为 (如全屏切换) 应当被屏蔽.
     /// <br>原生运行模式下本质无作用.</br>
     /// </summary>
