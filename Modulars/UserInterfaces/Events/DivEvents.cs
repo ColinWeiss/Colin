@@ -168,8 +168,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         }
         if (Div.Interact.IsDraggable && Div.Interact.DragLimit != Rectangle.Empty)
         {
-          Div.Layout.Left = Math.Clamp(Div.Layout.Left, 0, Div.Interact.DragLimit.Width - Div.Layout.Width);
-          Div.Layout.Top = Math.Clamp(Div.Layout.Top, 0, Div.Interact.DragLimit.Height - Div.Layout.Height);
+          //限制区域小于元素自身时钳制区间退化为空, 收拢到原点, 避免 ArgumentException.
+          Div.Layout.Left = Math.Clamp(Div.Layout.Left, 0, Math.Max(0, Div.Interact.DragLimit.Width - Div.Layout.Width));
+          Div.Layout.Top = Math.Clamp(Div.Layout.Top, 0, Math.Max(0, Div.Interact.DragLimit.Height - Div.Layout.Height));
         }
       }
       if (Div.Module.Focus == Div && Div.Module.LastFocus != Div)

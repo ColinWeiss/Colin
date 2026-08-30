@@ -13,6 +13,13 @@
 
     public virtual void OnBinded() { }
     public virtual void OnDivInitialize() { }
+
+    /// <summary>
+    /// 测量渲染器内容所期望的尺寸, 供布局系统于自适应尺寸模式下使用.
+    /// <br>任一分量为负表示渲染器无法测量内容尺寸; 可于子类重写以提供内容测量.</br>
+    /// </summary>
+    public virtual Vector2 MeasureContent() => new Vector2(-1f);
+
     public void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
       batch.End();

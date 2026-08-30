@@ -34,6 +34,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     };
     public DynamicSpriteFont Font;
     private string _text;
+    private Vector2 _measureCache;
+    private DynamicSpriteFont _measureFont;
+    private bool _measureDirty = true;
+
     public string Text
     {
       get => _text;
@@ -42,11 +46,28 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
         if (_text == value)
           return;
         _text = value;
+        _measureDirty = true;
         if (div is null || Font is null)
           return;
-        Div.Layout.SetSize(Font.MeasureString(_text));
+        Div.Layout.SetSize(MeasureContent());
         Div.Layout.Anchor = Div.Layout.Half;
       }
+    }
+
+    /// <summary>
+    /// 测量文本所期望的尺寸; 结果随文本与字体缓存, 避免逐帧重复测量.
+    /// </summary>
+    public override Vector2 MeasureContent()
+    {
+      if (Font is null)
+        return new Vector2(-1f);
+      if (_measureDirty || _measureFont != Font)
+      {
+        _measureCache = Font.MeasureString(_text ?? string.Empty);
+        _measureFont = Font;
+        _measureDirty = false;
+      }
+      return _measureCache;
     }
 
     public TextStyle TextStyle;

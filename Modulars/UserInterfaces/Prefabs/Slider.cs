@@ -71,16 +71,23 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     }
     public override void OnUpdate(GameTime time)
     {
-      Block.Layout.Left = Math.Clamp(Block.Layout.Left, Layout.PaddingLeft, Layout.Width - Layout.PaddingRight - Block.Layout.Width);
-      Block.Layout.Top = Math.Clamp(Block.Layout.Top, Layout.PaddingTop, Layout.Height - Layout.PaddingBottom - Block.Layout.Height);
+      //容器尺寸不足以容纳滑块时钳制区间退化为空, 收拢到下界, 避免越界与 Precent 出现 NaN.
+      float minX = Layout.PaddingLeft;
+      float minY = Layout.PaddingTop;
+      float maxX = Math.Max(minX, Layout.Width - Layout.PaddingRight - Block.Layout.Width);
+      float maxY = Math.Max(minY, Layout.Height - Layout.PaddingBottom - Block.Layout.Height);
+
+      Block.Layout.Left = Math.Clamp(Block.Layout.Left, minX, maxX);
+      Block.Layout.Top = Math.Clamp(Block.Layout.Top, minY, maxY);
 
       Block.Layout.Top += WheelVelocity;
       WheelVelocity *= 0.9f;
 
-      Precent =
-        (Block.Layout.Location - new Vector2(Layout.PaddingLeft, Layout.PaddingTop))
-        /
-        (Layout.Size - Block.Layout.Size - new Vector2(Layout.PaddingLeft + Layout.PaddingRight, Layout.PaddingTop + Layout.PaddingBottom));
+      float rangeX = maxX - minX;
+      float rangeY = maxY - minY;
+      Precent = new Vector2(
+        rangeX > 0f ? (Block.Layout.Left - minX) / rangeX : 0f,
+        rangeY > 0f ? (Block.Layout.Top - minY) / rangeY : 0f);
 
       base.OnUpdate(time);
     }

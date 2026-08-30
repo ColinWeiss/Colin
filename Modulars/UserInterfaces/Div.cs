@@ -75,6 +75,12 @@ namespace Colin.Core.Modulars.UserInterfaces
     public DivLayout Layout;
 
     /// <summary>
+    /// 划分元素的布局样式.
+    /// <br>声明式锚定 / 停靠 / 百分比 / 自适应布局; 默认全部关闭, 不影响手动布局.</br>
+    /// </summary>
+    public DivLayoutStyle Style;
+
+    /// <summary>
     /// 划分元素的交互样式.
     /// </summary>
     public InteractStyle Interact;
@@ -266,6 +272,17 @@ namespace Colin.Core.Modulars.UserInterfaces
       Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
     }
 
+    /// <summary>
+    /// 确保画布渲染目标与布局尺寸一致; 布局尺寸变化 (如经布局样式拉伸) 时重建渲染目标.
+    /// </summary>
+    private void EnsureCanvasSize()
+    {
+      int width = (int)MathF.Max(1f, Layout.Width);
+      int height = (int)MathF.Max(1f, Layout.Height);
+      if (Canvas is null || Canvas.Width != width || Canvas.Height != height)
+        SetCanvas(width, height);
+    }
+
     public void DoInitialize()
     {
       if (this is DivRoot divThreshold)
@@ -322,11 +339,14 @@ namespace Colin.Core.Modulars.UserInterfaces
       Controller?.Layout(this, ref Layout);
       Controller?.Interact(this, ref Interact);
       Controller?.Design(this, ref Design);
+      Style.Apply(this, Parent);
       LayoutCalculate(ref Layout);
       LayoutEvent?.Invoke(this);
       InteractCalculate(ref Interact);
       DesignCalculate(ref Design);
       DivLayout.Calculate(this);
+      if (IsCanvas)
+        EnsureCanvasSize();
       CalculateScissorBounds();
       Events.DoUpdate();
       OnUpdate(time);
@@ -338,6 +358,43 @@ namespace Colin.Core.Modulars.UserInterfaces
     public virtual void InteractCalculate(ref InteractStyle interact) { }
 
     public virtual void DesignCalculate(ref DivDesign design) { }
+
+    /// <summary>
+    /// 测量划分元素所期望的内容尺寸.
+    /// <br>于布局样式 (见 <see cref="DivLayoutStyle"/>) 使用 <see cref="DivSizeMode.Auto"/> 尺寸模式时被布局系统调用.</br>
+    /// <br>解析优先级: 渲染器内容测量 → 控制器内容测量 → 子级覆盖范围聚合 (容器包裹内容) → 当前尺寸. 可于子类重写以自定义测量逻辑.</br>
+    /// </summary>
+    public virtual Vector2 MeasureDesired()
+    {
+      if (_renderer is not null)
+      {
+        Vector2 desired = _renderer.MeasureContent();
+        if (desired.X >= 0f && desired.Y >= 0f)
+          return desired;
+      }
+      if (_controller is not null)
+      {
+        Vector2 desired = _controller.MeasureContent(this);
+        if (desired.X >= 0f && desired.Y >= 0f)
+          return desired;
+      }
+      if (Children.Count > 0)
+      {
+        //容器聚合: 期望尺寸为全部子级于相对坐标下向右/下方向的最大延伸.
+        float right = 0f, bottom = 0f;
+        List<Div> children = Children;
+        for (int count = 0; count < children.Count; count++)
+        {
+          Div child = children[count];
+          if (child.Layout.Right > right)
+            right = child.Layout.Right;
+          if (child.Layout.Bottom > bottom)
+            bottom = child.Layout.Bottom;
+        }
+        return new Vector2(right, bottom);
+      }
+      return new Vector2(Layout.Width, Layout.Height);
+    }
 
     /// <summary>
     /// 发生于 <see cref="DoUpdate(GameTime)"/> 第一帧执行时.

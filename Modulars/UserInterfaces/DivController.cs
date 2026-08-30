@@ -43,5 +43,11 @@
     public virtual void Layout(Div div, ref DivLayout layout) { }
     public virtual void Interact(Div div, ref InteractStyle interact) { }
     public virtual void Design(Div div, ref DivDesign design) { }
+
+    /// <summary>
+    /// 测量控制器所排列的内容期望尺寸, 供布局系统于自适应尺寸模式下使用.
+    /// <br>任一分量为负表示控制器无法测量内容尺寸; 可于子类重写以提供测量.</br>
+    /// </summary>
+    public virtual Vector2 MeasureContent(Div div) => new Vector2(-1f);
   }
 }

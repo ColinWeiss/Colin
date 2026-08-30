@@ -40,6 +40,21 @@
         div.Layout.SetSize(TotalSize);
       base.Layout(div, ref layout);
     }
+
+    /// <summary>
+    /// 测量线性排列的内容期望尺寸.
+    /// <br>按需聚合子级当前尺寸, 不依赖上一帧的布局结果.</br>
+    /// </summary>
+    public override Vector2 MeasureContent(Div div)
+    {
+      TotalSize = Vector2.Zero;
+      div.ForEach(CalculateLayout);
+      if (Direction == Direction.Vertical)
+        TotalSize.Y -= DivInterval;
+      else if (Direction == Direction.Horizontal)
+        TotalSize.X -= DivInterval;
+      return TotalSize;
+    }
     public void CalculateLayout(Div division)
     {
       switch (Direction)
