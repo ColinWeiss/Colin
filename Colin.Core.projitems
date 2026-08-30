@@ -154,6 +154,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Sprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Frame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\RoundedRect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\SpritePool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ControllerResponder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\KeyboardResponder.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivFontRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivRoundedRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIBatch.cs" />
