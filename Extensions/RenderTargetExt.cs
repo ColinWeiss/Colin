@@ -9,7 +9,7 @@
       CoreInfo.ViewWidth,
       CoreInfo.ViewHeight,
       false,
-      SurfaceFormat.Color,
+      SurfaceFormat.Vector4,
       DepthFormat.Depth16,
       0,
       RenderTargetUsage.PreserveContents);
@@ -22,7 +22,7 @@
       width,
       height,
       false,
-      SurfaceFormat.Color,
+      SurfaceFormat.Vector4,
       DepthFormat.None,
       0,
       RenderTargetUsage.PreserveContents);

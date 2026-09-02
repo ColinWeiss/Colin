@@ -2,6 +2,8 @@
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Resources;
+using SharpDX;
+using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Ecses
 {
@@ -39,6 +41,7 @@ namespace Colin.Core.Modulars.Ecses
       Entities = new Entity[2049];
       NeedClear = new bool[2049];
       _systems = new Dictionary<Type, Entitiesystem>();
+      CreateCommands = new ConcurrentQueue<EcsCreateCommand>();
     }
     public override void Start()
     {
@@ -126,6 +129,8 @@ namespace Colin.Core.Modulars.Ecses
     /// </summary>
     public event Action<Entity> OnCreate;
 
+    public ConcurrentQueue<EcsCreateCommand> CreateCommands;
+
     public T Create<T>() where T : Entity, new()
     {
       T result;
@@ -135,6 +140,8 @@ namespace Colin.Core.Modulars.Ecses
         Entity = Entities[count];
         if (Entity is null)
         {
+          EcsCreateCommand cmd = new EcsCreateCommand(this, new T(), count);
+
           result = new T();
           result.Ecs = this;
           result.ID = count;
@@ -145,6 +152,19 @@ namespace Colin.Core.Modulars.Ecses
         }
       }
       return null;
+    }
+
+    public void HandleCreate(EcsCreateCommand cmd)
+    {
+      if (Entities[cmd.ID] is null)
+      {
+        Entity result = cmd.Entity;
+        result.Ecs = this;
+        result.ID = cmd.ID;
+        result.DoInitialize();
+        OnCreate?.Invoke(result);
+        Entities[cmd.ID] = result;
+      }
     }
 
     /// <summary>
@@ -250,4 +270,9 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
   }
+  public record EcsCreateCommand(
+    Ecs Ecs,
+    Entity Entity,
+    int ID
+    );
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Colin.Core.Graphics.Bridge;
+using Microsoft.Xna.Framework.Input;
 using System.Reflection;
 
 namespace Colin.Core
@@ -21,6 +22,11 @@ namespace Colin.Core
     /// 纹理批管道.
     /// </summary>
     internal static SpriteBatch Batch { get; set; }
+
+    /// <summary>
+    /// Compute Sharp 桥接.
+    /// </summary>
+    internal static TinterBridge Tinter { get; set; }
 
     /// <summary>
     /// 游戏刻缓存.
@@ -169,6 +175,14 @@ namespace Colin.Core
     {
       Core = engine;
       IMEHandler = new WinFormsIMEHandler(Core, true);
+      Graphics = new GraphicsDeviceManager(Core)
+      {
+        PreferHalfPixelOffset = false,
+        HardwareModeSwitch = false,
+        SynchronizeWithVerticalRetrace = true,
+        PreferMultiSampling = true,
+        GraphicsProfile = GraphicsProfile.HiDef
+      };
 #if DEBUG
       Debug = true;
 #endif

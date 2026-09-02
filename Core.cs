@@ -1,4 +1,6 @@
 ﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Graphics.Bridge;
+using Colin.Core.Graphics.Tinters;
 using Colin.Core.Graphics.Tweens;
 using Colin.Core.IO;
 using Colin.Core.Preparation;
@@ -62,17 +64,6 @@ namespace Colin.Core
         }
       }
       CoreInfo.Init(this);
-      if (CoreInfo.Graphics == null)
-      {
-        CoreInfo.Graphics = new GraphicsDeviceManager(this)
-        {
-          PreferHalfPixelOffset = false,
-          HardwareModeSwitch = false,
-          SynchronizeWithVerticalRetrace = true,
-          PreferMultiSampling = true,
-          GraphicsProfile = GraphicsProfile.HiDef
-        };
-      }
       Content.RootDirectory = "Content";
       IsMouseVisible = false;
       IsFixedTimeStep = true;
@@ -80,6 +71,7 @@ namespace Colin.Core
 
     protected override sealed void Initialize()
     {
+      CoreInfo.Tinter = new TinterBridge(GraphicsDevice);
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
@@ -141,7 +133,7 @@ namespace Colin.Core
           module = Modules[count];
           module.DoRender(GraphicsDevice, CoreInfo.Batch);
         }*/
-
+      CoreInfo.Tinter.BeginFrame();
       base.Draw(gameTime);
       DoRender();
     }

@@ -48,6 +48,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PointExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\XNAExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\TinterBridge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\CsReflection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\D3D12Interop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\SharedTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\GrayScaleShader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Tinter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\VignetteShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Ease.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\FloatTween.cs" />
