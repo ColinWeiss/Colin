@@ -66,30 +66,31 @@ namespace Particle.Slash
       Progress = Math.Clamp(_elapsed / sweep, 0f, 1f);
 
       // —— 前缘: 解析推进 (Sweep 匀速 / Fade 缓动) ——
-      float progress = config.Retire == SlashRetireMode.Sweep
+      float headPrev = _headDeg;
+      float eased = config.Retire == SlashRetireMode.Sweep
         ? Math.Clamp(_elapsed / sweep, 0f, 1f)
         : EaseOutCubic(_elapsed / sweep);
-      _headDeg = MathHelper.Lerp(fromDeg, toDeg, config.Retire == SlashRetireMode.Sweep
-        ? Math.Clamp(_elapsed / sweep, 0f, 1f)
-        : EaseOutCubic(_elapsed / sweep));
+      _headDeg = MathHelper.Lerp(fromDeg, toDeg, eased);
 
-      // —— 尾端: 初始化于起始角, 之后以收拢速度持续向刃头收去 ——
+      // —— 尾端: 以收拢速度向"前缘已扫过的路径"收去 (目标 = 前缘上一帧的位置).
+      // 目标取上一帧而非当前帧: 收拢速度再快, 本帧刚扫出的弧段也保留到下一帧 ——
+      // 弧带跨度恒 ≥ 单帧扫角, 永不塌成零宽 (否则收拢快于扫速时整条刀光不可见). ——
       if (!_tailInitialized)
       {
         _tailDeg = fromDeg;
         _tailInitialized = true;
       }
-      float gap = _headDeg - _tailDeg;
+      float gap = headPrev - _tailDeg;
       float step = MathF.Max(0f, config.CatchupSpeed) * dt * MathF.Sign(gap);
       if (MathF.Abs(step) >= MathF.Abs(gap))
-        _tailDeg = _headDeg;
+        _tailDeg = headPrev;
       else
         _tailDeg += step;
 
-      // —— 结束: 渐隐按时间; 横扫按前缘到位且完全收拢 ——
+      // —— 结束: 渐隐按时间; 横扫按前缘到位且完全收拢 (CatchupSpeed=0 时以渐隐时长兜底) ——
       if (config.Retire == SlashRetireMode.Sweep)
       {
-        if (Progress >= 1f && MathF.Abs(_headDeg - _tailDeg) < 0.5f)
+        if (Progress >= 1f && (MathF.Abs(_headDeg - _tailDeg) < 0.5f || _elapsed >= sweep + MathF.Max(1e-3f, config.FadeTime)))
           IsFinished = true;
       }
       else if (_elapsed >= sweep + MathF.Max(1e-3f, config.FadeTime))
@@ -141,7 +142,7 @@ namespace Particle.Slash
 
         // 顶点色渐隐: Fade 模式用全局淡出; Sweep 模式尾端恒定渐隐 (静态色渐变).
         float fade = config.Retire == SlashRetireMode.Sweep
-          ? MathHelper.Lerp(1f, 0.35f, t) * Math.Min(1f, globalFade + 1f)
+          ? MathHelper.Lerp(1f, 0.35f, t)
           : globalFade;
         PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f));
       }

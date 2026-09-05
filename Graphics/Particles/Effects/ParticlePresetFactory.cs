@@ -32,7 +32,19 @@ namespace Particle.Effects
       Segments = 56,
       HeadColor = new Vector4(1.6f, 1.6f, 1.6f, 1f),
       TailColor = new Vector4(0.25f, 0.55f, 1.2f, 0.06f),
+      Retire = SlashRetireMode.Sweep,
+      CatchupSpeed = 500f,
       Texture = "blade"
+    };
+
+    /// <summary>刀光 Mesh 发射器 (统一进发射器体系: Kind == SlashArc, 粒子层参数不参与模拟).</summary>
+    public static EmitterConfig CreateSlashArcEmitter(string name = "刀光本体") => new EmitterConfig
+    {
+      Name = name,
+      Kind = EmitterKind.SlashArc,
+      Slash = CreateBladeSlashArc(),
+      Capacity = 1,                // 刀光发射器不占用粒子槽位 (仅保留 1 列占位).
+      StartTime = 0f
     };
 
     /// <summary>游戏内剑光轨迹 (SlashTrail) 的默认配置.</summary>
@@ -169,7 +181,7 @@ namespace Particle.Effects
         Name = "刀光",
         Duration = 0.26f,
         Looping = false,
-        Emitters = { glow, sparks },
+        Emitters = { glow, sparks, CreateSlashArcEmitter() },
         Render = new RenderConfig
         {
           Blend = ParticleBlendMode.Additive,

@@ -137,7 +137,10 @@ namespace Particle.Rendering
     }
 
     /// <summary>
-    /// 解析纹理: 内置程序化纹理名 ("white"/"glow"/"blade"/"spark"/"smoke") 或游戏资产路径.
+    /// 解析纹理: 内置程序化纹理名 ("white"/"glow"/"blade"/"spark"/"smoke"),
+    /// 或 "file:绝对路径" 直接从磁盘加载 (编辑器自定义贴图), 结果按名缓存.
+    /// <br>"file:" 贴图加载时做 alpha 预乘 —— 加法混合 (刀光/发光) 下透明区域不再发白,
+    /// 任意尺寸、带透明通道的 PNG 均可直接使用; 加载失败回退 white 并输出错误日志.</br>
     /// </summary>
     public Texture2D ResolveTexture(string name)
     {
@@ -147,11 +150,46 @@ namespace Particle.Rendering
       if (_textures.TryGetValue(name, out Texture2D cached))
         return cached;
 
-      Texture2D texture = ParticleTextureFactory.Create(_device, name);
+      Texture2D texture = null;
+      if (name.StartsWith("file:"))
+        texture = LoadFileTexture(name.Substring(5));
+      if (texture is null)
+        texture = ParticleTextureFactory.Create(_device, name);
       if (texture is null)
         texture = ParticleTextureFactory.Create(_device, "white");
       _textures[name] = texture;
       return texture;
+    }
+
+    /// <summary>从磁盘加载贴图并预乘 alpha (自定义刀光纹理的统一入口).</summary>
+    private Texture2D LoadFileTexture(string path)
+    {
+      try
+      {
+        if (!File.Exists(path))
+        {
+          Console.WriteLine("Error", $"自定义纹理文件不存在: {path}");
+          return null;
+        }
+        Texture2D texture = Texture2D.FromFile(_device, path);
+        Color[] pixels = new Color[texture.Width * texture.Height];
+        texture.GetData(pixels);
+        for (int i = 0; i < pixels.Length; i++)
+        {
+          byte alpha = pixels[i].A;
+          pixels[i].R = (byte)(pixels[i].R * alpha / 255);
+          pixels[i].G = (byte)(pixels[i].G * alpha / 255);
+          pixels[i].B = (byte)(pixels[i].B * alpha / 255);
+        }
+        texture.SetData(pixels);
+        Console.WriteLine("Remind", $"自定义纹理已加载: {path} ({texture.Width}×{texture.Height})");
+        return texture;
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine("Error", $"自定义纹理加载失败 ({path}): {exception.Message}");
+        return null;
+      }
     }
 
     /// <summary>注册外部纹理 (编辑器/游戏可注入自定义刀光贴图).</summary>

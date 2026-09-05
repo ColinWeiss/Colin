@@ -37,6 +37,12 @@
     /// <summary>运行时发射器列表 (与 Config.Emitters 一一对应).</summary>
     public List<ParticleEmitter> Emitters = new List<ParticleEmitter>();
 
+    /// <summary>运行时刀光弧列表 (与 Config.Emitters 一一对应; 粒子发射器对应项为 null).
+    /// <br>刀光发射器 (Kind == SlashArc) 的条带 Mesh 实例 —— 播放/暂停/停止/重置/循环
+    /// 与粒子共用同一套效果生命周期, 游戏代码亦可直接操作 <see cref="SlashArc"/>.</br>
+    /// </summary>
+    public List<global::Particle.Slash.SlashArc> SlashArcs = new List<global::Particle.Slash.SlashArc>();
+
     /// <summary>是否正在播放.</summary>
     public bool IsPlaying;
     /// <summary>是否暂停.</summary>
@@ -69,6 +75,8 @@
     private int _customEmitterIndex;
     private float _maxLife;
     private bool _capacityDirty;
+    private int[] _builtCapacities = Array.Empty<int>();
+    private int _strategyCapacity;
     private Random _seedRandom = new Random();
 
     /// <summary>效果实例标识 (诊断与日志).</summary>
@@ -80,6 +88,7 @@
     {
       Config = config;
       _strategy = ParticleManager.Instance.CreateStrategy(config.TotalCapacity());
+      _strategyCapacity = _strategy?.Capacity ?? 0;
       BuildEmitters(seed: 0);
       Config.Subscribe(OnConfigChanged);
       IsPlaying = true;
@@ -88,6 +97,7 @@
     private void BuildEmitters(int? seed)
     {
       Emitters.Clear();
+      SlashArcs.Clear();
       int range = 0;
       _maxLife = 0f;
       for (int i = 0; i < Config.Emitters.Count; i++)
@@ -96,9 +106,14 @@
         ParticleEmitter emitter = new ParticleEmitter(emitterConfig, range);
         emitter.Reset(emitterConfig, range, seed);
         range += Math.Max(1, emitterConfig.Capacity);
-        _maxLife = Math.Max(_maxLife, emitter.MaxLife);
+        if (emitterConfig.Kind == EmitterKind.Particle)
+          _maxLife = Math.Max(_maxLife, emitter.MaxLife);
         Emitters.Add(emitter);
+        SlashArcs.Add(emitterConfig.Kind == EmitterKind.SlashArc && emitterConfig.Slash is not null
+          ? new global::Particle.Slash.SlashArc(emitterConfig.Slash)
+          : null);
       }
+      _builtCapacities = Config.Emitters.Select(e => Math.Max(1, e.Capacity)).ToArray();
       _capacityDirty = false;
     }
 
@@ -123,11 +138,19 @@
       _frame.DrawEnd = 0;
     }
 
-    /// <summary>停止并标记完成 (非循环).</summary>
+    /// <summary>停止并标记完成 (非循环); 刀光弧同时复位到挥出起点.</summary>
     public void Stop()
     {
       IsPlaying = false;
       IsFinished = true;
+      ResetSlashArcs();
+    }
+
+    /// <summary>复位全部刀光弧 (清空姿态, 下次播放从起点重新挥出).</summary>
+    public void ResetSlashArcs()
+    {
+      for (int i = 0; i < SlashArcs.Count; i++)
+        SlashArcs[i]?.Reset();
     }
 
     /// <summary>
@@ -139,9 +162,14 @@
       if (!IsPlaying || IsPaused)
         return;
 
-      // —— 结构性变更 (容量/发射器增删) 需重建槽位池 ——
+      // —— 结构性变更 (容量/发射器增删) 需重建槽位池; 曲线与参数修改无需重建 ——
       if (_capacityDirty || Emitters.Count != Config.Emitters.Count)
-        Rebuild();
+      {
+        if (NeedsStructuralRebuild())
+          Rebuild();
+        else
+          _capacityDirty = false;
+      }
 
       float duration = MathF.Max(1e-4f, Config.Duration);
       Time += dt;
@@ -152,6 +180,7 @@
         Time -= duration;
         for (int i = 0; i < Emitters.Count; i++)
           Emitters[i].RestartCycle();
+        ResetSlashArcs();
       }
 
       float normalized = looping ? (Time / duration) % 1f : Math.Clamp(Time / duration, 0f, 1f);
@@ -167,6 +196,20 @@
       {
         ParticleEmitter emitter = Emitters[i];
         EmitterConfig config = emitter.Config;
+
+        // —— 刀光发射器: 无粒子模拟, 弧形 Mesh 由本效果托管推进 (跟随效果变换, 支持 StartTime 延迟) ——
+        if (config.Kind == EmitterKind.SlashArc)
+        {
+          global::Particle.Slash.SlashArc managedArc = i < SlashArcs.Count ? SlashArcs[i] : null;
+          if (managedArc is not null && Time >= config.StartTime)
+          {
+            managedArc.Position = Position;
+            managedArc.Rotation = Rotation;
+            managedArc.Scale = Scale;
+            managedArc.Update(dt);
+          }
+          continue;
+        }
 
         EmitterFrame emitterFrame = new EmitterFrame
         {
@@ -216,12 +259,32 @@
 
       InstanceCount = _frame.DrawEnd;
 
-      // —— 非循环效果在发射结束且全部粒子死亡后自动完成 ——
-      if (!Config.Looping && Time > duration + _maxLife + 0.1f)
+      // —— 非循环效果在发射结束、全部粒子死亡且刀光弧收完后自动完成 ——
+      if (!Config.Looping && Time > duration + _maxLife + 0.1f && SlashArcsFinished())
       {
         IsPlaying = false;
         IsFinished = true;
       }
+    }
+
+    /// <summary>全部刀光弧是否已收完 (粒子发射器对应项为 null 视为完成).</summary>
+    private bool SlashArcsFinished()
+    {
+      for (int i = 0; i < SlashArcs.Count; i++)
+        if (SlashArcs[i] is not null && !SlashArcs[i].IsFinished)
+          return false;
+      return true;
+    }
+
+    /// <summary>发射器布局 (数量/容量) 是否真的发生了变化 —— 仅曲线参数变化时不重建.</summary>
+    private bool NeedsStructuralRebuild()
+    {
+      if (Emitters.Count != Config.Emitters.Count || _builtCapacities.Length != Config.Emitters.Count)
+        return true;
+      for (int i = 0; i < Config.Emitters.Count; i++)
+        if (_builtCapacities[i] != Math.Max(1, Config.Emitters[i].Capacity))
+          return true;
+      return false;
     }
 
     /// <summary>排队一批代码式发射 (世界坐标, 在下一次 Update 前生效).</summary>
@@ -303,22 +366,37 @@
     }
 
     /// <summary>
-    /// 绘制本效果 (由 <see cref="ParticleManager.RenderAll"/> 统一调用, 也可自行调用).
+    /// 绘制本效果 (由 <see cref="ParticleManager.RenderAll"/> 统一调用, 也可自行调用):
+    /// 粒子公告牌 + 刀光发射器的弧形 Mesh (同一相机变换).
     /// </summary>
     /// <param name="transform">相机变换矩阵 (世界坐标 → 裁剪空间).</param>
     public void Draw(Matrix transform)
     {
       (Texture2D dataTexture, int instanceCount) = _strategy.ResolveFrame();
       InstanceCount = instanceCount;
-      if (dataTexture is null || instanceCount <= 0)
-        return;
-      global::Particle.Rendering.ParticleRenderer.Shared?.Draw(dataTexture, instanceCount, Config.Render, transform);
+      if (dataTexture is not null && instanceCount > 0)
+        global::Particle.Rendering.ParticleRenderer.Shared?.Draw(dataTexture, instanceCount, Config.Render, transform);
+
+      // —— 刀光发射器: 弧形 Mesh 绘制 (停止后不再绘制) ——
+      if (!IsFinished || Config.Looping)
+      {
+        global::Particle.Slash.SlashRenderer renderer = global::Particle.Slash.SlashRenderer.GetOrCreate();
+        for (int i = 0; i < SlashArcs.Count; i++)
+          if (SlashArcs[i] is not null)
+            renderer.DrawOne(SlashArcs[i], transform);
+      }
     }
 
     private void Rebuild()
     {
-      _strategy.Dispose();
-      _strategy = ParticleManager.Instance.CreateStrategy(Config.TotalCapacity());
+      // —— 总容量未变时复用现有策略 (GPU 纹理/共享句柄不重建), 仅重摆发射器槽位 ——
+      int total = Config.TotalCapacity();
+      if (total != _strategyCapacity)
+      {
+        _strategy.Dispose();
+        _strategy = ParticleManager.Instance.CreateStrategy(total);
+        _strategyCapacity = total;
+      }
       BuildEmitters(null);
       _capacityDirty = false;
     }

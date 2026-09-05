@@ -38,9 +38,9 @@ namespace Particle.Slash
 
     /// <summary>收起方式: Fade = 扫完后整体渐隐; Sweep = 整条弧随前缘横扫跟进, 尾部连续消亡 (星爆气流斩式).</summary>
     public SlashRetireMode Retire = SlashRetireMode.Sweep;
-    /// <summary>Sweep 模式: 尾端向刃头收拢的速度 (度/秒) —— 越大收得越快;
-    /// 低于前缘速度则弧带先展开再收拢.</summary>
-    public float CatchupSpeed = 1500f;
+    /// <summary>Sweep 模式: 尾端向刃头收拢的速度 (度/秒) —— 低于前缘扫速则弧带先展开再收拢,
+    /// 高于扫速则呈短彗尾跟随前缘.</summary>
+    public float CatchupSpeed = 480f;
 
     /// <summary>头部颜色 (扫动前缘).</summary>
     public Vector4 HeadColor = new Vector4(1.5f, 1.5f, 1.5f, 1f);

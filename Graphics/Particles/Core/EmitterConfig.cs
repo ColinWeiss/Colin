@@ -21,10 +21,22 @@ namespace Particle.Core
     public BurstEvent Clone() => new BurstEvent { Time = Time, Count = Count, VelocityScale = VelocityScale };
   }
 
+  /// <summary>发射器类型.</summary>
+  [Serializable]
+  public enum EmitterKind
+  {
+    /// <summary>粒子公告牌 (默认).</summary>
+    Particle,
+    /// <summary>刀光弧形 Mesh (拉刀光条带, 参数见 <see cref="SlashArcConfig"/>).</summary>
+    SlashArc
+  }
+
   /// <summary>
   /// 单个发射器的完整可序列化配置.
   /// <br>包含发射时机 (速率曲线 + 突发事件)、形状、初速度、生命周期、
-  /// 颜色/尺寸/透明度随生命变化的曲线、外力与渲染相关参数.</br>
+  /// 颜色/尺寸/透明度随生命变化的曲线、外力与渲染相关参数.
+  /// <see cref="Kind"/> 为 <see cref="EmitterKind.SlashArc"/> 时, 发射器本体是一段刀光 Mesh,
+  /// 其参数存放于 <see cref="Slash"/>, 粒子形状/曲线等字段不参与模拟.</br>
   /// </summary>
   [Serializable]
   public class EmitterConfig
@@ -33,6 +45,10 @@ namespace Particle.Core
 
     /// <summary>发射器名称 (编辑器中显示).</summary>
     public string Name = "发射器";
+    /// <summary>发射器类型: 粒子公告牌 / 刀光弧形 Mesh.</summary>
+    public EmitterKind Kind = EmitterKind.Particle;
+    /// <summary>刀光 Mesh 配置 (Kind == SlashArc 时有效; 粒子发射器为 null).</summary>
+    public Slash.SlashArcConfig Slash;
     /// <summary>发射器槽位上限 (同时存活的粒子数上限).</summary>
     public int Capacity = 512;
     /// <summary>持续发射速率 (个/秒); 配合 <see cref="RateCurve"/> 使用.</summary>
@@ -136,6 +152,8 @@ namespace Particle.Core
     public EmitterConfig Clone() => new EmitterConfig
     {
       Name = Name,
+      Kind = Kind,
+      Slash = Slash?.Clone(),
       Capacity = Capacity,
       EmissionRate = EmissionRate,
       RateCurve = RateCurve?.Clone() ?? FloatCurve.Constant(),
