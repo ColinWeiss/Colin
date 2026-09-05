@@ -90,7 +90,7 @@ namespace Colin.Core.Common
               //var t = Scene.ScreenReprocess.TestProcess(frameRenderLayer);
 
               CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
-              CoreInfo.Batch.Draw(t, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              //CoreInfo.Batch.Draw(t, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
               CoreInfo.Batch.End();
             }
           }

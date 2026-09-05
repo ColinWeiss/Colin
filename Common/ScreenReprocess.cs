@@ -21,8 +21,8 @@ namespace Colin.Core.Common
     public Texture2D TestProcess(RenderTarget2D rt)
     {
       Texture2D t = CoreInfo.Tinter.Process(rt,
-         (src, dst) => new GrayScaleShader(src, dst, 500f));
-       // (src, dst) => new VignetteShader(src, dst));
+       // (src, dst) => new GrayScaleShader(src, dst, 500f));
+        (src, dst) => new VignetteShader(src, dst));
       return t;
     }
   }

@@ -50,6 +50,15 @@ namespace Colin.Core.Modulars.Ecses.Systems
         }
         batch.End();
 
+        // —— GPU 粒子与刀光 Mesh: 在实体层之上绘制 (特效覆盖于武器表现之上).
+        Particle.Core.ParticleManager.Instance.TickAndRender(Time.DeltaTime, Ecs.Scene.Camera.Transform);
+        if (Particle.Core.ParticleManager.Instance.IsInitialized)
+        {
+          Particle.Slash.SlashRenderer slash = Particle.Slash.SlashRenderer.GetOrCreate();
+          slash.TickAll(Time.DeltaTime);
+          slash.DrawAll(Ecs.Scene.Camera.Transform);
+        }
+
         for (int count = 0; count < Ecs.Entities.Length; count++)
         {
           entity = Ecs.Entities[count];

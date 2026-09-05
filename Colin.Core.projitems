@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -15,6 +15,10 @@
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Colin.Core.sln" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleRender.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleRender.mgfx" />
+    <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRender.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRender.mgfx" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\Cyotek.Drawing.BitmapFont.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Base.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.MonoGame.dll" />
@@ -47,8 +51,44 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ArrayExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PointExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\XNAExt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\CpuUpdateStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\EmissionShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\EmitterConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\IParticleUpdateStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleCurve.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleEffectConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleEmitter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\TinterBridge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\ParticleComputeShaders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\ParticleComputeDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\D3D12BufferInterop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\SharedParticleBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\GpuUpdateStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleCompiledShaders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleShaderSource.g.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleRenderEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleEffectCompiler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleTextureFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Serialization\ParticleConfigIO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Effects\ParticlePresetFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Effects\BladeTrailAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\EditorCommandHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\ParticleTimeline.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\ParticleEditorComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashVertex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\RibbonBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashArcConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashArc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashTrail.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRenderEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashCompiledShaders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashShaderSource.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\CsReflection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\D3D12Interop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\SharedTexture.cs" />

@@ -82,6 +82,7 @@ namespace Colin.Core
       Components.Add(SpritePool.Instance);
       Components.Add(FileDropProcessor.Instance);
       DoInitialize();
+      Console.WriteLine(CoreInfo.Tinter.Status);
       base.Initialize();
     }
 
