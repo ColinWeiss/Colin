@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using Particle.Core;
+using Particle.Slash;
 
 namespace Particle.Serialization
 {
@@ -59,6 +60,33 @@ namespace Particle.Serialization
       catch (Exception exception)
       {
         Console.WriteLine("Error", $"读取粒子配置失败 ({path}): {exception.Message}");
+        config = null;
+        return false;
+      }
+    }
+
+    /// <summary>保存刀光配置到 JSON 文件 (UTF-8, 缩进).</summary>
+    public static void SaveSlash(SlashEffectConfig config, string path)
+    {
+      string json = JsonSerializer.Serialize(config, Options);
+      string directory = Path.GetDirectoryName(Path.GetFullPath(path));
+      if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+        Directory.CreateDirectory(directory);
+      File.WriteAllText(path, json, new System.Text.UTF8Encoding(false));
+    }
+
+    /// <summary>尝试读取刀光配置 (失败返回 null 并输出日志).</summary>
+    public static bool TryLoadSlash(string path, out SlashEffectConfig config)
+    {
+      try
+      {
+        config = JsonSerializer.Deserialize<SlashEffectConfig>(File.ReadAllText(path), Options)
+          ?? throw new InvalidDataException($"配置文件为空: {path}");
+        return true;
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine("Error", $"读取刀光配置失败 ({path}): {exception.Message}");
         config = null;
         return false;
       }

@@ -4,6 +4,7 @@ using Particle.Core;
 using Particle.Effects;
 using Particle.Rendering;
 using Particle.Serialization;
+using Particle.Slash;
 using CurveInterpolation = Particle.Core.CurveInterpolation;
 using NV2 = System.Numerics.Vector2;
 using NV4 = System.Numerics.Vector4;
@@ -15,23 +16,46 @@ using XnaMatrix = Microsoft.Xna.Framework.Matrix;
 namespace Particle.Editor
 {
   /// <summary>
-  /// 粒子可视化编辑器 (MonoGame.ImGUI, 场景模块): 预设选择 / 参数编辑 / 实时预览视口 / 时间轴 / 刀光 Mesh.
-  /// <br>以 <see cref="SceneRenderModule"/> 形式挂载于场景 —— 界面绘制到模块 RawRt 后透明合成,
-  /// 不遮挡游戏画面; 参数修改经观察者模式实时生效; 撤销/重做经命令模式统一管理;
-  /// F10 开关编辑器, 仅依赖核心库与渲染模块的公共 API.</br>
+  /// 粒子 / 刀光可视化编辑器 (MonoGame.ImGUI, 场景模块).
+  /// <br>两种编辑对象经左栏顶部切换:</br>
+  /// <br>- <b>粒子</b>: 预设选择 / 发射器组合 / 参数编辑 / 时间轴 (ParticlePresetFactory + ParticleEffect);</br>
+  /// <br>- <b>刀光</b>: 独立大功能 (SlashPresetFactory + SlashEffect) —— 刀光本体 (拉刀光 Mesh) 与
+  /// 与前缘角度绑定的刃花层分页签编辑, 播放控制统一驱动.</br>
+  /// <br>界面绘制到模块 RawRt 后透明合成, 不遮挡游戏画面; F10 开关编辑器.</br>
   /// </summary>
   public class ParticleEditorModule : SceneRenderModule
   {
+    private enum EditorMode
+    {
+      Particle,
+      Slash
+    }
+
     private ImGuiRenderer _imGui;
     private GraphicsDevice _device;
     private RenderTarget2D _previewRt;
     private IntPtr _previewBinding;
     private bool _previewBindingDirty = true;
 
+    /// <summary>文件对话框打开期间挂起编辑器渲染/更新 —— WinForms 模态对话框的嵌套消息循环
+    /// 会重入游戏主循环, 不挂起会导致 ImGui 帧重入与点击穿透 (选完图跳预设的 BUG 根因).</summary>
+    private bool _modalDialogOpen;
+
+    // —— 编辑对象 ——
+    private EditorMode _mode = EditorMode.Slash;
+
+    // —— 粒子模式状态 ——
     private ParticleEffectConfig _config;
     private ParticleEffect _previewEffect;
     private EmitterConfig _selectedEmitter;
     private int _selectedEmitterIndex = -1;
+    private string _currentPath;
+
+    // —— 刀光模式状态 ——
+    private SlashEffectConfig _slashEffectConfig;
+    private SlashEffect _slashEffect;
+    private string _slashPath;
+
     private readonly EditorCommandHistory _history = new EditorCommandHistory();
 
     // —— 预览相机 (世界坐标, Y 向下) ——
@@ -45,9 +69,6 @@ namespace Particle.Editor
     private bool _showEditor = true;
     private KeyboardState _previousKeys;
 
-    // —— 文件路径 ——
-    private string _currentPath;
-
     private Func<object> _pendingUndoSnapshot;
 
     /// <summary>编辑器是否显示 (F10 切换).</summary>
@@ -60,7 +81,8 @@ namespace Particle.Editor
     public ParticleEditorModule(Scene scene)
     {
       Scene = scene;
-      _config = ParticlePresetFactory.Create("刀光");
+      _config = ParticlePresetFactory.Create("爆炸");
+      _slashEffectConfig = SlashPresetFactory.CreateStandard();
     }
 
     public override void DoInitialize()
@@ -76,7 +98,8 @@ namespace Particle.Editor
       RawRtVisible = _showEditor;
       Presentation = true;
 
-      RebuildPreview();
+      RebuildParticlePreview();
+      RebuildSlashPreview();
     }
 
     /// <summary>ImGuiRenderer 跨场景共享实例 (字体图集只构建一次).</summary>
@@ -108,28 +131,13 @@ namespace Particle.Editor
       return _sharedImGui;
     }
 
-    /// <summary>加载预设 (工厂模式入口).</summary>
-    public void LoadPreset(string name)
-    {
-      _config = ParticlePresetFactory.Create(name);
-      _currentPath = null;
-      _history.Clear();
-      RebuildPreview();
-    }
+    // =====================================================================
+    //  预览实例管理
+    //  (编辑器对文件对话框的挂起也在此层: 对话框期间冻结全部推进, 防止重入)
+    // =====================================================================
 
-    /// <summary>加载配置文件.</summary>
-    public void LoadConfig(string path)
-    {
-      if (!ParticleConfigIO.TryLoad(path, out ParticleEffectConfig config))
-        return;
-      _config = config;
-      _currentPath = path;
-      _history.Clear();
-      RebuildPreview();
-    }
-
-    /// <summary>重建预览效果实例 (配置结构变化后).</summary>
-    public void RebuildPreview()
+    /// <summary>重建粒子预览效果实例 (配置结构变化后).</summary>
+    public void RebuildParticlePreview()
     {
       if (_previewEffect is not null)
         ParticleManager.Instance.Stop(_previewEffect);
@@ -139,17 +147,43 @@ namespace Particle.Editor
 
       _previewEffect = ParticleManager.Instance.Play(_config, XnaVector2.Zero);
       _previewEffect.PreviewOnly = true;
-
       _selectedEmitterIndex = _config.Emitters.Count > 0 ? 0 : -1;
       _selectedEmitter = _selectedEmitterIndex >= 0 ? _config.Emitters[_selectedEmitterIndex] : null;
+      _previewBindingDirty = true;
+    }
+
+    /// <summary>重建刀光预览实例 (配置结构变化后).</summary>
+    public void RebuildSlashPreview()
+    {
+      _slashEffect?.Dispose();
+      if (!ParticleManager.Instance.IsInitialized)
+        ParticleManager.Instance.Initialize(_device);
+      _slashEffect = new SlashEffect(_slashEffectConfig);
+      _previewBindingDirty = true;
+    }
+
+    private void ResetCamera()
+    {
       _cameraPosition = XnaVector2.Zero;
       _cameraZoom = 1f;
       _cameraRotation = 0f;
+    }
+
+    private void SetMode(EditorMode mode)
+    {
+      if (_mode == mode)
+        return;
+      _mode = mode;
+      ResetCamera();
       _previewBindingDirty = true;
     }
 
     public override void DoUpdate(GameTime time)
     {
+      // —— 文件对话框打开期间冻结 (嵌套消息循环重入防护) ——
+      if (_modalDialogOpen)
+        return;
+
       // —— F10 开关 (切换模块 RawRt 渲染) ——
       KeyboardState keys = Microsoft.Xna.Framework.Input.Keyboard.GetState();
       if (keys.IsKeyDown(Keys.F10) && _previousKeys.IsKeyUp(Keys.F10))
@@ -159,24 +193,35 @@ namespace Particle.Editor
       }
       _previousKeys = keys;
 
-      if (_showEditor && _previewEffect is not null)
-      {
-        // —— 循环预览: 非循环效果播完后自动重置 (粒子与刀光发射器同周期) ——
-        if (_previewEffect.IsFinished && !_config.Looping && _loopPreview)
-          _previewEffect.Reset();
+      if (!_showEditor)
+        return;
 
-        // —— 编辑器先行驱动模拟 (帧守卫: 其他调用者本帧的更新会被自动跳过).
-        // 刀光发射器的弧形 Mesh 由效果统一推进, 无需单独驱动 ——
-        ParticleManager.Instance.UpdateAll(Time.DeltaTime * _previewSpeed);
+      if (_mode == EditorMode.Particle)
+      {
+        if (_previewEffect is not null)
+        {
+          // —— 循环预览: 非循环效果播完后自动重置 ——
+          if (_previewEffect.IsFinished && !_config.Looping && _loopPreview)
+            _previewEffect.Reset();
+
+          // —— 编辑器先行驱动模拟 (帧守卫: 其他调用者本帧的更新会被自动跳过) ——
+          ParticleManager.Instance.UpdateAll(Time.DeltaTime * _previewSpeed);
+        }
+      }
+      else if (_slashEffect is not null)
+      {
+        if (_slashEffect.IsFinished && !_slashEffectConfig.Looping && _loopPreview)
+          _slashEffect.Reset();
+        _slashEffect.Update(Time.DeltaTime * _previewSpeed);
       }
     }
 
     public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
-      if (!_showEditor || _imGui is null)
+      if (!_showEditor || _imGui is null || _modalDialogOpen)
         return;
 
-      // 渲染预览画面 (粒子模拟已在 DoUpdate 阶段推进), 随后恢复到模块 RawRt.
+      // 渲染预览画面 (模拟已在 DoUpdate 阶段推进), 随后恢复到模块 RawRt.
       RenderPreview();
       device.SetRenderTarget(RawRt);
       device.Clear(Color.Transparent);   // 双保险: 防止上一帧的采样绑定使外层 Clear 无效 (残影).
@@ -197,11 +242,8 @@ namespace Particle.Editor
     // =====================================================================
     private void BuildUi()
     {
-      if (_config is null)
-        return;
-
       ImGui.SetNextWindowSize(new NV2(1180, 720), ImGuiCond.FirstUseEver);
-      ImGui.Begin("粒子编辑器", ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoCollapse);
+      ImGui.Begin(_mode == EditorMode.Slash ? "刀光编辑器" : "粒子编辑器", ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoCollapse);
 
       BuildMenuBar();
       BuildMainLayout();
@@ -216,43 +258,26 @@ namespace Particle.Editor
 
       if (ImGui.BeginMenu("文件"))
       {
-        if (ImGui.MenuItem("新建"))
-        {
-          _config = new ParticleEffectConfig();
-          _currentPath = null;
-          RebuildPreview();
-        }
-        if (ImGui.MenuItem("打开 (JSON)"))
-        {
-          string path = PickFile(open: true);
-          if (path is not null)
-            LoadConfig(path);
-        }
-        if (ImGui.MenuItem("保存"))
-        {
-          if (_currentPath is null)
-            _currentPath = PickFile(open: false);
-          if (_currentPath is not null)
-            ParticleConfigIO.Save(_config, _currentPath);
-        }
-        if (ImGui.MenuItem("另存为..."))
-        {
-          string path = PickFile(open: false);
-          if (path is not null)
-          {
-            ParticleConfigIO.Save(_config, path);
-            _currentPath = path;
-          }
-        }
+        if (_mode == EditorMode.Particle)
+          BuildParticleFileMenu();
+        else
+          BuildSlashFileMenu();
         ImGui.EndMenu();
       }
 
       if (ImGui.BeginMenu("预设"))
       {
-        foreach (string preset in ParticlePresetFactory.PresetNames)
+        if (_mode == EditorMode.Particle)
         {
-          if (ImGui.MenuItem(preset))
-            LoadPreset(preset);
+          foreach (string preset in ParticlePresetFactory.PresetNames)
+            if (ImGui.MenuItem(preset))
+              LoadParticlePreset(preset);
+        }
+        else
+        {
+          foreach (string preset in SlashPresetFactory.PresetNames)
+            if (ImGui.MenuItem(preset))
+              LoadSlashPreset(preset);
         }
         ImGui.EndMenu();
       }
@@ -275,20 +300,168 @@ namespace Particle.Editor
         _history.Redo();
     }
 
+    private void BuildParticleFileMenu()
+    {
+      if (ImGui.MenuItem("新建"))
+      {
+        _config = new ParticleEffectConfig();
+        _currentPath = null;
+        RebuildParticlePreview();
+      }
+      if (ImGui.MenuItem("打开 (JSON)"))
+      {
+        string path = PickFile(open: true);
+        if (path is not null && ParticleConfigIO.TryLoad(path, out ParticleEffectConfig config))
+        {
+          _config = config;
+          _currentPath = path;
+          _history.Clear();
+          RebuildParticlePreview();
+        }
+      }
+      if (ImGui.MenuItem("保存"))
+      {
+        if (_currentPath is null)
+          _currentPath = PickFile(open: false);
+        if (_currentPath is not null)
+          ParticleConfigIO.Save(_config, _currentPath);
+      }
+      if (ImGui.MenuItem("另存为..."))
+      {
+        string path = PickFile(open: false);
+        if (path is not null)
+        {
+          ParticleConfigIO.Save(_config, path);
+          _currentPath = path;
+        }
+      }
+    }
+
+    private void BuildSlashFileMenu()
+    {
+      if (ImGui.MenuItem("新建"))
+      {
+        _slashEffectConfig = new SlashEffectConfig();
+        _slashPath = null;
+        RebuildSlashPreview();
+      }
+      if (ImGui.MenuItem("打开 (JSON)"))
+      {
+        string path = PickFile(open: true);
+        if (path is not null && ParticleConfigIO.TryLoadSlash(path, out SlashEffectConfig config))
+        {
+          _slashEffectConfig = config;
+          _slashPath = path;
+          _history.Clear();
+          RebuildSlashPreview();
+        }
+      }
+      if (ImGui.MenuItem("保存"))
+      {
+        if (_slashPath is null)
+          _slashPath = PickFile(open: false);
+        if (_slashPath is not null)
+          ParticleConfigIO.SaveSlash(_slashEffectConfig, _slashPath);
+      }
+      if (ImGui.MenuItem("另存为..."))
+      {
+        string path = PickFile(open: false);
+        if (path is not null)
+        {
+          ParticleConfigIO.SaveSlash(_slashEffectConfig, path);
+          _slashPath = path;
+        }
+      }
+    }
+
+    private void LoadParticlePreset(string name)
+    {
+      _config = ParticlePresetFactory.Create(name);
+      _currentPath = null;
+      _history.Clear();
+      ResetCamera();
+      RebuildParticlePreview();
+    }
+
+    private void LoadSlashPreset(string name)
+    {
+      _slashEffectConfig = SlashPresetFactory.Create(name);
+      _slashPath = null;
+      _history.Clear();
+      ResetCamera();
+      RebuildSlashPreview();
+    }
+
     private void BuildMainLayout()
     {
       NV2 region = ImGui.GetContentRegionAvail();
       float leftWidth = 200f;
       float rightWidth = 348f;
 
-      // ---- 左列: 预设 + 发射器 ----
+      // ---- 左列: 编辑对象切换 + 对应内容 ----
       ImGui.BeginChild("left", new NV2(leftWidth, region.Y), true);
-      ImGui.TextUnformatted("预设");
+      BuildModeSwitch(leftWidth);
       ImGui.Separator();
+
+      if (_mode == EditorMode.Particle)
+        BuildParticleLeftColumn(leftWidth);
+      else
+        BuildSlashLeftColumn();
+
+      ImGui.EndChild();
+      ImGui.SameLine();
+
+      // ---- 中列: 播放控制 + 预览视口 ----
+      ImGui.BeginChild("center", new NV2(region.X - leftWidth - rightWidth - 16f, region.Y), true);
+      BuildPlaybackRow();
+      BuildPreviewViewport();
+      ImGui.EndChild();
+      ImGui.SameLine();
+
+      // ---- 右列: 按模式切换页签 ----
+      ImGui.BeginChild("right", new NV2(rightWidth, region.Y), true);
+      if (_mode == EditorMode.Particle)
+        BuildParticleRightTabs();
+      else
+        BuildSlashRightTabs();
+      ImGui.EndChild();
+    }
+
+    /// <summary>左栏顶部的编辑对象切换 (当前模式高亮).</summary>
+    private void BuildModeSwitch(float leftWidth)
+    {
+      ImGui.TextUnformatted("编辑对象");
+      NV4 activeColor = new NV4(0.18f, 0.42f, 0.20f, 1f);
+      float buttonWidth = (leftWidth - 28f) * 0.5f;
+
+      bool particleActive = _mode == EditorMode.Particle;
+      if (particleActive)
+        ImGui.PushStyleColor(ImGuiCol.Button, activeColor);
+      if (ImGui.Button("粒子", new NV2(buttonWidth, 0f)))
+        SetMode(EditorMode.Particle);
+      if (particleActive)
+        ImGui.PopStyleColor();
+
+      ImGui.SameLine();
+      bool slashActive = _mode == EditorMode.Slash;
+      if (slashActive)
+        ImGui.PushStyleColor(ImGuiCol.Button, activeColor);
+      if (ImGui.Button("刀光", new NV2(buttonWidth, 0f)))
+        SetMode(EditorMode.Slash);
+      if (slashActive)
+        ImGui.PopStyleColor();
+    }
+
+    // =====================================================================
+    //  粒子模式
+    // =====================================================================
+    private void BuildParticleLeftColumn(float leftWidth)
+    {
+      ImGui.TextUnformatted("预设");
       foreach (string preset in ParticlePresetFactory.PresetNames)
       {
         if (ImGui.Button(preset, new NV2(leftWidth - 20f, 0f)))
-          LoadPreset(preset);
+          LoadParticlePreset(preset);
       }
 
       ImGui.Spacing();
@@ -297,10 +470,7 @@ namespace Particle.Editor
       for (int i = 0; i < _config.Emitters.Count; i++)
       {
         bool selected = i == _selectedEmitterIndex;
-        string label = _config.Emitters[i].Kind == EmitterKind.SlashArc
-          ? $"{_config.Emitters[i].Name} (刀光)"
-          : _config.Emitters[i].Name;
-        if (ImGui.Selectable($"{label}##{i}", selected))
+        if (ImGui.Selectable($"{_config.Emitters[i].Name}##{i}", selected))
         {
           _selectedEmitterIndex = i;
           _selectedEmitter = _config.Emitters[i];
@@ -314,17 +484,7 @@ namespace Particle.Editor
         _history.Execute(new DelegateCommand("添加发射器",
           () => RestoreConfig(after),
           () => RestoreConfig(before)));
-        RebuildPreview();
-      }
-      if (ImGui.Button("+ 添加刀光发射器"))
-      {
-        ParticleEffectConfig before = _config.Clone();
-        _config.Emitters.Add(Particle.Effects.ParticlePresetFactory.CreateSlashArcEmitter($"刀光 {_config.Emitters.Count + 1}"));
-        ParticleEffectConfig after = _config.Clone();
-        _history.Execute(new DelegateCommand("添加刀光发射器",
-          () => RestoreConfig(after),
-          () => RestoreConfig(before)));
-        RebuildPreview();
+        RebuildParticlePreview();
       }
       ImGui.SameLine();
       ImGui.BeginDisabled(_selectedEmitter is null);
@@ -336,7 +496,7 @@ namespace Particle.Editor
         _history.Execute(new DelegateCommand("删除发射器",
           () => RestoreConfig(after),
           () => RestoreConfig(before)));
-        RebuildPreview();
+        RebuildParticlePreview();
       }
       ImGui.EndDisabled();
 
@@ -345,27 +505,62 @@ namespace Particle.Editor
       ImGui.TextDisabled($"策略: {ParticleManager.Instance.StrategyPath}");
       ImGui.TextDisabled($"实例数: {_previewEffect?.InstanceCount ?? 0}");
       ImGui.TextDisabled($"效果: {ParticleManager.Instance.EffectCount}");
+    }
 
-      ImGui.EndChild();
-      ImGui.SameLine();
+    private void BuildParticleRightTabs()
+    {
+      if (!ImGui.BeginTabBar("rightTabs"))
+        return;
 
-      // ---- 中列: 播放控制 + 预览视口 ----
-      ImGui.BeginChild("center", new NV2(region.X - leftWidth - rightWidth - 16f, region.Y), true);
+      if (ImGui.BeginTabItem("发射参数"))
+      {
+        if (_selectedEmitter is not null && _selectedEmitterIndex >= 0)
+          BuildEmitterPanel(_selectedEmitter);
+        else
+          ImGui.TextDisabled("选择一个发射器以编辑参数.");
+        ImGui.Separator();
+        BuildRenderPanel();
+        ImGui.EndTabItem();
+      }
+      if (ImGui.BeginTabItem("时间轴"))
+      {
+        BuildTimelineContent();
+        ImGui.EndTabItem();
+      }
+      ImGui.EndTabBar();
+    }
 
+    private void BuildPlaybackRow()
+    {
+      bool particleMode = _mode == EditorMode.Particle;
       if (ImGui.Button("▶ 播放"))
-        _previewEffect?.Play();
+      {
+        if (particleMode) _previewEffect?.Play(); else _slashEffect?.Play();
+      }
       ImGui.SameLine();
       if (ImGui.Button("⏸ 暂停"))
-        _previewEffect?.Pause();
+      {
+        if (particleMode) _previewEffect?.Pause(); else _slashEffect?.Pause();
+      }
       ImGui.SameLine();
       if (ImGui.Button("⏹ 停止"))
-        _previewEffect?.Stop();
+      {
+        if (particleMode) _previewEffect?.Stop(); else _slashEffect?.Stop();
+      }
       ImGui.SameLine();
       if (ImGui.Button("⟲ 重置"))
-        _previewEffect?.Reset();
+      {
+        if (particleMode) _previewEffect?.Reset(); else _slashEffect?.Reset();
+      }
       ImGui.SameLine();
       if (ImGui.Button("🎲 种子"))
-        _previewEffect?.Reset(_config.Seed != 0 ? _config.Seed : Environment.TickCount);
+      {
+        int seed = Environment.TickCount;
+        if (particleMode)
+          _previewEffect?.Reset(_config.Seed != 0 ? _config.Seed : seed);
+        else
+          _slashEffect?.Reset(_slashEffectConfig.Seed != 0 ? _slashEffectConfig.Seed : seed);
+      }
 
       ImGui.SameLine();
       bool looping = _loopPreview;
@@ -376,41 +571,6 @@ namespace Particle.Editor
       ImGui.TextDisabled($"相机: 滚轮缩放 | 中键平移 | 右键旋转");
 
       BuildPreviewViewport();
-
-      ImGui.EndChild();
-      ImGui.SameLine();
-
-      // ---- 右列: 一级页签 (发射参数 / 时间轴 / 刀光 Mesh) ----
-      ImGui.BeginChild("right", new NV2(rightWidth, region.Y), true);
-      if (ImGui.BeginTabBar("rightTabs"))
-      {
-        if (ImGui.BeginTabItem("发射参数"))
-        {
-          if (_selectedEmitter is not null && _selectedEmitterIndex >= 0)
-          {
-            BuildEmitterPanel(_selectedEmitter);
-          }
-          else
-          {
-            ImGui.TextDisabled("选择一个发射器以编辑参数.");
-          }
-          ImGui.Separator();
-          BuildRenderPanel();
-          ImGui.EndTabItem();
-        }
-        if (ImGui.BeginTabItem("时间轴"))
-        {
-          BuildTimelineContent();
-          ImGui.EndTabItem();
-        }
-        if (ImGui.BeginTabItem("刀光 Mesh"))
-        {
-          BuildSlashContent();
-          ImGui.EndTabItem();
-        }
-        ImGui.EndTabBar();
-      }
-      ImGui.EndChild();
     }
 
     private void BuildPreviewViewport()
@@ -452,7 +612,7 @@ namespace Particle.Editor
 
     private void RenderPreview()
     {
-      if (_previewRt is null || _previewEffect is null)
+      if (_previewRt is null)
         return;
 
       GraphicsDevice device = _device;
@@ -467,47 +627,29 @@ namespace Particle.Editor
         * XnaMatrix.CreateRotationZ(_cameraRotation)
         * XnaMatrix.CreateScale(_cameraZoom)
         * XnaMatrix.CreateTranslation(width / 2f, height / 2f, 0);
+      XnaMatrix transform = view * projection;
 
-      (Texture2D dataTexture, int count) = _previewEffect.Strategy.ResolveFrame();
-      if (dataTexture is not null && count > 0)
-        ParticleManager.Instance.Renderer.Draw(dataTexture, count, _config.Render, view * projection);
-
-      // —— 刀光发射器的弧形 Mesh 本体 (与粒子同一相机) ——
-      for (int i = 0; i < _previewEffect.SlashArcs.Count; i++)
+      if (_mode == EditorMode.Particle)
       {
-        if (_previewEffect.SlashArcs[i] is not null)
-          Particle.Slash.SlashRenderer.GetOrCreate().DrawOne(_previewEffect.SlashArcs[i], view * projection);
+        if (_previewEffect is null)
+          return;
+        (Texture2D dataTexture, int count) = _previewEffect.Strategy.ResolveFrame();
+        if (dataTexture is not null && count > 0)
+          ParticleManager.Instance.Renderer.Draw(dataTexture, count, _config.Render, transform);
+      }
+      else if (_slashEffect is not null)
+      {
+        _slashEffect.Draw(transform);   // 刃花粒子 + 刀光 Mesh.
       }
     }
 
     // =====================================================================
-    //  参数面板
+    //  粒子模式: 参数面板
     // =====================================================================
     private void BuildEmitterPanel(EmitterConfig emitter)
     {
       ImGui.TextUnformatted($"发射器: {emitter.Name}");
       ImGui.Separator();
-
-      // —— 发射器类型 (切换属结构变更, 走撤销命令并重建预览) ——
-      int kind = (int)emitter.Kind;
-      if (ImGui.Combo("发射器类型", ref kind, "粒子公告牌\0刀光 (弧形 Mesh)\0"))
-      {
-        ParticleEffectConfig before = _config.Clone();
-        ConvertEmitterKind(emitter, (EmitterKind)kind);
-        ParticleEffectConfig after = _config.Clone();
-        _history.Execute(new DelegateCommand("切换发射器类型",
-          () => RestoreConfig(after),
-          () => RestoreConfig(before)));
-        return;
-      }
-
-      if (emitter.Kind == EmitterKind.SlashArc)
-      {
-        ImGui.TextDisabled("刀光发射器: 无粒子模拟.");
-        ImGui.TextDisabled("Mesh 参数在右栏「刀光 Mesh」页签编辑.");
-        TrackedFloat("开始延迟 (秒)", () => emitter.StartTime, v => emitter.StartTime = v, 0f, 10f, NotifyAll);
-        return;
-      }
 
       if (ImGui.CollapsingHeader("发射", ImGuiTreeNodeFlags.DefaultOpen))
       {
@@ -602,17 +744,7 @@ namespace Particle.Editor
       TrackedFloat("拉伸系数 (秒)", () => render.StretchFactor, v => render.StretchFactor = v, 0f, 0.3f, NotifyAll);
       TrackedFloat("拉伸上限 (像素)", () => render.MaxStretchLength, v => render.MaxStretchLength = v, 0f, 600f, NotifyAll);
 
-      TrackedString("纹理 (内置: white/glow/blade/spark/smoke)", () => render.Texture, v => render.Texture = v, NotifyAll);
-      ImGui.SameLine();
-      if (ImGui.SmallButton("浏览... (粒子层)"))
-      {
-        string file = PickTexture();
-        if (file is not null)
-        {
-          render.Texture = "file:" + file;   // 渲染器按名解析加载 (预乘 alpha, 结果缓存).
-          NotifyAll();
-        }
-      }
+      TextureField("纹理 (粒子层)", () => render.Texture, v => render.Texture = v, "##texParticle");
 
       if (ImGui.TreeNodeEx("效果", ImGuiTreeNodeFlags.DefaultOpen))
       {
@@ -621,100 +753,6 @@ namespace Particle.Editor
         TrackedFloat("时长 (秒)", () => _config.Duration, v => _config.Duration = MathF.Max(0.05f, v), 0.05f, 10f, NotifyAll);
         ImGui.TreePop();
       }
-    }
-
-    // =====================================================================
-    //  刀光 Mesh 面板 (编辑选中的刀光发射器, 与粒子共用播放控制)
-    // =====================================================================
-    private void BuildSlashContent()
-    {
-      EmitterConfig emitter = _selectedEmitter;
-      if (emitter is null || emitter.Kind != EmitterKind.SlashArc || emitter.Slash is null)
-      {
-        ImGui.TextDisabled("选择一个刀光发射器 (发射器类型 = 刀光) 以编辑 Mesh.");
-        return;
-      }
-
-      Particle.Slash.SlashArcConfig cfg = emitter.Slash;
-      Particle.Slash.SlashArc arc = SelectedSlashArc;
-      ImGui.TextDisabled(arc is not null && !arc.IsFinished ? "挥扫中" : "待机 (顶栏播放控制统一驱动)");
-
-      // —— 收起方式: 渐隐 / 横扫 (尾部跟随) ——
-      int retire = (int)cfg.Retire;
-      if (ImGui.Combo("收起方式", ref retire, "扫完后整体渐隐\0横扫 (尾部跟随消亡)\0"))
-      {
-        cfg.Retire = (Particle.Slash.SlashRetireMode)retire;
-        NotifyAll();
-      }
-
-      TrackedFloat("弧线半径 (像素)", () => cfg.Radius, v => cfg.Radius = v, 10f, 600f, NotifyAll);
-      TrackedFloat("起始角 (度)", () => cfg.ArcFrom, v => cfg.ArcFrom = v, -360f, 360f, NotifyAll);
-      TrackedFloat("结束角 (度)", () => cfg.ArcTo, v => cfg.ArcTo = v, -360f, 360f, NotifyAll);
-      TrackedFloat("挥扫时长 (秒)", () => cfg.SweepTime, v => cfg.SweepTime = MathF.Max(0.02f, v), 0.02f, 2f, NotifyAll);
-      TrackedFloat("渐隐时长 (秒)", () => cfg.FadeTime, v => cfg.FadeTime = MathF.Max(0.02f, v), 0.02f, 3f, NotifyAll);
-
-      if (cfg.Retire == Particle.Slash.SlashRetireMode.Sweep)
-      {
-        ImGui.Separator();
-        ImGui.TextUnformatted("横扫参数 (尾端向刃头收去)");
-        TrackedFloat("收拢速度 (度/秒)", () => cfg.CatchupSpeed, v => cfg.CatchupSpeed = Math.Clamp(v, 0f, 20000f), 0f, 20000f, NotifyAll);
-      }
-      TrackedFloat("最大全宽 (像素)", () => cfg.Width, v => cfg.Width = MathF.Max(1f, v), 1f, 200f, NotifyAll);
-      TrackedInt("采样段数", () => cfg.Segments, v => cfg.Segments = Math.Clamp(v, 4, 512), 4, 512, NotifyAll);
-      TrackedString("纹理", () => cfg.Texture, v => cfg.Texture = v, NotifyAll);
-      ImGui.SameLine();
-      if (ImGui.SmallButton("浏览... (刀光本体)##slash"))
-      {
-        string file = PickTexture();
-        if (file is not null)
-        {
-          cfg.Texture = "file:" + file;   // 渲染器按名解析加载 (预乘 alpha, 结果缓存).
-          NotifyAll();
-        }
-      }
-
-      bool reversed = cfg.Reversed;
-      if (ImGui.Checkbox("反向挥扫", ref reversed))
-      {
-        cfg.Reversed = reversed;
-        NotifyAll();
-      }
-
-      NV4 head = new NV4(cfg.HeadColor.X, cfg.HeadColor.Y, cfg.HeadColor.Z, cfg.HeadColor.W);
-      if (ImGui.ColorEdit4("头部颜色", ref head))
-        cfg.HeadColor = new XnaVector4(head.X, head.Y, head.Z, head.W);
-      NV4 tail = new NV4(cfg.TailColor.X, cfg.TailColor.Y, cfg.TailColor.Z, cfg.TailColor.W);
-      if (ImGui.ColorEdit4("尾部颜色", ref tail))
-        cfg.TailColor = new XnaVector4(tail.X, tail.Y, tail.Z, tail.W);
-
-      ImGui.TextDisabled("顶点直接摆在弧线上 (拉刀光 Mesh), 等宽条带, 头亮尾隐.");
-
-      // —— 整体坐标系: X/Y 缩放决定长宽, 整体旋转 ——
-      ImGui.Separator();
-      ImGui.TextUnformatted("整体坐标系 (2D)");
-      TrackedFloat("横向缩放 (长)", () => cfg.ScaleX, v => cfg.ScaleX = v, 0.1f, 4f, NotifyAll);
-      TrackedFloat("纵向缩放 (宽)", () => cfg.ScaleY, v => cfg.ScaleY = v, 0.1f, 4f, NotifyAll);
-      TrackedFloat("整体旋转 (度)", () => cfg.RotationDeg, v => cfg.RotationDeg = v, -360f, 360f, NotifyAll);
-    }
-
-    /// <summary>选中发射器对应的运行时刀光弧 (非刀光发射器为 null).</summary>
-    private Particle.Slash.SlashArc SelectedSlashArc =>
-      (_previewEffect is not null && _selectedEmitterIndex >= 0 && _selectedEmitterIndex < _previewEffect.SlashArcs.Count)
-        ? _previewEffect.SlashArcs[_selectedEmitterIndex]
-        : null;
-
-    /// <summary>切换发射器类型 (粒子 ↔ 刀光 Mesh): 结构变更, 需重建预览.</summary>
-    private void ConvertEmitterKind(EmitterConfig emitter, EmitterKind kind)
-    {
-      if (emitter.Kind == kind)
-        return;
-      emitter.Kind = kind;
-      if (kind == EmitterKind.SlashArc)
-      {
-        emitter.Slash ??= Particle.Effects.ParticlePresetFactory.CreateBladeSlashArc();
-        emitter.Capacity = 1;   // 刀光发射器不占粒子槽位.
-      }
-      RebuildPreview();
     }
 
     /// <summary>统一设置本发射器全部曲线的插值模式.</summary>
@@ -730,8 +768,163 @@ namespace Particle.Editor
       emitter.SpeedCurve.Interpolation = mode;
     }
 
+    private void NotifyAll()
+    {
+      _selectedEmitter?.NotifyChanged();
+      _config.NotifyChanged();
+    }
+
+    /// <summary>用快照恢复配置 (撤销/重做发射器增删).</summary>
+    private void RestoreConfig(ParticleEffectConfig snapshot)
+    {
+      _config.Name = snapshot.Name;
+      _config.Duration = snapshot.Duration;
+      _config.Looping = snapshot.Looping;
+      _config.Render = snapshot.Render.Clone();
+      _config.Emitters = snapshot.Emitters.Select(e => e.Clone()).ToList();
+      RebuildParticlePreview();
+    }
+
     // =====================================================================
-    //  时间轴窗口
+    //  刀光模式
+    // =====================================================================
+    private void BuildSlashLeftColumn()
+    {
+      ImGui.TextUnformatted("预设");
+      foreach (string preset in SlashPresetFactory.PresetNames)
+      {
+        if (ImGui.Button(preset, new NV2(180f - 20f, 0f)))
+          LoadSlashPreset(preset);
+      }
+
+      ImGui.Spacing();
+      ImGui.TextUnformatted("状态");
+      ImGui.Separator();
+      bool sweeping = _slashEffect is not null && !_slashEffect.Arc.IsFinished;
+      ImGui.TextDisabled(sweeping ? "挥扫中" : "待机");
+      ImGui.TextDisabled($"刃花实例: {_slashEffect?.SparkCount ?? 0}");
+      ImGui.TextDisabled($"循环挥砍: {(_slashEffectConfig.Looping ? "开" : "关")}");
+
+      ImGui.Spacing();
+      ImGui.Separator();
+      TrackedBool("循环挥砍 (游戏)", () => _slashEffectConfig.Looping, v => _slashEffectConfig.Looping = v, NotifySlash);
+      TrackedFloat("挥砍间隔 (秒)", () => _slashEffectConfig.RestTime, v => _slashEffectConfig.RestTime = MathF.Max(0f, v), 0f, 5f, NotifySlash);
+      TrackedInt("随机种子 (0=随机)", () => _slashEffectConfig.Seed, v => _slashEffectConfig.Seed = v, 0, 999999, NotifySlash);
+    }
+
+    private void BuildSlashRightTabs()
+    {
+      if (!ImGui.BeginTabBar("slashTabs"))
+        return;
+
+      if (ImGui.BeginTabItem("刀光本体"))
+      {
+        BuildSlashArcPanel();
+        ImGui.EndTabItem();
+      }
+      if (ImGui.BeginTabItem("刃花"))
+      {
+        BuildSparkPanel();
+        ImGui.EndTabItem();
+      }
+      ImGui.EndTabBar();
+    }
+
+    /// <summary>刀光本体 (拉刀光 Mesh) 参数 —— 纹理即 Mesh 本体贴图.</summary>
+    private void BuildSlashArcPanel()
+    {
+      SlashArcConfig cfg = _slashEffectConfig.Arc;
+
+      // —— 收起方式: 渐隐 / 横扫 (尾部跟随) ——
+      int retire = (int)cfg.Retire;
+      if (ImGui.Combo("收起方式", ref retire, "扫完后整体渐隐\0横扫 (尾部跟随消亡)\0"))
+      {
+        cfg.Retire = (SlashRetireMode)retire;
+        NotifySlash();
+      }
+
+      TrackedFloat("弧线半径 (像素)", () => cfg.Radius, v => cfg.Radius = v, 10f, 600f, NotifySlash);
+      TrackedFloat("起始角 (度)", () => cfg.ArcFrom, v => cfg.ArcFrom = v, -360f, 360f, NotifySlash);
+      TrackedFloat("结束角 (度)", () => cfg.ArcTo, v => cfg.ArcTo = v, -360f, 360f, NotifySlash);
+      TrackedFloat("挥扫时长 (秒)", () => cfg.SweepTime, v => cfg.SweepTime = MathF.Max(0.02f, v), 0.02f, 2f, NotifySlash);
+      TrackedFloat("渐隐时长 (秒)", () => cfg.FadeTime, v => cfg.FadeTime = MathF.Max(0.02f, v), 0.02f, 3f, NotifySlash);
+
+      if (cfg.Retire == SlashRetireMode.Sweep)
+      {
+        ImGui.Separator();
+        ImGui.TextUnformatted("横扫参数 (尾端向刃头收去)");
+        TrackedFloat("收拢速度 (度/秒)", () => cfg.CatchupSpeed, v => cfg.CatchupSpeed = Math.Clamp(v, 0f, 20000f), 0f, 20000f, NotifySlash);
+      }
+      TrackedFloat("最大全宽 (像素)", () => cfg.Width, v => cfg.Width = MathF.Max(1f, v), 1f, 200f, NotifySlash);
+      TrackedInt("采样段数", () => cfg.Segments, v => cfg.Segments = Math.Clamp(v, 4, 512), 4, 512, NotifySlash);
+      TextureField("刀光纹理 (Mesh)", () => cfg.Texture, v => cfg.Texture = v, "##texArc");
+
+      bool reversed = cfg.Reversed;
+      if (ImGui.Checkbox("反向挥扫", ref reversed))
+      {
+        cfg.Reversed = reversed;
+        NotifySlash();
+      }
+
+      NV4 head = new NV4(cfg.HeadColor.X, cfg.HeadColor.Y, cfg.HeadColor.Z, cfg.HeadColor.W);
+      if (ImGui.ColorEdit4("头部颜色", ref head))
+        cfg.HeadColor = new XnaVector4(head.X, head.Y, head.Z, head.W);
+      NV4 tail = new NV4(cfg.TailColor.X, cfg.TailColor.Y, cfg.TailColor.Z, cfg.TailColor.W);
+      if (ImGui.ColorEdit4("尾部颜色", ref tail))
+        cfg.TailColor = new XnaVector4(tail.X, tail.Y, tail.Z, tail.W);
+
+      ImGui.Separator();
+      ImGui.TextUnformatted("整体坐标系 (2D)");
+      TrackedFloat("横向缩放 (长)", () => cfg.ScaleX, v => cfg.ScaleX = v, 0.1f, 4f, NotifySlash);
+      TrackedFloat("纵向缩放 (宽)", () => cfg.ScaleY, v => cfg.ScaleY = v, 0.1f, 4f, NotifySlash);
+      TrackedFloat("整体旋转 (度)", () => cfg.RotationDeg, v => cfg.RotationDeg = v, -360f, 360f, NotifySlash);
+      ImGui.TextDisabled("刃花自动跟随本坐标系的前缘角度.");
+    }
+
+    /// <summary>刃花参数 —— 与刀光前缘角度绑定, 沿弧当前位置/切向发射.</summary>
+    private void BuildSparkPanel()
+    {
+      SlashSparkConfig s = _slashEffectConfig.Sparks;
+
+      TrackedBool("启用刃花", () => s.Enabled, v => s.Enabled = v, NotifySlash);
+      if (!s.Enabled)
+      {
+        ImGui.TextDisabled("刃花已关闭.");
+        return;
+      }
+
+      TrackedFloat("发射率 (个/秒)", () => s.Rate, v => s.Rate = v, 0f, 2000f, NotifySlash);
+      TrackedFloat("初速下限 (像素/秒)", () => s.SpeedMin, v => s.SpeedMin = v, 0f, 4000f, NotifySlash);
+      TrackedFloat("初速上限 (像素/秒)", () => s.SpeedMax, v => s.SpeedMax = v, 0f, 4000f, NotifySlash);
+      TrackedFloat("散布半角 (度)", () => s.SpreadDeg, v => s.SpreadDeg = v, 0f, 90f, NotifySlash);
+      TrackedFloat("生命下限 (秒)", () => s.LifeMin, v => s.LifeMin = MathF.Max(0.01f, v), 0.01f, 3f, NotifySlash);
+      TrackedFloat("生命上限 (秒)", () => s.LifeMax, v => s.LifeMax = MathF.Max(0.01f, v), 0.01f, 3f, NotifySlash);
+      TrackedFloat("尺寸下限 (像素)", () => s.SizeMin, v => s.SizeMin = MathF.Max(0.1f, v), 0.1f, 32f, NotifySlash);
+      TrackedFloat("尺寸上限 (像素)", () => s.SizeMax, v => s.SizeMax = MathF.Max(0.1f, v), 0.1f, 32f, NotifySlash);
+      TrackedFloat("长宽比", () => s.Aspect, v => s.Aspect = MathF.Max(0.05f, v), 0.05f, 8f, NotifySlash);
+
+      TrackedFloat("重力 X (像素/秒²)", () => s.Gravity.X, v => s.Gravity = new XnaVector2(v, s.Gravity.Y), -2000f, 2000f, NotifySlash);
+      TrackedFloat("重力 Y (像素/秒²)", () => s.Gravity.Y, v => s.Gravity = new XnaVector2(s.Gravity.X, v), -2000f, 2000f, NotifySlash);
+      TrackedFloat("线性阻尼 (1/秒)", () => s.Drag, v => s.Drag = v, 0f, 20f, NotifySlash);
+
+      NV4 start = new NV4(s.StartColor.X, s.StartColor.Y, s.StartColor.Z, s.StartColor.W);
+      if (ImGui.ColorEdit4("出生颜色", ref start))
+        s.StartColor = new XnaVector4(start.X, start.Y, start.Z, start.W);
+      NV4 end = new NV4(s.EndColor.X, s.EndColor.Y, s.EndColor.Z, s.EndColor.W);
+      if (ImGui.ColorEdit4("消亡颜色", ref end))
+        s.EndColor = new XnaVector4(end.X, end.Y, end.Z, end.W);
+
+      TrackedBool("速度拉伸", () => s.Stretched, v => s.Stretched = v, NotifySlash);
+      TrackedInt("槽位上限", () => s.Capacity, v => s.Capacity = v, 8, 4096, NotifySlash);
+      TextureField("刃花纹理 (粒子)", () => s.Texture, v => s.Texture = v, "##texSpark");
+
+      ImGui.TextDisabled("刃花沿刀光当前前缘角度发射 (角度绑定).");
+    }
+
+    private void NotifySlash() => _slashEffectConfig?.NotifyChanged();
+
+    // =====================================================================
+    //  时间轴窗口 (粒子模式)
     // =====================================================================
     private void BuildTimelineContent()
     {
@@ -743,7 +936,7 @@ namespace Particle.Editor
 
       // —— 插值模式: 统一作用于本发射器的全部曲线 (CPU/GPU 求值同源) ——
       int interp = (int)_selectedEmitter.OpacityOverLife.Interpolation;
-      if (ImGui.Combo("曲线插值", ref interp, "线性折线 平滑 (SmoothStep) 平滑样条 (Catmull-Rom) "))
+      if (ImGui.Combo("曲线插值", ref interp, "线性折线  平滑 (SmoothStep)  平滑样条 (Catmull-Rom) "))
       {
         SetCurveInterpolation((CurveInterpolation)interp);
         NotifyAll();
@@ -805,21 +998,37 @@ namespace Particle.Editor
     // =====================================================================
     //  变更通知与撤销辅助
     // =====================================================================
-    private void NotifyAll()
+
+    /// <summary>纹理名输入 + 浏览按钮 (同一行, 输入框宽度自适应避免按钮被裁剪).</summary>
+    private void TextureField(string label, Func<string> get, Action<string> set, string browseId)
     {
-      _selectedEmitter?.NotifyChanged();
-      _config.NotifyChanged();
+      const string browseLabel = "浏览";
+      ImGuiStylePtr style = ImGui.GetStyle();
+      float labelWidth = ImGui.CalcTextSize(label).X + style.FramePadding.X;
+      float buttonWidth = ImGui.CalcTextSize(browseLabel).X + style.FramePadding.X * 2f;
+      float inputWidth = MathF.Max(60f, ImGui.GetContentRegionAvail().X - labelWidth - buttonWidth - style.ItemSpacing.X);
+
+      ImGui.SetNextItemWidth(inputWidth);
+      TrackedString(label, get, set, CurrentNotify);
+      ImGui.SameLine();
+      if (ImGui.SmallButton(browseLabel + browseId))
+      {
+        string file = PickTexture();
+        if (file is not null)
+        {
+          set("file:" + file);   // 渲染器按名解析加载 (预乘 alpha, 结果缓存).
+          CurrentNotify();
+        }
+      }
     }
 
-    /// <summary>用快照恢复配置 (撤销/重做发射器增删).</summary>
-    private void RestoreConfig(ParticleEffectConfig snapshot)
+    /// <summary>按当前编辑对象路由变更通知 (TrackedX 与纹理浏览共用).</summary>
+    private void CurrentNotify()
     {
-      _config.Name = snapshot.Name;
-      _config.Duration = snapshot.Duration;
-      _config.Looping = snapshot.Looping;
-      _config.Render = snapshot.Render.Clone();
-      _config.Emitters = snapshot.Emitters.Select(e => e.Clone()).ToList();
-      RebuildPreview();
+      if (_mode == EditorMode.Particle)
+        NotifyAll();
+      else
+        NotifySlash();
     }
 
     private void TrackedFloat(string label, Func<float> get, Action<float> set, float min, float max, Action onChanged)
@@ -861,7 +1070,7 @@ namespace Particle.Editor
     private void TrackedString(string label, Func<string> get, Action<string> set, Action onChanged)
     {
       string value = get() ?? string.Empty;
-      if (ImGui.InputText(label, ref value, 128))
+      if (ImGui.InputText(label, ref value, 256))
       {
         string before = get();
         set(value);
@@ -916,41 +1125,53 @@ namespace Particle.Editor
     }
 
     // =====================================================================
-    //  文件对话框 (WinForms)
+    //  文件对话框 (WinForms; 打开期间挂起编辑器以防 ImGui 帧重入)
     // =====================================================================
     private string PickTexture()
     {
       using System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog
       {
         Filter = "图片 (*.png;*.jpg;*.bmp)|*.png;*.jpg;*.bmp|全部文件 (*.*)|*.*",
-        Title = "选择刀光纹理"
+        Title = "选择纹理"
       };
-      return dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.FileName : null;
+      return RunFileDialog(dialog);
     }
 
     private string PickFile(bool open)
     {
-      using System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog
-      {
-        Filter = "粒子配置 (*.json)|*.json|全部文件 (*.*)|*.*",
-        Title = open ? "打开粒子配置" : "保存粒子配置"
-      };
       if (open)
       {
-        if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-          return dialog.FileName;
+        using System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog
+        {
+          Filter = "配置 (*.json)|*.json|全部文件 (*.*)|*.*",
+          Title = "打开配置"
+        };
+        return RunFileDialog(dialog);
       }
       else
       {
-        using System.Windows.Forms.SaveFileDialog saveDialog = new System.Windows.Forms.SaveFileDialog
+        using System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog
         {
-          Filter = "粒子配置 (*.json)|*.json",
-          Title = "保存粒子配置"
+          Filter = "配置 (*.json)|*.json",
+          Title = "保存配置"
         };
-        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-          return saveDialog.FileName;
+        return RunFileDialog(dialog);
       }
-      return null;
+    }
+
+    /// <summary>以模态挂起标志运行文件对话框: 对话框的嵌套消息循环会重入游戏主循环,
+    /// 标志使 DoUpdate/DoRawRender 在期间整体跳过, 杜绝 ImGui 帧重入与点击穿透.</summary>
+    private string RunFileDialog(System.Windows.Forms.FileDialog dialog)
+    {
+      _modalDialogOpen = true;
+      try
+      {
+        return dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.FileName : null;
+      }
+      finally
+      {
+        _modalDialogOpen = false;
+      }
     }
   }
 }

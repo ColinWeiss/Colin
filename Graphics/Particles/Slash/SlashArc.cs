@@ -24,6 +24,13 @@ namespace Particle.Slash
     /// <summary>挥扫进度 (0~1, 诊断).</summary>
     public float Progress { get; private set; }
 
+    /// <summary>当前前缘 (刃头) 角度 (度) —— 刃花沿此角度绑定发射.</summary>
+    public float HeadAngleDeg => _headDeg;
+    /// <summary>当前尾端角度 (度).</summary>
+    public float TailAngleDeg => _tailDeg;
+    /// <summary>前缘是否仍在扫进 (刃花发射门控).</summary>
+    public bool IsSweeping => !IsFinished && Progress < 1f;
+
     private float _elapsed;
     private float _headDeg;
     private float _tailDeg;
@@ -153,24 +160,7 @@ namespace Particle.Slash
     /// <summary>摆放单个弧点 (坐标系变换 + 等宽 + 头亮尾隐顶点色 × 存活系数).</summary>
     private void PlacePoint(int i, float angleDeg, SlashArcConfig config, float t, float fade)
     {
-      float angleRad = MathHelper.ToRadians(angleDeg);
-      float radius = config.Radius * Scale;
-
-      // 整体坐标系: X/Y 独立缩放 (弧线椭圆化, 决定"长宽").
-      Vector2 arcPoint = new Vector2(
-        MathF.Cos(angleRad) * radius * config.ScaleX,
-        MathF.Sin(angleRad) * radius * config.ScaleY);
-
-      // 整体旋转.
-      float rotation = Rotation + MathHelper.ToRadians(config.RotationDeg);
-      if (rotation != 0f)
-      {
-        float cos = MathF.Cos(rotation), sin = MathF.Sin(rotation);
-        arcPoint = new Vector2(
-          arcPoint.X * cos - arcPoint.Y * sin,
-          arcPoint.X * sin + arcPoint.Y * cos);
-      }
-      _points[i] = arcPoint + Position;
+      _points[i] = PointAt(angleDeg);
 
       // 等宽弯曲长方形: 宽度沿弧长恒定, 渐隐完全由顶点色承担.
       _halfWidths[i] = config.Width * 0.5f * Scale;
@@ -184,6 +174,52 @@ namespace Particle.Slash
       _colors[i] = color;
 
       _us[i] = 1f - t;   // u: 1 = 头 (纹理亮端), 0 = 尾.
+    }
+
+    /// <summary>
+    /// 计算给定角度处的弧上世界坐标 (含整体坐标系: X/Y 椭圆缩放 + 整体旋转 + 位置).
+    /// 刃花沿前缘绑定发射时用同一变换, 保证与 Mesh 完全贴合.
+    /// </summary>
+    public Vector2 PointAt(float angleDeg)
+    {
+      SlashArcConfig config = Config;
+      float angleRad = MathHelper.ToRadians(angleDeg);
+      float radius = config.Radius * Scale;
+
+      // 整体坐标系: X/Y 独立缩放 (弧线椭圆化, 决定"长宽").
+      Vector2 arcPoint = new Vector2(
+        MathF.Cos(angleRad) * radius * config.ScaleX,
+        MathF.Sin(angleRad) * radius * config.ScaleY);
+
+      return RotateByConfig(arcPoint) + Position;
+    }
+
+    /// <summary>
+    /// 给定角度处沿弧的切线方向 (单位向量, 指向角度增大的一侧, 即扫进方向).
+    /// 椭圆参数曲线的导数方向, 与 PointAt 使用同一整体坐标系.
+    /// </summary>
+    public Vector2 TangentAt(float angleDeg)
+    {
+      SlashArcConfig config = Config;
+      float angleRad = MathHelper.ToRadians(angleDeg);
+      Vector2 tangent = new Vector2(
+        -MathF.Sin(angleRad) * config.ScaleX,
+        MathF.Cos(angleRad) * config.ScaleY);
+      tangent = RotateByConfig(tangent);
+      float length = tangent.Length();
+      return length > 1e-5f ? tangent / length : Vector2.UnitX;
+    }
+
+    /// <summary>叠加整体旋转 (实例旋转 + 配置旋转).</summary>
+    private Vector2 RotateByConfig(Vector2 value)
+    {
+      float rotation = Rotation + MathHelper.ToRadians(Config.RotationDeg);
+      if (rotation == 0f)
+        return value;
+      float cos = MathF.Cos(rotation), sin = MathF.Sin(rotation);
+      return new Vector2(
+        value.X * cos - value.Y * sin,
+        value.X * sin + value.Y * cos);
     }
 
     private void EnsureCapacity(int count)

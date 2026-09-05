@@ -86,6 +86,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashTrail.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRenderEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashEffectConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashPresetFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashCompiledShaders.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashShaderSource.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\CsReflection.cs" />

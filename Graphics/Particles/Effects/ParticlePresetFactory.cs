@@ -7,44 +7,16 @@ namespace Particle.Effects
 {
   /// <summary>
   /// 粒子预设工厂 (工厂模式): 按名称创建效果配置的工厂注册表.
-  /// <br>内置预设: 刀光 / 爆炸 / 火焰 / 烟雾; 可通过 <see cref="Register"/> 扩展自定义预设.</br>
+  /// <br>内置预设: 爆炸 / 火焰 / 烟雾; 可通过 <see cref="Register"/> 扩展自定义预设.
+  /// 刀光为独立大功能 (Particle.Slash), 预设见 <see cref="Particle.Slash.SlashPresetFactory"/>.</br>
   /// </summary>
   public static class ParticlePresetFactory
   {
     private static readonly Dictionary<string, Func<ParticleEffectConfig>> Factories = new Dictionary<string, Func<ParticleEffectConfig>>
     {
-      ["刀光"] = CreateBladeSlash,
       ["爆炸"] = CreateExplosion,
       ["火焰"] = CreateFire,
       ["烟雾"] = CreateSmoke
-    };
-
-    /// <summary>刀光 Mesh (弧形条带) 的默认配置 —— 刀光本体的拉刀光网格参数.</summary>
-    public static SlashArcConfig CreateBladeSlashArc() => new SlashArcConfig
-    {
-      Radius = 120f,
-      ArcFrom = -125f,
-      ArcTo = 115f,
-      SweepTime = 0.20f,
-      FadeTime = 0.30f,
-      Width = 30f,
-      WidthPower = 1.4f,
-      Segments = 56,
-      HeadColor = new Vector4(1.6f, 1.6f, 1.6f, 1f),
-      TailColor = new Vector4(0.25f, 0.55f, 1.2f, 0.06f),
-      Retire = SlashRetireMode.Sweep,
-      CatchupSpeed = 500f,
-      Texture = "blade"
-    };
-
-    /// <summary>刀光 Mesh 发射器 (统一进发射器体系: Kind == SlashArc, 粒子层参数不参与模拟).</summary>
-    public static EmitterConfig CreateSlashArcEmitter(string name = "刀光本体") => new EmitterConfig
-    {
-      Name = name,
-      Kind = EmitterKind.SlashArc,
-      Slash = CreateBladeSlashArc(),
-      Capacity = 1,                // 刀光发射器不占用粒子槽位 (仅保留 1 列占位).
-      StartTime = 0f
     };
 
     /// <summary>游戏内剑光轨迹 (SlashTrail) 的默认配置.</summary>
@@ -73,123 +45,6 @@ namespace Particle.Effects
       if (Factories.TryGetValue(presetName, out Func<ParticleEffectConfig> factory))
         return factory();
       throw new KeyNotFoundException($"未注册的粒子预设: {presetName}");
-    }
-
-    // =====================================================================
-    //  刀光 (重点预设)
-    //  形状: 扇形弧线切向发射; 渲染: 速度拉伸公告牌 + 加法混合 + 梭形渐变纹理;
-    //  参数: 生命极短 (0.05~0.12 秒), 初速高 (900~1300 像素/秒), 颜色高亮, 快速衰减.
-    //  编辑器内单独播放时呈弧形扇面; 游戏内由 BladeTrailAPI 沿剑刃轨迹驱动.
-    // =====================================================================
-    private static ParticleEffectConfig CreateBladeSlash()
-    {
-      // —— 辉光层: 沿横扫前缘的柔光大粒子, 给光刃提供体积感 ——
-      EmitterConfig glow = new EmitterConfig
-      {
-        Name = "刃辉",
-        Capacity = 128,
-        EmissionRate = 260f,
-        RateCurve = new FloatCurve
-        {
-          Keys = { new CurveKey(0f, 0.8f), new CurveKey(0.3f, 1f), new CurveKey(0.85f, 0.6f), new CurveKey(1f, 0.2f) }
-        },
-        Shape = new EmissionShapeConfig
-        {
-          Shape = EmissionShapeType.Arc,
-          Radius = 118f,
-          ArcStart = -122f,
-          ArcAngle = 16f,             // 前缘角度窗口 (跟随横扫).
-          Velocity = VelocityMode.Tangent,
-          SweepSpeed = 1200f,         // 与 Mesh 横扫同步: (ArcTo-ArcFrom)/SweepTime ≈ 1075°/s.
-          Jitter = 5f
-        },
-        SpeedMin = 40f,
-        SpeedMax = 110f,
-        LifeMin = 0.14f,
-        LifeMax = 0.26f,
-        SizeMin = 16f,
-        SizeMax = 26f,
-        SizeOverLife = new FloatCurve
-        {
-          Keys = { new CurveKey(0f, 0.7f), new CurveKey(0.35f, 1f), new CurveKey(1f, 1.5f) }
-        },
-        ColorOverLife = new ColorCurve
-        {
-          Keys =
-          {
-            new ColorKey(0f,   new Vector4(1.00f, 1.00f, 1.00f, 1f)),
-            new ColorKey(0.4f, new Vector4(0.55f, 0.85f, 1.35f, 1f)),
-            new ColorKey(1f,   new Vector4(0.20f, 0.35f, 0.90f, 1f))
-          }
-        },
-        OpacityOverLife = new FloatCurve
-        {
-          Keys = { new CurveKey(0f, 0.85f), new CurveKey(0.5f, 0.55f), new CurveKey(1f, 0f) }
-        },
-        TintMin = 0.85f,
-        TintMax = 1.1f,
-        Drag = 2.5f,
-        StretchedBillboard = false,
-        Seed = 0
-      };
-
-      // —— 火花层: 沿弧散落的细小拖尾, 增强速度感 ——
-      EmitterConfig sparks = new EmitterConfig
-      {
-        Name = "刃花",
-        Capacity = 128,
-        EmissionRate = 220f,
-        Shape = new EmissionShapeConfig
-        {
-          Shape = EmissionShapeType.Arc,
-          Radius = 120f,
-          ArcStart = -125f,
-          ArcAngle = 14f,
-          Velocity = VelocityMode.Tangent,
-          SweepSpeed = 1200f,
-          Jitter = 10f
-        },
-        SpeedMin = 450f,
-        SpeedMax = 950f,
-        LifeMin = 0.06f,
-        LifeMax = 0.16f,
-        SizeMin = 1.6f,
-        SizeMax = 3f,
-        Aspect = 1.6f,
-        ColorOverLife = new ColorCurve
-        {
-          Keys =
-          {
-            new ColorKey(0f, new Vector4(1.2f, 1.2f, 1.0f, 1f)),
-            new ColorKey(1f, new Vector4(0.4f, 0.65f, 1.2f, 1f))
-          }
-        },
-        OpacityOverLife = new FloatCurve
-        {
-          Keys = { new CurveKey(0f, 1f), new CurveKey(1f, 0f) }
-        },
-        TintMin = 0.8f,
-        TintMax = 1.2f,
-        Gravity = new Vector2(0f, 140f),
-        Drag = 1.6f,
-        StretchedBillboard = true,
-        Seed = 0
-      };
-
-      return new ParticleEffectConfig
-      {
-        Name = "刀光",
-        Duration = 0.26f,
-        Looping = false,
-        Emitters = { glow, sparks, CreateSlashArcEmitter() },
-        Render = new RenderConfig
-        {
-          Blend = ParticleBlendMode.Additive,
-          Texture = "glow",
-          StretchFactor = 0.05f,
-          MaxStretchLength = 200f
-        }
-      };
     }
 
     // =====================================================================
