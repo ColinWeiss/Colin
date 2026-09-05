@@ -9,10 +9,10 @@ namespace Particle.Editor
 {
   /// <summary>
   /// 时间轴与曲线编辑控件 (自绘 ImDrawList 实现, 依赖 ImGuiNET):
-  /// <br>- <see cref="RateTimeline"/>: 发射率随效果时间的关键帧时间轴;</br>
+  /// <br>- <see cref="RateTimeline"/>: 发射率随效果时间的控制点时间轴;</br>
   /// <br>- <see cref="FloatCurveEditor"/>: 标量曲线 (透明度/尺寸/速度) 编辑器;</br>
   /// <br>- <see cref="ColorCurveEditor"/>: 颜色曲线 (RGB 三通道) 编辑器;</br>
-  /// <br>交互: 双击空白添加关键帧, 拖拽移动, 右键删除, 滚轮无缩放 (轻量实现).</br>
+  /// <br>交互: 按住控制点拖动 / 双击空白添加控制点 (添加后可直接拖) / 右键删除.</br>
   /// </summary>
   public static class ParticleTimeline
   {
@@ -22,15 +22,15 @@ namespace Particle.Editor
     private static readonly uint KeyColor = ImGui.GetColorU32(new NV4(1f, 0.85f, 0.25f, 1f));
     private static readonly uint PlayheadColor = ImGui.GetColorU32(new NV4(1f, 0.4f, 0.4f, 0.9f));
 
-    private const float KeyHitRadius = 8f;
+    private const float KeyHitRadius = 12f;
 
-    // —— 拖拽中的关键帧状态 (同一时间只允许一个控件交互) ——
+    // —— 拖拽中的控制点状态 (同一时间只允许一个控件交互) ——
     private static string _dragOwner;
     private static int _dragKey = -1;
     private static bool _dragging;
 
     /// <summary>
-    /// 发射率时间轴: 绘制速率倍率曲线与关键帧, 返回交互后是否需要通知配置变更.
+    /// 发射率时间轴: 绘制速率倍率曲线与控制点, 编辑后经 <paramref name="onChanged"/> 通知.
     /// </summary>
     /// <param name="emitter">发射器配置 (RateCurve 被编辑).</param>
     /// <param name="duration">效果时长 (秒), 修改后写回.</param>
@@ -50,6 +50,8 @@ namespace Particle.Editor
       NV2 mouse = ImGui.GetIO().MousePos;
 
       FloatCurve curve = emitter.RateCurve;
+      List<CurveKey> keys = curve.Keys;
+      int hitKey = HitTestKey(keys, key => MapPoint(key.Time * dur, key.Value), mouse, origin, size, hovered);
 
       drawList.AddRectFilled(origin, origin + size, BgColor);
 
@@ -69,11 +71,11 @@ namespace Particle.Editor
       }
 
       // —— 曲线 ——
-      NV2 previous = MapPoint(curve.Keys.Count > 0 ? curve.Keys[0].Time * duration : 0f, curve.Keys.Count > 0 ? curve.Keys[0].Value : 1f);
+      NV2 previous = MapPoint(curve.Keys.Count > 0 ? curve.Keys[0].Time * dur : 0f, curve.Keys.Count > 0 ? curve.Keys[0].Value : 1f);
       for (int step = 1; step <= 64; step++)
       {
-        float time = duration * step / 64f;
-        float value = curve.Evaluate(time / MathF.Max(duration, 1e-4f));
+        float time = dur * step / 64f;
+        float value = curve.Evaluate(time / MathF.Max(dur, 1e-4f));
         NV2 point = MapPoint(time, value);
         drawList.AddLine(previous, point, CurveColor, 1.5f);
         previous = point;
@@ -83,46 +85,55 @@ namespace Particle.Editor
       float playX = origin.X + size.X * Math.Clamp(effectTime / MathF.Max(dur, 1e-4f), 0f, 1f);
       drawList.AddLine(new NV2(playX, origin.Y), new NV2(playX, origin.Y + size.Y), PlayheadColor, 2f);
 
-      // —— 关键帧交互 ——
-      List<CurveKey> keys = curve.Keys;
-      int hitKey = HitTestKey(keys, key => MapPoint(key.Time * dur, key.Value), mouse, origin, size, hovered);
-
-      if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-      {
-        // 双击添加关键帧.
-        float time = Math.Clamp((mouse.X - origin.X) / size.X, 0f, 1f) * dur;
-        float value = 1f;
-        if (hitKey >= 0)
-          value = keys[hitKey].Value;
-        curve.AddKey(time / MathF.Max(dur, 1e-4f), value);
-        onChanged?.Invoke();
-      }
-      else if (hitKey >= 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !_dragging)
+      // —— 控制点交互: 按住拖动 / 双击空白添加 (添加后立即可拖) / 右键删除 ——
+      if (!_dragging && hitKey >= 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
       {
         _dragOwner = id;
         _dragKey = hitKey;
         _dragging = true;
       }
-      else if (hitKey < 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Right) && hovered)
+
+      if (!_dragging && hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
       {
-        // 右键删除最近的关键帧.
-        int nearest = NearestKey(keys, key => MapPoint(key.Time * dur, key.Value), mouse);
-        if (nearest >= 0)
+        float normalizedTime = Math.Clamp((mouse.X - origin.X) / size.X, 0f, 1f);
+        curve.AddKey(normalizedTime, 1f);
+        onChanged?.Invoke();
+        // 新点立即可拖.
+        for (int i = 0; i < keys.Count; i++)
         {
-          curve.RemoveKeyAt(nearest);
-          onChanged?.Invoke();
+          if (MathF.Abs(keys[i].Time - normalizedTime) < 1e-4f)
+          {
+            _dragOwner = id;
+            _dragKey = i;
+            _dragging = true;
+            break;
+          }
         }
       }
 
-      if (_dragging && _dragOwner == id && active && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+      if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+      {
+        int nearest = NearestKey(keys, key => MapPoint(key.Time * dur, key.Value), mouse);
+        if (nearest >= 0 && keys.Count > 2)
+        {
+          curve.RemoveKeyAt(nearest);
+          onChanged?.Invoke();
+          if (_dragKey == nearest)
+          {
+            _dragging = false;
+            _dragOwner = null;
+            _dragKey = -1;
+          }
+        }
+      }
+
+      if (_dragging && _dragOwner == id && active && ImGui.IsMouseDown(ImGuiMouseButton.Left))
       {
         if (_dragKey >= 0 && _dragKey < keys.Count)
         {
-          CurveKey key = keys[_dragKey];
           float newTime = Math.Clamp((mouse.X - origin.X) / size.X, 0f, 1f);
           float newValue = Math.Clamp(1f - (mouse.Y - origin.Y) / size.Y, 0f, 2f);
-          keys[_dragKey] = new CurveKey(newTime, newValue);
-          curve.Version++;
+          curve.MoveKey(_dragKey, newTime, newValue);
           onChanged?.Invoke();
         }
       }
@@ -133,7 +144,7 @@ namespace Particle.Editor
         _dragKey = -1;
       }
 
-      // —— 关键帧绘制 (最后画, 覆盖曲线) ——
+      // —— 控制点绘制 (最后画, 覆盖曲线) ——
       for (int i = 0; i < keys.Count; i++)
       {
         NV2 p = MapPoint(keys[i].Time * duration, keys[i].Value);
@@ -170,6 +181,9 @@ namespace Particle.Editor
       bool active = ImGui.IsItemActive();
       NV2 mouse = ImGui.GetIO().MousePos;
 
+      List<CurveKey> keys = curve.Keys;
+      int hitKey = HitTestKey(keys, key => MapPoint(key.Time, key.Value), mouse, origin, size, hovered);
+
       drawList.AddRectFilled(origin, origin + size, BgColor);
       for (int i = 0; i <= 8; i++)
       {
@@ -188,35 +202,56 @@ namespace Particle.Editor
         previous = point;
       }
 
-      // —— 关键帧交互 ——
-      List<CurveKey> keys = curve.Keys;
-      int hitKey = HitTestKey(keys, key => MapPoint(key.Time, key.Value), mouse, origin, size, hovered);
+      // —— 控制点交互 ——
+      if (!_dragging && hitKey >= 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+      {
+        _dragOwner = id;
+        _dragKey = hitKey;
+        _dragging = true;
+      }
 
-      if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+      if (!_dragging && hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
       {
         float t = Math.Clamp((mouse.X - origin.X) / size.X, 0f, 1f);
         float value = Math.Clamp(1.5f * (1f - (mouse.Y - origin.Y) / size.Y), 0f, 1.5f);
         curve.AddKey(t, value);
         onChanged?.Invoke();
-      }
-      else if (hitKey < 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Right) && hovered)
-      {
-        int nearest = NearestKey(keys, key => MapPoint(key.Time, key.Value), mouse);
-        if (nearest >= 0)
+        // 新点立即可拖.
+        for (int i = 0; i < keys.Count; i++)
         {
-          curve.RemoveKeyAt(nearest);
-          onChanged?.Invoke();
+          if (MathF.Abs(keys[i].Time - t) < 1e-4f)
+          {
+            _dragOwner = id;
+            _dragKey = i;
+            _dragging = true;
+            break;
+          }
         }
       }
 
-      if (_dragging && _dragOwner == id && active && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+      if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+      {
+        int nearest = NearestKey(keys, key => MapPoint(key.Time, key.Value), mouse);
+        if (nearest >= 0 && keys.Count > 2)
+        {
+          curve.RemoveKeyAt(nearest);
+          onChanged?.Invoke();
+          if (_dragKey == nearest)
+          {
+            _dragging = false;
+            _dragOwner = null;
+            _dragKey = -1;
+          }
+        }
+      }
+
+      if (_dragging && _dragOwner == id && active && ImGui.IsMouseDown(ImGuiMouseButton.Left))
       {
         if (_dragKey >= 0 && _dragKey < keys.Count)
         {
           float newTime = Math.Clamp((mouse.X - origin.X) / size.X, 0f, 1f);
           float newValue = Math.Clamp(1.5f * (1f - (mouse.Y - origin.Y) / size.Y), 0f, 1.5f);
-          keys[_dragKey] = new CurveKey(newTime, newValue);
-          curve.Version++;
+          curve.MoveKey(_dragKey, newTime, newValue);
           onChanged?.Invoke();
         }
       }
@@ -254,6 +289,9 @@ namespace Particle.Editor
       bool hovered = ImGui.IsItemHovered();
       bool active = ImGui.IsItemActive();
       NV2 mouse = ImGui.GetIO().MousePos;
+
+      List<ColorKey> keys = curve.Keys;
+      int hitKey = HitTestKey(keys, key => new NV2(origin.X + size.X * key.Time, origin.Y + size.Y * 0.5f), mouse, origin, size, hovered);
 
       drawList.AddRectFilled(origin, origin + size, BgColor);
 
@@ -293,28 +331,49 @@ namespace Particle.Editor
         }
       }
 
-      // —— 关键帧交互 (整体移动颜色) ——
-      List<ColorKey> keys = curve.Keys;
-      int hitKey = HitTestKey(keys, key => new NV2(origin.X + size.X * key.Time, origin.Y + size.Y * 0.5f), mouse, origin, size, hovered);
+      // —— 控制点交互 ——
+      if (!_dragging && hitKey >= 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+      {
+        _dragOwner = id;
+        _dragKey = hitKey;
+        _dragging = true;
+      }
 
-      if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+      if (!_dragging && hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
       {
         float t = Math.Clamp((mouse.X - origin.X) / size.X, 0f, 1f);
         Microsoft.Xna.Framework.Vector4 evaluated = curve.Evaluate(t);
         curve.AddKey(t, evaluated);
         onChanged?.Invoke();
-      }
-      else if (hitKey < 0 && ImGui.IsMouseClicked(ImGuiMouseButton.Right) && hovered)
-      {
-        int nearest = NearestKey(keys, key => new NV2(origin.X + size.X * key.Time, origin.Y + size.Y * 0.5f), mouse);
-        if (nearest >= 0)
+        for (int i = 0; i < keys.Count; i++)
         {
-          curve.RemoveKeyAt(nearest);
-          onChanged?.Invoke();
+          if (MathF.Abs(keys[i].Time - t) < 1e-4f)
+          {
+            _dragOwner = id;
+            _dragKey = i;
+            _dragging = true;
+            break;
+          }
         }
       }
 
-      if (_dragging && _dragOwner == id && active && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+      if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+      {
+        int nearest = NearestKey(keys, key => new NV2(origin.X + size.X * key.Time, origin.Y + size.Y * 0.5f), mouse);
+        if (nearest >= 0 && keys.Count > 2)
+        {
+          curve.RemoveKeyAt(nearest);
+          onChanged?.Invoke();
+          if (_dragKey == nearest)
+          {
+            _dragging = false;
+            _dragOwner = null;
+            _dragKey = -1;
+          }
+        }
+      }
+
+      if (_dragging && _dragOwner == id && active && ImGui.IsMouseDown(ImGuiMouseButton.Left))
       {
         if (_dragKey >= 0 && _dragKey < keys.Count)
         {
@@ -326,8 +385,7 @@ namespace Particle.Editor
             Math.Clamp(key.Color.Y * brightness / MathF.Max(MathF.Max(key.Color.X, key.Color.Y), key.Color.Z), 0f, 1.5f),
             Math.Clamp(key.Color.Z * brightness / MathF.Max(MathF.Max(key.Color.X, key.Color.Y), key.Color.Z), 0f, 1.5f),
             key.Color.W);
-          keys[_dragKey] = new ColorKey(newTime, scaled);
-          curve.Version++;
+          curve.MoveKey(_dragKey, newTime, scaled);
           onChanged?.Invoke();
         }
       }

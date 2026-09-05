@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ComputeSharp;
@@ -378,10 +378,11 @@ public sealed unsafe class TinterBridge : IDisposable
     if (PipelineDepth > 0 && _hasPending)
     {
       // pipelined: hand out the previous frame's output (guaranteed complete by this
-      // frame's BeginFrame wait); this frame's result becomes visible next frame
-      Texture2D result = _chain[n - 1, 1 - p].Wrapper;
+      // frame's BeginFrame wait); this frame's result becomes visible next frame.
+      // (p - 1) mod Parities —— 与本帧写入端、上上帧读取端均错开.
+      Texture2D result = _chain[n - 1, (p + Parities - 1) % Parities].Wrapper;
       _lastSubmittedValue = lastValue;
-      _parity ^= 1;
+      _parity = (_parity + 1) % Parities;
       return result;
     }
 
@@ -397,7 +398,10 @@ public sealed unsafe class TinterBridge : IDisposable
     return _chain[n - 1, p].Wrapper;
   }
 
-  private int Parities => PipelineDepth > 0 ? 2 : 1;
+  // 三缓冲: D3D12 (dispatch 写) 与 D3D11 (渲染读) 是无隐式同步的独立队列,
+  // 双缓冲下 "帧 N 的写" 会撞上 "帧 N-1 的读" (BeginFrame 的栅栏只同步 D3D12 队列).
+  // 三缓冲使任意写与读错开一整帧.
+  private int Parities => PipelineDepth > 0 ? 3 : 1;
 
   private int CurrentParity => PipelineDepth > 0 ? _parity : 0;
 

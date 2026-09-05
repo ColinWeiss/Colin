@@ -72,7 +72,7 @@ namespace Colin.Core.Common
         }
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
-      // CoreInfo.Graphics.GraphicsDevice.Clear(Color.Black);
+      CoreInfo.Graphics.GraphicsDevice.Clear(Color.Black);   // 每帧清场景合成目标: 否则半透明模块 (编辑器等) 的旧帧会永久残留.
       using (DebugProfiler.Tag("(Re-render)"))
       {
         for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
@@ -83,14 +83,8 @@ namespace Colin.Core.Common
           {
             {
               renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
-              //    if (Scene.ScreenReprocess.Effects.TryGetValue(renderMode, out Effect e))
-              //      CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: e);
-              //    else
-
-              //var t = Scene.ScreenReprocess.TestProcess(frameRenderLayer);
-
               CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
-              //CoreInfo.Batch.Draw(t, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
               CoreInfo.Batch.End();
             }
           }

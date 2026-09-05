@@ -100,8 +100,7 @@ namespace Particle.Core
         }
         catch (Exception exception)
         {
-          string creationMode = global::Particle.Compute.SharedParticleBuffer<Particle>.LastCreationMode;
-          Console.WriteLine("Error", "GPU 粒子策略创建失败, 回退 CPU: " + exception.Message + " | 组合: " + creationMode);
+          Console.WriteLine("Error", "GPU 粒子策略创建失败, 回退 CPU: " + exception.Message);
           CpuUpdateStrategy cpu = new CpuUpdateStrategy();
           cpu.Initialize(GraphicsDevice, capacity);
           StrategyPath = cpu.Name;

@@ -47,11 +47,16 @@
     public int AlphaKeyCount;
     /// <summary>尺寸曲线关键帧数.</summary>
     public int SizeKeyCount;
+    /// <summary>曲线插值模式 (0 线性 / 1 SmoothStep / 2 Catmull-Rom; 与 CPU 求值同源).</summary>
+    public int Interpolation;
   }
 
   /// <summary>
   /// 粒子更新策略 (策略模式): 封装"粒子状态如何推进一帧"的实现.
-  /// <br>内置实现: GPU 策略 (ComputeSharp 零拷贝) 与 CPU 回退策略, 可替换/扩展.</br>
+  /// <br>所有策略统一输出"粒子数据纹理" —— 每粒子占一列
+  /// (<see cref="ParticleLayouts.DataRows"/> 行 × RGBA32F, 逐行对应 <see cref="Particle"/> 的 5 个 float4),
+  /// 渲染端顶点着色器按槽位 ID 做纹素取样展开四边形 (老 GpuParticle 的纹理粒子思路,
+  /// 零拷贝档借助 D3D11↔D3D12 共享纹理 —— 该路径已被 TinterBridge 实战验证).</br>
   /// </summary>
   public interface IParticleUpdateStrategy : IDisposable
   {
@@ -72,7 +77,7 @@
     /// <summary>提交本帧模拟数据并推进粒子状态 (CPU 侧同步完成 / GPU 侧异步派发).</summary>
     void Submit(ParticleSimFrame frame);
 
-    /// <summary>取回本帧渲染数据: 实例顶点缓冲区与实例数量.</summary>
-    (VertexBuffer Buffer, int InstanceCount) ResolveFrame();
+    /// <summary>取回本帧渲染数据: 粒子数据纹理与实例数量.</summary>
+    (Texture2D DataTexture, int InstanceCount) ResolveFrame();
   }
 }

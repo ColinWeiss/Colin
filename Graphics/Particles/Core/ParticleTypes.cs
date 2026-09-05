@@ -44,24 +44,18 @@ namespace Particle.Core
   }
 
   /// <summary>
-  /// 粒子实例流的顶点声明: 与 <see cref="Particle"/> 的内存布局逐字节对应.
-  /// <br>语义分配避开四边形顶点流 (POSITION0/TEXCOORD0), 支持双流实例化绘制.</br>
+  /// 粒子数据纹理的布局常量与渲染端声明.
+  /// <br>每粒子占一列纹素 (宽 = 容量), <see cref="DataRows"/> 行 × RGBA32F,
+  /// 逐行对应 <see cref="Particle"/> 的 5 个 float4; 渲染端实例流只携带槽位 ID,
+  /// 顶点着色器按 ID 做纹素取样.</br>
   /// </summary>
   public static class ParticleLayouts
   {
-    /// <summary>粒子实例顶点声明 (每实例一个 <see cref="Particle"/>).</summary>
-    public static readonly VertexDeclaration InstanceVertexDeclaration = new VertexDeclaration(
-      new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.Color, 0),
-      new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.Color, 1),
-      new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
-      new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2),
-      new VertexElement(64, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3));
+    /// <summary>数据纹理行数 (每粒子 5 × float4).</summary>
+    public const int DataRows = 5;
 
-    /// <summary>粒子生成记录声明 (仅调试/回读用途).</summary>
-    public static readonly VertexDeclaration SpawnRecordVertexDeclaration = new VertexDeclaration(
-      new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.Position, 0),
-      new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0),
-      new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
-      new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2));
+    /// <summary>ID 实例流顶点声明 (每实例一个槽位 ID).</summary>
+    public static readonly VertexDeclaration IdInstanceVertexDeclaration = new VertexDeclaration(
+      new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 1));
   }
 }

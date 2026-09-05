@@ -2,13 +2,15 @@ namespace Particle.Core
 {
   /// <summary>
   /// CPU 回退更新策略 (策略模式的回退实现): 与 GPU 策略保持完全一致的模拟语义,
-  /// 用于 ComputeSharp 设备不可用或共享缓冲区创建失败的场合.
-  /// <br>每帧将粒子数组上传至动态顶点缓冲区, 渲染路径与 GPU 策略完全相同.</br>
+  /// 用于 ComputeSharp 设备不可用的场合.
+  /// <br>每帧将粒子数组打包为数据纹理并上传, 渲染路径与 GPU 策略完全一致
+  /// (顶点着色器按槽位 ID 取样).</br>
   /// </summary>
   public sealed class CpuUpdateStrategy : IParticleUpdateStrategy
   {
     private Particle[] _state;
-    private DynamicVertexBuffer _instanceBuffer;
+    private Texture2D _dataTexture;
+    private Vector4[] _textureData;
     private int _drawEnd;
 
     public string Name => "CPU 回退";
@@ -20,7 +22,8 @@ namespace Particle.Core
       capacity = Math.Max(1, capacity);
       _state = new Particle[capacity];
       _drawEnd = 0;
-      _instanceBuffer = new DynamicVertexBuffer(device, ParticleLayouts.InstanceVertexDeclaration, capacity, BufferUsage.WriteOnly);
+      _textureData = new Vector4[capacity * ParticleLayouts.DataRows];
+      _dataTexture = new Texture2D(device, capacity, ParticleLayouts.DataRows, false, SurfaceFormat.Vector4);
     }
 
     public void Submit(ParticleSimFrame frame)
@@ -115,24 +118,34 @@ namespace Particle.Core
       }
     }
 
-    public (VertexBuffer Buffer, int InstanceCount) ResolveFrame()
+    public (Texture2D DataTexture, int InstanceCount) ResolveFrame()
     {
-      if (_instanceBuffer is null)
-        return (null, 0);
       int count = Math.Min(_drawEnd, _state.Length);
-      if (count > 0)
+      if (count > 0 && _dataTexture is not null)
       {
-        // 只上传占用前缀; 动态缓冲区使用 Discard 避免同步等待.
-        _instanceBuffer.SetData(_state, 0, count, SetDataOptions.Discard);
+        // —— 打包粒子数组 → 数据纹理 (只传占用前缀列) ——
+        for (int i = 0; i < count; i++)
+        {
+          Particle p = _state[i];
+          int b = i * ParticleLayouts.DataRows;
+          _textureData[b + 0] = new Vector4(p.PosX, p.PosY, p.VelX, p.VelY);
+          _textureData[b + 1] = new Vector4(p.R, p.G, p.B, p.A);
+          _textureData[b + 2] = new Vector4(p.Size, p.Rotation, p.Age, p.Life);
+          _textureData[b + 3] = new Vector4(p.Seed, p.Aspect, p.AngularVel, p.Tint);
+          _textureData[b + 4] = new Vector4(p.BaseSize, p.Stretch, p.Reserved2, p.Reserved3);
+        }
+        _dataTexture.SetData(0, new Rectangle(0, 0, count, ParticleLayouts.DataRows),
+          _textureData, 0, count * ParticleLayouts.DataRows);
       }
-      return (_instanceBuffer, count);
+      return (_dataTexture, count);
     }
 
     public void Dispose()
     {
-      _instanceBuffer?.Dispose();
-      _instanceBuffer = null;
+      _dataTexture?.Dispose();
+      _dataTexture = null;
       _state = null;
+      _textureData = null;
     }
   }
 }

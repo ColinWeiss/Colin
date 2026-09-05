@@ -1,45 +1,38 @@
 // =====================================================================
-// 粒子渲染着色器 (MonoGame Effect, mgfxc /Profile:DirectX_11 编译).
-// 双流实例化绘制: 流 0 = 四边形角点模板 (每顶点), 流 1 = 粒子数据 (每实例一个 Particle, 80 字节).
-// 支持两种渲染模式: 普通公告牌 (自旋转) 与 速度拉伸公告牌 (刀光等高速条状效果).
+// 粒子渲染着色器 (纹理粒子版, MonoGame Effect / DirectX_11):
+// 粒子状态存于"数据纹理" (宽 = 容量, 高 = 5 行 RGBA32F, 逐行对应 Particle 的 5 个 float4),
+// 实例流只携带槽位 ID, 顶点着色器按 ID 做纹素取样展开四边形 —— 与老 GpuParticle 思路一致.
+// 双流实例化: 流 0 = 四边形角点模板, 流 1 = 槽位 ID.
 // =====================================================================
 
 Texture2D<float4> SpriteTexture : register(t0);
 sampler SpriteTextureSampler : register(s0);
 
+// 粒子数据纹理: [列 = 槽位, 行 = 数据段].
+Texture2D<float4> DataTexture : register(t1);
+SamplerState DataSampler : register(s1)
+{
+    Filter = Point;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
 // 世界坐标 -> 裁剪空间 的完整变换 (View * Projection).
 float4x4 Transform;
+// 数据纹理宽度 (= 粒子容量), 用于纹素中心对齐.
+float Capacity;
 // 速度拉伸系数 (秒): 拉伸长度增量 = |速度| * StretchFactor.
 float StretchFactor;
 // 速度拉伸最大长度 (像素).
 float MaxStretchLength;
 
 // ---- 流 0: 四边形角点 (三角带 4 顶点, ±0.5) ----
-struct QuadVertex
-{
-    float2 Corner : POSITION0;
-    float2 Uv : TEXCOORD0;
-};
-
-// ---- 流 1: 粒子实例数据 (与 Particle.Core.Particle 逐字节对应) ----
-struct ParticleInstance
-{
-    float4 PosVel : COLOR0;             // 位置.xy, 速度.xy
-    float4 Color : COLOR1;              // 渲染颜色 rgba
-    float4 SizeRotationAgeLife : TEXCOORD1;  // 尺寸, 旋转(弧度), 年龄, 总生命(<=0 死亡)
-    float4 Misc : TEXCOORD2;            // 种子, 长宽比, 角速度, 色调
-    float4 Extra : TEXCOORD3;           // 基准尺寸, 拉伸模式(0/1), 保留...
-};
-
+// ---- 流 1: 槽位 ID (每实例一个) ----
 struct VertexShaderInput
 {
     float2 Corner : POSITION0;
     float2 Uv : TEXCOORD0;
-    float4 PosVel : COLOR0;
-    float4 Color : COLOR1;
-    float4 SizeRotationAgeLife : TEXCOORD1;
-    float4 Misc : TEXCOORD2;
-    float4 Extra : TEXCOORD3;
+    float ID : TEXCOORD1;
 };
 
 struct VertexShaderOutput
@@ -53,7 +46,15 @@ VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    float life = input.SizeRotationAgeLife.w;
+    // —— 按槽位取样粒子数据 (纹素中心对齐; 行: 0=位置速度, 1=颜色, 2=尺寸旋转年龄生命, 3=杂项, 4=基准) ——
+    float u = (input.ID + 0.5f) / Capacity;
+    float4 posVel = DataTexture.SampleLevel(DataSampler, float2(u, 0.1f), 0);
+    float4 color = DataTexture.SampleLevel(DataSampler, float2(u, 0.3f), 0);
+    float4 sizeRotAgeLife = DataTexture.SampleLevel(DataSampler, float2(u, 0.5f), 0);
+    float4 misc = DataTexture.SampleLevel(DataSampler, float2(u, 0.7f), 0);
+    float4 extra = DataTexture.SampleLevel(DataSampler, float2(u, 0.9f), 0);
+
+    float life = sizeRotAgeLife.w;
     if (life <= 0)
     {
         // 死亡槽位: 退化四边形 (全部顶点重合于裁剪空间外).
@@ -63,12 +64,12 @@ VertexShaderOutput MainVS(VertexShaderInput input)
         return output;
     }
 
-    float2 position = input.PosVel.xy;
-    float2 velocity = input.PosVel.zw;
-    float size = input.SizeRotationAgeLife.x;
-    float rotation = input.SizeRotationAgeLife.y;
-    float aspect = max(input.Misc.y, 0.0001);
-    float stretched = input.Extra.y;
+    float2 position = posVel.xy;
+    float2 velocity = posVel.zw;
+    float size = sizeRotAgeLife.x;
+    float rotation = sizeRotAgeLife.y;
+    float aspect = max(misc.y, 0.0001);
+    float stretched = extra.y;
     float2 worldPosition;
 
     if (stretched > 0.5)
@@ -96,7 +97,7 @@ VertexShaderOutput MainVS(VertexShaderInput input)
 
     output.Position = mul(float4(worldPosition, 0, 1), Transform);
     output.Uv = input.Uv;
-    output.Color = input.Color;
+    output.Color = color;
     return output;
 }
 

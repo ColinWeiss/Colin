@@ -1,9 +1,11 @@
-﻿namespace Particle.Slash
+namespace Particle.Slash
 {
   /// <summary>
-  /// 弧形刀光实例 (拉刀光 Mesh): 一条圆弧条带, 挥出阶段从起始角横扫到结束角
-  /// (角度范围逐渐展开 —— 前缘即扫动方向), 随后整体渐隐.
-  /// <br>顶点直接摆在弧线上 (RibbonBuilder), 月牙宽度 + 头亮尾隐的顶点色随构建计算.</br>
+  /// 弧形刀光实例 (拉刀光 Mesh): 等宽弯曲长方形条带, 顶点直接摆在弧线上.
+  /// <br>两种收起方式 (<see cref="SlashRetireMode"/>):</br>
+  /// <br>- <b>Fade</b>: 弧带自起始角展开至结束角, 停住后整体淡出;</br>
+  /// <br>- <b>Sweep</b>: 前缘横扫, 尾端以可调的收拢速度持续<b>向刃头收去</b> ——
+  /// 弧带逐渐收拢、最终在刃头处消散 (星爆气流斩式).</br>
   /// </summary>
   public sealed class SlashArc
   {
@@ -23,6 +25,9 @@
     public float Progress { get; private set; }
 
     private float _elapsed;
+    private float _headDeg;
+    private float _tailDeg;
+    private bool _tailInitialized;
 
     // —— 网格构建缓存 (避免每帧分配) ——
     private Vector2[] _points = new Vector2[0];
@@ -41,18 +46,56 @@
       _elapsed = 0f;
       Progress = 0f;
       IsFinished = false;
+      _tailInitialized = false;
     }
 
-    /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动).</summary>
+    /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动). 尾端收拢为状态积分, 只在此处推进.</summary>
     public void Update(float dt)
     {
       if (IsFinished)
         return;
+
+      SlashArcConfig config = Config;
+      float fromDeg = config.ArcFrom;
+      float toDeg = config.ArcTo;
+      if (config.Reversed)
+        (fromDeg, toDeg) = (toDeg, fromDeg);
+
+      float sweep = MathF.Max(1e-4f, config.SweepTime);
       _elapsed += dt;
-      float sweep = MathF.Max(1e-4f, Config.SweepTime);
       Progress = Math.Clamp(_elapsed / sweep, 0f, 1f);
-      if (_elapsed >= sweep + Config.FadeTime)
+
+      // —— 前缘: 解析推进 (Sweep 匀速 / Fade 缓动) ——
+      float progress = config.Retire == SlashRetireMode.Sweep
+        ? Math.Clamp(_elapsed / sweep, 0f, 1f)
+        : EaseOutCubic(_elapsed / sweep);
+      _headDeg = MathHelper.Lerp(fromDeg, toDeg, config.Retire == SlashRetireMode.Sweep
+        ? Math.Clamp(_elapsed / sweep, 0f, 1f)
+        : EaseOutCubic(_elapsed / sweep));
+
+      // —— 尾端: 初始化于起始角, 之后以收拢速度持续向刃头收去 ——
+      if (!_tailInitialized)
+      {
+        _tailDeg = fromDeg;
+        _tailInitialized = true;
+      }
+      float gap = _headDeg - _tailDeg;
+      float step = MathF.Max(0f, config.CatchupSpeed) * dt * MathF.Sign(gap);
+      if (MathF.Abs(step) >= MathF.Abs(gap))
+        _tailDeg = _headDeg;
+      else
+        _tailDeg += step;
+
+      // —— 结束: 渐隐按时间; 横扫按前缘到位且完全收拢 ——
+      if (config.Retire == SlashRetireMode.Sweep)
+      {
+        if (Progress >= 1f && MathF.Abs(_headDeg - _tailDeg) < 0.5f)
+          IsFinished = true;
+      }
+      else if (_elapsed >= sweep + MathF.Max(1e-3f, config.FadeTime))
+      {
         IsFinished = true;
+      }
     }
 
     /// <summary>
@@ -64,26 +107,86 @@
       SlashArcConfig config = Config;
       int segments = Math.Max(2, config.Segments);
 
-      // —— 弧角范围: 挥出阶段按缓动展开; 扫完后保持全弧 ——
-      float eased = EaseOutCubic(Progress);
       float fromDeg = config.ArcFrom;
       float toDeg = config.ArcTo;
       if (config.Reversed)
         (fromDeg, toDeg) = (toDeg, fromDeg);
-      float currentTo = MathHelper.Lerp(fromDeg, toDeg, eased);
 
-      float fade = 1f;
+      // —— 弧带覆盖 [尾端, 前缘]; Fade 模式下尾端恒为起始角 ——
+      float tailDeg = config.Retire == SlashRetireMode.Sweep ? _tailDeg : fromDeg;
+      float spanDeg = _headDeg - tailDeg;
+      if (MathF.Abs(spanDeg) < 1f)
+        return 0;
+
+      int count = Math.Max(2, (int)MathF.Ceiling(segments * MathF.Abs(spanDeg) / 360f)) + 1;
+      EnsureCapacity(count);
+
+      float globalFade = 1f;
       float sweep = MathF.Max(1e-4f, config.SweepTime);
-      if (_elapsed > sweep)
+      if (config.Retire == SlashRetireMode.Fade && _elapsed > sweep)
       {
         float fadeT = Math.Clamp((_elapsed - sweep) / MathF.Max(1e-4f, config.FadeTime), 0f, 1f);
-        fade = 1f - fadeT * fadeT;   // 平方渐隐.
+        globalFade = 1f - fadeT * fadeT;
+        if (globalFade <= 0f)
+        {
+          IsFinished = true;
+          return 0;
+        }
       }
 
-      Vector2 center = Vector2.Zero;
-      int count = segments + 1;
+      for (int i = 0; i < count; i++)
+      {
+        float t = i / (float)(count - 1);       // 0 = 头部 (前缘), 1 = 尾端.
+        float angleDeg = MathHelper.Lerp(_headDeg, tailDeg, t);
 
-      // —— 逐点摆放 (i=0 为扫动前缘/头部); 缓存数组随段数扩容 ——
+        // 顶点色渐隐: Fade 模式用全局淡出; Sweep 模式尾端恒定渐隐 (静态色渐变).
+        float fade = config.Retire == SlashRetireMode.Sweep
+          ? MathHelper.Lerp(1f, 0.35f, t) * Math.Min(1f, globalFade + 1f)
+          : globalFade;
+        PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f));
+      }
+
+      return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, vertices, indices);
+    }
+
+    /// <summary>摆放单个弧点 (坐标系变换 + 等宽 + 头亮尾隐顶点色 × 存活系数).</summary>
+    private void PlacePoint(int i, float angleDeg, SlashArcConfig config, float t, float fade)
+    {
+      float angleRad = MathHelper.ToRadians(angleDeg);
+      float radius = config.Radius * Scale;
+
+      // 整体坐标系: X/Y 独立缩放 (弧线椭圆化, 决定"长宽").
+      Vector2 arcPoint = new Vector2(
+        MathF.Cos(angleRad) * radius * config.ScaleX,
+        MathF.Sin(angleRad) * radius * config.ScaleY);
+
+      // 整体旋转.
+      float rotation = Rotation + MathHelper.ToRadians(config.RotationDeg);
+      if (rotation != 0f)
+      {
+        float cos = MathF.Cos(rotation), sin = MathF.Sin(rotation);
+        arcPoint = new Vector2(
+          arcPoint.X * cos - arcPoint.Y * sin,
+          arcPoint.X * sin + arcPoint.Y * cos);
+      }
+      _points[i] = arcPoint + Position;
+
+      // 等宽弯曲长方形: 宽度沿弧长恒定, 渐隐完全由顶点色承担.
+      _halfWidths[i] = config.Width * 0.5f * Scale;
+
+      // 顶点色: 头部亮白 → 尾部青蓝渐隐.
+      Vector4 color = Vector4.Lerp(config.HeadColor, config.TailColor, t);
+      color.X *= fade;
+      color.Y *= fade;
+      color.Z *= fade;
+      color.W *= fade;
+      _colors[i] = color;
+
+      _us[i] = 1f - t;   // u: 1 = 头 (纹理亮端), 0 = 尾.
+    }
+
+    private void EnsureCapacity(int count)
+    {
       if (_points.Length < count)
       {
         _points = new Vector2[count];
@@ -91,33 +194,9 @@
         _colors = new Vector4[count];
         _us = new float[count];
       }
-
-      float rotation = Rotation;
-      for (int i = 0; i < count; i++)
-      {
-        float t = i / (float)segments;              // 0 = 头部 (前缘), 1 = 尾部.
-        float angleDeg = MathHelper.Lerp(currentTo, fromDeg, t);
-        float angleRad = MathHelper.ToRadians(angleDeg) + rotation;
-        float radius = config.Radius * Scale;
-
-        _points[i] = center + new Vector2(MathF.Cos(angleRad), MathF.Sin(angleRad)) * radius;
-
-        // 月牙宽度: 沿弧长两端尖、中段宽 (指数可调).
-        float widthProfile = MathF.Sin(MathHelper.Pi * MathF.Pow(1f - t, config.WidthPower));
-        _halfWidths[i] = config.Width * 0.5f * widthProfile * Scale;
-
-        // 顶点色: 头部亮白 → 尾部青蓝渐隐; 整体乘挥扫后的全局渐隐.
-        Vector4 color = Vector4.Lerp(config.HeadColor, config.TailColor, t);
-        color.W *= fade;
-        _colors[i] = color;
-
-        _us[i] = 1f - t;   // u: 1 = 头 (纹理亮端), 0 = 尾.
-      }
-
-      return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, vertices, indices);
     }
 
-    /// <summary>缓动: 快出缓收的横扫手感.</summary>
+    /// <summary>缓动: 快出缓收的展开手感 (仅渐隐模式的展开阶段用).</summary>
     private static float EaseOutCubic(float t) => 1f - MathF.Pow(1f - Math.Clamp(t, 0f, 1f), 3f);
   }
 }

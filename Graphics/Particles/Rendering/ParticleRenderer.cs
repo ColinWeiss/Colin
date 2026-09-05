@@ -17,7 +17,9 @@ namespace Particle.Rendering
   }
 
   /// <summary>
-  /// 粒子渲染器: 将更新策略产出的实例缓冲区绘制为实例化公告牌/拉伸公告牌.
+  /// 粒子渲染器 (纹理粒子版): 将更新策略产出的"数据纹理"按槽位 ID 实例化绘制.
+  /// <br>实例顶点流只携带槽位 ID (静态缓冲), 粒子数据一律由顶点着色器从数据纹理取样 ——
+  /// 无论更新策略是零拷贝共享纹理、读回还是 CPU 回退, 渲染路径完全一致.</br>
   /// <br>渲染后端可替换 —— 换用别的 Effect 或绘制方式只需重写本类 (渲染模块与核心解耦).</br>
   /// </summary>
   public sealed class ParticleRenderer
@@ -29,6 +31,7 @@ namespace Particle.Rendering
     private readonly Effect _effect;
     private readonly VertexBuffer _quadBuffer;
     private readonly IndexBuffer _quadIndices;
+    private VertexBuffer _idBuffer;
     private readonly Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
 
     /// <summary>混合模式映射.</summary>
@@ -49,6 +52,7 @@ namespace Particle.Rendering
     public ParticleRenderer(GraphicsDevice device)
     {
       _device = device;
+      Shared = this;   // 引擎挂钩与刀光渲染器经此解析纹理/绘制.
 
       _effect = ParticleRenderEffect.GetOrCreate(device);
 
@@ -73,14 +77,16 @@ namespace Particle.Rendering
     /// <summary>
     /// 绘制一批粒子.
     /// </summary>
-    /// <param name="instanceBuffer">实例顶点缓冲区 (由更新策略提供, 布局为 <see cref="ParticleLayouts.InstanceVertexDeclaration"/>).</param>
+    /// <param name="dataTexture">粒子数据纹理 (由更新策略提供, 宽 = 容量, 高 = 5 行).</param>
     /// <param name="instanceCount">实例数量 (含死亡槽位, 由着色器退化).</param>
     /// <param name="config">渲染配置 (混合模式/纹理/拉伸参数).</param>
     /// <param name="transform">相机变换 (世界 → 裁剪空间).</param>
-    public void Draw(VertexBuffer instanceBuffer, int instanceCount, RenderConfig config, Matrix transform)
+    public void Draw(Texture2D dataTexture, int instanceCount, RenderConfig config, Matrix transform)
     {
-      if (instanceBuffer is null || instanceCount <= 0)
+      if (dataTexture is null || instanceCount <= 0)
         return;
+
+      EnsureIdBuffer(instanceCount);
 
       BlendState blend = BlendStates.TryGetValue(config.Blend, out BlendState state) ? state : BlendState.Additive;
       Texture2D texture = ResolveTexture(config.Texture);
@@ -89,27 +95,45 @@ namespace Particle.Rendering
       _device.RasterizerState = RasterizerState.CullNone;
       _device.DepthStencilState = DepthStencilState.None;
       _device.SamplerStates[0] = SamplerState.LinearClamp;
+      _device.SamplerStates[1] = SamplerState.PointClamp;
 
       _device.SetVertexBuffers(
         new VertexBufferBinding(_quadBuffer),
-        new VertexBufferBinding(instanceBuffer, 0, 1));
+        new VertexBufferBinding(_idBuffer, 0, 1));
       _device.Indices = _quadIndices;
       _device.Textures[0] = texture;
-
-      // 纹理同时经 Effect 参数绑定 —— EffectPass.Apply 会以参数资源覆盖 t0, 两者都设置才可靠.
-      EffectParameter textureParameter = _effect.Parameters["SpriteTexture"];
-      textureParameter?.SetValue(texture);
+      _device.Textures[1] = dataTexture;
+      _device.VertexTextures[1] = dataTexture;
 
       EffectParameterCollection parameters = _effect.Parameters;
       parameters["Transform"].SetValue(transform);
+      parameters["Capacity"].SetValue((float)_idBuffer.VertexCount);
       parameters["StretchFactor"].SetValue(config.StretchFactor);
       parameters["MaxStretchLength"].SetValue(config.MaxStretchLength);
+      parameters["SpriteTexture"]?.SetValue(texture);
+      parameters["DataTexture"]?.SetValue(dataTexture);
 
       _effect.CurrentTechnique.Passes[0].Apply();
       _device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 2, instanceCount);
 
       TotalDrawnParticles += instanceCount;
       TotalDrawCalls++;
+    }
+
+    /// <summary>槽位 ID 实例缓冲 (静态内容, 按需扩容).</summary>
+    private void EnsureIdBuffer(int instanceCount)
+    {
+      if (_idBuffer is not null && _idBuffer.VertexCount >= instanceCount)
+        return;
+
+      int capacity = Math.Max(256, Math.Max(instanceCount, _idBuffer?.VertexCount * 2 ?? 0));
+      float[] ids = new float[capacity];
+      for (int i = 0; i < capacity; i++)
+        ids[i] = i;
+
+      _idBuffer?.Dispose();
+      _idBuffer = new VertexBuffer(_device, ParticleLayouts.IdInstanceVertexDeclaration, capacity, BufferUsage.WriteOnly);
+      _idBuffer.SetData(ids);
     }
 
     /// <summary>
@@ -140,6 +164,8 @@ namespace Particle.Rendering
     public void Dispose()
     {
       _quadBuffer?.Dispose();
+      _quadIndices?.Dispose();
+      _idBuffer?.Dispose();
       _effect?.Dispose();
       foreach (Texture2D texture in _textures.Values)
         texture?.Dispose();

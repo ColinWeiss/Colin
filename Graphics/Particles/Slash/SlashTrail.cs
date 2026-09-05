@@ -37,6 +37,12 @@
     private Vector2 _lastPosition;
     private bool _hasLast;
 
+    // —— 网格构建缓存 ——
+    private Vector2[] _points_cache = new Vector2[64];
+    private float[] _halfWidths_cache = new float[64];
+    private Vector4[] _colors_cache = new Vector4[64];
+    private float[] _us_cache = new float[64];
+
     public SlashTrail()
     {
     }
@@ -82,21 +88,24 @@
       if (count < 2)
         return 0;
 
-      Span<Vector2> points = stackalloc Vector2[64];
-      Span<float> halfWidths = stackalloc float[64];
-      Span<Vector4> colors = stackalloc Vector4[64];
-      Span<float> us = stackalloc float[64];
+      if (_points_cache.Length < count)
+      {
+        _points_cache = new Vector2[64];
+        _halfWidths_cache = new float[64];
+        _colors_cache = new Vector4[64];
+        _us_cache = new float[64];
+      }
 
       for (int i = 0; i < count; i++)
       {
         TrailPoint point = _points[i];
         float age01 = Math.Clamp(point.Age / MathF.Max(1e-4f, TrailTime), 0f, 1f);
 
-        points[i] = point.Position;
+        _points_cache[i] = point.Position;
 
-        // 月牙宽度: 头部 (i=0) 最宽, 沿轨迹收窄至尖.
-        float widthProfile = MathF.Sin(MathHelper.Pi * MathF.Pow(1f - i / (float)(count - 1), 0.8f));
-        halfWidths[i] = Width * 0.5f * widthProfile;
+        // 等宽轨迹 (战场剑2 刀光): 宽度恒定, 头亮尾隐由颜色/透明度承担.
+        _halfWidths_cache[i] = Width * 0.5f;
+
 
         // 头亮尾隐: 颜色随轨迹年龄渐变 + 亮度随年龄衰减.
         Vector4 color = Vector4.Lerp(HeadColor, TailColor, i / (float)(count - 1));
@@ -105,14 +114,12 @@
         color.Y *= brightness;
         color.Z *= brightness;
         color.W *= brightness;
-        colors[i] = color;
+        _colors_cache[i] = color;
 
-        us[i] = 1f - i / (float)(count - 1);
+        _us_cache[i] = 1f - i / (float)(count - 1);
       }
 
-      return RibbonBuilder.Build(
-          points.ToArray(), halfWidths.ToArray(), colors.ToArray(), us.ToArray(),
-          vertices, indices);
+      return RibbonBuilder.Build(_points_cache, _halfWidths_cache, _colors_cache, _us_cache, vertices, indices);
     }
   }
 }

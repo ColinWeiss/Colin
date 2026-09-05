@@ -15,6 +15,7 @@
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Colin.Core.sln" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\README.md" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleRender.fx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleRender.mgfx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashRender.fx" />
@@ -65,8 +66,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Core\ParticleManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\ParticleComputeShaders.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\ParticleComputeDevice.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\D3D12BufferInterop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\SharedParticleBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Compute\GpuUpdateStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleCompiledShaders.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Rendering\ParticleShaderSource.g.cs" />
@@ -79,7 +78,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Effects\BladeTrailAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\EditorCommandHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\ParticleTimeline.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\ParticleEditorComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Editor\ParticleEditorModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashVertex.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\RibbonBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Particles\Slash\SlashArcConfig.cs" />

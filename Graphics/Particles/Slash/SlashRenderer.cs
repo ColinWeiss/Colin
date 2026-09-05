@@ -26,11 +26,16 @@
       _effect = SlashRenderEffect.GetOrCreate(device);
     }
 
-    /// <summary>获取/创建共享渲染器 (图形设备取自粒子管理器, 需已初始化).</summary>
+    /// <summary>获取/创建共享渲染器 (图形设备取自粒子管理器; 未初始化时直接用引擎设备).</summary>
     public static SlashRenderer GetOrCreate()
     {
       if (Shared is null)
-        Shared = new SlashRenderer(Core.ParticleManager.Instance.GraphicsDevice);
+      {
+        GraphicsDevice device = Core.ParticleManager.Instance.IsInitialized
+          ? Core.ParticleManager.Instance.GraphicsDevice
+          : CoreInfo.Graphics.GraphicsDevice;
+        Shared = new SlashRenderer(device);
+      }
       return Shared;
     }
 
@@ -64,12 +69,10 @@
         if (_arcs[i].IsFinished)
           _arcs.RemoveAt(i);
       }
+      // 轨迹不自动移除: 挥砍间歇会短暂少于 2 点, 移除会让仍被持有的实例永远脱离渲染;
+      // 由持有方调用 Remove 显式回收.
       for (int i = _trails.Count - 1; i >= 0; i--)
-      {
         _trails[i].Update(dt);
-        if (_trails[i].IsEmpty)
-          _trails.RemoveAt(i);
-      }
     }
 
     /// <summary>绘制全部活跃刀光 (可在不同相机下多次调用).</summary>
@@ -120,7 +123,8 @@
         return;
 
       Texture2D texture = Particle.Rendering.ParticleRenderer.Shared?.ResolveTexture(textureName)
-        ?? Particle.Rendering.ParticleTextureFactory.Create(_device, textureName);
+        ?? Particle.Rendering.ParticleTextureFactory.Create(_device, textureName)
+        ?? Particle.Rendering.ParticleTextureFactory.Create(_device, "white");
       _effect.Parameters["SpriteTexture"]?.SetValue(texture);
       _effect.CurrentTechnique.Passes[0].Apply();
 

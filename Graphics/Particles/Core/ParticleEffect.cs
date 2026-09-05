@@ -188,7 +188,8 @@
           RangeEnd = emitter.RangeStart + Math.Max(1, config.Capacity),
           ColorKeyCount = config.ColorKeyCount,
           AlphaKeyCount = config.AlphaKeyCount,
-          SizeKeyCount = config.SizeKeyCount
+          SizeKeyCount = config.SizeKeyCount,
+          Interpolation = (int)config.ColorOverLife.Interpolation
         };
 
         // —— 效果变换叠加到配置发射的记录上 (代码式发射的记录视为世界坐标, 不叠加) ——
@@ -259,7 +260,8 @@
           RangeEnd = emitter.RangeStart + Math.Max(1, config.Capacity),
           ColorKeyCount = config.ColorKeyCount,
           AlphaKeyCount = config.AlphaKeyCount,
-          SizeKeyCount = config.SizeKeyCount
+          SizeKeyCount = config.SizeKeyCount,
+          Interpolation = (int)config.ColorOverLife.Interpolation
         }
       };
 
@@ -306,11 +308,11 @@
     /// <param name="transform">相机变换矩阵 (世界坐标 → 裁剪空间).</param>
     public void Draw(Matrix transform)
     {
-      (VertexBuffer buffer, int instanceCount) = _strategy.ResolveFrame();
+      (Texture2D dataTexture, int instanceCount) = _strategy.ResolveFrame();
       InstanceCount = instanceCount;
-      if (buffer is null || instanceCount <= 0)
+      if (dataTexture is null || instanceCount <= 0)
         return;
-      global::Particle.Rendering.ParticleRenderer.Shared?.Draw(buffer, instanceCount, Config.Render, transform);
+      global::Particle.Rendering.ParticleRenderer.Shared?.Draw(dataTexture, instanceCount, Config.Render, transform);
     }
 
     private void Rebuild()

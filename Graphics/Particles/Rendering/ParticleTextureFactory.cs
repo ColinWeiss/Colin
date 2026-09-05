@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Particle.Rendering
 {
@@ -25,7 +25,7 @@ namespace Particle.Rendering
         case "spark":
           return CreateRadial(device, 32, hardCore: 0.35f);
         case "blade":
-          return CreateBladeStreak(device, 128, 32);
+          return CreateBladeStreak(device, 512, 128);
         case "smoke":
           return CreateSmokePuff(device, 64);
         default:
@@ -70,8 +70,9 @@ namespace Particle.Rendering
     }
 
     /// <summary>
-    /// 刀光梭形纹理: 横向 —— 头部 (u=1, 运动前方) 亮而锐利, 尾部 (u=0) 渐隐拉丝;
-    /// 纵向 —— 高斯衰减. 速度拉伸公告牌 + 加法混合下呈现连续发光的刀光弧线.
+    /// 刀光条纹理 (512×128, 整张映射到刀光 Mesh 的 UV 0~1):
+    /// <br>横向 (u: 0=尾 → 1=头) —— 尾部拖影渐入 → 主体流光带 → 光锋区亮白爆发 → 前端收尖;</br>
+    /// <br>纵向 (v) —— 高斯截面 + 边缘羽化; 主体区叠加细微纵向流线, 避免出现"一节一节"的均匀感.</br>
     /// </summary>
     public static Texture2D CreateBladeStreak(GraphicsDevice device, int width, int height)
     {
@@ -84,19 +85,37 @@ namespace Particle.Rendering
         {
           float u = x / (width - 1f);
           float v = (y - halfHeight) / halfHeight;
+          float absV = MathF.Abs(v);
 
-          // 纵向: 高斯截面, 核心亮线.
-          float cross = MathF.Exp(-v * v * 7f);
+          // —— 纵向: 亮芯 + 宽柔光晕双层截面 ——
+          float core = MathF.Exp(-v * v * 26f);        // 中央亮芯.
+          float halo = MathF.Exp(-absV * absV * 4.5f); // 外围柔光.
+          float cross = core * 0.85f + halo * 0.5f;
+          // 边缘羽化 (v 越接近 ±1 越透明).
+          cross *= Math.Clamp(1f - absV * absV * absV * 0.6f, 0f, 1f);
 
-          // 横向: 尾部 (u→0) 快速渐隐, 头部 (u→1) 收成亮锋.
-          float head = MathF.Pow(u, 0.65f);
-          float edge = MathF.Exp(-(1f - u) * (1f - u) * 3f);
-          float intensity = Math.Clamp(cross * (head * 0.85f + edge * 0.4f), 0f, 1f);
+          // —— 横向能量分布 (全段连续, 无分界突变): 主体爬升 + 头部高斯光锋叠加 ——
+          float body = 0.10f + 0.45f * MathF.Pow(u, 0.8f);
+          float flare = 0.75f * MathF.Exp(-MathF.Pow((u - 0.88f) / 0.10f, 2f));   // 头部光锋 (连续高斯峰).
+          float tipFade = 1f - 0.55f * Math.Clamp((u - 0.93f) / 0.07f, 0f, 1f);   // 最前端柔化收尖.
 
-          // 中心线提亮, 模拟刃锋高光.
-          intensity = MathF.Pow(intensity, 1.2f);
+          // 细微纵向流线: 若干条随 u 漂移的亮丝 (打破均匀, 制造速度感).
+          float streak = 0f;
+          for (int s = 0; s < 3; s++)
+          {
+            float phase = u * (9f + s * 3.7f) + s * 2.1f;
+            float line = MathF.Exp(-MathF.Pow(v * 2.2f - MathF.Sin(phase) * 0.55f, 2f) * 30f);
+            streak += line * (0.10f - s * 0.025f) * (0.5f + 0.5f * MathF.Sin(phase * 0.7f));
+          }
 
-          pixels[y * width + x] = new Color(intensity, intensity, intensity, intensity);
+          float intensity = Math.Clamp((body + flare) * cross * tipFade + streak * MathF.Max(0f, cross), 0f, 1f);
+          intensity = MathF.Pow(intensity, 1.08f);
+
+          // 冷色调: 亮部白、中调微青 (与顶点色叠加后的整体观感).
+          float r = intensity * (0.92f + 0.08f * core);
+          float g = intensity;
+          float b = intensity * (0.98f - 0.06f * core);
+          pixels[y * width + x] = new Color(r, g, b, intensity);
         }
       }
 

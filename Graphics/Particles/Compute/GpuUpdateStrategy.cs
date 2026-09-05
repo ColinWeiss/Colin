@@ -1,46 +1,60 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Colin.Core.Graphics.Bridge;
 using ComputeSharp;
+using Particle.Core;
 using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
 
 namespace Particle.Compute
 {
-  using Particle.Core;
   /// <summary>
-  /// GPU 零拷贝更新策略 (策略模式): 粒子状态全程驻留显存.
-  /// <br>每帧两个 ComputeSharp 派发: 生成 (写入新粒子) 与集成 (生命/运动/曲线外观);
-  /// 粒子缓冲区为 MonoGame 与 ComputeSharp 共享的同一块显存 (奇偶双缓冲),
-  /// D3D11 渲染端始终读取上一帧结果, 与本帧派发写入的另一缓冲区完全无冲突;
-  /// 帧首以 ComputeSharp 完成栅栏同步 (几乎从不等待).</br>
-  /// <br>任何初始化失败都会抛出, 由 ParticleManager 捕获并回退 CPU 策略.</br>
+  /// GPU 更新策略 (策略模式, 纹理粒子实现): 粒子状态存于"数据纹理"
+  /// (每粒子一列 × 5 行 RGBA32F 纹素, 逐行对应 <see cref="Particle"/> 的 5 个 float4),
+  /// 每帧 ComputeSharp 派发生成/集成两个计算着色器, 渲染端顶点着色器按槽位 ID 取样纹素.
+  /// <br>两档实现:</br>
+  /// <br>- <b>零拷贝</b>: 数据纹理为 D3D11↔D3D12 共享纹理 (复用 TinterBridge 的 SharedTexture 机制,
+  /// 该路径已被实战验证), 粒子数据全程驻留显存, CPU 不触碰;</br>
+  /// <br>- <b>读回</b>: 驱动不支持共享时, ComputeSharp 侧本地纹理更新后每帧拷回并上传
+  /// MonoGame 纹理, 更新仍在 GPU.</br>
+  /// <br>奇偶双缓冲 + ComputeSharp 完成栅栏同步: D3D11 渲染端始终读取上一帧结果, 无跨设备写冲突.</br>
   /// </summary>
   public sealed unsafe class GpuUpdateStrategy : IParticleUpdateStrategy
   {
-    public string Name => _zeroCopy ? "GPU 零拷贝 (ComputeSharp)" : "GPU 更新+读回 (ComputeSharp)";
+    public string Name => _zeroCopy ? "GPU 零拷贝 (ComputeSharp·共享纹理)" : "GPU 更新+读回 (ComputeSharp)";
     public bool IsZeroCopy => _zeroCopy;
     public int Capacity => _capacity;
 
     private GraphicsDevice _device;
     private int _capacity;
     private ParticleComputeDevice _compute;
-    private SharedParticleBuffer<Particle>[] _parity = new SharedParticleBuffer<Particle>[2];
+    private bool _zeroCopy = true;
+
+    // —— 零拷贝档: 共享数据纹理 (奇偶) ——
+    private SharedTexture[] _sharedParity = new SharedTexture[ParityCount];
+
+    // —— 读回档: ComputeSharp 本地纹理 + MonoGame 采样纹理 ——
+    private ReadWriteTexture2D<float4>[] _localParity = new ReadWriteTexture2D<float4>[ParityCount];
+    private Texture2D _monoTexture;
+    private float4[] _readback;
+
     private int _writeParity;
     private int _readParity;
     private ulong _lastFenceValue;
     private bool _pending;
     private int _drawEnd;
 
-    // —— 读回模式 (驱动不支持跨设备共享时的 GPU 备选): 粒子更新仍在 GPU, 结果每帧读回上传 ——
-    private bool _zeroCopy = true;
-    private ReadWriteBuffer<Particle>[] _local = new ReadWriteBuffer<Particle>[2];
-    private Particle[] _readback;
-    private DynamicVertexBuffer _uploadBuffer;
+    /// <summary>
+    /// 数据纹理的缓冲深度. 必须为 3: D3D12 (ComputeSharp 写) 与 D3D11 (渲染读) 是两个
+    /// 无隐式同步的独立队列, 双缓冲下"帧 N 的 D3D12 写"会撞上"帧 N-1 的 D3D11 读"
+    /// (帧首栅栏只同步 D3D12 队列, 管不到 D3D11 的 draw/present) —— 实测表现为
+    /// Clear 疑似失效/残影/驱动仲裁导致的风扇狂转. 三缓冲使任意写与读错开一整帧.
+    /// </summary>
+    private const int ParityCount = 3;
 
     // —— 曲线缓冲缓存 (按发射器配置版本增量重建) ——
-    private ReadOnlyBuffer<float4>[] _curveBuffers;
-    private int[] _curveVersions;
+    private ReadOnlyBuffer<float4>[] _curveBuffers = Array.Empty<ReadOnlyBuffer<float4>>();
+    private int[] _curveVersions = Array.Empty<int>();
     private readonly List<Vector4> _curveScratch = new List<Vector4>(64);
     private float4[] _curvePacked = new float4[64];
     private readonly List<ParticleSpawnRecord> _spawnScratch = new List<ParticleSpawnRecord>(128);
@@ -59,40 +73,37 @@ namespace Particle.Compute
 
       try
       {
-        // —— 优先: 跨设备零拷贝共享缓冲区 ——
-        for (int i = 0; i < 2; i++)
+        // —— 优先: 跨设备共享数据纹理 (TinterBridge 同款机制, 纹理路径已被实战验证) ——
+        for (int i = 0; i < ParityCount; i++)
         {
-          _parity[i] = SharedParticleBuffer<Particle>.Create(
-              _device, _compute.Device, _compute.D3d12Device, _capacity,
-              ParticleLayouts.InstanceVertexDeclaration);
-
-          _compute.Device.For(_capacity, new ParticleClearShader(_parity[i].WriteView));
+          _sharedParity[i] = SharedTexture.Create(
+              _device, _compute.D3d11, _compute.Device, _compute.D3d12Device, _capacity, ParticleLayouts.DataRows);
+          _compute.Device.For(_capacity, ParticleLayouts.DataRows, new ParticleClearShader(_sharedParity[i].CsTexture));
           _lastFenceValue = _compute.Fence.ReadNextValue(_compute.Device);
         }
+        _zeroCopy = true;
       }
       catch (Exception sharedFailure)
       {
-        // —— 回退: 驱动不支持共享 (如部分 AMD 驱动拒绝缓冲区 NT 共享) → 纯 ComputeSharp 缓冲 + 帧读回.
-        Console.WriteLine("Remind", "跨设备共享不可用 (" + sharedFailure.Message + "), GPU 策略切换为更新+读回模式.");
+        // —— 回退: ComputeSharp 本地纹理更新 + 帧读回上传 (更新仍在 GPU) ——
         _zeroCopy = false;
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < ParityCount; i++)
         {
-          _parity[i]?.Dispose();
-          _parity[i] = null;
-          _local[i]?.Dispose();
-          _local[i] = _compute.Device.AllocateReadWriteBuffer<Particle>(_capacity);
-          _compute.Device.For(_capacity, new ParticleClearShader(_local[i]));
+          _sharedParity[i]?.Dispose();
+          _sharedParity[i] = null;
+          _localParity[i]?.Dispose();
+          _localParity[i] = _compute.Device.AllocateReadWriteTexture2D<float4>(_capacity, ParticleLayouts.DataRows);
+          _compute.Device.For(_capacity, ParticleLayouts.DataRows, new ParticleClearShader(_localParity[i]));
           _lastFenceValue = _compute.Fence.ReadNextValue(_compute.Device);
         }
-        _readback = new Particle[_capacity];
-        _uploadBuffer = new DynamicVertexBuffer(_device, ParticleLayouts.InstanceVertexDeclaration, _capacity, BufferUsage.WriteOnly);
+        _readback = new float4[_capacity * ParticleLayouts.DataRows];
+        _monoTexture = new Texture2D(_device, _capacity, ParticleLayouts.DataRows, false, SurfaceFormat.Vector4);
       }
+
       _pending = true;
       _writeParity = 0;
       _readParity = 1;
-      _curveBuffers = new ReadOnlyBuffer<float4>[Math.Max(1, _curveBuffers?.Length ?? 0)];
       _drawEnd = 0;
-      Console.WriteLine("Remind", $"GPU 粒子策略就绪 ({SharedParticleBuffer<Particle>.LastCreationMode}).");
     }
 
     public void Submit(ParticleSimFrame frame)
@@ -101,14 +112,14 @@ namespace Particle.Compute
       if (_pending)
         _compute.Fence.Wait(_lastFenceValue);
 
-      // —— 翻转奇偶: 上帧写入端变为本帧读取端 (D3D11 绘制它), 新写入端为另一块 ——
+      // —— 翻转: 上帧写入端变为本帧读取端 (D3D11 绘制它), 新写入端为第三块 (与读写双方均错开) ——
       _readParity = _writeParity;
-      _writeParity ^= 1;
+      _writeParity = (_writeParity + 1) % ParityCount;
       _pending = false;
       _drawEnd = frame.DrawEnd;
 
-      ReadWriteBuffer<Particle> write = _zeroCopy ? _parity[_writeParity].WriteView : _local[_writeParity];
-      ReadWriteBuffer<Particle> read = _zeroCopy ? _parity[_readParity].ReadView : _local[_readParity];
+      ReadWriteTexture2D<float4> write = _zeroCopy ? _sharedParity[_writeParity].CsTexture : _localParity[_writeParity];
+      ReadWriteTexture2D<float4> read = _zeroCopy ? _sharedParity[_readParity].CsTexture : _localParity[_readParity];
 
       // —— 生成派发: 所有发射器的记录合并为一条生成缓冲 ——
       _spawnScratch.Clear();
@@ -150,39 +161,38 @@ namespace Particle.Compute
             parameters.RangeStart,
             parameters.ColorKeyCount,
             parameters.AlphaKeyCount,
-            parameters.SizeKeyCount));
+            parameters.SizeKeyCount,
+            parameters.Interpolation));
         _lastFenceValue = _compute.Fence.ReadNextValue(_compute.Device);
         _pending = true;
       }
     }
 
-    public (VertexBuffer Buffer, int InstanceCount) ResolveFrame()
+    public (Texture2D DataTexture, int InstanceCount) ResolveFrame()
     {
       if (_zeroCopy)
       {
         // 渲染端读取上一帧的写入结果 (本帧派发写入另一奇偶, 无冲突).
-        return (_parity[_readParity].InstanceBuffer, Math.Min(_drawEnd, _capacity));
+        return (_sharedParity[_readParity].Wrapper, Math.Min(_drawEnd, _capacity));
       }
 
-      // 读回模式: 取回上一帧结果并上传动态顶点缓冲 (GPU 同步已在帧首等待完成).
+      // 读回档: 取回上一帧结果并上传 MonoGame 采样纹理 (只传占用前缀列).
       int count = Math.Min(_drawEnd, _capacity);
-      if (count > 0 && _readback is not null)
+      if (count > 0 && _readback is not null && _monoTexture is not null)
       {
-        _local[_readParity].CopyTo(_readback.AsSpan(0, count));
-        _uploadBuffer.SetData(_readback, 0, count, SetDataOptions.Discard);
+        _localParity[_readParity].CopyTo(_readback.AsSpan(0, count * ParticleLayouts.DataRows));
+        _monoTexture.SetData(0, new Rectangle(0, 0, count, ParticleLayouts.DataRows),
+          _readback, 0, count * ParticleLayouts.DataRows);
       }
-      return (_uploadBuffer, count);
+      return (_monoTexture, count);
     }
 
     /// <summary>获取/重建发射器曲线缓冲 (配置版本号变化时重建).</summary>
     private ReadOnlyBuffer<float4> EnsureCurveBuffer(int emitterIndex, EmitterConfig config)
     {
       if (_curveBuffers.Length <= emitterIndex)
-      {
         Array.Resize(ref _curveBuffers, emitterIndex + 1);
-      }
 
-      // 版本不足时扩容版本缓存 (新发射器).
       if (_curveVersions is null || _curveVersions.Length <= emitterIndex)
       {
         int[] old = _curveVersions;
@@ -196,7 +206,7 @@ namespace Particle.Compute
 
       config.PackGpuCurves(_curveScratch);
       if (_curveScratch.Count == 0)
-        _curveScratch.Add(new Vector4(0f, 1f, 1f, 1f));   // 空曲线: 恒定白色 (与 CPU 求值一致)
+        _curveScratch.Add(new Vector4(0f, 1f, 1f, 1f));   // 空曲线: 恒定白色 (与 CPU 求值一致).
 
       if (_curvePacked.Length < _curveScratch.Count)
         _curvePacked = new float4[_curveScratch.Count * 2];
@@ -224,15 +234,15 @@ namespace Particle.Compute
         // 释放路径尽力等待即可.
       }
 
-      for (int i = 0; i < _parity.Length; i++)
+      for (int i = 0; i < _sharedParity.Length; i++)
       {
-        _parity[i]?.Dispose();
-        _parity[i] = null;
-        _local[i]?.Dispose();
-        _local[i] = null;
+        _sharedParity[i]?.Dispose();
+        _sharedParity[i] = null;
+        _localParity[i]?.Dispose();
+        _localParity[i] = null;
       }
-      _uploadBuffer?.Dispose();
-      _uploadBuffer = null;
+      _monoTexture?.Dispose();
+      _monoTexture = null;
       _readback = null;
 
       if (_curveBuffers is not null)
