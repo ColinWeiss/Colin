@@ -120,14 +120,15 @@ namespace Colin.Core.Graphics.Visual.Particle
       }
     }
 
-    /// <summary>移动控制点 (时间钳制在相邻控制点之间, 保持递增 —— 拖拽安全).</summary>
+    /// <summary>移动控制点: 头尾两个端点<b>钉死在时间 0 / 1</b> (拖动只改数值, 不许动横轴),
+    /// 中间点的时间钳制在相邻控制点之间 (保持递增 —— 拖拽安全).</summary>
     public void MoveKey(int index, float time, float value)
     {
       if (index < 0 || index >= Keys.Count)
         return;
       float min = index > 0 ? Keys[index - 1].Time : 0f;
       float max = index < Keys.Count - 1 ? Keys[index + 1].Time : 1f;
-      Keys[index] = new CurveKey(Math.Clamp(time, min, max), value);
+      Keys[index] = new CurveKey(CurveMath.PinKeyTime(Keys.Count, index, time, min, max), value);
       Version++;
     }
 
@@ -223,14 +224,14 @@ namespace Colin.Core.Graphics.Visual.Particle
       }
     }
 
-    /// <summary>移动控制点 (时间钳制在相邻控制点之间, 保持递增).</summary>
+    /// <summary>移动控制点: 头尾两个端点<b>钉死在时间 0 / 1</b>, 中间点时间钳制在相邻控制点之间.</summary>
     public void MoveKey(int index, float time, Vector4 color)
     {
       if (index < 0 || index >= Keys.Count)
         return;
       float min = index > 0 ? Keys[index - 1].Time : 0f;
       float max = index < Keys.Count - 1 ? Keys[index + 1].Time : 1f;
-      Keys[index] = new ColorKey(Math.Clamp(time, min, max), color);
+      Keys[index] = new ColorKey(CurveMath.PinKeyTime(Keys.Count, index, time, min, max), color);
       Version++;
     }
 
@@ -262,6 +263,19 @@ namespace Colin.Core.Graphics.Visual.Particle
         + (-p0 + p2) * f
         + (2f * p0 - 5f * p1 + 4f * p2 - p3) * f2
         + (-p0 + 3f * p1 - 3f * p2 + p3) * f3);
+    }
+
+    /// <summary>端点时间钉死规则 (MoveKey 共用): 首键恒 0, 末键恒 1,
+    /// 中间点钳制在相邻两键之间 (minTime/maxTime 由调用方按邻居给出); 仅一个键时钳制在 0~1.</summary>
+    public static float PinKeyTime(int count, int index, float time, float minTime, float maxTime)
+    {
+      if (count <= 1)
+        return Math.Clamp(time, 0f, 1f);
+      if (index == 0)
+        return 0f;
+      if (index == count - 1)
+        return 1f;
+      return Math.Clamp(time, minTime, maxTime);
     }
   }
 
