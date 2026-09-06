@@ -36,9 +36,9 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     /// <summary>收尾时长 (秒) —— 该修饰器自己的时间轴长度.</summary>
     public float Duration = 0.25f;
 
-    /// <summary>收尾时间轴曲线 (横轴: 收尾时间进度, <b>纵轴: 相对速度</b>) ——
-    /// 积分归一化: 时长内必完成, 曲线只塑造快慢节奏 (收拢速度 / 渐隐速度).</summary>
-    public FloatCurve Curve = FloatCurve.Constant(1f);
+    /// <summary>收尾时间轴曲线 (横轴: 收尾时间进度, <b>纵轴: 该修饰器的完成度</b>, 0=未开始 1=完成) ——
+    /// 直读映射; 末关键帧应落在 1 (收拢收满到刃头 / 渐隐完全消失), 否则修饰器会提前定型.</summary>
+    public FloatCurve Curve = FloatCurve.Linear();
 
     /// <summary>修饰器类型 (诊断).</summary>
     public abstract SlashFinishKind Kind { get; }
@@ -57,7 +57,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     {
       Enabled = Enabled,
       Duration = Duration,
-      Curve = Curve?.Clone() ?? FloatCurve.Constant(1f)
+      Curve = Curve?.Clone() ?? FloatCurve.Linear()
     };
   }
 
@@ -72,7 +72,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     {
       Enabled = Enabled,
       Duration = Duration,
-      Curve = Curve?.Clone() ?? FloatCurve.Constant(1f)
+      Curve = Curve?.Clone() ?? FloatCurve.Linear()
     };
   }
 

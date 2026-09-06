@@ -14,10 +14,10 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     Sweep
   }
 
-  /// <summary>
-  /// 刀光本体 (弧形条带 Mesh) 配置. 一次完整的挥动明确分为两个阶段:
-  /// <br>- <b>阶段一 挥动</b>: 前缘按 <see cref="SweepCurve"/> 速度曲线从 <see cref="ArcFrom"/>
-  /// 扫到 <see cref="ArcTo"/>, 历时 <see cref="SweepTime"/>; 尾端钉在起始角, 弧带随挥动展开;</br>
+    /// <summary>
+    /// 刀光本体 (弧形条带 Mesh) 配置. 一次完整的挥动明确分为两个阶段:
+    /// <br>- <b>阶段一 挥动</b>: 前缘按 <see cref="SweepCurve"/> 进度曲线从 <see cref="ArcFrom"/>
+    /// 扫到 <see cref="ArcTo"/>, 历时 <see cref="SweepTime"/>; 尾端钉在起始角, 弧带随挥动展开;</br>
   /// <br>- <b>阶段二 收尾</b>: <see cref="Finishes"/> 修饰器列表 (渐隐/收拢, 可同时叠加),
   /// 各自拥有独立时长与时间轴曲线; 全部播完刀光才判定完成.</br>
   /// <br>本体可叠加 <see cref="Layers"/> 纹理层 (每层独立纹理/色调/UV 变换).</br>
@@ -56,9 +56,9 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
 
     /// <summary>挥扫时长 (秒) —— 前缘从起始角扫到结束角.</summary>
     public float SweepTime = 0.20f;
-    /// <summary>挥扫速度曲线 (横轴: 挥扫时间进度, <b>纵轴: 相对速度</b>, 1 ≈ 平均速度) ——
-    /// 运行时积分归一化: 挥扫必在时长内完成, 曲线只塑造快慢节奏; 曲线水平段 = 原地停顿.</summary>
-    public FloatCurve SweepCurve = FloatCurve.Constant(1f);
+    /// <summary>挥扫进度曲线 (横轴: 挥扫时间进度, <b>纵轴: 已扫弧段占比</b>, 0=起始角 1=结束角) ——
+    /// 直读映射: 时间 t 时前缘应到达的位置; 末关键帧应落在 1, 否则前缘到不了结束角.</summary>
+    public FloatCurve SweepCurve = FloatCurve.Linear();
 
     // ---- 阶段二: 收尾 (修饰器, 可同时叠加) ----
 
@@ -119,7 +119,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
       ScaleY = ScaleY,
       RotationDeg = RotationDeg,
       SweepTime = SweepTime,
-      SweepCurve = SweepCurve?.Clone() ?? FloatCurve.Constant(1f),
+      SweepCurve = SweepCurve?.Clone() ?? FloatCurve.Linear(),
       Finishes = Finishes?.Select(f => f?.Clone()).ToList() ?? new List<SlashFinishConfig>(),
       Layers = Layers?.Select(l => l?.Clone()).ToList() ?? new List<SlashTextureLayer>(),
       Retire = Retire,

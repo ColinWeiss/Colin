@@ -2,7 +2,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
 {
   /// <summary>
   /// 弧形刀光实例 (拉刀光 Mesh): 一次完整的挥动明确分为两个阶段 ——
-  /// <br><b>阶段一 挥动</b>: 前缘按速度曲线从起始角扫到结束角, 尾端钉在起始角, 弧带随挥动展开;</br>
+  /// <br><b>阶段一 挥动</b>: 前缘按进度曲线从起始角扫到结束角, 尾端钉在起始角, 弧带随挥动展开;</br>
   /// <br><b>阶段二 收尾</b>: 修饰器列表 (<see cref="SlashFadeFinish"/> 渐隐 /
   /// <see cref="SlashCollapseFinish"/> 收拢) 逐个推进, 可同时叠加, 全部播完即完成.</br>
   /// <br>顶点在"模型空间" (未缩放圆弧, 等宽) 内生成, 椭圆长宽/旋转/位移由相机矩阵承担
@@ -38,14 +38,10 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     private float _headDeg;
     private float _tailDeg;
 
-    // —— 收尾修饰器运行时: 启用列表 (随配置版本同步) 与各修饰器的计算结果 ——
+    // —— 收尾修饰器运行时: 启用列表 (随配置版本同步) ——
     private readonly List<SlashFinishConfig> _activeFinishes = new List<SlashFinishConfig>();
-    private readonly List<SlashSpeedCurve> _finishPacing = new List<SlashSpeedCurve>();
     private int _configStamp = -1;
     private float _fadeScale = 1f;
-
-    // —— 阶段曲线: 纵轴 = 相对速度, 运行时积分归一化为进度 ——
-    private readonly SlashSpeedCurve _sweepPacing = new SlashSpeedCurve();
 
     // —— 纹理层横向滚动状态 (逐层累计 ScrollSpeed) ——
     private float[] _layerScrolls = Array.Empty<float>();
@@ -76,7 +72,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     private void SyncFinishes()
     {
       int stamp = Config.Version;
-      if (_configStamp == stamp && _activeFinishes.Count == _finishPacing.Count)
+      if (_configStamp == stamp)
         return;
       _configStamp = stamp;
 
@@ -87,7 +83,6 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
             _activeFinishes.Add(finish);
 
       // —— 旧配置兼容: 未配置收尾修饰器时按 Retire/FadeTime/CatchupTime 合成 ——
-      // (必须在构建换算器列表之前补齐, 否则两表长度失配 → 收尾帧索引越界.)
       if (_activeFinishes.Count == 0)
       {
         if (Config.Retire == SlashRetireMode.Sweep)
@@ -95,15 +90,11 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
         else
           _activeFinishes.Add(new SlashFadeFinish { Duration = MathF.Max(1e-3f, Config.FadeTime) });
       }
-
-      _finishPacing.Clear();
-      for (int i = 0; i < _activeFinishes.Count; i++)
-        _finishPacing.Add(new SlashSpeedCurve());
     }
 
     /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动).
     /// <br><b>一次完整的挥动 = 阶段一 挥动 + 阶段二 收尾</b>:</br>
-    /// <br>① 挥动: 前缘按速度曲线从起始角扫到结束角, 尾端钉在起始角 (弧带随挥动展开);</br>
+    /// <br>① 挥动: 前缘按进度曲线从起始角扫到结束角, 尾端钉在起始角 (弧带随挥动展开);</br>
     /// <br>② 收尾: 收尾修饰器列表逐个推进 (渐隐/收拢, 可同时叠加, 各自时长与曲线),
     /// 全部播完刀光才判定完成 —— 收拢到点必然收完, 不存在没收入的顶点.</br>
     /// </summary>
@@ -127,18 +118,18 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
 
       if (_elapsed <= sweep)
       {
-        // —— 阶段一 挥动: 前缘速度曲线积分后扫进 (纵轴=相对速度); 尾端钉在起始角 ——
+        // —— 阶段一 挥动: 前缘按进度曲线直读扫进 (纵轴=已扫弧段占比, 0=起始角 1=结束角);
+        // 尾端钉在起始角 ——
         float sweepT = Math.Clamp(_elapsed / sweep, 0f, 1f);
         Progress = sweepT;
-        float progress = Math.Clamp(_sweepPacing.Evaluate(config.SweepCurve, sweepT), 0f, 1f);
-        _headDeg = MathHelper.Lerp(fromDeg, toDeg, progress);
+        _headDeg = MathHelper.Lerp(fromDeg, toDeg, EvaluateProgress(config.SweepCurve, sweepT));
         _tailDeg = fromDeg;
         _fadeScale = 1f;
       }
       else
       {
-        // —— 阶段二 收尾: 各修饰器按自己的时长/速度曲线推进 (积分归一化, 时长内必完成)
-        // (收拢改写尾端, 渐隐乘算透明度) ——
+        // —— 阶段二 收尾: 各修饰器按自己的时长/进度曲线推进 (纵轴=完成度, 末关键帧应落在 1,
+        // 否则修饰器会在到时前提前定型); (收拢改写尾端, 渐隐乘算透明度) ——
         Progress = 1f;
         _headDeg = toDeg;
         _tailDeg = fromDeg;
@@ -146,15 +137,13 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
 
         float finishT = _elapsed - sweep;
         bool allDone = true;
-        if (_activeFinishes.Count != _finishPacing.Count)
-          SyncFinishes();   // 容灾: 两表失配 (配置被外部热替换) 时强制重建.
         for (int i = 0; i < _activeFinishes.Count; i++)
         {
           SlashFinishConfig finish = _activeFinishes[i];
           float t = Math.Clamp(finishT / MathF.Max(1e-3f, finish.Duration), 0f, 1f);
           if (t < 1f)
             allDone = false;
-          float curved = Math.Clamp(_finishPacing[i].Evaluate(finish.Curve, t), 0f, 1f);
+          float curved = EvaluateProgress(finish.Curve, t);
           if (finish is SlashCollapseFinish)
             _tailDeg = MathHelper.Lerp(fromDeg, toDeg, curved);
           else if (finish is SlashFadeFinish)
@@ -219,14 +208,22 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
         float t = i / (float)(count - 1);       // 0 = 头部 (前缘), 1 = 尾端.
         float angleDeg = MathHelper.Lerp(_headDeg, tailDeg, t);
 
-        // 顶点色渐隐: Fade 模式用全局淡出; Sweep 模式尾端恒定渐隐 (静态色渐变).
-        float fade = config.Retire == SlashRetireMode.Sweep
-          ? MathHelper.Lerp(1f, 0.35f, t)
-          : globalFade;
+        // 顶点色渐隐: 全局透明度 (渐隐修饰器乘算) 恒参与;
+        // 旧 Sweep 收起配置再叠加静态尾端渐变 (头亮尾隐的既有观感).
+        float fade = globalFade;
+        if (config.Retire == SlashRetireMode.Sweep)
+          fade *= MathHelper.Lerp(1f, 0.35f, t);
         PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f), radius, halfWidth);
       }
 
-      return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, count, vertices, indices);
+      return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, count, vertices, indices, Vector2.Zero);
+    }
+
+    /// <summary>进度曲线求值: 纵轴即进度 (0=起点, 1=终点), 直读不积分; 异常值兜底回线性.</summary>
+    private static float EvaluateProgress(FloatCurve curve, float t)
+    {
+      float value = curve?.Evaluate(t) ?? t;
+      return float.IsFinite(value) ? Math.Clamp(value, 0f, 1f) : t;
     }
 
     /// <summary>摆放单个弧点 (模型空间圆弧 + 整体面片等宽 + 头亮尾隐顶点色; 变换交给相机矩阵).</summary>
@@ -322,63 +319,6 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
         _halfWidths = new float[count];
         _colors = new Vector4[count];
         _us = new float[count];
-      }
-    }
-  }
-
-  /// <summary>
-  /// 速度曲线的积分换算器: 曲线<b>纵轴 = 相对速度</b> (1 ≈ 该阶段的平均速度), 横轴 = 该阶段的时间进度.
-  /// 运行时对速度做梯形积分并归一化 —— 进度 = 已走过路程的占比, 因此阶段末尾必达 1
-  /// (到点必完成), 曲线只塑造快慢节奏; 曲线的水平段即"没速度" (原地停顿).
-  /// </summary>
-  public sealed class SlashSpeedCurve
-  {
-    private const int Samples = 32;
-    private FloatCurve _curve;
-    private int _stamp = -1;
-    private readonly float[] _cdf = new float[Samples + 1];   // 归一化累计积分 (进度查找表).
-
-    /// <summary>求时间进度 t (0~1) 处的归一化进度; 自动跟随曲线实例/版本重建积分表.</summary>
-    public float Evaluate(FloatCurve curve, float t)
-    {
-      if (!ReferenceEquals(_curve, curve) || _stamp != (curve?.Version ?? -1))
-      {
-        _curve = curve;
-        _stamp = curve?.Version ?? -1;
-        Rebuild();
-      }
-
-      // —— NaN 会穿透 Math.Clamp, 而 (int)NaN 在 x64 上 = int.MinValue → 索引越界, 必须先行拦截. ——
-      if (!float.IsFinite(t))
-        t = 0f;
-      t = Math.Clamp(t, 0f, 1f);
-      float f = t * Samples;
-      int i = Math.Clamp((int)f, 0, Samples - 1);
-      return MathHelper.Lerp(_cdf[i], _cdf[i + 1], f - i);
-    }
-
-    private void Rebuild()
-    {
-      float total = 0f;
-      _cdf[0] = 0f;
-      for (int i = 0; i < Samples; i++)
-      {
-        float a = _curve?.Evaluate(i / (float)Samples) ?? i / (float)Samples;
-        float b = _curve?.Evaluate((i + 1) / (float)Samples) ?? (i + 1) / (float)Samples;
-        total += (a + b) * 0.5f / Samples;
-        _cdf[i + 1] = total;
-      }
-
-      if (total <= 1e-6f)
-      {
-        // 全零速度: 退化为匀速 (否则永远走不完).
-        for (int i = 0; i <= Samples; i++)
-          _cdf[i] = i / (float)Samples;
-      }
-      else
-      {
-        for (int i = 0; i <= Samples; i++)
-          _cdf[i] /= total;
       }
     }
   }

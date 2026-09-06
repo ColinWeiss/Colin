@@ -18,6 +18,9 @@
     /// 超出部分是上一帧的陈旧位置, 绝不允许进入索引 (否则出现拉向旧顶点的撕拉鬼影).</param>
     /// <param name="vertices">输出顶点 (2 × count).</param>
     /// <param name="indices">输出索引 (三角带, 3 × (count-1) × 2).</param>
+    /// <param name="vCenter">纹理 V 定侧参考中心 (弧心, 模型空间). 提供时<b>远离中心的一侧恒为 V=1</b> ——
+    /// 定侧只看几何位置、不看扫动方向, 反向挥扫/起止角对调/镜像都不再把纹理翻面;
+    /// 缺省退回 ±法线定侧 (V: +法线侧 0, −法线侧 1, 随扫向翻转).</param>
     /// <returns>实际写入的三角带段数 (count-1; 不足两点时为 0).</returns>
     public static int Build(
         IReadOnlyList<Vector2> points,
@@ -26,7 +29,8 @@
         IReadOnlyList<float> us,
         int count,
         SlashVertex[] vertices,
-        short[] indices)
+        short[] indices,
+        Vector2? vCenter = null)
     {
       if (count < 2 || count > points.Count)
         return 0;
@@ -45,12 +49,22 @@
         Vector4 color = colors[i];
         float u = us[i];
 
+        // —— V 定侧: 参考中心给定时, 远离中心 (朝外) 的一侧恒为 V=1 ——
+        // 弧形刀光的法线恒为径向, dot(法线, 点位-弧心) 的符号即朝向内外,
+        // 全弧连续无跳变 (逐点比 Y 的做法会在弧线左右极点处翻面).
+        float vPlus = 0f, vMinus = 1f;
+        if (vCenter.HasValue && Vector2.Dot(normal, points[i] - vCenter.Value) > 0f)
+        {
+          vPlus = 1f;
+          vMinus = 0f;
+        }
+
         vertices[i * 2].Position = points[i] + normal * halfWidth;
-        vertices[i * 2].TexCoord = new Vector2(u, 0f);
+        vertices[i * 2].TexCoord = new Vector2(u, vPlus);
         vertices[i * 2].Color = color;
 
         vertices[i * 2 + 1].Position = points[i] - normal * halfWidth;
-        vertices[i * 2 + 1].TexCoord = new Vector2(u, 1f);
+        vertices[i * 2 + 1].TexCoord = new Vector2(u, vMinus);
         vertices[i * 2 + 1].Color = color;
       }
 
