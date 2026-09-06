@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34018.315
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12120.119 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Colin.Core", "Colin.Core.shproj", "{F13B6209-0F35-4088-AB34-D5F07FB2891C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Colin.Editor", "..\Colin.Editor\Colin.Editor.shproj", "{0ECD24C7-02F7-469D-B01E-4443A1271235}"
 EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
@@ -13,6 +15,7 @@ Global
 		SolutionGuid = {79ADD8C7-D63C-4B37-9D83-D4888F194618}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\Colin.Editor\Colin.Editor.projitems*{0ecd24c7-02f7-469d-b01e-4443a1271235}*SharedItemsImports = 13
 		Colin.Core.projitems*{f13b6209-0f35-4088-ab34-d5f07fb2891c}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
