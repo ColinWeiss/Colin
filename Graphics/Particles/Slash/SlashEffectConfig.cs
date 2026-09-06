@@ -1,12 +1,134 @@
 ﻿using System.Text.Json.Serialization;
 
+using Particle.Core;
+using CurveKey = Particle.Core.CurveKey;
+
 namespace Particle.Slash
 {
+  // =====================================================================
+  //  收尾修饰器 (阶段二): 挥动结束后的收尾表现, 一份配置可同时叠加多个.
+  //  每个修饰器有独立的时长与时间轴曲线; 全部修饰器播完, 刀光才判定完成.
+  // =====================================================================
+
+  /// <summary>收尾修饰器类型标识 (诊断用).</summary>
+  public enum SlashFinishKind
+  {
+    /// <summary>渐隐: 整体透明度随曲线衰减.</summary>
+    Fade,
+    /// <summary>收拢: 尾端从起始角向刃头收进 (星爆气流斩式).</summary>
+    Collapse
+  }
+
+  /// <summary>
+  /// 收尾修饰器基类: 挥动 (阶段一) 结束后驱动收尾 (阶段二) 的可叠加修饰器.
+  /// <br>派生: <see cref="SlashFadeFinish"/> (渐隐) / <see cref="SlashCollapseFinish"/> (收拢) ——
+  /// 二者同级、允许同时添加 (边收拢边渐隐). 多态序列化经 "$kind" 判别符.</br>
+  /// </summary>
+  [JsonPolymorphic(TypeDiscriminatorPropertyName = "$kind")]
+  [JsonDerivedType(typeof(SlashFadeFinish), "fade")]
+  [JsonDerivedType(typeof(SlashCollapseFinish), "collapse")]
+  [Serializable]
+  public abstract class SlashFinishConfig
+  {
+    /// <summary>是否启用.</summary>
+    public bool Enabled = true;
+
+    /// <summary>收尾时长 (秒) —— 该修饰器自己的时间轴长度.</summary>
+    public float Duration = 0.25f;
+
+    /// <summary>收尾时间轴曲线 (横轴: 收尾时间进度 0~1, 纵轴: 该修饰器的进度/强度 0~1).</summary>
+    public FloatCurve Curve = new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } };
+
+    /// <summary>修饰器类型 (诊断).</summary>
+    public abstract SlashFinishKind Kind { get; }
+
+    /// <summary>深拷贝.</summary>
+    public abstract SlashFinishConfig Clone();
+  }
+
+  /// <summary>渐隐收尾: 整体透明度 × (1 - 曲线(t)). 曲线决定渐隐节奏 (线性淡出 / 先驻留后消失等).</summary>
+  [Serializable]
+  public sealed class SlashFadeFinish : SlashFinishConfig
+  {
+    public override SlashFinishKind Kind => SlashFinishKind.Fade;
+
+    public override SlashFinishConfig Clone() => new SlashFadeFinish
+    {
+      Enabled = Enabled,
+      Duration = Duration,
+      Curve = Curve?.Clone() ?? new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } }
+    };
+  }
+
+  /// <summary>收拢收尾: 尾端角 = 起始角 → (起始角 + 曲线(t) × 全弧) 向刃头收进.
+  /// 时长到点收拢必然完成 —— 不存在没收入的顶点 (容灾).</summary>
+  [Serializable]
+  public sealed class SlashCollapseFinish : SlashFinishConfig
+  {
+    public override SlashFinishKind Kind => SlashFinishKind.Collapse;
+
+    public override SlashFinishConfig Clone() => new SlashCollapseFinish
+    {
+      Enabled = Enabled,
+      Duration = Duration,
+      Curve = Curve?.Clone() ?? new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } }
+    };
+  }
+
+  // =====================================================================
+  //  纹理层修饰器: 刀光本体的贴图可叠加任意多层, 每层独立纹理与参数,
+  //  几何每帧只构建一次, 逐层绘制 (各自采样/色调) —— 叠出更丰富的视觉表现.
+  // =====================================================================
+
+  /// <summary>
+  /// 刀光纹理层: 一层独立的贴图 pass. UV.x 沿刀光方向 (尾 0 → 头 1), UV.y 沿宽度截面.
+  /// </summary>
+  [Serializable]
+  public class SlashTextureLayer
+  {
+    /// <summary>是否启用.</summary>
+    public bool Enabled = true;
+
+    /// <summary>纹理名: 内置 ("blade"/"glow"/"spark"/"smoke") / "file:路径" / "embed:键" (预制件自带).</summary>
+    public string Texture = "blade";
+
+    /// <summary>层颜色调制 (与顶点头尾渐变色相乘后再乘此色).</summary>
+    public Vector4 Tint = new Vector4(1f, 1f, 1f, 1f);
+
+    /// <summary>层强度 (整体乘算, 可叠出主次层级).</summary>
+    public float Intensity = 1f;
+
+    /// <summary>UV 横向平铺次数 (1 = 整张映射; &gt;1 沿刀光重复).</summary>
+    public float UTiling = 1f;
+
+    /// <summary>UV 横向偏移 (静态; 配合滚动做相位).</summary>
+    public float UOffset = 0f;
+
+    /// <summary>横向滚动速度 (u/秒) —— 流光沿刀光方向持续流动.</summary>
+    public float ScrollSpeed = 0f;
+
+    /// <summary>UV 纵向缩放 (截面收窄 &lt;1 / 扩张 &gt;1, 以中线为中心).</summary>
+    public float VScale = 1f;
+
+    /// <summary>深拷贝.</summary>
+    public SlashTextureLayer Clone() => new SlashTextureLayer
+    {
+      Enabled = Enabled,
+      Texture = Texture,
+      Tint = Tint,
+      Intensity = Intensity,
+      UTiling = UTiling,
+      UOffset = UOffset,
+      ScrollSpeed = ScrollSpeed,
+      VScale = VScale
+    };
+  }
+
   /// <summary>
   /// 刃花配置: 沿刀光前缘喷射的火花粒子层.
   /// <br>刃花与刀光角度<b>绑定</b> —— 运行时由 <see cref="SlashEffect"/> 每帧取弧的当前前缘角度,
   /// 用与 Mesh 相同的整体坐标系 (椭圆缩放/旋转) 求前缘位置与切向, 直接驱动发射,
-  /// 因此无论收起方式、扫速、坐标系怎么改, 刃花始终生在刃头上.</br>
+  /// 因此无论收尾方式、扫速、坐标系怎么改, 刃花始终生在刃头上.</br>
   /// </summary>
   [Serializable]
   public class SlashSparkConfig
@@ -43,7 +165,7 @@ namespace Particle.Slash
     public bool Stretched = true;
     /// <summary>火花槽位上限.</summary>
     public int Capacity = 128;
-    /// <summary>刃花纹理名 (内置 spark/glow/blade 或 "file:路径").</summary>
+    /// <summary>刃花纹理名 (内置 spark/glow 或 "file:路径" / "embed:键").</summary>
     public string Texture = "spark";
 
     /// <summary>深拷贝.</summary>
@@ -70,8 +192,12 @@ namespace Particle.Slash
   }
 
   /// <summary>
-  /// 刀光效果的完整可序列化配置 (独立大功能, 不依附粒子发射器):
-  /// <see cref="Arc"/> 为拉刀光 Mesh 本体, <see cref="Sparks"/> 为与前缘角度绑定的刃花粒子层.
+  /// 刀光预制件配置 (独立大功能, 自包含): 
+  /// <br>- 阶段一 <b>挥动</b>: 前缘按 <see cref="SlashArcConfig.SweepCurve"/> 从起始角扫到结束角;</br>
+  /// <br>- 阶段二 <b>收尾</b>: <see cref="SlashArcConfig.Finishes"/> 修饰器列表 (渐隐/收拢, 可同时叠加);</br>
+  /// <br>- 本体贴图: <see cref="SlashArcConfig.Layers"/> 纹理层列表 (可叠加多层);</br>
+  /// <br>- <see cref="EmbeddedTextures"/>: 预制件自带的贴图数据 (PNG base64) —— 层纹理名写 "embed:键"
+  /// 即从预制件内部取图, 不依赖任何磁盘路径, 玩家机器上开箱即用.</br>
   /// </summary>
   [Serializable]
   public class SlashEffectConfig
@@ -84,6 +210,9 @@ namespace Particle.Slash
 
     /// <summary>刃花层 (沿前缘喷射) 参数.</summary>
     public SlashSparkConfig Sparks = new SlashSparkConfig();
+
+    /// <summary>嵌入纹理表 (键 → PNG base64) —— 预制件自带贴图, "embed:键" 由此解析.</summary>
+    public Dictionary<string, string> EmbeddedTextures = new Dictionary<string, string>();
 
     /// <summary>是否循环挥砍 (游戏内持续技/编辑器预览).</summary>
     public bool Looping = false;
@@ -119,6 +248,9 @@ namespace Particle.Slash
       Name = Name,
       Arc = Arc?.Clone() ?? new SlashArcConfig(),
       Sparks = Sparks?.Clone() ?? new SlashSparkConfig(),
+      EmbeddedTextures = EmbeddedTextures is null
+        ? new Dictionary<string, string>()
+        : new Dictionary<string, string>(EmbeddedTextures),
       Looping = Looping,
       RestTime = RestTime,
       Seed = Seed

@@ -52,7 +52,9 @@
     private readonly List<Particle.Core.ParticleSpawnInit> _spawnBatch = new List<Particle.Core.ParticleSpawnInit>(32);
     private Random _random = new Random();
 
-    /// <summary>由管理器或用户创建; 图形设备缺省取粒子管理器/引擎设备.</summary>
+    /// <summary>由管理器或用户创建; 图形设备缺省取粒子管理器/引擎设备.
+    /// <br>预制件自带的嵌入纹理 ("embed:键") 在此统一注册 —— 调用侧无需任何额外准备.</br>
+    /// </summary>
     public SlashEffect(SlashEffectConfig config, GraphicsDevice device = null)
     {
       Config = config ?? throw new ArgumentNullException(nameof(config));
@@ -60,11 +62,46 @@
         ? Particle.Core.ParticleManager.Instance.GraphicsDevice
         : CoreInfo.Graphics.GraphicsDevice;
 
+      RegisterEmbeddedTextures(device);
       Arc = new SlashArc(Config.Arc);
       BuildSparks(device);
       Config.Subscribe(OnConfigChanged);
       IsPlaying = true;
     }
+
+    /// <summary>把配置里的嵌入纹理 (PNG base64) 解码注册进共享渲染器缓存 (按 "embed:键" 命名, 幂等).</summary>
+    private void RegisterEmbeddedTextures(GraphicsDevice device)
+    {
+      Particle.Rendering.ParticleRenderer renderer = Particle.Rendering.ParticleRenderer.Shared;
+      if (renderer is null)
+      {
+        if (!Particle.Core.ParticleManager.Instance.IsInitialized)
+          Particle.Core.ParticleManager.Instance.Initialize(device);
+        renderer = Particle.Rendering.ParticleRenderer.Shared;
+      }
+      if (renderer is null)
+        return;
+
+      foreach (KeyValuePair<string, string> pair in ConfigEmbeddedTextures())
+      {
+        if (string.IsNullOrEmpty(pair.Value))
+          continue;
+        try
+        {
+          renderer.LoadTextureBytes("embed:" + pair.Key, Convert.FromBase64String(pair.Value));
+        }
+        catch (Exception exception)
+        {
+          Console.WriteLine("Error", $"嵌入纹理解码失败 ({pair.Key}): {exception.Message}");
+        }
+      }
+    }
+
+    /// <summary>嵌入纹理表快照 (避免遍历时与编辑修改竞争).</summary>
+    private List<KeyValuePair<string, string>> ConfigEmbeddedTextures() =>
+      Config.EmbeddedTextures is null
+        ? new List<KeyValuePair<string, string>>()
+        : Config.EmbeddedTextures.ToList();
 
     /// <summary>播放 (恢复).</summary>
     public void Play() { IsPlaying = true; IsPaused = false; IsFinished = false; }

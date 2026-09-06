@@ -75,33 +75,79 @@
         _trails[i].Update(dt);
     }
 
-    /// <summary>绘制全部活跃刀光 (可在不同相机下多次调用).</summary>
+    /// <summary>绘制全部活跃刀光 (可在不同相机下多次调用).
+    /// 弧形刀光顶点在模型空间生成, 经自身"相机矩阵"成像; 轨迹点为世界坐标, 用单位矩阵.</summary>
     public void DrawAll(Matrix transform)
     {
       if (_arcs.Count == 0 && _trails.Count == 0)
         return;
 
-      _device.BlendState = BlendState.Additive;
-      _device.RasterizerState = RasterizerState.CullNone;
-      _device.DepthStencilState = DepthStencilState.None;
-      _device.SamplerStates[0] = SamplerState.LinearClamp;
-      _effect.Parameters["Transform"].SetValue(transform);
-
+      BeginPass();
       foreach (SlashArc arc in _arcs)
-        DrawMesh(arc.Config.Segments + 2, arc.Config.Texture, arc.Build);
+        DrawArc(arc, transform);
       foreach (SlashTrail trail in _trails)
-        DrawMesh(64, trail.Texture, trail.Build);
+        DrawTrail(trail, transform);
     }
 
     /// <summary>绘制单个弧形刀光 (编辑器预览用, 不受实例列表影响).</summary>
     public void DrawOne(SlashArc arc, Matrix transform)
     {
+      BeginPass();
+      DrawArc(arc, transform);
+    }
+
+    /// <summary>统一的加法混合渲染状态.</summary>
+    private void BeginPass()
+    {
       _device.BlendState = BlendState.Additive;
       _device.RasterizerState = RasterizerState.CullNone;
       _device.DepthStencilState = DepthStencilState.None;
       _device.SamplerStates[0] = SamplerState.LinearClamp;
-      _effect.Parameters["Transform"].SetValue(transform);
-      DrawMesh(arc.Config.Segments + 2, arc.Config.Texture, arc.Build);
+    }
+
+    /// <summary>
+    /// 弧形刀光: 几何每帧只构建一次, 逐个启用的纹理层单独成 pass
+    /// (各自纹理/色调/UV 平铺偏移滚动) —— 纹理层是刀光的叠加修饰器.
+    /// </summary>
+    private void DrawArc(SlashArc arc, Matrix camera)
+    {
+      int pointCount = arc.Config.Segments + 2;
+      EnsureCapacity(pointCount);
+
+      int segments = arc.Build(_vertices, _indices);
+      if (segments <= 0)
+        return;
+
+      Matrix world = arc.TransformMatrix();
+      List<SlashTextureLayer> layers = arc.Config.Layers;
+      bool drewAny = false;
+      if (layers is not null)
+      {
+        for (int i = 0; i < layers.Count; i++)
+        {
+          SlashTextureLayer layer = layers[i];
+          if (layer is null || !layer.Enabled)
+            continue;
+          drewAny = true;
+          bool wrap = layer.UTiling != 1f || layer.UOffset != 0f || layer.ScrollSpeed != 0f;
+          Vector4 uvTransform = new Vector4(layer.UTiling, layer.UOffset + arc.GetLayerScroll(i), layer.VScale, layer.Intensity);
+          DrawPass(segments, layer.Texture, uvTransform, layer.Tint, world, camera, wrap);
+        }
+      }
+
+      // —— 无层配置: 回退到旧单纹理字段 (等价单层) ——
+      if (!drewAny)
+        DrawPass(segments, arc.Config.Texture, new Vector4(1f, 0f, 1f, 1f), Vector4.One, world, camera, wrap: false);
+    }
+
+    /// <summary>轨迹刀光 (世界坐标点列, 单纹理).</summary>
+    private void DrawTrail(SlashTrail trail, Matrix camera)
+    {
+      EnsureCapacity(64);
+      int segments = trail.Build(_vertices, _indices);
+      if (segments <= 0)
+        return;
+      DrawPass(segments, trail.Texture, new Vector4(1f, 0f, 1f, 1f), Vector4.One, Matrix.Identity, camera, wrap: false);
     }
 
     private void EnsureCapacity(int pointCount)
@@ -114,18 +160,18 @@
       }
     }
 
-    private void DrawMesh(int pointCount, string textureName, Func<SlashVertex[], short[], int> build)
+    /// <summary>以给定层参数绘制一段条带 Mesh.</summary>
+    private void DrawPass(int segments, string textureName, Vector4 uvTransform, Vector4 tint, Matrix world, Matrix camera, bool wrap)
     {
-      EnsureCapacity(pointCount);
-
-      int segments = build(_vertices, _indices);
-      if (segments <= 0)
-        return;
-
       Texture2D texture = Particle.Rendering.ParticleRenderer.Shared?.ResolveTexture(textureName)
         ?? Particle.Rendering.ParticleTextureFactory.Create(_device, textureName)
         ?? Particle.Rendering.ParticleTextureFactory.Create(_device, "white");
       _effect.Parameters["SpriteTexture"]?.SetValue(texture);
+      _effect.Parameters["UvTransform"]?.SetValue(uvTransform);   // x=U平铺, y=U偏移, z=V缩放, w=层强度.
+      _effect.Parameters["LayerTint"]?.SetValue(tint);
+      _device.SamplerStates[0] = wrap ? SamplerState.LinearWrap : SamplerState.LinearClamp;
+      // 模型空间 → 世界 (弧自身的相机矩阵) → 裁剪空间 (外部相机).
+      _effect.Parameters["Transform"]?.SetValue(world * camera);
       _effect.CurrentTechnique.Passes[0].Apply();
 
       int vertexCount = (segments + 1) * 2;

@@ -1,11 +1,12 @@
 namespace Particle.Slash
 {
   /// <summary>
-  /// 弧形刀光实例 (拉刀光 Mesh): 等宽弯曲长方形条带, 顶点直接摆在弧线上.
-  /// <br>两种收起方式 (<see cref="SlashRetireMode"/>):</br>
-  /// <br>- <b>Fade</b>: 弧带自起始角展开至结束角, 停住后整体淡出;</br>
-  /// <br>- <b>Sweep</b>: 前缘横扫, 尾端以可调的收拢速度持续<b>向刃头收去</b> ——
-  /// 弧带逐渐收拢、最终在刃头处消散 (星爆气流斩式).</br>
+  /// 弧形刀光实例 (拉刀光 Mesh): 一次完整的挥动明确分为两个阶段 ——
+  /// <br><b>阶段一 挥动</b>: 前缘按速度曲线从起始角扫到结束角, 尾端钉在起始角, 弧带随挥动展开;</br>
+  /// <br><b>阶段二 收尾</b>: 修饰器列表 (<see cref="SlashFadeFinish"/> 渐隐 /
+  /// <see cref="SlashCollapseFinish"/> 收拢) 逐个推进, 可同时叠加, 全部播完即完成.</br>
+  /// <br>顶点在"模型空间" (未缩放圆弧, 等宽) 内生成, 椭圆长宽/旋转/位移由相机矩阵承担
+  /// (<see cref="TransformMatrix"/>) —— 仿射变换保证弯折再急面片也不自交.</br>
   /// </summary>
   public sealed class SlashArc
   {
@@ -30,11 +31,20 @@ namespace Particle.Slash
     public float TailAngleDeg => _tailDeg;
     /// <summary>前缘是否仍在扫进 (刃花发射门控).</summary>
     public bool IsSweeping => !IsFinished && Progress < 1f;
+    /// <summary>第 <paramref name="index"/> 个纹理层的累计横向滚动偏移 (渲染层读取).</summary>
+    public float GetLayerScroll(int index) => index >= 0 && index < _layerScrolls.Length ? _layerScrolls[index] : 0f;
 
     private float _elapsed;
     private float _headDeg;
     private float _tailDeg;
-    private bool _tailInitialized;
+
+    // —— 收尾修饰器运行时: 启用列表 (随配置版本同步) 与各修饰器的计算结果 ——
+    private readonly List<SlashFinishConfig> _activeFinishes = new List<SlashFinishConfig>();
+    private int _configStamp = -1;
+    private float _fadeScale = 1f;
+
+    // —— 纹理层横向滚动状态 (逐层累计 ScrollSpeed) ——
+    private float[] _layerScrolls = Array.Empty<float>();
 
     // —— 网格构建缓存 (避免每帧分配) ——
     private Vector2[] _points = new Vector2[0];
@@ -53,14 +63,46 @@ namespace Particle.Slash
       _elapsed = 0f;
       Progress = 0f;
       IsFinished = false;
-      _tailInitialized = false;
+      _fadeScale = 1f;
+      Array.Clear(_layerScrolls, 0, _layerScrolls.Length);
     }
 
-    /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动). 尾端收拢为状态积分, 只在此处推进.</summary>
+    /// <summary>同步启用的收尾修饰器 (配置版本变更或首次更新时重建;
+    /// 旧配置无修饰器时按 Retire/FadeTime/CatchupTime 合成兜底).</summary>
+    private void SyncFinishes()
+    {
+      int stamp = Config.Version;
+      if (_configStamp == stamp)
+        return;
+      _configStamp = stamp;
+
+      _activeFinishes.Clear();
+      if (Config.Finishes is not null)
+        foreach (SlashFinishConfig finish in Config.Finishes)
+          if (finish is not null && finish.Enabled)
+            _activeFinishes.Add(finish);
+
+      if (_activeFinishes.Count == 0)
+      {
+        if (Config.Retire == SlashRetireMode.Sweep)
+          _activeFinishes.Add(new SlashCollapseFinish { Duration = MathF.Max(1e-3f, Config.CatchupTime) });
+        else
+          _activeFinishes.Add(new SlashFadeFinish { Duration = MathF.Max(1e-3f, Config.FadeTime) });
+      }
+    }
+
+    /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动).
+    /// <br><b>一次完整的挥动 = 阶段一 挥动 + 阶段二 收尾</b>:</br>
+    /// <br>① 挥动: 前缘按速度曲线从起始角扫到结束角, 尾端钉在起始角 (弧带随挥动展开);</br>
+    /// <br>② 收尾: 收尾修饰器列表逐个推进 (渐隐/收拢, 可同时叠加, 各自时长与曲线),
+    /// 全部播完刀光才判定完成 —— 收拢到点必然收完, 不存在没收入的顶点.</br>
+    /// </summary>
     public void Update(float dt)
     {
       if (IsFinished)
         return;
+
+      SyncFinishes();
 
       SlashArcConfig config = Config;
       float fromDeg = config.ArcFrom;
@@ -70,58 +112,79 @@ namespace Particle.Slash
 
       float sweep = MathF.Max(1e-4f, config.SweepTime);
       _elapsed += dt;
-      Progress = Math.Clamp(_elapsed / sweep, 0f, 1f);
 
-      // —— 前缘: 解析推进 (Sweep 匀速 / Fade 缓动) ——
-      float headPrev = _headDeg;
-      float eased = config.Retire == SlashRetireMode.Sweep
-        ? Math.Clamp(_elapsed / sweep, 0f, 1f)
-        : EaseOutCubic(_elapsed / sweep);
-      _headDeg = MathHelper.Lerp(fromDeg, toDeg, eased);
-
-      // —— 尾端: 以收拢速度向"前缘已扫过的路径"收去 (目标 = 前缘上一帧的位置).
-      // 目标取上一帧而非当前帧: 收拢速度再快, 本帧刚扫出的弧段也保留到下一帧 ——
-      // 弧带跨度恒 ≥ 单帧扫角, 永不塌成零宽 (否则收拢快于扫速时整条刀光不可见). ——
-      if (!_tailInitialized)
+      if (_elapsed <= sweep)
       {
+        // —— 阶段一 挥动: 前缘按速度曲线扫进; 尾端钉在起始角 ——
+        float sweepT = Math.Clamp(_elapsed / sweep, 0f, 1f);
+        Progress = sweepT;
+        float progress = Math.Clamp(config.SweepCurve?.Evaluate(sweepT) ?? sweepT, 0f, 1f);
+        _headDeg = MathHelper.Lerp(fromDeg, toDeg, progress);
         _tailDeg = fromDeg;
-        _tailInitialized = true;
+        _fadeScale = 1f;
       }
-      float gap = headPrev - _tailDeg;
-      float step = MathF.Max(0f, config.CatchupSpeed) * dt * MathF.Sign(gap);
-      if (MathF.Abs(step) >= MathF.Abs(gap))
-        _tailDeg = headPrev;
       else
-        _tailDeg += step;
+      {
+        // —— 阶段二 收尾: 各修饰器按自己的时长/曲线推进 (收拢改写尾端, 渐隐乘算透明度) ——
+        Progress = 1f;
+        _headDeg = toDeg;
+        _tailDeg = fromDeg;
+        _fadeScale = 1f;
 
-      // —— 结束: 渐隐按时间; 横扫按前缘到位且完全收拢 (CatchupSpeed=0 时以渐隐时长兜底) ——
-      if (config.Retire == SlashRetireMode.Sweep)
-      {
-        if (Progress >= 1f && (MathF.Abs(_headDeg - _tailDeg) < 0.5f || _elapsed >= sweep + MathF.Max(1e-3f, config.FadeTime)))
+        float finishT = _elapsed - sweep;
+        bool allDone = true;
+        for (int i = 0; i < _activeFinishes.Count; i++)
+        {
+          SlashFinishConfig finish = _activeFinishes[i];
+          float t = Math.Clamp(finishT / MathF.Max(1e-3f, finish.Duration), 0f, 1f);
+          if (t < 1f)
+            allDone = false;
+          float curved = Math.Clamp(finish.Curve?.Evaluate(t) ?? t, 0f, 1f);
+          if (finish is SlashCollapseFinish)
+            _tailDeg = MathHelper.Lerp(fromDeg, toDeg, curved);
+          else if (finish is SlashFadeFinish)
+            _fadeScale *= 1f - curved;
+        }
+
+        if (allDone)
+        {
           IsFinished = true;
+          return;
+        }
       }
-      else if (_elapsed >= sweep + MathF.Max(1e-3f, config.FadeTime))
+
+      // —— 纹理层横向滚动 (流光) ——
+      List<SlashTextureLayer> layers = Config.Layers;
+      if (layers is not null && layers.Count > 0)
       {
-        IsFinished = true;
+        if (_layerScrolls.Length < layers.Count)
+          _layerScrolls = new float[layers.Count];
+        for (int i = 0; i < layers.Count; i++)
+          if (layers[i] is not null && layers[i].Enabled)
+            _layerScrolls[i] += layers[i].ScrollSpeed * dt;
       }
     }
 
     /// <summary>
     /// 构建当前姿态的条带网格.
+    /// <br>顶点在"模型空间"内生成: 未缩放的标准圆弧, 宽度沿半径方向且沿弧长恒定 ——
+    /// 圆弧的法线恒为径向, 弯折再急内缘也不会交叉; 椭圆长宽 (ScaleX/ScaleY)、
+    /// 整体旋转与位移全部由 <see cref="TransformMatrix"/> (相机矩阵) 承担,
+    /// 缩放表现即相机俯拍 —— 仿射变换保证面片永不自交重叠.</br>
     /// </summary>
     /// <returns>三角带段数 (0 = 无需绘制).</returns>
     public int Build(SlashVertex[] vertices, short[] indices)
     {
+      // —— 容灾: 已完成的刀光绝不绘制 —— 收尾模型保证修饰器到点必完成, 任何路径下都不会留下冻住的顶点. ——
+      if (IsFinished)
+        return 0;
+
       SlashArcConfig config = Config;
       int segments = Math.Max(2, config.Segments);
 
-      float fromDeg = config.ArcFrom;
-      float toDeg = config.ArcTo;
-      if (config.Reversed)
-        (fromDeg, toDeg) = (toDeg, fromDeg);
-
-      // —— 弧带覆盖 [尾端, 前缘]; Fade 模式下尾端恒为起始角 ——
-      float tailDeg = config.Retire == SlashRetireMode.Sweep ? _tailDeg : fromDeg;
+      // —— 弧带覆盖 [尾端, 前缘]: 两端角度均由 Update 阶段状态给出
+      // (挥动期尾端钉在起始角; 收尾期收拢修饰器驱动尾端) ——
+      float tailDeg = _tailDeg;
       float spanDeg = _headDeg - tailDeg;
       if (MathF.Abs(spanDeg) < 1f)
         return 0;
@@ -129,18 +192,12 @@ namespace Particle.Slash
       int count = Math.Max(2, (int)MathF.Ceiling(segments * MathF.Abs(spanDeg) / 360f)) + 1;
       EnsureCapacity(count);
 
-      float globalFade = 1f;
-      float sweep = MathF.Max(1e-4f, config.SweepTime);
-      if (config.Retire == SlashRetireMode.Fade && _elapsed > sweep)
-      {
-        float fadeT = Math.Clamp((_elapsed - sweep) / MathF.Max(1e-4f, config.FadeTime), 0f, 1f);
-        globalFade = 1f - fadeT * fadeT;
-        if (globalFade <= 0f)
-        {
-          IsFinished = true;
-          return 0;
-        }
-      }
+      // —— 全局透明度: 渐隐修饰器的乘算结果 (Update 阶段计算) ——
+      float globalFade = _fadeScale;
+
+      // —— 模型空间: 标准圆弧 + 整体面片等宽 (宽度超过直径的极端配置兜底) ——
+      float radius = MathF.Max(1f, config.Radius * Scale);
+      float halfWidth = MathF.Min(config.Width * 0.5f, radius * 0.95f);
 
       for (int i = 0; i < count; i++)
       {
@@ -151,19 +208,20 @@ namespace Particle.Slash
         float fade = config.Retire == SlashRetireMode.Sweep
           ? MathHelper.Lerp(1f, 0.35f, t)
           : globalFade;
-        PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f));
+        PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f), radius, halfWidth);
       }
 
       return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, vertices, indices);
     }
 
-    /// <summary>摆放单个弧点 (坐标系变换 + 等宽 + 头亮尾隐顶点色 × 存活系数).</summary>
-    private void PlacePoint(int i, float angleDeg, SlashArcConfig config, float t, float fade)
+    /// <summary>摆放单个弧点 (模型空间圆弧 + 整体面片等宽 + 头亮尾隐顶点色; 变换交给相机矩阵).</summary>
+    private void PlacePoint(int i, float angleDeg, SlashArcConfig config, float t, float fade, float radius, float halfWidth)
     {
-      _points[i] = PointAt(angleDeg);
+      float angleRad = MathHelper.ToRadians(angleDeg);
+      _points[i] = new Vector2(MathF.Cos(angleRad), MathF.Sin(angleRad)) * radius;
 
-      // 等宽弯曲长方形: 宽度沿弧长恒定, 渐隐完全由顶点色承担.
-      _halfWidths[i] = config.Width * 0.5f * Scale;
+      // 等宽: 宽度参数控制整个刀光面片的宽度, 沿弧长恒定; 渐隐完全由顶点色承担.
+      _halfWidths[i] = halfWidth;
 
       // 顶点色: 头部亮白 → 尾部青蓝渐隐.
       Vector4 color = Vector4.Lerp(config.HeadColor, config.TailColor, t);
@@ -177,8 +235,22 @@ namespace Particle.Slash
     }
 
     /// <summary>
-    /// 计算给定角度处的弧上世界坐标 (含整体坐标系: X/Y 椭圆缩放 + 整体旋转 + 位置).
-    /// 刃花沿前缘绑定发射时用同一变换, 保证与 Mesh 完全贴合.
+    /// 刀光的"相机矩阵" (模型空间 → 世界): 椭圆长宽缩放 (ScaleX/ScaleY)、
+    /// 整体旋转 (实例 + 配置) 与弧心位移. Mesh 顶点在模型空间内生成后经此矩阵成像,
+    /// 因此缩放由"相机"控制, 面片在模型空间内永远不折叠.
+    /// </summary>
+    public Matrix TransformMatrix()
+    {
+      SlashArcConfig config = Config;
+      return Matrix.CreateScale(config.ScaleX, config.ScaleY, 1f)
+        * Matrix.CreateRotationZ(Rotation + MathHelper.ToRadians(config.RotationDeg))
+        * Matrix.CreateTranslation(Position.X, Position.Y, 0f);
+    }
+
+    /// <summary>
+    /// 计算给定角度处的弧上世界坐标 —— 即模型空间圆弧点经 <see cref="TransformMatrix"/>
+    /// (相机矩阵) 成像的结果 (X/Y 椭圆缩放 + 整体旋转 + 位置). 刃花沿前缘绑定发射时
+    /// 用同一变换, 保证与 Mesh 完全贴合.
     /// </summary>
     public Vector2 PointAt(float angleDeg)
     {
@@ -232,8 +304,5 @@ namespace Particle.Slash
         _us = new float[count];
       }
     }
-
-    /// <summary>缓动: 快出缓收的展开手感 (仅渐隐模式的展开阶段用).</summary>
-    private static float EaseOutCubic(float t) => 1f - MathF.Pow(1f - Math.Clamp(t, 0f, 1f), 3f);
   }
 }

@@ -568,7 +568,7 @@ namespace Particle.Editor
         _loopPreview = looping;
 
       ImGui.SameLine();
-      ImGui.TextDisabled($"相机: 滚轮缩放 | 中键平移 | 右键旋转");
+      ImGui.TextDisabled($"相机: 滚轮缩放 | 中键平移 | 右键旋转 | 数值框双击输入");
 
       BuildPreviewViewport();
     }
@@ -785,6 +785,13 @@ namespace Particle.Editor
       RebuildParticlePreview();
     }
 
+    /// <summary>用快照恢复刀光配置 (撤销/重做收尾修饰器与纹理层增删).</summary>
+    private void RestoreSlash(SlashEffectConfig snapshot)
+    {
+      _slashEffectConfig = snapshot.Clone();
+      RebuildSlashPreview();
+    }
+
     // =====================================================================
     //  刀光模式
     // =====================================================================
@@ -830,42 +837,63 @@ namespace Particle.Editor
       ImGui.EndTabBar();
     }
 
-    /// <summary>刀光本体 (拉刀光 Mesh) 参数 —— 纹理即 Mesh 本体贴图.</summary>
+    /// <summary>刀光本体参数: 阶段一 挥动 → 阶段二 收尾修饰器 → 纹理层 → 面片外观 → 整体坐标系.</summary>
     private void BuildSlashArcPanel()
     {
       SlashArcConfig cfg = _slashEffectConfig.Arc;
 
-      // —— 收起方式: 渐隐 / 横扫 (尾部跟随) ——
-      int retire = (int)cfg.Retire;
-      if (ImGui.Combo("收起方式", ref retire, "扫完后整体渐隐\0横扫 (尾部跟随消亡)\0"))
-      {
-        cfg.Retire = (SlashRetireMode)retire;
-        NotifySlash();
-      }
-
-      TrackedFloat("弧线半径 (像素)", () => cfg.Radius, v => cfg.Radius = v, 10f, 600f, NotifySlash);
+      // —— 阶段一 挥动 ——
+      ImGui.Separator();
+      ImGui.TextUnformatted("阶段一 挥动");
+      TrackedFloat("挥扫时长 (秒)", () => cfg.SweepTime, v => cfg.SweepTime = MathF.Max(0.02f, v), 0.02f, 2f, NotifySlash);
       TrackedFloat("起始角 (度)", () => cfg.ArcFrom, v => cfg.ArcFrom = v, -360f, 360f, NotifySlash);
       TrackedFloat("结束角 (度)", () => cfg.ArcTo, v => cfg.ArcTo = v, -360f, 360f, NotifySlash);
-      TrackedFloat("挥扫时长 (秒)", () => cfg.SweepTime, v => cfg.SweepTime = MathF.Max(0.02f, v), 0.02f, 2f, NotifySlash);
-      TrackedFloat("渐隐时长 (秒)", () => cfg.FadeTime, v => cfg.FadeTime = MathF.Max(0.02f, v), 0.02f, 3f, NotifySlash);
+      TrackedFloat("弧线半径 (像素)", () => cfg.Radius, v => cfg.Radius = v, 10f, 600f, NotifySlash);
+      ImGui.TextUnformatted("挥扫速度曲线");
+      ParticleTimeline.FloatCurveEditor("##sweepCurve", cfg.SweepCurve, new NV2(ImGui.GetContentRegionAvail().X, 110f), NotifySlash);
+      ImGui.TextDisabled("双击添加关键帧 | 拖拽移动 | 右键删除 (先蓄后发/快出缓收)");
 
-      if (cfg.Retire == SlashRetireMode.Sweep)
+      // —— 阶段二 收尾 (修饰器, 可同时叠加) ——
+      ImGui.Separator();
+      ImGui.TextUnformatted("阶段二 收尾修饰器 (可同时叠加)");
+      BuildFinisherToggles(cfg);
+      SlashFadeFinish fade = cfg.Finishes.OfType<SlashFadeFinish>().FirstOrDefault();
+      if (fade is not null)
       {
-        ImGui.Separator();
-        ImGui.TextUnformatted("横扫参数 (尾端向刃头收去)");
-        TrackedFloat("收拢速度 (度/秒)", () => cfg.CatchupSpeed, v => cfg.CatchupSpeed = Math.Clamp(v, 0f, 20000f), 0f, 20000f, NotifySlash);
+        TrackedFloat("渐隐时长 (秒)", () => fade.Duration, v => fade.Duration = Math.Clamp(v, 0.02f, 3f), 0.02f, 3f, NotifySlash);
+        if (ImGui.TreeNodeEx("渐隐曲线 (纵轴: 不透明度)", ImGuiTreeNodeFlags.DefaultOpen))
+        {
+          ParticleTimeline.FloatCurveEditor("##fadeCurve", fade.Curve, new NV2(ImGui.GetContentRegionAvail().X, 90f), NotifySlash);
+          ImGui.TreePop();
+        }
       }
-      TrackedFloat("最大全宽 (像素)", () => cfg.Width, v => cfg.Width = MathF.Max(1f, v), 1f, 200f, NotifySlash);
-      TrackedInt("采样段数", () => cfg.Segments, v => cfg.Segments = Math.Clamp(v, 4, 512), 4, 512, NotifySlash);
-      TextureField("刀光纹理 (Mesh)", () => cfg.Texture, v => cfg.Texture = v, "##texArc");
+      SlashCollapseFinish collapse = cfg.Finishes.OfType<SlashCollapseFinish>().FirstOrDefault();
+      if (collapse is not null)
+      {
+        TrackedFloat("收拢时长 (秒)", () => collapse.Duration, v => collapse.Duration = Math.Clamp(v, 0.02f, 3f), 0.02f, 3f, NotifySlash);
+        if (ImGui.TreeNodeEx("收拢曲线 (纵轴: 收拢进度)", ImGuiTreeNodeFlags.DefaultOpen))
+        {
+          ParticleTimeline.FloatCurveEditor("##collapseCurve", collapse.Curve, new NV2(ImGui.GetContentRegionAvail().X, 90f), NotifySlash);
+          ImGui.TreePop();
+        }
+      }
 
+      // —— 纹理层 (可叠加) ——
+      ImGui.Separator();
+      ImGui.TextUnformatted("纹理层 (可叠加)");
+      BuildLayerList(cfg);
+
+      // —— 面片与外观 ——
+      ImGui.Separator();
+      ImGui.TextUnformatted("面片与外观");
+      TrackedFloat("面片全宽 (像素)", () => cfg.Width, v => cfg.Width = MathF.Max(1f, v), 1f, 200f, NotifySlash);
+      TrackedInt("采样段数", () => cfg.Segments, v => cfg.Segments = Math.Clamp(v, 4, 512), 4, 512, NotifySlash);
       bool reversed = cfg.Reversed;
       if (ImGui.Checkbox("反向挥扫", ref reversed))
       {
         cfg.Reversed = reversed;
         NotifySlash();
       }
-
       NV4 head = new NV4(cfg.HeadColor.X, cfg.HeadColor.Y, cfg.HeadColor.Z, cfg.HeadColor.W);
       if (ImGui.ColorEdit4("头部颜色", ref head))
         cfg.HeadColor = new XnaVector4(head.X, head.Y, head.Z, head.W);
@@ -873,12 +901,105 @@ namespace Particle.Editor
       if (ImGui.ColorEdit4("尾部颜色", ref tail))
         cfg.TailColor = new XnaVector4(tail.X, tail.Y, tail.Z, tail.W);
 
+      // —— 整体坐标系 ——
       ImGui.Separator();
       ImGui.TextUnformatted("整体坐标系 (2D)");
       TrackedFloat("横向缩放 (长)", () => cfg.ScaleX, v => cfg.ScaleX = v, 0.1f, 4f, NotifySlash);
       TrackedFloat("纵向缩放 (宽)", () => cfg.ScaleY, v => cfg.ScaleY = v, 0.1f, 4f, NotifySlash);
       TrackedFloat("整体旋转 (度)", () => cfg.RotationDeg, v => cfg.RotationDeg = v, -360f, 360f, NotifySlash);
       ImGui.TextDisabled("刃花自动跟随本坐标系的前缘角度.");
+    }
+
+    /// <summary>收尾修饰器开关: 勾选即加入列表, 取消即移除 (走撤销命令).</summary>
+    private void BuildFinisherToggles(SlashArcConfig cfg)
+    {
+      bool fadeOn = cfg.Finishes.OfType<SlashFadeFinish>().Any();
+      bool fadeWanted = fadeOn;
+      if (ImGui.Checkbox("渐隐收尾", ref fadeWanted) && fadeWanted != fadeOn)
+        ToggleFinisher(cfg, new SlashFadeFinish(), fadeWanted, "渐隐收尾");
+
+      ImGui.SameLine();
+      bool collapseOn = cfg.Finishes.OfType<SlashCollapseFinish>().Any();
+      bool collapseWanted = collapseOn;
+      if (ImGui.Checkbox("收拢收尾", ref collapseWanted) && collapseWanted != collapseOn)
+        ToggleFinisher(cfg, new SlashCollapseFinish(), collapseWanted, "收拢收尾");
+    }
+
+    private void ToggleFinisher(SlashArcConfig cfg, SlashFinishConfig finisher, bool add, string label)
+    {
+      SlashEffectConfig before = _slashEffectConfig.Clone();
+      if (add)
+        cfg.Finishes.Add(finisher);
+      else
+        cfg.Finishes.RemoveAll(f => f is not null && f.GetType() == finisher.GetType());
+      SlashEffectConfig after = _slashEffectConfig.Clone();
+      _history.Execute(new DelegateCommand(label,
+        () => RestoreSlash(after),
+        () => RestoreSlash(before)));
+      NotifySlash();
+    }
+
+    /// <summary>纹理层列表: 逐层编辑 + 增删 (几何一次构建, 逐层叠加绘制).</summary>
+    private void BuildLayerList(SlashArcConfig cfg)
+    {
+      for (int i = 0; i < cfg.Layers.Count; i++)
+      {
+        SlashTextureLayer layer = cfg.Layers[i];
+        ImGui.PushID(i);
+        string header = $"层 {i + 1}: {LayerTextureLabel(layer.Texture)}{(layer.Enabled ? "" : " (停用)")}";
+        if (ImGui.TreeNodeEx(header, ImGuiTreeNodeFlags.DefaultOpen))
+        {
+          TrackedBool("启用", () => layer.Enabled, v => layer.Enabled = v, NotifySlash);
+          TextureField("纹理", () => layer.Texture, v => layer.Texture = v, "##layerTex", embed: true);
+          TrackedFloat("强度", () => layer.Intensity, v => layer.Intensity = Math.Clamp(v, 0f, 4f), 0f, 4f, NotifySlash);
+          TrackedFloat("横向平铺", () => layer.UTiling, v => layer.UTiling = Math.Clamp(v, 0.25f, 8f), 0.25f, 8f, NotifySlash);
+          TrackedFloat("横向偏移", () => layer.UOffset, v => layer.UOffset = Math.Clamp(v, -2f, 2f), -2f, 2f, NotifySlash);
+          TrackedFloat("滚动速度 (u/秒)", () => layer.ScrollSpeed, v => layer.ScrollSpeed = Math.Clamp(v, -4f, 4f), -4f, 4f, NotifySlash);
+          TrackedFloat("纵向缩放", () => layer.VScale, v => layer.VScale = Math.Clamp(v, 0.25f, 4f), 0.25f, 4f, NotifySlash);
+          NV4 tint = new NV4(layer.Tint.X, layer.Tint.Y, layer.Tint.Z, layer.Tint.W);
+          if (ImGui.ColorEdit4("层色调", ref tint))
+            layer.Tint = new XnaVector4(tint.X, tint.Y, tint.Z, tint.W);
+          if (ImGui.SmallButton("删除此层"))
+          {
+            SlashEffectConfig before = _slashEffectConfig.Clone();
+            cfg.Layers.RemoveAt(i);
+            SlashEffectConfig after = _slashEffectConfig.Clone();
+            _history.Execute(new DelegateCommand("删除纹理层",
+              () => RestoreSlash(after),
+              () => RestoreSlash(before)));
+            NotifySlash();
+            ImGui.TreePop();
+            ImGui.PopID();
+            return;   // 列表已变更, 下帧重绘.
+          }
+          ImGui.TreePop();
+        }
+        ImGui.PopID();
+      }
+
+      if (ImGui.Button("＋ 添加纹理层"))
+      {
+        SlashEffectConfig before = _slashEffectConfig.Clone();
+        cfg.Layers.Add(new SlashTextureLayer());
+        SlashEffectConfig after = _slashEffectConfig.Clone();
+        _history.Execute(new DelegateCommand("添加纹理层",
+          () => RestoreSlash(after),
+          () => RestoreSlash(before)));
+        NotifySlash();
+      }
+      ImGui.SameLine();
+      ImGui.TextDisabled("几何一次构建, 逐层叠加绘制");
+    }
+
+    private static string LayerTextureLabel(string texture)
+    {
+      if (texture is null)
+        return "?";
+      if (texture.StartsWith("embed:"))
+        return "嵌入图 " + texture.Substring(6);
+      if (texture.StartsWith("file:"))
+        return Path.GetFileName(texture.Substring(5));
+      return texture;
     }
 
     /// <summary>刃花参数 —— 与刀光前缘角度绑定, 沿弧当前位置/切向发射.</summary>
@@ -916,7 +1037,7 @@ namespace Particle.Editor
 
       TrackedBool("速度拉伸", () => s.Stretched, v => s.Stretched = v, NotifySlash);
       TrackedInt("槽位上限", () => s.Capacity, v => s.Capacity = v, 8, 4096, NotifySlash);
-      TextureField("刃花纹理 (粒子)", () => s.Texture, v => s.Texture = v, "##texSpark");
+      TextureField("刃花纹理 (粒子)", () => s.Texture, v => s.Texture = v, "##texSpark", embed: true);
 
       ImGui.TextDisabled("刃花沿刀光当前前缘角度发射 (角度绑定).");
     }
@@ -999,8 +1120,10 @@ namespace Particle.Editor
     //  变更通知与撤销辅助
     // =====================================================================
 
-    /// <summary>纹理名输入 + 浏览按钮 (同一行, 输入框宽度自适应避免按钮被裁剪).</summary>
-    private void TextureField(string label, Func<string> get, Action<string> set, string browseId)
+    /// <summary>纹理名输入 + 浏览按钮 (同一行, 输入框宽度自适应避免按钮被裁剪).
+    /// embed = true 时浏览的图片直接嵌入刀光预制件 (PNG base64, "embed:键") ——
+    /// 保存的预制件自带贴图, 玩家机器无需原文件; 否则记为 "file:路径" (游戏资产/本地调试).</summary>
+    private void TextureField(string label, Func<string> get, Action<string> set, string browseId, bool embed = false)
     {
       const string browseLabel = "浏览";
       ImGuiStylePtr style = ImGui.GetStyle();
@@ -1016,9 +1139,28 @@ namespace Particle.Editor
         string file = PickTexture();
         if (file is not null)
         {
-          set("file:" + file);   // 渲染器按名解析加载 (预乘 alpha, 结果缓存).
+          set(embed ? ImportTexture(file) : "file:" + file);
           CurrentNotify();
         }
+      }
+    }
+
+    /// <summary>把图片文件嵌入当前刀光预制件 (base64), 返回 "embed:键" 纹理名;
+    /// 立即注册进渲染器缓存以供预览.</summary>
+    private string ImportTexture(string file)
+    {
+      try
+      {
+        byte[] png = File.ReadAllBytes(file);
+        string key = "tex" + _slashEffectConfig.EmbeddedTextures.Count;
+        _slashEffectConfig.EmbeddedTextures[key] = Convert.ToBase64String(png);
+        Particle.Rendering.ParticleRenderer.Shared?.LoadTextureBytes("embed:" + key, png);
+        return "embed:" + key;
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine("Error", "嵌入纹理失败 (" + file + "): " + exception.Message);
+        return "blade";
       }
     }
 
@@ -1034,7 +1176,9 @@ namespace Particle.Editor
     private void TrackedFloat(string label, Func<float> get, Action<float> set, float min, float max, Action onChanged)
     {
       float value = get();
-      if (ImGui.SliderFloat(label, ref value, min, max))
+      // 拖动粗调; 双击 (或 Ctrl+点击) 数值框可键入精确数值 —— 大范围参数 (如收拢速度) 靠拖动难以控制.
+      float speed = MathF.Max((max - min) / 400f, 0.01f);
+      if (ImGui.DragFloat(label, ref value, speed, min, max, "%.2f"))
       {
         set(value);
         onChanged();

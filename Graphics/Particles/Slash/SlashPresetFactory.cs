@@ -26,7 +26,7 @@
       throw new KeyNotFoundException($"未注册的刀光预设: {presetName}");
     }
 
-    /// <summary>标准斩: 中速横扫, 弧带先展开再向刃头收拢, 刃花沿前缘喷射.</summary>
+    /// <summary>标准斩: 中速横扫, 弧带随挥动展开后边收拢边渐隐, 刃花沿前缘喷射.</summary>
     public static SlashEffectConfig CreateStandard() => new SlashEffectConfig
     {
       Name = "标准斩",
@@ -36,20 +36,21 @@
         ArcFrom = -125f,
         ArcTo = 115f,
         SweepTime = 0.20f,
-        FadeTime = 0.30f,
         Width = 30f,
-        WidthPower = 1.4f,
         Segments = 56,
         HeadColor = new Vector4(1.6f, 1.6f, 1.6f, 1f),
         TailColor = new Vector4(0.25f, 0.55f, 1.2f, 0.06f),
-        Retire = SlashRetireMode.Sweep,
-        CatchupSpeed = 500f,
-        Texture = "blade"
+        Finishes =
+        {
+          new SlashCollapseFinish { Duration = 0.30f },
+          new SlashFadeFinish { Duration = 0.34f }
+        },
+        Layers = { new SlashTextureLayer { Texture = "blade" } }
       },
       Sparks = new SlashSparkConfig()
     };
 
-    /// <summary>快速斩: 高速窄弧短横扫, 扫速远高于收拢速度, 弧带充分展开后迅速收拢.</summary>
+    /// <summary>快速斩: 高速窄弧短横扫, 迅速收拢.</summary>
     public static SlashEffectConfig CreateQuick() => new SlashEffectConfig
     {
       Name = "快速斩",
@@ -59,14 +60,16 @@
         ArcFrom = -150f,
         ArcTo = 130f,
         SweepTime = 0.12f,
-        FadeTime = 0.18f,
         Width = 22f,
         Segments = 48,
         HeadColor = new Vector4(1.7f, 1.5f, 1.2f, 1f),
         TailColor = new Vector4(1.0f, 0.45f, 0.25f, 0.08f),
-        Retire = SlashRetireMode.Sweep,
-        CatchupSpeed = 900f,
-        Texture = "blade"
+        Finishes =
+        {
+          new SlashCollapseFinish { Duration = 0.18f },
+          new SlashFadeFinish { Duration = 0.22f }
+        },
+        Layers = { new SlashTextureLayer { Texture = "blade" } }
       },
       Sparks = new SlashSparkConfig
       {

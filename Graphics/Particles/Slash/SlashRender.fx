@@ -1,14 +1,21 @@
 // =====================================================================
 // 刀光条带 Mesh 着色器 (MonoGame Effect, DirectX_11):
 // 顶点由 RibbonBuilder 直接摆在轨迹/弧线上 (拉刀光, Unity trail 同思路),
-// PS 采样梭形渐变纹理 × 顶点色 (头部亮、尾部渐隐在顶点色/UV 中完成).
+// PS 采样纹理 × 顶点色 × 纹理层参数 —— 本体可叠加多个纹理层,
+// 每层一次 pass, 各自携带 UvTransform (平铺/偏移/V缩放/强度) 与 LayerTint (层色调).
 // =====================================================================
 
 Texture2D<float4> SpriteTexture : register(t0);
 sampler SpriteTextureSampler : register(s0);
 
-// 世界坐标 -> 裁剪空间 的完整变换 (View * Projection).
+// 模型空间 -> 世界 (弧的相机矩阵) -> 裁剪空间 (外部相机) 的完整变换.
 float4x4 Transform;
+
+// 纹理层 UV 变换: x = U 平铺次数, y = U 偏移 (含累计滚动), z = V 缩放 (以中线为中心), w = 层强度.
+float4 UvTransform;
+
+// 纹理层颜色调制 (与顶点头尾渐变色相乘).
+float4 LayerTint;
 
 struct VertexShaderInput
 {
@@ -35,8 +42,13 @@ VertexShaderOutput MainVS(VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    float4 texel = SpriteTexture.Sample(SpriteTextureSampler, input.Uv);
-    return texel * input.Color;
+    // 层 UV 变换: 横向平铺 + 偏移 (流光滚动), 纵向以中线为中心缩放.
+    float2 uv = input.Uv;
+    uv.x = uv.x * UvTransform.x + UvTransform.y;
+    uv.y = (uv.y - 0.5f) * UvTransform.z + 0.5f;
+
+    float4 texel = SpriteTexture.Sample(SpriteTextureSampler, uv);
+    return texel * input.Color * LayerTint * UvTransform.w;
 }
 
 technique SlashRendering

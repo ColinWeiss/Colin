@@ -161,7 +161,7 @@ namespace Particle.Rendering
       return texture;
     }
 
-    /// <summary>从磁盘加载贴图并预乘 alpha (自定义刀光纹理的统一入口).</summary>
+    /// <summary>从磁盘加载贴图并预乘 alpha (自定义纹理的统一入口).</summary>
     private Texture2D LoadFileTexture(string path)
     {
       try
@@ -172,16 +172,7 @@ namespace Particle.Rendering
           return null;
         }
         Texture2D texture = Texture2D.FromFile(_device, path);
-        Color[] pixels = new Color[texture.Width * texture.Height];
-        texture.GetData(pixels);
-        for (int i = 0; i < pixels.Length; i++)
-        {
-          byte alpha = pixels[i].A;
-          pixels[i].R = (byte)(pixels[i].R * alpha / 255);
-          pixels[i].G = (byte)(pixels[i].G * alpha / 255);
-          pixels[i].B = (byte)(pixels[i].B * alpha / 255);
-        }
-        texture.SetData(pixels);
+        PremultiplyAlpha(texture);
         Console.WriteLine("Remind", $"自定义纹理已加载: {path} ({texture.Width}×{texture.Height})");
         return texture;
       }
@@ -190,6 +181,50 @@ namespace Particle.Rendering
         Console.WriteLine("Error", $"自定义纹理加载失败 ({path}): {exception.Message}");
         return null;
       }
+    }
+
+    /// <summary>
+    /// 解码 PNG/JPG 字节为纹理并按名缓存 (预制件嵌入纹理的统一入口; alpha 预乘).
+    /// 已缓存直接返回 —— "embed:键" 纹理由此解析, 玩家机器上无需任何磁盘文件.
+    /// </summary>
+    public Texture2D LoadTextureBytes(string cacheName, byte[] imageData)
+    {
+      if (_textures.TryGetValue(cacheName, out Texture2D cached))
+        return cached;
+      string tempPath = Path.Combine(Path.GetTempPath(), "particle_embed_" + Math.Abs(cacheName.GetHashCode()) + ".png");
+      try
+      {
+        File.WriteAllBytes(tempPath, imageData);
+        Texture2D texture = Texture2D.FromFile(_device, tempPath);
+        PremultiplyAlpha(texture);
+        _textures[cacheName] = texture;
+        Console.WriteLine("Remind", $"嵌入纹理已加载: {cacheName} ({texture.Width}×{texture.Height})");
+        return texture;
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine("Error", $"嵌入纹理解码失败 ({cacheName}): {exception.Message}");
+        return null;
+      }
+      finally
+      {
+        try { File.Delete(tempPath); } catch { /* 临时文件清理失败可忽略. */ }
+      }
+    }
+
+    /// <summary>alpha 预乘: 加法混合 (刀光/发光) 下透明区域不再发白.</summary>
+    private void PremultiplyAlpha(Texture2D texture)
+    {
+      Color[] pixels = new Color[texture.Width * texture.Height];
+      texture.GetData(pixels);
+      for (int i = 0; i < pixels.Length; i++)
+      {
+        byte alpha = pixels[i].A;
+        pixels[i].R = (byte)(pixels[i].R * alpha / 255);
+        pixels[i].G = (byte)(pixels[i].G * alpha / 255);
+        pixels[i].B = (byte)(pixels[i].B * alpha / 255);
+      }
+      texture.SetData(pixels);
     }
 
     /// <summary>注册外部纹理 (编辑器/游戏可注入自定义刀光贴图).</summary>
