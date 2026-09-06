@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Colin.Core.Graphics.Bridge;
 using ComputeSharp;
-using Particle.Core;
+using Colin.Core.Graphics.Visual.Particle;
 using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
 
 namespace Colin.Core.Graphics.Visual.Particle

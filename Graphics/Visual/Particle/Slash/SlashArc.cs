@@ -1,6 +1,4 @@
 namespace Colin.Core.Graphics.Visual.Particle.Slash
-
-namespace Particle.Slash
 {
   /// <summary>
   /// 弧形刀光实例 (拉刀光 Mesh): 一次完整的挥动明确分为两个阶段 ——
@@ -78,7 +76,7 @@ namespace Particle.Slash
     private void SyncFinishes()
     {
       int stamp = Config.Version;
-      if (_configStamp == stamp)
+      if (_configStamp == stamp && _activeFinishes.Count == _finishPacing.Count)
         return;
       _configStamp = stamp;
 
@@ -87,10 +85,9 @@ namespace Particle.Slash
         foreach (SlashFinishConfig finish in Config.Finishes)
           if (finish is not null && finish.Enabled)
             _activeFinishes.Add(finish);
-      _finishPacing.Clear();
-      for (int i = 0; i < _activeFinishes.Count; i++)
-        _finishPacing.Add(new SlashSpeedCurve());
 
+      // —— 旧配置兼容: 未配置收尾修饰器时按 Retire/FadeTime/CatchupTime 合成 ——
+      // (必须在构建换算器列表之前补齐, 否则两表长度失配 → 收尾帧索引越界.)
       if (_activeFinishes.Count == 0)
       {
         if (Config.Retire == SlashRetireMode.Sweep)
@@ -98,6 +95,10 @@ namespace Particle.Slash
         else
           _activeFinishes.Add(new SlashFadeFinish { Duration = MathF.Max(1e-3f, Config.FadeTime) });
       }
+
+      _finishPacing.Clear();
+      for (int i = 0; i < _activeFinishes.Count; i++)
+        _finishPacing.Add(new SlashSpeedCurve());
     }
 
     /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动).
@@ -110,6 +111,8 @@ namespace Particle.Slash
     {
       if (IsFinished)
         return;
+      if (!float.IsFinite(dt) || dt < 0f)
+        return;   // 异常帧步长 (NaN/∞/负) 不推进, 防 _elapsed 中毒.
 
       SyncFinishes();
 
@@ -143,6 +146,8 @@ namespace Particle.Slash
 
         float finishT = _elapsed - sweep;
         bool allDone = true;
+        if (_activeFinishes.Count != _finishPacing.Count)
+          SyncFinishes();   // 容灾: 两表失配 (配置被外部热替换) 时强制重建.
         for (int i = 0; i < _activeFinishes.Count; i++)
         {
           SlashFinishConfig finish = _activeFinishes[i];
@@ -338,9 +343,12 @@ namespace Particle.Slash
         Rebuild();
       }
 
+      // —— NaN 会穿透 Math.Clamp, 而 (int)NaN 在 x64 上 = int.MinValue → 索引越界, 必须先行拦截. ——
+      if (!float.IsFinite(t))
+        t = 0f;
       t = Math.Clamp(t, 0f, 1f);
       float f = t * Samples;
-      int i = Math.Min(Samples - 1, (int)f);
+      int i = Math.Clamp((int)f, 0, Samples - 1);
       return MathHelper.Lerp(_cdf[i], _cdf[i + 1], f - i);
     }
 

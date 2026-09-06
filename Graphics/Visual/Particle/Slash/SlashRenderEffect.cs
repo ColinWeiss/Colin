@@ -4,7 +4,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
 {
   /// <summary>
   /// 刀光渲染 Effect 加载器: 嵌入 MGFX 主路径 + EffectProcessor 进程内编译回退
-  /// (与 <see cref="Particle.Rendering.ParticleRenderEffect"/> 同一套机制).
+  /// (与 <see cref="Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderEffect"/> 同一套机制).
   /// </summary>
   public static class SlashRenderEffect
   {
@@ -45,7 +45,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     {
       try
       {
-        byte[] mgfx = Particle.Rendering.ParticleEffectCompiler.CompileFromSource(SlashShaderSource.RenderEffectSource);
+        byte[] mgfx = Colin.Core.Graphics.Visual.Particle.Rendering.ParticleEffectCompiler.CompileFromSource(SlashShaderSource.RenderEffectSource);
         Console.WriteLine("Remind", "刀光渲染着色器已由进程内 Effect 编译器生成.");
         return mgfx;
       }

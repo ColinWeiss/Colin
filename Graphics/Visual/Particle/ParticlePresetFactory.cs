@@ -1,4 +1,4 @@
-﻿using Particle.Slash;
+﻿using Colin.Core.Graphics.Visual.Particle.Slash;
 using XnaVector4 = Microsoft.Xna.Framework.Vector4;
 
 namespace Colin.Core.Graphics.Visual.Particle
@@ -6,7 +6,7 @@ namespace Colin.Core.Graphics.Visual.Particle
   /// <summary>
   /// 粒子预设工厂 (工厂模式): 按名称创建效果配置的工厂注册表.
   /// <br>内置预设: 爆炸 / 火焰 / 烟雾; 可通过 <see cref="Register"/> 扩展自定义预设.
-  /// 刀光为独立大功能 (Particle.Slash), 预设见 <see cref="Particle.Slash.SlashPresetFactory"/>.</br>
+  /// 刀光为独立大功能 (Colin.Core.Graphics.Visual.Particle.Slash), 预设见 <see cref="Colin.Core.Graphics.Visual.Particle.Slash.SlashPresetFactory"/>.</br>
   /// </summary>
   public static class ParticlePresetFactory
   {

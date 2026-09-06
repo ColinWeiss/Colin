@@ -333,7 +333,7 @@
       InstanceCount = instanceCount;
       if (dataTexture is null || instanceCount <= 0)
         return;
-      global::Particle.Rendering.ParticleRenderer.Shared?.Draw(dataTexture, instanceCount, Config.Render, transform);
+      Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer.Shared?.Draw(dataTexture, instanceCount, Config.Render, transform);
     }
 
     private void Rebuild()

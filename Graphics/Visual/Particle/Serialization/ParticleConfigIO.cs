@@ -2,8 +2,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Particle.Core;
-using Particle.Slash;
+using Colin.Core.Graphics.Visual.Particle;
+using Colin.Core.Graphics.Visual.Particle.Slash;
 
 namespace Colin.Core.Graphics.Visual.Particle.Serialization
 {

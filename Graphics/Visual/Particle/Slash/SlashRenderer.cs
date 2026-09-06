@@ -31,8 +31,8 @@
     {
       if (Shared is null)
       {
-        GraphicsDevice device = Core.ParticleManager.Instance.IsInitialized
-          ? Core.ParticleManager.Instance.GraphicsDevice
+        GraphicsDevice device = ParticleManager.Instance.IsInitialized
+          ? ParticleManager.Instance.GraphicsDevice
           : CoreInfo.Graphics.GraphicsDevice;
         Shared = new SlashRenderer(device);
       }
@@ -163,9 +163,9 @@
     /// <summary>以给定层参数绘制一段条带 Mesh.</summary>
     private void DrawPass(int segments, string textureName, Vector4 uvTransform, Vector4 tint, Matrix world, Matrix camera, bool wrap)
     {
-      Texture2D texture = Particle.Rendering.ParticleRenderer.Shared?.ResolveTexture(textureName)
-        ?? Particle.Rendering.ParticleTextureFactory.Create(_device, textureName)
-        ?? Particle.Rendering.ParticleTextureFactory.Create(_device, "white");
+      Texture2D texture = Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer.Shared?.ResolveTexture(textureName)
+        ?? Colin.Core.Graphics.Visual.Particle.Rendering.ParticleTextureFactory.Create(_device, textureName)
+        ?? Colin.Core.Graphics.Visual.Particle.Rendering.ParticleTextureFactory.Create(_device, "white");
       _effect.Parameters["SpriteTexture"]?.SetValue(texture);
       _effect.Parameters["UvTransform"]?.SetValue(uvTransform);   // x=U平铺, y=U偏移, z=V缩放, w=层强度.
       _effect.Parameters["LayerTint"]?.SetValue(tint);

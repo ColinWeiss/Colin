@@ -14,6 +14,7 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Colin.Core.sln" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\Rendering\ParticleRender.fx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\Rendering\ParticleRender.mgfx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\Slash\SlashRender.fx" />
@@ -170,7 +171,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Systems\EcsScriptSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleID.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Console.cs" />
@@ -178,8 +178,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ComputeShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ShaderCompiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Particles\GpuParticleEmitter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />

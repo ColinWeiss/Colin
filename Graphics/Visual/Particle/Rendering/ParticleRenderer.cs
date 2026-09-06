@@ -1,6 +1,4 @@
 ﻿namespace Colin.Core.Graphics.Visual.Particle.Rendering
-
-namespace Particle.Rendering
 {
   /// <summary>四边形角点顶点 (实例化绘制的流 0 模板).</summary>
   public struct ParticleQuadVertex

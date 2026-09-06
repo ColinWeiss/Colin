@@ -6,7 +6,7 @@
   /// 经与 Mesh 完全相同的整体坐标系 (椭圆缩放/旋转/位置) 求前缘坐标与切向, 直接驱动发射,
   /// 因此收起方式、扫速、坐标系怎么改, 刃花始终生在刃头上.</br>
   /// <br>提供 <see cref="Play"/> / <see cref="Pause"/> / <see cref="Stop"/> / <see cref="Reset"/>
-  /// 完整生命周期; 刃花粒子经内部 <see cref="Particle.Core.ParticleEffect"/> 承载
+  /// 完整生命周期; 刃花粒子经内部 <see cref="Colin.Core.Graphics.Visual.Particle.ParticleEffect"/> 承载
   /// (不注册进 ParticleManager, 由本效果统一驱动, 避免双重更新).</br>
   /// </summary>
   public sealed class SlashEffect : IDisposable
@@ -44,12 +44,12 @@
     public int Id { get; } = _nextId++;
     private static int _nextId = 1;
 
-    private Particle.Core.ParticleEffect _sparks;
-    private Particle.Core.EmitterConfig _sparkEmitter;
+    private Colin.Core.Graphics.Visual.Particle.ParticleEffect _sparks;
+    private Colin.Core.Graphics.Visual.Particle.EmitterConfig _sparkEmitter;
     private float _restElapsed;
     private float _sparkCarry;
     private float _afterGlow;
-    private readonly List<Particle.Core.ParticleSpawnInit> _spawnBatch = new List<Particle.Core.ParticleSpawnInit>(32);
+    private readonly List<Colin.Core.Graphics.Visual.Particle.ParticleSpawnInit> _spawnBatch = new List<Colin.Core.Graphics.Visual.Particle.ParticleSpawnInit>(32);
     private Random _random = new Random();
 
     /// <summary>由管理器或用户创建; 图形设备缺省取粒子管理器/引擎设备.
@@ -58,8 +58,8 @@
     public SlashEffect(SlashEffectConfig config, GraphicsDevice device = null)
     {
       Config = config ?? throw new ArgumentNullException(nameof(config));
-      device ??= Particle.Core.ParticleManager.Instance.IsInitialized
-        ? Particle.Core.ParticleManager.Instance.GraphicsDevice
+      device ??= Colin.Core.Graphics.Visual.Particle.ParticleManager.Instance.IsInitialized
+        ? Colin.Core.Graphics.Visual.Particle.ParticleManager.Instance.GraphicsDevice
         : CoreInfo.Graphics.GraphicsDevice;
 
       RegisterEmbeddedTextures(device);
@@ -72,12 +72,12 @@
     /// <summary>把配置里的嵌入纹理 (PNG base64) 解码注册进共享渲染器缓存 (按 "embed:键" 命名, 幂等).</summary>
     private void RegisterEmbeddedTextures(GraphicsDevice device)
     {
-      Particle.Rendering.ParticleRenderer renderer = Particle.Rendering.ParticleRenderer.Shared;
+      Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer renderer = Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer.Shared;
       if (renderer is null)
       {
-        if (!Particle.Core.ParticleManager.Instance.IsInitialized)
-          Particle.Core.ParticleManager.Instance.Initialize(device);
-        renderer = Particle.Rendering.ParticleRenderer.Shared;
+        if (!Colin.Core.Graphics.Visual.Particle.ParticleManager.Instance.IsInitialized)
+          Colin.Core.Graphics.Visual.Particle.ParticleManager.Instance.Initialize(device);
+        renderer = Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer.Shared;
       }
       if (renderer is null)
         return;
@@ -222,7 +222,7 @@
         // 位置: 前缘点 ± 4px 法向散布 (避免完全重叠成一条线).
         Vector2 position = head + normal * RandRange(-4f, 4f);
 
-        _spawnBatch.Add(new Particle.Core.ParticleSpawnInit
+        _spawnBatch.Add(new Colin.Core.Graphics.Visual.Particle.ParticleSpawnInit
         {
           Position = position,
           Velocity = direction * speed,
@@ -243,12 +243,12 @@
     private void BuildSparks(GraphicsDevice device)
     {
       SlashSparkConfig sparks = Config.Sparks;
-      _sparkEmitter = new Particle.Core.EmitterConfig
+      _sparkEmitter = new Colin.Core.Graphics.Visual.Particle.EmitterConfig
       {
         Name = "刃花",
         Capacity = Math.Max(1, sparks.Capacity),
         EmissionRate = 0f,                        // 全部经 EmitCustom 驱动 (与前缘绑定).
-        Shape = new Particle.Core.EmissionShapeConfig(),
+        Shape = new Colin.Core.Graphics.Visual.Particle.EmissionShapeConfig(),
         SpeedMin = 0f,
         SpeedMax = 0f,
         LifeMin = sparks.LifeMin,
@@ -262,21 +262,21 @@
       };
       _sparkEmitter.Subscribe(_ => _sparks?.MarkRebuildRequired());
 
-      Particle.Core.ParticleEffectConfig effectConfig = new Particle.Core.ParticleEffectConfig
+      Colin.Core.Graphics.Visual.Particle.ParticleEffectConfig effectConfig = new Colin.Core.Graphics.Visual.Particle.ParticleEffectConfig
       {
         Name = Config.Name + "·刃花",
         Duration = 3600f,
         Looping = true,                           // 永不自动完成, 由本效果统一停止.
         Emitters = { _sparkEmitter },
-        Render = new Particle.Core.RenderConfig
+        Render = new Colin.Core.Graphics.Visual.Particle.RenderConfig
         {
-          Blend = Particle.Core.ParticleBlendMode.Additive,
+          Blend = Colin.Core.Graphics.Visual.Particle.ParticleBlendMode.Additive,
           Texture = sparks.Texture,
           StretchFactor = 0.05f,
           MaxStretchLength = 200f
         }
       };
-      _sparks = new Particle.Core.ParticleEffect(effectConfig, device);
+      _sparks = new Colin.Core.Graphics.Visual.Particle.ParticleEffect(effectConfig, device);
       SyncSparkEmitter();
     }
 
@@ -296,8 +296,8 @@
       _sparkEmitter.Drag = sparks.Drag;
       _sparkEmitter.StretchedBillboard = sparks.Stretched;
       _sparkEmitter.ColorOverLife.Keys.Clear();
-      _sparkEmitter.ColorOverLife.Keys.Add(new Particle.Core.ColorKey(0f, sparks.StartColor));
-      _sparkEmitter.ColorOverLife.Keys.Add(new Particle.Core.ColorKey(1f, sparks.EndColor));
+      _sparkEmitter.ColorOverLife.Keys.Add(new Colin.Core.Graphics.Visual.Particle.ColorKey(0f, sparks.StartColor));
+      _sparkEmitter.ColorOverLife.Keys.Add(new Colin.Core.Graphics.Visual.Particle.ColorKey(1f, sparks.EndColor));
       if (_sparks is not null)
         _sparks.Config.Render.Texture = sparks.Texture;
       _sparkEmitter.NotifyChanged();   // 曲线版本自增 → GPU 曲线缓冲刷新; 容量变化走结构重建.

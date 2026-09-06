@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
-using Particle.Core;
-using CurveKey = Particle.Core.CurveKey;
+using Colin.Core.Graphics.Visual.Particle;
+using CurveKey = Colin.Core.Graphics.Visual.Particle.CurveKey;
 
 namespace Colin.Core.Graphics.Visual.Particle.Slash
 {

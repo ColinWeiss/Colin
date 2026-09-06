@@ -1,10 +1,8 @@
 ﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
-
-namespace Particle.Slash
 {
   /// <summary>
   /// 刀光管理器 (单例): 统一持有活跃的 <see cref="SlashEffect"/>, 驱动每帧更新与渲染.
-  /// <br>与 <see cref="Particle.Core.ParticleManager"/> 平行的独立入口 —— 刀光不依附粒子发射器,
+  /// <br>与 <see cref="Colin.Core.Graphics.Visual.Particle.ParticleManager"/> 平行的独立入口 —— 刀光不依附粒子发射器,
   /// 由引擎挂钩调用 <see cref="TickAndRender"/> 一步完成 (挥砍推进 → 余焰回收 → 相机绘制).</br>
   /// </summary>
   public sealed class SlashManager

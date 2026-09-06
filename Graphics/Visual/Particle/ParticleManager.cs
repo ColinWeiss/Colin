@@ -33,7 +33,7 @@ namespace Colin.Core.Graphics.Visual.Particle
     public GraphicsDevice GraphicsDevice { get; private set; }
 
     /// <summary>共享渲染器 (空时不渲染).</summary>
-    public global::Particle.Rendering.ParticleRenderer Renderer { get; private set; }
+    public Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer Renderer { get; private set; }
 
     /// <summary>初始化是否已完成.</summary>
     public bool IsInitialized { get; private set; }
@@ -75,7 +75,7 @@ namespace Colin.Core.Graphics.Visual.Particle
         if (IsInitialized)
           return;
         GraphicsDevice = device ?? throw new ArgumentNullException(nameof(device));
-        Renderer ??= new global::Particle.Rendering.ParticleRenderer(device);
+        Renderer ??= new Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer(device);
         IsInitialized = true;
         Console.WriteLine("Remind", $"粒子系统初始化完成.");
       }
@@ -93,7 +93,7 @@ namespace Colin.Core.Graphics.Visual.Particle
       {
         try
         {
-          global::Particle.Compute.GpuUpdateStrategy gpu = new global::Particle.Compute.GpuUpdateStrategy();
+          Colin.Core.Graphics.Visual.Particle.GpuUpdateStrategy gpu = new Colin.Core.Graphics.Visual.Particle.GpuUpdateStrategy();
           gpu.Initialize(GraphicsDevice, capacity);
           StrategyPath = gpu.Name;
           return gpu;

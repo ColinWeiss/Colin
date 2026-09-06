@@ -1,5 +1,5 @@
 ﻿using ComputeSharp;
-using Particle.Core;
+using Colin.Core.Graphics.Visual.Particle;
 
 namespace Colin.Core.Graphics.Visual.Particle
 {
