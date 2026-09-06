@@ -1,3 +1,5 @@
+using Particle.Core;
+
 namespace Particle.Slash
 {
   /// <summary>
@@ -40,8 +42,12 @@ namespace Particle.Slash
 
     // —— 收尾修饰器运行时: 启用列表 (随配置版本同步) 与各修饰器的计算结果 ——
     private readonly List<SlashFinishConfig> _activeFinishes = new List<SlashFinishConfig>();
+    private readonly List<SlashSpeedCurve> _finishPacing = new List<SlashSpeedCurve>();
     private int _configStamp = -1;
     private float _fadeScale = 1f;
+
+    // —— 阶段曲线: 纵轴 = 相对速度, 运行时积分归一化为进度 ——
+    private readonly SlashSpeedCurve _sweepPacing = new SlashSpeedCurve();
 
     // —— 纹理层横向滚动状态 (逐层累计 ScrollSpeed) ——
     private float[] _layerScrolls = Array.Empty<float>();
@@ -81,6 +87,9 @@ namespace Particle.Slash
         foreach (SlashFinishConfig finish in Config.Finishes)
           if (finish is not null && finish.Enabled)
             _activeFinishes.Add(finish);
+      _finishPacing.Clear();
+      for (int i = 0; i < _activeFinishes.Count; i++)
+        _finishPacing.Add(new SlashSpeedCurve());
 
       if (_activeFinishes.Count == 0)
       {
@@ -115,17 +124,18 @@ namespace Particle.Slash
 
       if (_elapsed <= sweep)
       {
-        // —— 阶段一 挥动: 前缘按速度曲线扫进; 尾端钉在起始角 ——
+        // —— 阶段一 挥动: 前缘速度曲线积分后扫进 (纵轴=相对速度); 尾端钉在起始角 ——
         float sweepT = Math.Clamp(_elapsed / sweep, 0f, 1f);
         Progress = sweepT;
-        float progress = Math.Clamp(config.SweepCurve?.Evaluate(sweepT) ?? sweepT, 0f, 1f);
+        float progress = Math.Clamp(_sweepPacing.Evaluate(config.SweepCurve, sweepT), 0f, 1f);
         _headDeg = MathHelper.Lerp(fromDeg, toDeg, progress);
         _tailDeg = fromDeg;
         _fadeScale = 1f;
       }
       else
       {
-        // —— 阶段二 收尾: 各修饰器按自己的时长/曲线推进 (收拢改写尾端, 渐隐乘算透明度) ——
+        // —— 阶段二 收尾: 各修饰器按自己的时长/速度曲线推进 (积分归一化, 时长内必完成)
+        // (收拢改写尾端, 渐隐乘算透明度) ——
         Progress = 1f;
         _headDeg = toDeg;
         _tailDeg = fromDeg;
@@ -139,7 +149,7 @@ namespace Particle.Slash
           float t = Math.Clamp(finishT / MathF.Max(1e-3f, finish.Duration), 0f, 1f);
           if (t < 1f)
             allDone = false;
-          float curved = Math.Clamp(finish.Curve?.Evaluate(t) ?? t, 0f, 1f);
+          float curved = Math.Clamp(_finishPacing[i].Evaluate(finish.Curve, t), 0f, 1f);
           if (finish is SlashCollapseFinish)
             _tailDeg = MathHelper.Lerp(fromDeg, toDeg, curved);
           else if (finish is SlashFadeFinish)
@@ -211,7 +221,7 @@ namespace Particle.Slash
         PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f), radius, halfWidth);
       }
 
-      return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, vertices, indices);
+      return RibbonBuilder.Build(_points, _halfWidths, _colors, _us, count, vertices, indices);
     }
 
     /// <summary>摆放单个弧点 (模型空间圆弧 + 整体面片等宽 + 头亮尾隐顶点色; 变换交给相机矩阵).</summary>
@@ -302,6 +312,60 @@ namespace Particle.Slash
         _halfWidths = new float[count];
         _colors = new Vector4[count];
         _us = new float[count];
+      }
+    }
+  }
+
+  /// <summary>
+  /// 速度曲线的积分换算器: 曲线<b>纵轴 = 相对速度</b> (1 ≈ 该阶段的平均速度), 横轴 = 该阶段的时间进度.
+  /// 运行时对速度做梯形积分并归一化 —— 进度 = 已走过路程的占比, 因此阶段末尾必达 1
+  /// (到点必完成), 曲线只塑造快慢节奏; 曲线的水平段即"没速度" (原地停顿).
+  /// </summary>
+  public sealed class SlashSpeedCurve
+  {
+    private const int Samples = 32;
+    private FloatCurve _curve;
+    private int _stamp = -1;
+    private readonly float[] _cdf = new float[Samples + 1];   // 归一化累计积分 (进度查找表).
+
+    /// <summary>求时间进度 t (0~1) 处的归一化进度; 自动跟随曲线实例/版本重建积分表.</summary>
+    public float Evaluate(FloatCurve curve, float t)
+    {
+      if (!ReferenceEquals(_curve, curve) || _stamp != (curve?.Version ?? -1))
+      {
+        _curve = curve;
+        _stamp = curve?.Version ?? -1;
+        Rebuild();
+      }
+
+      t = Math.Clamp(t, 0f, 1f);
+      float f = t * Samples;
+      int i = Math.Min(Samples - 1, (int)f);
+      return MathHelper.Lerp(_cdf[i], _cdf[i + 1], f - i);
+    }
+
+    private void Rebuild()
+    {
+      float total = 0f;
+      _cdf[0] = 0f;
+      for (int i = 0; i < Samples; i++)
+      {
+        float a = _curve?.Evaluate(i / (float)Samples) ?? i / (float)Samples;
+        float b = _curve?.Evaluate((i + 1) / (float)Samples) ?? (i + 1) / (float)Samples;
+        total += (a + b) * 0.5f / Samples;
+        _cdf[i + 1] = total;
+      }
+
+      if (total <= 1e-6f)
+      {
+        // 全零速度: 退化为匀速 (否则永远走不完).
+        for (int i = 0; i <= Samples; i++)
+          _cdf[i] = i / (float)Samples;
+      }
+      else
+      {
+        for (int i = 0; i <= Samples; i++)
+          _cdf[i] /= total;
       }
     }
   }

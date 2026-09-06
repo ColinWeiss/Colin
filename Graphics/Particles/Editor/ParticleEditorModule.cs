@@ -21,7 +21,7 @@ namespace Particle.Editor
   /// <br>- <b>粒子</b>: 预设选择 / 发射器组合 / 参数编辑 / 时间轴 (ParticlePresetFactory + ParticleEffect);</br>
   /// <br>- <b>刀光</b>: 独立大功能 (SlashPresetFactory + SlashEffect) —— 刀光本体 (拉刀光 Mesh) 与
   /// 与前缘角度绑定的刃花层分页签编辑, 播放控制统一驱动.</br>
-  /// <br>界面绘制到模块 RawRt 后透明合成, 不遮挡游戏画面; F10 开关编辑器.</br>
+  /// <br>界面绘制到模块 RawRt 后透明合成, 不遮挡游戏画面; F11 开关编辑器.</br>
   /// </summary>
   public class ParticleEditorModule : SceneRenderModule
   {
@@ -71,7 +71,7 @@ namespace Particle.Editor
 
     private Func<object> _pendingUndoSnapshot;
 
-    /// <summary>编辑器是否显示 (F10 切换).</summary>
+    /// <summary>编辑器是否显示 (F11 切换).</summary>
     public bool ShowEditor
     {
       get => _showEditor;
@@ -184,9 +184,9 @@ namespace Particle.Editor
       if (_modalDialogOpen)
         return;
 
-      // —— F10 开关 (切换模块 RawRt 渲染) ——
+      // —— F11 开关 (切换模块 RawRt 渲染) ——
       KeyboardState keys = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-      if (keys.IsKeyDown(Keys.F10) && _previousKeys.IsKeyUp(Keys.F10))
+      if (keys.IsKeyDown(Keys.F11) && _previousKeys.IsKeyUp(Keys.F11))
       {
         _showEditor = !_showEditor;
         RawRtVisible = _showEditor;
@@ -851,7 +851,7 @@ namespace Particle.Editor
       TrackedFloat("弧线半径 (像素)", () => cfg.Radius, v => cfg.Radius = v, 10f, 600f, NotifySlash);
       ImGui.TextUnformatted("挥扫速度曲线");
       ParticleTimeline.FloatCurveEditor("##sweepCurve", cfg.SweepCurve, new NV2(ImGui.GetContentRegionAvail().X, 110f), NotifySlash);
-      ImGui.TextDisabled("双击添加关键帧 | 拖拽移动 | 右键删除 (先蓄后发/快出缓收)");
+      ImGui.TextDisabled("纵轴: 相对速度 | 双击添加关键帧 | 拖拽 | 右键删除 (积分归一化, 时长内必完成)");
 
       // —— 阶段二 收尾 (修饰器, 可同时叠加) ——
       ImGui.Separator();
@@ -861,7 +861,7 @@ namespace Particle.Editor
       if (fade is not null)
       {
         TrackedFloat("渐隐时长 (秒)", () => fade.Duration, v => fade.Duration = Math.Clamp(v, 0.02f, 3f), 0.02f, 3f, NotifySlash);
-        if (ImGui.TreeNodeEx("渐隐曲线 (纵轴: 不透明度)", ImGuiTreeNodeFlags.DefaultOpen))
+        if (ImGui.TreeNodeEx("渐隐曲线 (纵轴: 渐隐速度)", ImGuiTreeNodeFlags.DefaultOpen))
         {
           ParticleTimeline.FloatCurveEditor("##fadeCurve", fade.Curve, new NV2(ImGui.GetContentRegionAvail().X, 90f), NotifySlash);
           ImGui.TreePop();
@@ -871,7 +871,7 @@ namespace Particle.Editor
       if (collapse is not null)
       {
         TrackedFloat("收拢时长 (秒)", () => collapse.Duration, v => collapse.Duration = Math.Clamp(v, 0.02f, 3f), 0.02f, 3f, NotifySlash);
-        if (ImGui.TreeNodeEx("收拢曲线 (纵轴: 收拢进度)", ImGuiTreeNodeFlags.DefaultOpen))
+        if (ImGui.TreeNodeEx("收拢曲线 (纵轴: 收拢速度)", ImGuiTreeNodeFlags.DefaultOpen))
         {
           ParticleTimeline.FloatCurveEditor("##collapseCurve", collapse.Curve, new NV2(ImGui.GetContentRegionAvail().X, 90f), NotifySlash);
           ImGui.TreePop();

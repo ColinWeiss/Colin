@@ -56,8 +56,9 @@ namespace Particle.Slash
 
     /// <summary>挥扫时长 (秒) —— 前缘从起始角扫到结束角.</summary>
     public float SweepTime = 0.20f;
-    /// <summary>挥扫速度曲线 (横轴: 挥扫时间进度, 纵轴: 前缘角度进度) —— 先蓄后发/快出缓收等手感.</summary>
-    public FloatCurve SweepCurve = new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } };
+    /// <summary>挥扫速度曲线 (横轴: 挥扫时间进度, <b>纵轴: 相对速度</b>, 1 ≈ 平均速度) ——
+    /// 运行时积分归一化: 挥扫必在时长内完成, 曲线只塑造快慢节奏; 曲线水平段 = 原地停顿.</summary>
+    public FloatCurve SweepCurve = FloatCurve.Constant(1f);
 
     // ---- 阶段二: 收尾 (修饰器, 可同时叠加) ----
 
@@ -118,7 +119,7 @@ namespace Particle.Slash
       ScaleY = ScaleY,
       RotationDeg = RotationDeg,
       SweepTime = SweepTime,
-      SweepCurve = SweepCurve?.Clone() ?? new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } },
+      SweepCurve = SweepCurve?.Clone() ?? FloatCurve.Constant(1f),
       Finishes = Finishes?.Select(f => f?.Clone()).ToList() ?? new List<SlashFinishConfig>(),
       Layers = Layers?.Select(l => l?.Clone()).ToList() ?? new List<SlashTextureLayer>(),
       Retire = Retire,

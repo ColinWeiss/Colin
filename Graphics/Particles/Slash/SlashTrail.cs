@@ -119,7 +119,7 @@
         _us_cache[i] = 1f - i / (float)(count - 1);
       }
 
-      return RibbonBuilder.Build(_points_cache, _halfWidths_cache, _colors_cache, _us_cache, vertices, indices);
+      return RibbonBuilder.Build(_points_cache, _halfWidths_cache, _colors_cache, _us_cache, count, vertices, indices);
     }
   }
 }

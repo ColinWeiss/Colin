@@ -11,22 +11,24 @@
     /// 构建条带顶点与索引.
     /// </summary>
     /// <param name="points">轨迹点列 (顺序: 头部在前 —— 即扫动前缘/最新位置在前).</param>
-    /// <param name="halfWidths">每点的半宽 (像素), 与点列等长.</param>
+    /// <param name="halfWidths">每点的半宽 (像素).</param>
     /// <param name="colors">每点顶点色 rgba.</param>
     /// <param name="us">每点 UV.u (0=尾, 1=头; 与纹理渐变方向一致).</param>
-    /// <param name="vertices">输出顶点 (2 × 点数).</param>
-    /// <param name="indices">输出索引 (三角带, 3 × (点数-1) × 2).</param>
-    /// <returns>实际写入的三角带段数 (点数-1; 不足两点时为 0).</returns>
+    /// <param name="count">实际参与构网的点数 —— 调用方的缓存数组可能比它大,
+    /// 超出部分是上一帧的陈旧位置, 绝不允许进入索引 (否则出现拉向旧顶点的撕拉鬼影).</param>
+    /// <param name="vertices">输出顶点 (2 × count).</param>
+    /// <param name="indices">输出索引 (三角带, 3 × (count-1) × 2).</param>
+    /// <returns>实际写入的三角带段数 (count-1; 不足两点时为 0).</returns>
     public static int Build(
         IReadOnlyList<Vector2> points,
         IReadOnlyList<float> halfWidths,
         IReadOnlyList<Vector4> colors,
         IReadOnlyList<float> us,
+        int count,
         SlashVertex[] vertices,
         short[] indices)
     {
-      int count = points.Count;
-      if (count < 2)
+      if (count < 2 || count > points.Count)
         return 0;
 
       // —— 顶点: 每点沿法线两侧展开 ——

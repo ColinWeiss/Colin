@@ -36,8 +36,9 @@ namespace Particle.Slash
     /// <summary>收尾时长 (秒) —— 该修饰器自己的时间轴长度.</summary>
     public float Duration = 0.25f;
 
-    /// <summary>收尾时间轴曲线 (横轴: 收尾时间进度 0~1, 纵轴: 该修饰器的进度/强度 0~1).</summary>
-    public FloatCurve Curve = new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } };
+    /// <summary>收尾时间轴曲线 (横轴: 收尾时间进度, <b>纵轴: 相对速度</b>) ——
+    /// 积分归一化: 时长内必完成, 曲线只塑造快慢节奏 (收拢速度 / 渐隐速度).</summary>
+    public FloatCurve Curve = FloatCurve.Constant(1f);
 
     /// <summary>修饰器类型 (诊断).</summary>
     public abstract SlashFinishKind Kind { get; }
@@ -56,7 +57,7 @@ namespace Particle.Slash
     {
       Enabled = Enabled,
       Duration = Duration,
-      Curve = Curve?.Clone() ?? new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } }
+      Curve = Curve?.Clone() ?? FloatCurve.Constant(1f)
     };
   }
 
@@ -71,7 +72,7 @@ namespace Particle.Slash
     {
       Enabled = Enabled,
       Duration = Duration,
-      Curve = Curve?.Clone() ?? new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } }
+      Curve = Curve?.Clone() ?? FloatCurve.Constant(1f)
     };
   }
 
