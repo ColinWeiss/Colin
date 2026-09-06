@@ -65,3 +65,4 @@
 *.xnb
 /Content/obj/Windows/.mgstats
 /Content/obj/Windows/net8.0-windows7.0/Content/.mgstats
+/Content/obj/Windows
