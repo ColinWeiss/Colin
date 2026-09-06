@@ -50,17 +50,6 @@ namespace Colin.Core.Modulars.Ecses.Systems
         }
         batch.End();
 
-        // —— GPU 粒子与刀光: 在实体层之上绘制 (特效覆盖于武器表现之上).
-        Colin.Core.Graphics.Visual.Particle.ParticleManager.Instance.TickAndRender(Time.DeltaTime, Ecs.Scene.Camera.Transform);
-        if (Colin.Core.Graphics.Visual.Particle.ParticleManager.Instance.IsInitialized)
-        {
-          Colin.Core.Graphics.Visual.Particle.Slash.SlashRenderer slash = Colin.Core.Graphics.Visual.Particle.Slash.SlashRenderer.GetOrCreate();
-          slash.TickAll(Time.DeltaTime);
-          slash.DrawAll(Ecs.Scene.Camera.Transform);
-        }
-        // —— 独立刀光效果 (SlashManager): 更新 + 回收 + 绘制一步完成 ——
-        Colin.Core.Graphics.Visual.Particle.Slash.SlashManager.Instance.TickAndRender(Time.DeltaTime, Ecs.Scene.Camera.Transform);
-
         for (int count = 0; count < Ecs.Entities.Length; count++)
         {
           entity = Ecs.Entities[count];

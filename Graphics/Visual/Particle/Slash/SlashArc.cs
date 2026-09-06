@@ -251,8 +251,13 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
 
     /// <summary>
     /// 刀光的"相机矩阵" (模型空间 → 世界): 椭圆长宽缩放 (ScaleX/ScaleY)、
-    /// 整体旋转 (实例 + 配置) 与弧心位移. Mesh 顶点在模型空间内生成后经此矩阵成像,
-    /// 因此缩放由"相机"控制, 面片在模型空间内永远不折叠.
+    /// 整体旋转 (实例 + 配置) 与弧心位移. 复合顺序 = <b>缩放 · 旋转 · 平移</b>
+    /// (行向量约定: 缩放、旋转绕模型空间原点/弧心, 平移最后落到世界位置),
+    /// 与 <see cref="PointAt"/>/<see cref="TangentAt"/> 的求值完全同构.
+    /// <br>朝向镜像在此矩阵内表达: <b>ScaleX 取负 + RotationDeg 取反</b> ——
+    /// 恒等于对最终图形做弧心竖轴镜像 (S(−SX,SY)·R(−φ) ≡ S(SX,SY)·R(φ)·M),
+    /// 对任意 Width/椭圆缩放/整体旋转组合严格成立;
+    /// 若改为重映射角度, 只有无旋转的正圆才等价, 椭圆/旋转弧会左右表现分叉.</br>
     /// </summary>
     public Matrix TransformMatrix()
     {

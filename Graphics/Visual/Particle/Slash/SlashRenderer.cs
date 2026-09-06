@@ -96,10 +96,13 @@
       DrawArc(arc, transform);
     }
 
+    /// <summary>管线状态覆盖 (诊断/宿主管线适配): 非空时替代默认加法混合绘制条带 Mesh.</summary>
+    public BlendState BlendOverride;
+
     /// <summary>统一的加法混合渲染状态.</summary>
     private void BeginPass()
     {
-      _device.BlendState = BlendState.Additive;
+      _device.BlendState = BlendOverride ?? BlendState.Additive;
       _device.RasterizerState = RasterizerState.CullNone;
       _device.DepthStencilState = DepthStencilState.None;
       _device.SamplerStates[0] = SamplerState.LinearClamp;

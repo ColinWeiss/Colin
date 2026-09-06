@@ -51,7 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ArrayExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PointExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\XNAExt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\BladeTrailAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\CpuUpdateStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\EmissionShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\EmitterConfig.cs" />
