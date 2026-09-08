@@ -81,6 +81,15 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
   //  几何每帧只构建一次, 逐层绘制 (各自采样/色调) —— 叠出更丰富的视觉表现.
   // =====================================================================
 
+  /// <summary>刃花发射方向模式.</summary>
+  public enum SlashSparkAimMode
+  {
+    /// <summary>切线: 沿前缘扫进方向发射 (默认).</summary>
+    Tangent,
+    /// <summary>角度: 在前缘切线基础上偏移固定角度 (相对切线).</summary>
+    Angle
+  }
+
   /// <summary>
   /// 刀光纹理层: 一层独立的贴图 pass. UV.x 沿刀光方向 (尾 0 → 头 1), UV.y 沿宽度截面.
   /// </summary>
@@ -138,6 +147,16 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     public bool Enabled = true;
     /// <summary>发射率 (个/秒, 沿前缘).</summary>
     public float Rate = 220f;
+    /// <summary>发射起点 (0~100): 刀挥过该弧长百分比后刃花才开始发射
+    /// (0 = 全程发射; 100 = 挥到尽头一瞬才发射) —— 门控期间不积累发射量.</summary>
+    public float EmitStartPercent = 0f;
+    /// <summary>发射方向: 切线 (沿前缘扫进方向) / 角度 (相对切线偏移固定角).</summary>
+    public SlashSparkAimMode Aim = SlashSparkAimMode.Tangent;
+    /// <summary>方向偏移角 (度): 仅 Angle 模式生效, 相对前缘切线的偏移 (散布仍围绕偏移后的方向).</summary>
+    public float AngleOffsetDeg = 0f;
+    /// <summary>发射点沿半径外移 (像素): 沿"弧心 → 前缘"方向偏移初始位置,
+    /// 正 = 远离弧心 (弧线外侧), 负 = 朝弧心 (内侧); 与方向模式相互独立.</summary>
+    public float RadiusOffset = 0f;
     /// <summary>初速下限 (像素/秒, 沿前缘切向).</summary>
     public float SpeedMin = 450f;
     /// <summary>初速上限 (像素/秒).</summary>
@@ -174,6 +193,10 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     {
       Enabled = Enabled,
       Rate = Rate,
+      EmitStartPercent = EmitStartPercent,
+      Aim = Aim,
+      AngleOffsetDeg = AngleOffsetDeg,
+      RadiusOffset = RadiusOffset,
       SpeedMin = SpeedMin,
       SpeedMax = SpeedMax,
       SpreadDeg = SpreadDeg,

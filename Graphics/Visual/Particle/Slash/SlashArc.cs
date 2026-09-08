@@ -22,8 +22,12 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     /// <summary>是否播放完毕.</summary>
     public bool IsFinished;
 
-    /// <summary>挥扫进度 (0~1, 诊断).</summary>
+    /// <summary>挥扫进度 (0~1, 时间占比, 诊断).</summary>
     public float Progress { get; private set; }
+
+    /// <summary>已挥过的弧长占比 (0~1, 进度曲线映射后) —— "刀挥到哪了"的可见进度,
+    /// 刃花发射起点门控即以此为准 (与时间占比区分: 进度曲线会拉开二者).</summary>
+    public float SweepFraction => _sweepFraction;
 
     /// <summary>当前前缘 (刃头) 角度 (度) —— 刃花沿此角度绑定发射.</summary>
     public float HeadAngleDeg => _headDeg;
@@ -37,6 +41,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     private float _elapsed;
     private float _headDeg;
     private float _tailDeg;
+    private float _sweepFraction;
 
     // —— 收尾修饰器运行时: 启用列表 (随配置版本同步) ——
     private readonly List<SlashFinishConfig> _activeFinishes = new List<SlashFinishConfig>();
@@ -62,6 +67,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
     {
       _elapsed = 0f;
       Progress = 0f;
+      _sweepFraction = 0f;
       IsFinished = false;
       _fadeScale = 1f;
       Array.Clear(_layerScrolls, 0, _layerScrolls.Length);
@@ -122,7 +128,8 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
         // 尾端钉在起始角 ——
         float sweepT = Math.Clamp(_elapsed / sweep, 0f, 1f);
         Progress = sweepT;
-        _headDeg = MathHelper.Lerp(fromDeg, toDeg, EvaluateProgress(config.SweepCurve, sweepT));
+        _sweepFraction = EvaluateProgress(config.SweepCurve, sweepT);
+        _headDeg = MathHelper.Lerp(fromDeg, toDeg, _sweepFraction);
         _tailDeg = fromDeg;
         _fadeScale = 1f;
       }
@@ -131,6 +138,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
         // —— 阶段二 收尾: 各修饰器按自己的时长/进度曲线推进 (纵轴=完成度, 末关键帧应落在 1,
         // 否则修饰器会在到时前提前定型); (收拢改写尾端, 渐隐乘算透明度) ——
         Progress = 1f;
+        _sweepFraction = 1f;
         _headDeg = toDeg;
         _tailDeg = fromDeg;
         _fadeScale = 1f;

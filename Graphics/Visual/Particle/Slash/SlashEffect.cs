@@ -192,13 +192,20 @@
     /// <summary>沿当前前缘喷射刃花 —— 位置/切向取自弧的实时状态.</summary>
     private void EmitSparks(float dt)
     {
-      if (_sparks is null || !Config.Sparks.Enabled || !Arc.IsSweeping)
+      SlashSparkConfig sparks = Config.Sparks;
+      if (_sparks is null || !sparks.Enabled || !Arc.IsSweeping)
       {
         _sparkCarry = 0f;
         return;
       }
 
-      SlashSparkConfig sparks = Config.Sparks;
+      // —— 发射起点门控: 刀挥过 EmitStartPercent% 弧长后才开始发射 (期间不积累) ——
+      if (Arc.SweepFraction * 100f < Math.Clamp(sparks.EmitStartPercent, 0f, 100f))
+      {
+        _sparkCarry = 0f;
+        return;
+      }
+
       _sparkCarry += MathF.Max(0f, sparks.Rate) * dt;
       if (_sparkCarry < 1f)
         return;
@@ -207,6 +214,20 @@
       Vector2 head = Arc.PointAt(headDeg);
       Vector2 tangent = Arc.TangentAt(headDeg);       // 指向扫进方向.
       Vector2 normal = new Vector2(-tangent.Y, tangent.X);
+
+      // —— 沿半径外移: 发射点沿"弧心 → 前缘"方向偏移 (正=远离弧心, 负=朝弧心) ——
+      Vector2 radial = head - Arc.Position;
+      float radialLength = radial.Length();
+      Vector2 radialDir = radialLength > 1e-4f ? radial / radialLength : Vector2.UnitX;
+
+      // —— 方向模式: 角度模式在切线基础上偏移固定角 (相对切线), 散布围绕偏移后的方向 ——
+      Vector2 aim = tangent;
+      if (sparks.Aim == SlashSparkAimMode.Angle && sparks.AngleOffsetDeg != 0f)
+      {
+        float offset = sparks.AngleOffsetDeg * MathF.PI / 180f;
+        float oc = MathF.Cos(offset), os = MathF.Sin(offset);
+        aim = new Vector2(tangent.X * oc - tangent.Y * os, tangent.X * os + tangent.Y * oc);
+      }
 
       _spawnBatch.Clear();
       while (_sparkCarry >= 1f)
@@ -217,10 +238,10 @@
         float speed = RandRange(sparks.SpeedMin, sparks.SpeedMax);
         float spread = RandRange(-sparks.SpreadDeg, sparks.SpreadDeg) * MathF.PI / 180f;
         float cos = MathF.Cos(spread), sin = MathF.Sin(spread);
-        Vector2 direction = new Vector2(tangent.X * cos - tangent.Y * sin, tangent.X * sin + tangent.Y * cos);
+        Vector2 direction = new Vector2(aim.X * cos - aim.Y * sin, aim.X * sin + aim.Y * cos);
 
-        // 位置: 前缘点 ± 4px 法向散布 (避免完全重叠成一条线).
-        Vector2 position = head + normal * RandRange(-4f, 4f);
+        // 位置: 前缘点 沿半径外移 + ±4px 法向散布 (避免完全重叠成一条线).
+        Vector2 position = head + radialDir * sparks.RadiusOffset + normal * RandRange(-4f, 4f);
 
         _spawnBatch.Add(new Colin.Core.Graphics.Visual.Particle.ParticleSpawnInit
         {
