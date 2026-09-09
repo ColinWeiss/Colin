@@ -1,7 +1,7 @@
 ﻿namespace Colin.Core.Assets
 {
   /// <summary>
-  /// 标识游戏资产.
+  /// [OLD]标识游戏资产.
   /// </summary>
   public interface IGameAsset
   {

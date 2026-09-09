@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Media;
 namespace Colin.Core
 {
   /// <summary>
-  /// 抛弃晚餐 MGCB-Editor, 走向美好未来.
+  /// [OLD]抛弃晚餐 MGCB-Editor, 走向美好未来.
   /// </summary>
   public class Asset
   {
