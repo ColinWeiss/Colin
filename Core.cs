@@ -64,7 +64,6 @@ namespace Colin.Core
         }
       }
       CoreInfo.Init(this);
-      Content.RootDirectory = "Content";
       IsMouseVisible = false;
       IsFixedTimeStep = true;
     }
@@ -75,6 +74,17 @@ namespace Colin.Core
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
+      // 初始化 Leemo.Assets 运行时资产管线 (rootDir 缺省为 <exe目录>/Assets, 与宿主工程的资源拷贝约定一致);
+      // 调试构建开启热重载, 文件一改即排队, 主线程 Update 里 PumpReloads 落地.
+      Assets.Init(GraphicsDevice, hotReload: CoreInfo.Debug);
+      // 注册 Colin 自定义资产的加载器 (计算着色器 / .fx 特效源码, 均为进程内编译).
+      Assets.Manager.RegisterLoader(new ComputeShaderLoader());
+      Assets.Manager.RegisterLoader(new EffectSourceLoader());
+      // 热重载结果进日志: 成功带出新实例, 失败保留旧资产并报错 (冒烟/调试期间可见).
+      Assets.Manager.AssetReloaded += (path, type, _) =>
+        Console.WriteLine("Remind", string.Concat("资产热重载: ", path, " (", type.Name, ")"));
+      Assets.Manager.ReloadFailed += (path, ex) =>
+        Console.WriteLine("Error", string.Concat("资产热重载失败 '", path, "': ", ex.Message));
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
       Components.Add(Singleton.Get<ControllerResponder>());
       Components.Add(Singleton.Get<MouseResponder>());
@@ -110,6 +120,7 @@ namespace Colin.Core
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
       TweenManager.Update();
       DebugProfiler.NextTick();
+      Assets.Manager.PumpReloads();
       if (!Started)
       {
         SceneManager.SetScene(Preparator);
@@ -160,6 +171,7 @@ namespace Colin.Core
     protected override void OnExiting(object sender, ExitingEventArgs args)
     {
       CoreInfo.Config.Save();
+      Assets.Shutdown();
       args.Cancel = false;
       base.OnExiting(sender, args);
     }

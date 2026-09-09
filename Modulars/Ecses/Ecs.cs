@@ -64,7 +64,13 @@ namespace Colin.Core.Modulars.Ecses
       {
         Entity _entity;
         Entitiesystem _currentSystem;
-        for (int count = 0; count < Systems.Count; count++)
+        EcsCreateCommand cmd;
+        while (CreateCommands.Count > 0)
+        {
+          if(CreateCommands.TryDequeue(out cmd))
+            HandleCreate(cmd);
+        }
+          for (int count = 0; count < Systems.Count; count++)
         {
           _currentSystem = Systems.ElementAt(count).Value;
           _currentSystem.Reset();
@@ -131,24 +137,24 @@ namespace Colin.Core.Modulars.Ecses
 
     public ConcurrentQueue<EcsCreateCommand> CreateCommands;
 
-    public T Create<T>() where T : Entity, new()
+    public T MarkCreate<T>() where T : Entity, new()
     {
-      T result;
-      Entity Entity;
-      for (int count = 0; count < Entities.Length; count++)
+      lock(Entities)
       {
-        Entity = Entities[count];
-        if (Entity is null)
+        T result;
+        EcsCreateCommand cmd;
+        for (int count = 0; count < Entities.Length; count++)
         {
-          EcsCreateCommand cmd = new EcsCreateCommand(this, new T(), count);
-
-          result = new T();
-          result.Ecs = this;
-          result.ID = count;
-          result.DoInitialize();
-          OnCreate?.Invoke(result);
-          Entities[count] = result;
-          return result;
+          if (Entities[count] is null)
+          {
+            result = new T();
+            result.Ecs = this;
+            result.ID = count;
+            result.DoInitialize();
+            cmd = new EcsCreateCommand(this, result, count);
+            CreateCommands.Enqueue(cmd);
+            return result;
+          }
         }
       }
       return null;

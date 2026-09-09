@@ -102,7 +102,7 @@
       if (SpritePool.Instance.TryGetValue(path, out Sprite sprite))
         return sprite;
       else
-        return new Sprite(Asset.GetTexture(path));
+        return new Sprite(Assets.Texture("Textures/" + path + ".png"));
     }
     public static Sprite Get(params string[] paths) => Get(Path.Combine(paths));
   }

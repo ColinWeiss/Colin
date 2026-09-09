@@ -21,7 +21,9 @@ namespace Colin.Core.Preparation
       assetLoadTask = Task.Run(
       () =>
       {
-        Asset.LoadAssets();
+        // 运行时资产预加载: 扫描 <exe>/Assets 全目录, 命中已注册加载器的文件全部载入缓存.
+        int loaded = Assets.Manager.LoadDirectory();
+        Console.WriteLine("Remind", string.Concat("运行时资产预加载完成: ", loaded, " 项."));
         LoadGameAssets();
         IPreExecution theTask;
         for (int count = 0; count < _preparatoryTasks.Count; count++)

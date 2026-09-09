@@ -24,7 +24,7 @@ namespace Colin.Core.Graphics.Visual.Particle
     /// <summary>混合模式.</summary>
     public ParticleBlendMode Blend = ParticleBlendMode.Additive;
 
-    /// <summary>纹理名称: 程序化内置纹理 ("blade"/"glow"/"spark"/"smoke") 或资产路径 (经 Asset.GetTexture 加载).</summary>
+    /// <summary>纹理名称: 程序化内置纹理 ("blade"/"glow"/"spark"/"smoke") 或资产路径 (经 Leemo.Assets 管线加载).</summary>
     public string Texture = "blade";
 
     /// <summary>速度拉伸系数 (秒): 拉伸长度增量 = |速度| × 该值; 0.02~0.08 适合刀光.</summary>

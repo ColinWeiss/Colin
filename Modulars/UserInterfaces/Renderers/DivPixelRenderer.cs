@@ -1,13 +1,4 @@
-﻿
-/* 项目“DeltaMachine.Desktop”的未合并的更改
-在此之前:
-using Colin.Core.Graphics;
-using Colin.Core.Assets;
-在此之后:
-using Colin.Core.Assets;
-using Colin.Core.Graphics;
-*/
-namespace Colin.Core.Modulars.UserInterfaces.Renderers
+﻿namespace Colin.Core.Modulars.UserInterfaces.Renderers
 {
   public class DivPixelRenderer : DivRenderer
   {

@@ -6,7 +6,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
   /// 程序化粒子纹理工厂: 内置若干无需外部资源的默认纹理,
   /// 避免粒子系统对美术资产的硬依赖.
   /// <br>名称解析: 内置名 ("white"/"glow"/"blade"/"spark"/"smoke") 直接生成;
-  /// 其余名称转发至 Colin 资产系统 (Asset.GetTexture).</br>
+  /// 其余名称转发至 Leemo.Assets 管线 (Assets.Manager.TryGet).</br>
   /// </summary>
   public static class ParticleTextureFactory
   {
@@ -29,7 +29,9 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
         case "smoke":
           return CreateSmokePuff(device, 64);
         default:
-          return Asset.GetTexture(name);
+          // 缓存直取 (预加载覆盖 Textures 全目录); 未缓存/不存在返回 null, 由渲染器走兜底纹理.
+          return Assets.Manager.TryGet<Texture2D>("Textures/" + name + ".png", out Texture2D particleTexture)
+            ? particleTexture : null;
       }
     }
 

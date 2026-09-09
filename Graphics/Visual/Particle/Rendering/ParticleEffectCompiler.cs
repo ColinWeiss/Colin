@@ -17,9 +17,29 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
     public static string LastDiagnostics { get; private set; } = string.Empty;
 
     /// <summary>
-    /// 在进程内把 HLSL 源码编译为 MGFX 字节码 (DirectX_11 / HiDef).
+    /// 在进程内把磁盘上的 .fx 源文件编译为 MGFX 字节码 (DirectX_11 / HiDef).
+    /// <br><see cref="EffectContent"/> 的 Identity 指向真实源文件, 因此 #include
+    /// (如 Macros.fxh) 相对源文件所在目录解析.</br>
+    /// </summary>
+    /// <param name="sourceFile">.fx 源文件绝对路径.</param>
+    /// <param name="debug">是否生成调试信息.</param>
+    /// <param name="defines">可选的预处理宏定义 (分号分隔).</param>
+    /// <returns>可直接交由 <c>new Effect(GraphicsDevice, bytes)</c> 加载的 MGFX 字节.</returns>
+    /// <exception cref="InvalidContentException">HLSL 存在语法/语义错误时抛出.</exception>
+    public static byte[] CompileFromFile(string sourceFile, bool debug = false, string defines = null)
+    {
+      EffectContent effectContent = new EffectContent
+      {
+        Identity = new ContentIdentity(sourceFile, nameof(ParticleEffectCompiler))
+      };
+      return Compile(effectContent, Path.Combine(Path.GetTempPath(), Path.GetFileName(sourceFile) + ".runtime.mgfx"));
+    }
+
+    /// <summary>
+    /// 在进程内把 HLSL 源码字符串编译为 MGFX 字节码 (DirectX_11 / HiDef).
     /// <br>源码写入临时文件后交由 <see cref="EffectProcessor"/> 编译 (管线要求文件路径形式的身份标识),
-    /// 编译本身完全发生在当前进程内.</br>
+    /// 编译本身完全发生在当前进程内. 源码为字符串时不含相对 #include 语义, 需要包含其他文件的
+    /// 源码请改用 <see cref="CompileFromFile"/>.</br>
     /// </summary>
     /// <param name="effectSource">HLSL 源码 (与 ParticleRender.fx 同构).</param>
     /// <param name="debug">是否生成调试信息.</param>
@@ -40,15 +60,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
           EffectCode = effectSource
         };
 
-        EffectProcessor processor = new EffectProcessor
-        {
-          DebugMode = debug ? EffectProcessorDebugMode.Debug : EffectProcessorDebugMode.Auto,
-          Defines = defines
-        };
-
-        CompiledEffectContent compiled = processor.Process(effectContent, new RuntimeProcessorContext(outputFile));
-        LastDiagnostics = "编译完成.";
-        return compiled.GetEffectCode();
+        return Compile(effectContent, outputFile);
       }
       finally
       {
@@ -64,6 +76,20 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
           // 临时文件清理失败可忽略.
         }
       }
+    }
+
+    /// <summary>编译核心: 给定已构造的 <see cref="EffectContent"/> 与产物输出名, 完成进程内编译.</summary>
+    public static byte[] Compile(EffectContent effectContent, string outputFilename, bool debug = false, string defines = null)
+    {
+      EffectProcessor processor = new EffectProcessor
+      {
+        DebugMode = debug ? EffectProcessorDebugMode.Debug : EffectProcessorDebugMode.Auto,
+        Defines = defines
+      };
+
+      CompiledEffectContent compiled = processor.Process(effectContent, new RuntimeProcessorContext(outputFilename));
+      LastDiagnostics = "编译完成.";
+      return compiled.GetEffectCode();
     }
 
     /// <summary>
@@ -89,29 +115,29 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
       public override OpaqueDataDictionary Parameters => _parameters;
       public override TargetPlatform TargetPlatform => TargetPlatform.Windows;
       public override GraphicsProfile TargetProfile => GraphicsProfile.HiDef;
-      public override ContentIdentity SourceIdentity => new ContentIdentity("ParticleRender.runtime.fx");
+      public override ContentIdentity SourceIdentity => new ContentIdentity("Runtime");
 
       public override void AddDependency(string filename) { }
 
       public override void AddOutputFile(string filename) { }
 
       public override TOutput BuildAndLoadAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, IContentImporter importer, IContentProcessor processor)
-        => throw new NotSupportedException("粒子效果编译不涉及子资产构建.");
+        => throw new NotSupportedException("运行时 Effect 编译不涉及子资产构建.");
 
       public override ExternalReference<TOutput> BuildAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, IContentImporter importer, IContentProcessor processor, string? assetName)
-        => throw new NotSupportedException("粒子效果编译不涉及子资产构建.");
+        => throw new NotSupportedException("运行时 Effect 编译不涉及子资产构建.");
 
       public override TOutput Convert<TInput, TOutput>(TInput input, IContentProcessor processor)
-        => throw new NotSupportedException("粒子效果编译不涉及子资产转换.");
+        => throw new NotSupportedException("运行时 Effect 编译不涉及子资产转换.");
 
       public override TOutput BuildAndLoadAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, string processorName, OpaqueDataDictionary processorParameters, string importerName)
-        => throw new NotSupportedException("粒子效果编译不涉及子资产构建.");
+        => throw new NotSupportedException("运行时 Effect 编译不涉及子资产构建.");
 
       public override ExternalReference<TOutput> BuildAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, string processorName, OpaqueDataDictionary processorParameters, string importerName, string assetName)
-        => throw new NotSupportedException("粒子效果编译不涉及子资产构建.");
+        => throw new NotSupportedException("运行时 Effect 编译不涉及子资产构建.");
 
       public override TOutput Convert<TInput, TOutput>(TInput input, string processorName, OpaqueDataDictionary processorParameters)
-        => throw new NotSupportedException("粒子效果编译不涉及子资产转换.");
+        => throw new NotSupportedException("运行时 Effect 编译不涉及子资产转换.");
     }
   }
 }

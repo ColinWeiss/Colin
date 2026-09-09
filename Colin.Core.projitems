@@ -9,10 +9,8 @@
     <Import_RootNamespace>Colin.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\README.md" />
     <None Include="$(MSBuildThisFileDirectory)Colin.Core.sln" />
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\Rendering\ParticleRender.fx" />
@@ -31,16 +29,19 @@
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.Common.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\SharpDX.D3DCompiler.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\System.CommandLine.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\YamlDotNet.dll" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\Asset_Old.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\AssetManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\Assets_New.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\Assets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IAssetLoader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\IGameAsset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Preparation\IGameAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\BuiltinLoaders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\ComputeShaderLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\EffectSourceLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEvents.cs" />

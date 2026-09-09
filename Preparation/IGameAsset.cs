@@ -1,7 +1,8 @@
-﻿namespace Colin.Core.Assets
+﻿namespace Colin.Core.Preparation
 {
   /// <summary>
-  /// [OLD]标识游戏资产.
+  /// 标识游戏资产: 由 <see cref="Preparator"/> 在启动阶段反射实例化并调用 <see cref="LoadResource"/>,
+  /// 供游戏项目声明自己的启动期加载逻辑 (具体文件读取经 Leemo.Assets 管线完成).
   /// </summary>
   public interface IGameAsset
   {

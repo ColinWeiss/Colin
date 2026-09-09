@@ -1,5 +1,4 @@
 ﻿global using Colin.Core;
-global using Colin.Core.Assets;
 global using Colin.Core.Common;
 global using Colin.Core.Extensions;
 global using Colin.Core.Graphics;
@@ -9,6 +8,8 @@ global using Colin.Core.Graphics.Visual.Particle.Serialization;
 global using Colin.Core.Graphics.Visual.Particle.Slash;
 global using Colin.Editor.Particle;
 global using Colin.Core.Inputs;
+global using Colin.Core.Preparation;
+global using Leemo.Assets;
 global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
 global using MonoGame.IMEHelper;
