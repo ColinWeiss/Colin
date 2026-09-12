@@ -8,16 +8,16 @@ using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
 namespace Colin.Core.Graphics.Bridge;
 
 /// <summary>
-/// 一个GPU纹理同时对三方可见，零拷贝：
-/// - MonoGame：一个RenderTarget2D包装器（用于向其渲染，或使用SpriteBatch对其进行采样）；
-/// - ComputeSharp：一个 ReadWriteTexture2D 包装器（从着色器进行读写）；
+/// 一个GPU纹理同时对三方可见, 零拷贝：
+/// - MonoGame：一个RenderTarget2D包装器(用于向其渲染, 或使用SpriteBatch对其进行采样)；
+/// - ComputeSharp：一个 ReadWriteTexture2D 包装器(从着色器进行读写)；
 /// - 两者都由相同的内存支持：在MonoGame的设备中创建的D3D11纹理
-/// （共享 | 共享NTHandle + RT | SRV | UAV绑定标志），已在ComputeSharp上打开
-/// 通过ID3D12Device::OpenSharedHandle获取D3D12设备。
-/// D3D12端是通过分配一个普通的ComputeSharp纹理来安装的（以获取一个
-///（完全注册的包装对象）然后将其原生ID3D12Resource替换为
-/// 打开了一个共享对象，重写了其持久化无人机描述符。一切尽在ComputeSharp
-/// 轨迹（大小、描述符槽、状态）保持有效。
+/// (共享 | 共享NTHandle + RT | SRV | UAV绑定标志), 已在ComputeSharp上打开
+/// 通过ID3D12Device::OpenSharedHandle获取D3D12设备.
+/// D3D12端是通过分配一个普通的ComputeSharp纹理来安装的(以获取一个
+///(完全注册的包装对象)然后将其原生ID3D12Resource替换为
+/// 打开了一个共享对象, 重写了其持久化无人机描述符.一切尽在ComputeSharp
+/// 轨迹(大小、描述符槽、状态)保持有效.
 /// </summary>
 public sealed unsafe class SharedTexture : IDisposable
 {

@@ -59,7 +59,7 @@
       short previousIndex = (short)vertices.Count;
       vertices.Add(new VertexPositionColor(new Vector3(previousPoint, 0), new Color(Color, 0.5f)));
 
-      // 添加第一条直线边（从中心点到起始边缘点）
+      // 添加第一条直线边(从中心点到起始边缘点)
       borderIndices.Add(centerIndex);
       borderIndices.Add(previousIndex);
 
@@ -83,7 +83,7 @@
           fillIndices.Add(currentIndex);
         }
 
-        // 构建描边线段（边缘弧线）
+        // 构建描边线段(边缘弧线)
         if (i > 0)
         {
           borderIndices.Add(previousIndex);
@@ -93,7 +93,7 @@
         previousIndex = currentIndex; // 保存当前点索引作为下一个三角形的上一个点
       }
 
-      // 添加第二条直线边（从中心点到结束边缘点）
+      // 添加第二条直线边(从中心点到结束边缘点)
       borderIndices.Add(centerIndex);
       borderIndices.Add(previousIndex);
 
@@ -146,7 +146,7 @@
               FillVertices.Length,
               BorderIndicesArray, // 使用描边扇形的索引数组
               0,
-              (Segments + 2) // 线段数量等于扇形段数 + 2（两条直线边）
+              (Segments + 2) // 线段数量等于扇形段数 + 2(两条直线边)
           );
         }
       }

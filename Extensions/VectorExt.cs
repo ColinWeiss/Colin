@@ -281,7 +281,7 @@
     }
 
     /// <summary>
-    /// 检查权重向量是否有效（所有分量在0-1之间, 总和接近1）
+    /// 检查权重向量是否有效(所有分量在0-1之间, 总和接近1)
     /// </summary>
     public static bool IsValidWeightVector(this Vector4 weights, float tolerance = 0.01f)
     {
@@ -305,7 +305,7 @@
     }
 
     /// <summary>
-    /// 检查Vector4是否为有效骨骼索引（所有分量>=0）
+    /// 检查Vector4是否为有效骨骼索引(所有分量>=0)
     /// </summary>
     public static bool IsValidBoneIndexVector(this Vector4 indices)
     {
@@ -367,7 +367,7 @@
     }
 
     /// <summary>
-    /// 将Vector3转换为Vector4（W分量设为0或指定值）
+    /// 将Vector3转换为Vector4(W分量设为0或指定值)
     /// </summary>
     public static Vector4 ToVector4(this Vector3 vector, float w = 0)
     {
@@ -375,7 +375,7 @@
     }
 
     /// <summary>
-    /// 将Vector4转换为Vector3（丢弃W分量）
+    /// 将Vector4转换为Vector3(丢弃W分量)
     /// </summary>
     public static Vector3 ToVector3(this Vector4 vector)
     {

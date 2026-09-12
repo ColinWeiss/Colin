@@ -19,28 +19,28 @@ public delegate TShader ShaderStageFactory<TShader>(
     where TShader : struct, IComputeShader, IComputeShaderDescriptor<TShader>;
 
 /// <summary>
-/// Bridges MonoGame（D3D11，SharpDX后端）和ComputeSharp（D3D12）通过零拷贝共享GPU纹理:
-/// 一系列C#计算着色器可处理任何Texture2D，其结果可直接由MonoGame渲染——无需像素的CPU往返传输。
+/// Bridges MonoGame(D3D11, SharpDX后端)和ComputeSharp(D3D12)通过零拷贝共享GPU纹理:
+/// 一系列C#计算着色器可处理任何Texture2D, 其结果可直接由MonoGame渲染——无需像素的CPU往返传输.
 /// 用法：
 /// <code>
 /// var bridge = new TinterBridge(GraphicsDevice); 
 /// // 默认情况下 PipelineDepth = 1
 /// // 每帧：
 /// bridge.BeginFrame();
-/// // 将场景渲染到 SurfaceFormat.Vector4 的二维渲染目标中，然后：
+/// // 将场景渲染到 SurfaceFormat.Vector4 的二维渲染目标中, 然后：
 /// Texture2D processed = bridge.Process(
 /// sceneRt,
 /// (src, dst) => new GrayScaleShader(src, dst, wipeX),
 /// (src, dst) => new VignetteShader(src, dst));
-/// //（或者，完全不进行复制：渲染到 bridge.GetInputTarget(w, h) 中，并调用
-/// // bridge.Dispatch(...) 而不是 Process）
+/// //(或者, 完全不进行复制：渲染到 bridge.GetInputTarget(w, h) 中, 并调用
+/// // bridge.Dispatch(...) 而不是 Process)
 /// </code>
-/// 工作原理（MonoGame 3.8.5.1 + ComputeSharp 3.2.0，运行时修改，无 PR/fork）：
-/// 每个管道纹理都在 MonoGame 的 D3D11 设备（Shared | SharedNTHandle）中创建，
-/// 通过原始虚表 ID3D12Device::OpenSharedHandle 在 ComputeSharp D3D12 设备上打开，
-/// 并交换到 ComputeSharp 纹理包装器中。MonoGame 渲染/采样与着色器读/写完全相同的内存。
-/// 同步：每个ComputeSharp调度都会向设备的内部完成栅栏发送信号；桥接器会等待该信号（同步模式）或等待前一帧的值（流水线模式：通过帧奇偶性进行双缓冲输入/输出，延迟一帧，稳态下无CPU停滞）。所有缓冲区都会在分辨率或链长发生变化时重新创建，因此窗口大小调整会自动处理。
-/// 如果手术在启动时失败（例如，未来的ComputeSharp改变了其内部布局），那么桥接将降级为CPU回读管道，虽然速度较慢，但能正确运行。
+/// 工作原理(MonoGame 3.8.5.1 + ComputeSharp 3.2.0, 运行时修改, 无 PR/fork)：
+/// 每个管道纹理都在 MonoGame 的 D3D11 设备(Shared | SharedNTHandle)中创建, 
+/// 通过原始虚表 ID3D12Device::OpenSharedHandle 在 ComputeSharp D3D12 设备上打开, 
+/// 并交换到 ComputeSharp 纹理包装器中.MonoGame 渲染/采样与着色器读/写完全相同的内存.
+/// 同步：每个ComputeSharp调度都会向设备的内部完成栅栏发送信号；桥接器会等待该信号(同步模式)或等待前一帧的值(流水线模式：通过帧奇偶性进行双缓冲输入/输出, 延迟一帧, 稳态下无CPU停滞).所有缓冲区都会在分辨率或链长发生变化时重新创建, 因此窗口大小调整会自动处理.
+/// 如果手术在启动时失败(例如, 未来的ComputeSharp改变了其内部布局), 那么桥接将降级为CPU回读管道, 虽然速度较慢, 但能正确运行.
 /// </summary>
 public sealed unsafe class TinterBridge : IDisposable
 {

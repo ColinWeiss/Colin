@@ -198,7 +198,7 @@
     }
 
     /// <summary>
-    /// 获取多边形的所有边法线（分离轴）
+    /// 获取多边形的所有边法线(分离轴)
     /// </summary>
     /// <returns>边法线列表</returns>
     public List<Vector2> GetAxes()
@@ -213,7 +213,7 @@
         // 计算边的方向向量
         Vector2 edge = p2 - p1;
 
-        // 计算边的法线（垂直于边的向量）
+        // 计算边的法线(垂直于边的向量)
         Vector2 normal = new Vector2(-edge.Y, edge.X);
         normal.Normalize();
 

@@ -112,7 +112,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
               comTransform.Vel = deltaVel / Time.DeltaTime;
               continue;
             }
-            // 斜坡条件不满足, 回退到方块碰撞处理（仅首帧接触时）
+            // 斜坡条件不满足, 回退到方块碰撞处理(仅首帧接触时)
             if (!firstContact)
               continue;
           }
@@ -168,19 +168,19 @@ namespace Colin.Core.Modulars.Ecses.Systems
     /// <summary>
     /// 处理斜坡碰撞.
     /// </summary>
-    /// <param name="firstContact">是否为首帧接触（previousBounds 不与 target 相交）.</param>
+    /// <param name="firstContact">是否为首帧接触(previousBounds 不与 target 相交).</param>
     /// <returns>如果斜坡碰撞成功处理则返回 <c>true</c>；否则返回 <c>false</c> 表示应回退到方块碰撞处理.</returns>
     private bool HandleSlopeCollision(ref TileInfo info, ref Vector2 deltaVel, ref RectangleF next,
       RectangleF bounds, RectangleF previousBounds, RectangleF target, bool firstContact, Entity Entity)
     {
       TileSolid slopeType = info.Collision;
-      // 使用 next（预计下帧位置）计算坡面高度
+      // 使用 next(预计下帧位置)计算坡面高度
       float slopeSurfaceY = GetSlopeSurfaceY(slopeType, target, next);
 
       
       if (firstContact)
       {
-        // 首帧接触：做实心侧和上坡起点检测（用当前 bounds 和上一帧 previousBounds 判定来向）
+        // 首帧接触：做实心侧和上坡起点检测(用当前 bounds 和上一帧 previousBounds 判定来向)
         if (IsOnSolidSideOfSlope(slopeType, target, bounds, previousBounds, deltaVel))
           return false;
 
@@ -189,8 +189,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
       else
       {
-        // 非首帧接触：检测实体是否本就处于斜坡实心侧（即被直接放入体内，而非从前一帧骑坡而来）
-        // 仅用 previousBounds 判定，避免重力微弱穿透导致的误判
+        // 非首帧接触：检测实体是否本就处于斜坡实心侧(即被直接放入体内, 而非从前一帧骑坡而来)
+        // 仅用 previousBounds 判定, 避免重力微弱穿透导致的误判
         if (WasPreviousInSolidSideOfSlope(slopeType, target, previousBounds))
           return false;
       }
@@ -200,13 +200,13 @@ namespace Colin.Core.Modulars.Ecses.Systems
       {
         // 地面斜坡
         float penetration = next.Bottom - slopeSurfaceY;
-        // 实体在坡面上方且正在向上移动（跳跃）→ 不贴合, 允许跳离
+        // 实体在坡面上方且正在向上移动(跳跃)→ 不贴合, 允许跳离
         if (penetration <= 0)
         {
           comPhysic.IsOnSlope = false;
           return true;
         }
-        // 否则始终贴合坡面：穿透时推上去, 悬空时拉下来（下坡跟随）
+        // 否则始终贴合坡面：穿透时推上去, 悬空时拉下来(下坡跟随)
         if (penetration != 0)
         {
           deltaVel.Y -= penetration;
@@ -284,7 +284,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
     /// <summary>
     /// 判定实体是否从斜坡的实心侧试图通过.
-    /// 实心侧即斜坡三角形填充的一侧（地面斜坡为线下方, 天花板斜坡为线上方）.
+    /// 实心侧即斜坡三角形填充的一侧(地面斜坡为线下方, 天花板斜坡为线上方).
     /// </summary>
     private bool IsOnSolidSideOfSlope(TileSolid slopeType, RectangleF target,
       RectangleF bounds, RectangleF previousBounds, Vector2 deltaVel)
@@ -298,10 +298,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
       {
         case TileSolid.SlopeLeftUp:
           {
-            // '/' 实心侧在左下三角（线下方）
+            // '/' 实心侧在左下三角(线下方)
             // 判断前一刻实体底部是否在实心侧, 即线下方
             float slopeYAtPrevBottom = tileBottom - (previousBounds.Right - tileLeft);
-            // 前一刻底部在实心侧（线下方）→ 从实心侧来
+            // 前一刻底部在实心侧(线下方)→ 从实心侧来
             if (previousBounds.Bottom > slopeYAtPrevBottom)
               return true;
             // 当前底部深陷实心侧 → 实心侧
@@ -313,7 +313,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
         case TileSolid.SlopeRightUp:
           {
-            // '\' 实心侧在右下三角（线下方）
+            // '\' 实心侧在右下三角(线下方)
             float slopeYAtPrevBottom = tileBottom - (tileRight - previousBounds.Left);
             if (previousBounds.Bottom > slopeYAtPrevBottom)
               return true;
@@ -325,7 +325,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
         case TileSolid.SlopeLeftDown:
           {
-            // 天花板 '\' 实心侧在左上三角（线上方）
+            // 天花板 '\' 实心侧在左上三角(线上方)
             float slopeYAtPrevTop = tileTop + (previousBounds.Right - tileLeft);
             if (previousBounds.Top < slopeYAtPrevTop)
               return true;
@@ -337,7 +337,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
         case TileSolid.SlopeRightDown:
           {
-            // 天花板 '/' 实心侧在右上三角（线上方）
+            // 天花板 '/' 实心侧在右上三角(线上方)
             float slopeYAtPrevTop = tileTop + (tileRight - previousBounds.Left);
             if (previousBounds.Top < slopeYAtPrevTop)
               return true;
@@ -401,8 +401,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
     /// <summary>
     /// 判定实体是否能从斜坡底部开始上坡.
-    /// 首帧接触时：实体必须处于斜坡起点（底端）且沿正确方向移动, 否则无法上坡.
-    /// 如果实体正在下落（deltaVel.Y > 0）则允许落在斜面上.
+    /// 首帧接触时：实体必须处于斜坡起点(底端)且沿正确方向移动, 否则无法上坡.
+    /// 如果实体正在下落(deltaVel.Y > 0)则允许落在斜面上.
     /// </summary>
     private bool CanStartClimbingSlope(TileSolid slopeType, RectangleF target,
       RectangleF bounds, RectangleF previousBounds, Vector2 deltaVel)
@@ -488,7 +488,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
         if (roofInfo.Collision == TileSolid.SlopeLeftDown || roofInfo.Collision == TileSolid.SlopeRightDown)
         {
-          // 天花板斜坡：实心侧在线之上（Y更小）
+          // 天花板斜坡：实心侧在线之上(Y更小)
           float roofY = GetSlopeSurfaceY(roofInfo.Collision, roofTarget, next);
           if (next.Top >= roofY)
             continue; // 头部在线之下 → 空侧 → 未穿透

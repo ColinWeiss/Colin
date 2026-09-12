@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Resources;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Colin.Core.Preparation
@@ -24,7 +23,6 @@ namespace Colin.Core.Preparation
         // 运行时资产预加载: 扫描 <exe>/Assets 全目录, 命中已注册加载器的文件全部载入缓存.
         int loaded = Assets.Manager.LoadDirectory();
         Console.WriteLine("Remind", string.Concat("运行时资产预加载完成: ", loaded, " 项."));
-        LoadGameAssets();
         IPreExecution theTask;
         for (int count = 0; count < _preparatoryTasks.Count; count++)
         {
@@ -39,27 +37,6 @@ namespace Colin.Core.Preparation
       if (CoreInfo.Debug)
         Console.WriteLine("Remind", "当前正以调试模式启动");
       base.SceneInit();
-    }
-
-    private void LoadGameAssets()
-    {
-      try
-      {
-        IGameAsset asset;
-        foreach (Type item in Assembly.GetExecutingAssembly().GetTypes())
-        {
-          if (item.GetInterfaces().Contains(typeof(IGameAsset)) && !item.IsAbstract)
-          {
-            asset = (IGameAsset)Activator.CreateInstance(item);
-            asset.LoadResource();
-            Console.WriteLine(string.Concat("正在加载", asset.Name));
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
     }
 
     public override void Start()

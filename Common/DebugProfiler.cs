@@ -45,7 +45,7 @@ namespace Colin.Core.Common.Debugs
     }
 
     /// <summary>
-    /// 重置时长统计结果（如每帧/每若干秒重置）
+    /// 重置时长统计结果(如每帧/每若干秒重置)
     /// </summary>
     public static void Reset()
     {

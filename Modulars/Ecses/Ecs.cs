@@ -139,22 +139,19 @@ namespace Colin.Core.Modulars.Ecses
 
     public T MarkCreate<T>() where T : Entity, new()
     {
-      lock(Entities)
+      T result;
+      EcsCreateCommand cmd;
+      for (int count = 0; count < Entities.Length; count++)
       {
-        T result;
-        EcsCreateCommand cmd;
-        for (int count = 0; count < Entities.Length; count++)
+        if (Entities[count] is null)
         {
-          if (Entities[count] is null)
-          {
-            result = new T();
-            result.Ecs = this;
-            result.ID = count;
-            result.DoInitialize();
-            cmd = new EcsCreateCommand(this, result, count);
-            CreateCommands.Enqueue(cmd);
-            return result;
-          }
+          result = new T();
+          result.Ecs = this;
+          result.ID = count;
+          result.DoInitialize();
+          cmd = new EcsCreateCommand(this, result, count);
+          CreateCommands.Enqueue(cmd);
+          return result;
         }
       }
       return null;
@@ -164,10 +161,11 @@ namespace Colin.Core.Modulars.Ecses
     {
       if (Entities[cmd.ID] is null)
       {
+        Console.WriteLine(cmd.Entity.Document.Name);
         Entity result = cmd.Entity;
-        result.Ecs = this;
-        result.ID = cmd.ID;
-        result.DoInitialize();
+      //  result.Ecs = this;
+     //   result.ID = cmd.ID;
+      //  result.DoInitialize();
         OnCreate?.Invoke(result);
         Entities[cmd.ID] = result;
       }
@@ -226,6 +224,12 @@ namespace Colin.Core.Modulars.Ecses
 
     public void LoadStep(BinaryReader reader)
     {
+      EcsCreateCommand cmd;
+      while (CreateCommands.Count > 0)
+      {
+        if (CreateCommands.TryDequeue(out cmd))
+          HandleCreate(cmd);
+      }
       for (int i = 0; i < Entities.Length; i++)
       {
         LoadEntity(reader, ref Entities[i]);

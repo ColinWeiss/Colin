@@ -64,8 +64,8 @@ namespace Colin.Core.Graphics.Shaders
     /// <summary>
     /// 向CBuffer写入数据
     /// <br>会按照顺序写入</br>
-    /// <br>会以16字节对齐（float4向量的大小）</br>
-    /// <br>start: 起始地址（字节）</br>
+    /// <br>会以16字节对齐(float4向量的大小)</br>
+    /// <br>start: 起始地址(字节)</br>
     /// </summary>
     public int SetBufferData(int start, params object[] objects)
     {

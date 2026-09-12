@@ -70,7 +70,7 @@
 
       //锐角三角形
       double r = cross / d2;
-      double px = x1 + (x2 - x1) * r;  // C在 AB上的垂足点（px, py）
+      double px = x1 + (x2 - x1) * r;  // C在 AB上的垂足点(px, py)
       double py = y1 + (y2 - y1) * r;
       return Math.Pow(((x - px) * (x - px) + (y - py) * (y - py) + 0.0), 0.5); //两点间距离公式
     }

@@ -19,7 +19,7 @@
   {
     int[,] map = new int[width, height];
 
-    // 树的起始位置（底部中间）
+    // 树的起始位置(底部中间)
     int startX = width / 2;
     int startY = height - 2;
 
@@ -38,7 +38,7 @@
     // 为主干底部加厚
     ThickenTrunkBase(map, mainTrunk, width, height);
 
-    // 收集所有分支点（包括主干末端和分支末端）
+    // 收集所有分支点(包括主干末端和分支末端)
     List<Point> branchEnds = new List<Point>();
 
     // 从主干生成分支
@@ -77,7 +77,7 @@
   {
     if (mainTrunk.Count == 0) return;
 
-    // 确定要加厚的底部区域（最下面的20%左右的主干）
+    // 确定要加厚的底部区域(最下面的20%左右的主干)
     int thickenHeight = Math.Max(3, mainTrunk.Count / 5);
 
     for (int i = 0; i < thickenHeight && i < mainTrunk.Count; i++)
@@ -152,7 +152,7 @@
         x += bendDirection;
       }
 
-      // 确保不会超出边界（简单处理）
+      // 确保不会超出边界(简单处理)
       if (x < 1) x = 1;
       // 宽度边界在后续绘制时检查
 
@@ -175,7 +175,7 @@
     int y = startY;
     List<Point> branchPoints = new List<Point>();
 
-    // 随机选择分支方向（更多方向选择）
+    // 随机选择分支方向(更多方向选择)
     int direction = random.Next(0, 5); // 0=左上, 1=上, 2=右上, 3=左, 4=右
 
     // 分支长度随机变化
@@ -227,7 +227,7 @@
       map[x, y] = 1;
       branchPoints.Add(new Point(x, y));
 
-      // 更频繁地改变方向（紫颂树特点）
+      // 更频繁地改变方向(紫颂树特点)
       if (random.NextDouble() < 0.4)
       {
         direction = random.Next(0, 5);
@@ -252,7 +252,7 @@
     // 在每个分支末端添加树叶簇
     foreach (Point endPoint in branchEnds)
     {
-      // 根据位置调整树叶簇大小（高处树叶更大）
+      // 根据位置调整树叶簇大小(高处树叶更大)
       int clusterSize = 2 + (height - endPoint.Y) / 10;
       clusterSize = Math.Min(clusterSize, 6); // 最大为6
 
@@ -288,7 +288,7 @@
 
         if (IsInBounds(x, y, width, height) && map[x, y] == 0)
         {
-          // 根据距离决定添加树叶的概率（圆形分布）
+          // 根据距离决定添加树叶的概率(圆形分布)
           double distance = Math.Sqrt(dx * dx + dy * dy);
           if (distance <= clusterSize)
           {
@@ -306,7 +306,7 @@
   }
 
   /// <summary>
-  /// 添加垂下样式的树叶（类似柳叶）
+  /// 添加垂下样式的树叶(类似柳叶)
   /// </summary>
   private void AddHangingLeaves(int[,] map, List<Point> branchEnds)
   {
@@ -365,7 +365,7 @@
   }
 
   /// <summary>
-  /// 创建纹理（调试用）
+  /// 创建纹理(调试用)
   /// </summary>
   public Texture2D CreateSimpleTexture(GraphicsDevice graphicsDevice, int[,] array, int blockSize = 8)
   {

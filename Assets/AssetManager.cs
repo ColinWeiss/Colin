@@ -6,15 +6,15 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Leemo.Assets;
 
 /// <summary>
-/// 统一的运行时资产管道（MonoGame / WindowsDX）。
+/// 统一的运行时资产管道(MonoGame / WindowsDX).
 /// 特性：
-///   - 直接加载原始资源文件，完全绕开 MGCB / Content Pipeline 编译产物；
-///   - 统一的 Load / LoadAsync / TryGet / Unload API，按 (资产类型, 虚拟路径) 缓存；
-///   - 通过 IAssetLoader&lt;T&gt; 按扩展名注册加载器，新资产类型零侵入接入；
-///   - 内置 FileSystemWatcher 热重载：文件一改即排队，主线程 PumpReloads() 时重建并换入缓存，
-///     GPU 资源始终在主线程重建，重载失败保留旧资产并回调。
-/// 线程约定：Load 的文件 IO 可在任意线程，但构造 GPU 资源的 Load/Async 收尾与
-/// PumpReloads 必须在主线程调用（MonoGame 图形设备惯例）。
+///   - 直接加载原始资源文件, 完全绕开 MGCB / Content Pipeline 编译产物；
+///   - 统一的 Load / LoadAsync / TryGet / Unload API, 按 (资产类型, 虚拟路径) 缓存；
+///   - 通过 IAssetLoader&lt;T&gt; 按扩展名注册加载器, 新资产类型零侵入接入；
+///   - 内置 FileSystemWatcher 热重载：文件一改即排队, 主线程 PumpReloads() 时重建并换入缓存, 
+///     GPU 资源始终在主线程重建, 重载失败保留旧资产并回调.
+/// 线程约定：Load 的文件 IO 可在任意线程, 但构造 GPU 资源的 Load/Async 收尾与
+/// PumpReloads 必须在主线程调用(MonoGame 图形设备惯例).
 /// </summary>
 public sealed class AssetManager : IDisposable
 {
@@ -49,13 +49,13 @@ public sealed class AssetManager : IDisposable
 
     public string RootDir { get; }
 
-    /// <summary>热重载是否处于监听状态。</summary>
+    /// <summary>热重载是否处于监听状态.</summary>
     public bool HotReloadEnabled { get; private set; }
 
-    /// <summary>(虚拟路径, 资产类型, 新资产实例)。在主线程 PumpReloads 内触发。</summary>
+    /// <summary>(虚拟路径, 资产类型, 新资产实例).在主线程 PumpReloads 内触发.</summary>
     public event Action<string, Type, object>? AssetReloaded;
 
-    /// <summary>(虚拟路径, 异常)。热重载失败时触发，缓存保留旧资产。</summary>
+    /// <summary>(虚拟路径, 异常).热重载失败时触发, 缓存保留旧资产.</summary>
     public event Action<string, Exception>? ReloadFailed;
 
     public AssetManager(GraphicsDevice graphicsDevice, string? rootDir = null,
@@ -70,13 +70,13 @@ public sealed class AssetManager : IDisposable
             EnableHotReload();
     }
 
-    /// <summary>按本次加载的文件构造宿主上下文（加载器可经 PhysicalPath 定位源文件邻近资源）。</summary>
+    /// <summary>按本次加载的文件构造宿主上下文(加载器可经 PhysicalPath 定位源文件邻近资源).</summary>
     private AssetLoadContext ContextFor(string physical) =>
         new(_graphicsDevice, _services, physical);
 
     // ---------- 加载器注册 ----------
 
-    /// <summary>为资产类型 T 注册加载器（按扩展名）。同扩展名后注册者覆盖先注册者。</summary>
+    /// <summary>为资产类型 T 注册加载器(按扩展名).同扩展名后注册者覆盖先注册者.</summary>
     public void RegisterLoader<T>(IAssetLoader<T> loader)
     {
         ArgumentNullException.ThrowIfNull(loader);
@@ -88,13 +88,13 @@ public sealed class AssetManager : IDisposable
         }
     }
 
-    /// <summary>已注册的 (资产类型, 扩展名) 清单，诊断用。</summary>
+    /// <summary>已注册的 (资产类型, 扩展名) 清单, 诊断用.</summary>
     public IEnumerable<(Type AssetType, string Extension)> RegisteredLoaders =>
         _loaders.Keys.Select(k => (k.Item1, k.Item2));
 
     // ---------- 统一取用 API ----------
 
-    /// <summary>同步加载。已缓存则直取，否则经注册加载器从原始文件构造并缓存。</summary>
+    /// <summary>同步加载.已缓存则直取, 否则经注册加载器从原始文件构造并缓存.</summary>
     public T Load<T>(string path)
     {
         var key = NormalizePath(path);
@@ -113,8 +113,8 @@ public sealed class AssetManager : IDisposable
     }
 
     /// <summary>
-    /// 异步加载：文件读取在后台线程，资产构造（含 GPU 上传）回到调用方线程完成——
-    /// 符合 MonoGame 图形设备的线程约定。缓存命中时等价于同步直取。
+    /// 异步加载：文件读取在后台线程, 资产构造(含 GPU 上传)回到调用方线程完成——
+    /// 符合 MonoGame 图形设备的线程约定.缓存命中时等价于同步直取.
     /// </summary>
     public async Task<T> LoadAsync<T>(string path, CancellationToken cancellationToken = default)
     {
@@ -135,7 +135,7 @@ public sealed class AssetManager : IDisposable
         return (T)asset;
     }
 
-    /// <summary>仅查缓存，不触发加载。</summary>
+    /// <summary>仅查缓存, 不触发加载.</summary>
     public bool TryGet<T>(string path, out T? asset)
     {
         if (_cache.TryGetValue(new CacheKey(typeof(T), NormalizePath(path)), out var hit))
@@ -147,11 +147,11 @@ public sealed class AssetManager : IDisposable
         return false;
     }
 
-    /// <summary>缓存中是否存在该资产。</summary>
+    /// <summary>缓存中是否存在该资产.</summary>
     public bool IsLoaded<T>(string path) =>
         _cache.ContainsKey(new CacheKey(typeof(T), NormalizePath(path)));
 
-    /// <summary>卸载单个资产；实现 IDisposable 的资产会被释放（请在主线程调用）。</summary>
+    /// <summary>卸载单个资产；实现 IDisposable 的资产会被释放(请在主线程调用).</summary>
     public bool Unload<T>(string path, bool dispose = true)
     {
         if (_cache.Remove(new CacheKey(typeof(T), NormalizePath(path)), out var asset))
@@ -162,7 +162,7 @@ public sealed class AssetManager : IDisposable
         return false;
     }
 
-    /// <summary>清空缓存并（可选）释放全部资产；监听器保持原状（请在主线程调用）。</summary>
+    /// <summary>清空缓存并(可选)释放全部资产；监听器保持原状(请在主线程调用).</summary>
     public void UnloadAll(bool dispose = true)
     {
         if (dispose)
@@ -173,7 +173,7 @@ public sealed class AssetManager : IDisposable
 
     // ---------- 热重载 ----------
 
-    /// <summary>开启文件监视。变更事件进入排队，等待主线程 PumpReloads() 落地。</summary>
+    /// <summary>开启文件监视.变更事件进入排队, 等待主线程 PumpReloads() 落地.</summary>
     public void EnableHotReload()
     {
         if (_watcher is not null) return;
@@ -199,13 +199,13 @@ public sealed class AssetManager : IDisposable
     private void QueueReload(object? sender, FileSystemEventArgs e)
     {
         try { NotifyChange(e.FullPath); }
-        catch { /* 变更瞬间文件可能不可见，忽略等下次 */ }
+        catch { /* 变更瞬间文件可能不可见, 忽略等下次 */ }
     }
 
     /// <summary>
-    /// 手动把一个文件标记为待重载（相对 RootDir 或绝对路径均可）。
+    /// 手动把一个文件标记为待重载(相对 RootDir 或绝对路径均可).
     /// 文件系统不支持监视时的备用通道——网络共享盘/容器挂载卷上
-    /// FileSystemWatcher 不产生事件，宿主可在自己的变更检测里调它。
+    /// FileSystemWatcher 不产生事件, 宿主可在自己的变更检测里调它.
     /// </summary>
     public void NotifyChange(string path)
     {
@@ -215,8 +215,8 @@ public sealed class AssetManager : IDisposable
     }
 
     /// <summary>
-    /// 在游戏 Update 中调用（主线程）：把排队的文件变更重建为新资产、换入缓存并触发
-    /// AssetReloaded；失败的保留旧资产并触发 ReloadFailed。返回本次重载数量。
+    /// 在游戏 Update 中调用(主线程)：把排队的文件变更重建为新资产、换入缓存并触发
+    /// AssetReloaded；失败的保留旧资产并触发 ReloadFailed.返回本次重载数量.
     /// </summary>
     public int PumpReloads()
     {
@@ -251,8 +251,8 @@ public sealed class AssetManager : IDisposable
     }
 
     /// <summary>
-    /// 预加载：扫描目录（默认整个根目录），把所有命中已注册加载器的文件按其资产类型
-    /// 全部载入缓存（已缓存的跳过）。单文件失败不中断整体。返回本次加载数量。
+    /// 预加载：扫描目录(默认整个根目录), 把所有命中已注册加载器的文件按其资产类型
+    /// 全部载入缓存(已缓存的跳过).单文件失败不中断整体.返回本次加载数量.
     /// </summary>
     public int LoadDirectory(string? subDir = null, SearchOption option = SearchOption.AllDirectories)
     {
@@ -297,12 +297,12 @@ public sealed class AssetManager : IDisposable
         var ext = ExtensionOf(key);
         if (_loaders.TryGetValue((typeof(T), ext), out var loader))
             return loader;
-        var known = string.Join("，", _loaders.Keys
+        var known = string.Join(", ", _loaders.Keys
             .Where(k => k.Item1 == typeof(T))
             .Select(k => k.Item2));
         throw new NotSupportedException(
-            $"Leemo.Assets: 没有能为 {typeof(T).Name} 处理扩展名 '{ext}' 的加载器（路径 '{key}'）。" +
-            (known.Length > 0 ? $"该类型已注册的扩展名：{known}。" : "该类型尚未注册任何加载器。"));
+            $"Leemo.Assets: 没有能为 {typeof(T).Name} 处理扩展名 '{ext}' 的加载器(路径 '{key}')." +
+            (known.Length > 0 ? $"该类型已注册的扩展名：{known}." : "该类型尚未注册任何加载器."));
     }
 
     private string PhysicalPath(string virtualPath) =>
