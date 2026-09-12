@@ -406,7 +406,6 @@ namespace Colin.Core.Modulars.Tiles
 
     // 全量刷新只刷有内容的格子, 空格子没挂行为, 刷了也是空转, 还占队列
     // 直接拿本区块的刷新队列一次入队, 逐格走 MarkRefresh 的字典查找太浪费
-    // 格子边缘的衔接表现由渲染器的整块重绘兜底, 所以这里不需要往邻域扩散
     public void MarkRefreshAll()
     {
       ConcurrentQueue<Point3> queue = Refresher.RefreshQueue.GetOrAdd(Coord, static _ => new ConcurrentQueue<Point3>());
@@ -417,6 +416,45 @@ namespace Colin.Core.Modulars.Tiles
         if (info.Empty)
           continue;
         queue.Enqueue(new Point3(info.ICoordX, info.ICoordY, info.ICoordZ));
+      }
+      MarkNeighborEdgeRefresh();
+    }
+
+    /// <summary>
+    /// 把四邻八向已有区块的贴边格子标进刷新队列.
+    /// <br>边框连接靠 IsSame 跨区块查邻居, 邻居晚到时旧边的边框是按空画的, 邻居就位后必须让人家重画一遍.</br>
+    /// <br>四个正方向刷整条贴边, 四个对角刷角上一格, 不刷的话区块接缝处的边框会一直错着.</br>
+    /// </summary>
+    public void MarkNeighborEdgeRefresh()
+    {
+      int lastX = Tile.Context.ChunkWidth - 1;
+      int lastY = Tile.Context.ChunkHeight - 1;
+      for (int dx = -1; dx <= 1; dx++)
+      {
+        for (int dy = -1; dy <= 1; dy++)
+        {
+          if (dx == 0 && dy == 0)
+            continue;
+          TileChunk neighbor = Tile.GetChunk(Coord.X + dx, Coord.Y + dy);
+          if (neighbor is null || neighbor.InOperation)
+            continue;
+          // 邻居还在加载的话不用管, 它自己就位时也会走这里把我们的贴边补刷
+          ConcurrentQueue<Point3> queue = Refresher.RefreshQueue.GetOrAdd(neighbor.Coord, static _ => new ConcurrentQueue<Point3>());
+          ref TileInfo info = ref neighbor[0, 0, 0];
+          for (int count = 0; count < neighbor.Infos.Length; count++)
+          {
+            info = ref neighbor[count];
+            if (info.Empty)
+              continue;
+            int ix = info.ICoordX;
+            int iy = info.ICoordY;
+            bool onEdge = (dx == 0 || (dx == 1 ? ix == lastX : ix == 0))
+                       && (dy == 0 || (dy == 1 ? iy == lastY : iy == 0));
+            if (onEdge is false)
+              continue;
+            queue.Enqueue(new Point3(ix, iy, info.ICoordZ));
+          }
+        }
       }
     }
 
