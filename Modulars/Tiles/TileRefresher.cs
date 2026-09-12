@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Colin.Core.Common.Debugs;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Colin.Core.Modulars.Tiles
@@ -135,25 +136,28 @@ namespace Colin.Core.Modulars.Tiles
     {
       // 刷新消费按时间预算分帧, 一次把整个区块刷完会让那一帧明显变长
       // 预算用完就直接返回, 没刷完的坐标还留在队列里, 下一帧接着刷
-      long start = Stopwatch.GetTimestamp();
-      ConcurrentQueue<Point3> queue;
-      TileChunk chunk;
-      for (int i = 0; i < Tile.Chunks.Count; i++)
+      using (StageRecorder.Tag("Chunk.RefreshDrain"))
       {
-        chunk = Tile.Chunks.ElementAt(i).Value;
-        if (chunk.InOperation)
-          continue;
-        else
+        long start = Stopwatch.GetTimestamp();
+        ConcurrentQueue<Point3> queue;
+        TileChunk chunk;
+        for (int i = 0; i < Tile.Chunks.Count; i++)
         {
-          if (RefreshQueue.TryGetValue(chunk.Coord, out queue) is false)
+          chunk = Tile.Chunks.ElementAt(i).Value;
+          if (chunk.InOperation)
             continue;
-          // 排队的数量多到像整块加载就不逐格通知渲染器, 渲染器对新区块有整块重绘, 逐个通知只会把重绘工作量翻好几倍
-          bool notifyRenderer = queue.Count <= BulkNotifyThreshold;
-          while (queue.TryDequeue(out Point3 cCoord))
+          else
           {
-            DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord), notifyRenderer);
-            if ((Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency >= RefreshBudgetMs)
-              return;
+            if (RefreshQueue.TryGetValue(chunk.Coord, out queue) is false)
+              continue;
+            // 排队的数量多到像整块加载就不逐格通知渲染器, 渲染器对新区块有整块重绘, 逐个通知只会把重绘工作量翻好几倍
+            bool notifyRenderer = queue.Count <= BulkNotifyThreshold;
+            while (queue.TryDequeue(out Point3 cCoord))
+            {
+              DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord), notifyRenderer);
+              if ((Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency >= RefreshBudgetMs)
+                return;
+            }
           }
         }
       }

@@ -1,4 +1,5 @@
-﻿using Colin.Core.IO;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.IO;
 using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars.Tiles
@@ -343,9 +344,13 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public void CreateEmptyChunk(int x, int y, int? quantumLayer = null)
     {
-      TileChunk chunk = new TileChunk(this, new Point(x, y));
-      chunk.DoInitialize();
-      Chunks[chunk.Coord] = chunk;
+      // 创建一个区块要分配好几 MB 的数组, 这里的耗时和 GC 压力都会进尖峰报告的 Chunk.Create
+      using (StageRecorder.Tag("Chunk.Create"))
+      {
+        TileChunk chunk = new TileChunk(this, new Point(x, y));
+        chunk.DoInitialize();
+        Chunks[chunk.Coord] = chunk;
+      }
     }
 
     /// <summary>

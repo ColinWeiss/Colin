@@ -16,6 +16,21 @@ namespace Colin.Core.Common
 
     public Dictionary<Type, IRenderableISceneModule> RenderableComponents = new Dictionary<Type, IRenderableISceneModule>();
 
+    // 逐模块的阶段标签缓存一份, 不然每帧每模块都拼字符串
+    private readonly Dictionary<Type, string> _updateTags = new Dictionary<Type, string>();
+    private readonly Dictionary<Type, string> _rawTags = new Dictionary<Type, string>();
+    private readonly Dictionary<Type, string> _presTags = new Dictionary<Type, string>();
+
+    private static string GetTag(Dictionary<Type, string> cache, Type type, string prefix)
+    {
+      if (cache.TryGetValue(type, out string tag) is false)
+      {
+        tag = prefix + type.Name;
+        cache.Add(type, tag);
+      }
+      return tag;
+    }
+
     public string Name => nameof(SceneModuleList);
 
     public string DisplayName => Name;
@@ -43,6 +58,7 @@ namespace Colin.Core.Common
         _com = Components.Values.ElementAt(count);
         if (_com.Enable)
         {
+          using (StageRecorder.Tag(GetTag(_updateTags, _com.GetType(), "Upd:")))
           using (DebugProfiler.Tag("(Components)"))
           {
             _com.DoUpdate(gameTime);
@@ -67,6 +83,7 @@ namespace Colin.Core.Common
           if (renderMode.RawRtVisible)
           {
             // using (DebugProfiler.Tag(renderMode.GetType().Name))
+            using (StageRecorder.Tag(GetTag(_rawTags, renderMode.GetType(), "Raw:")))
             {
               renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
             }
@@ -84,17 +101,20 @@ namespace Colin.Core.Common
           temp = null;
           if (renderMode.Presentation)
           {
-            if (Scene.ModulePostProcessor.Passes.TryGetValue(renderMode, out var pass))
+            using (StageRecorder.Tag(GetTag(_presTags, renderMode.GetType(), "Pres:")))
             {
-              temp = pass.PostProcess(frameRenderLayer);
-              // TinterBridge.ProcessCore 的契约是"处理结果直接上屏", 内部会 SetRenderTarget(null) 且不恢复;
-              // 在场景合成管线里必须把绑定切回 SceneRenderTarget, 否则本层之后的所有绘制都进了背屏.
-              CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+              if (Scene.ModulePostProcessor.Passes.TryGetValue(renderMode, out var pass))
+              {
+                temp = pass.PostProcess(frameRenderLayer);
+                // TinterBridge.ProcessCore 的契约是"处理结果直接上屏", 内部会 SetRenderTarget(null) 且不恢复;
+                // 在场景合成管线里必须把绑定切回 SceneRenderTarget, 否则本层之后的所有绘制都进了背屏.
+                CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
+              }
+              renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
+              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
+              CoreInfo.Batch.Draw(temp == null ? frameRenderLayer : temp, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              CoreInfo.Batch.End();
             }
-            renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
-            CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
-            CoreInfo.Batch.Draw(temp == null ? frameRenderLayer : temp, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-            CoreInfo.Batch.End();
           }
         }
       }

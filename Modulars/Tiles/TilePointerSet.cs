@@ -30,12 +30,20 @@
     /// </summary>
     public bool AddPointer(Point3 wCoord, TilePointer pointer)
     {
-      if (Cache.ContainsKey(wCoord) is false)
-        Cache[wCoord] = new List<TilePointer>();
-      List<TilePointer> _list = Cache[wCoord];
+      if (Cache.TryGetValue(wCoord, out List<TilePointer> _list) is false)
+      {
+        _list = new List<TilePointer>();
+        Cache[wCoord] = _list;
+      }
       _list.Add(pointer);
       _list.Sort();
-      _list.ForEach(a => a.Index = _list.IndexOf(a));
+      // 这里以前用 ForEach 套 IndexOf, 那是平方级的, 单格指针一多每帧都是天价, 换成线性遍历
+      for (int i = 0; i < _list.Count; i++)
+      {
+        TilePointer indexed = _list[i];
+        indexed.Index = i;
+        _list[i] = indexed;
+      }
       return true;
     }
 
@@ -53,17 +61,31 @@
     /// </summary>
     public bool RemovePointer(Point3 wCoord, TilePointer pointer)
     {
-      if (Cache.ContainsKey(wCoord) is false)
+      if (Cache.TryGetValue(wCoord, out List<TilePointer> _list) is false)
         return false;
-      List<TilePointer> _list = Cache[wCoord];
       if (_list.Remove(pointer))
       {
         _list.Sort();
-        _list.ForEach(a => a.Index = _list.IndexOf(a));
+        for (int i = 0; i < _list.Count; i++)
+        {
+          TilePointer indexed = _list[i];
+          indexed.Index = i;
+          _list[i] = indexed;
+        }
         return true;
       }
       else
         return true;
+    }
+
+    /// <summary>
+    /// 清空整个指针缓存.
+    /// <br>本来想把列表回收进池子, 但世界生成在后台线程也会写这本字典, 活着枚举必撞并发, 直接清最稳.</br>
+    /// <br>真正的大头是 AddPointer 里的平方级重排, 那个已经修掉了, 每帧这点列表开销交给 GC 可以接受.</br>
+    /// </summary>
+    public void ClearToPool()
+    {
+      Cache.Clear();
     }
 
     public void ClearPointer(Point3 wCoord)

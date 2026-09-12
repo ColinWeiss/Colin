@@ -136,6 +136,8 @@ namespace Colin.Core
       if (!Enable)
         return;
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+      // 帧尖峰黑匣子, 自己用秒表测真实帧耗时, GameTime 在固定步长下是常数测不了尖峰
+      HitchRecorder.OnFrame();
       TweenManager.Update();
       DebugProfiler.NextTick();
       Assets.Manager.PumpReloads();
@@ -145,9 +147,13 @@ namespace Colin.Core
         Started = true;
       }
       CoreInfo.GetInformationFromDevice(gameTime);
-      SceneManager.Update(gameTime);
-      DoUpdate();
-      base.Update(gameTime);
+      using (StageRecorder.Tag("Frame.SceneUpdate"))
+        SceneManager.Update(gameTime);
+      using (StageRecorder.Tag("Frame.GameUpdate"))
+        DoUpdate();
+      // 场景本体是 GameComponent, 真正的场景更新跑在 base.Update 里, 必须埋到这
+      using (StageRecorder.Tag("Frame.BaseUpdate"))
+        base.Update(gameTime);
     }
     public virtual void DoUpdate() { }
 
@@ -164,8 +170,11 @@ namespace Colin.Core
           module.DoRender(GraphicsDevice, CoreInfo.Batch);
         }*/
       CoreInfo.Tinter.BeginFrame();
-      base.Draw(gameTime);
-      DoRender();
+      // 场景本体的渲染同样在 base.Draw 里, 和 base.Update 一起构成主线程两大桶
+      using (StageRecorder.Tag("Frame.BaseDraw"))
+        base.Draw(gameTime);
+      using (StageRecorder.Tag("Frame.SceneRender"))
+        DoRender();
     }
     public virtual void DoRender() { }
 

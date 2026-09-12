@@ -1,4 +1,5 @@
-﻿using Colin.Core.IO;
+﻿using Colin.Core.Common.Debugs;
+using Colin.Core.IO;
 using Colin.Core.Resources;
 using DeltaMachine.Core.Repair;
 using System.Collections.Concurrent;
@@ -385,9 +386,12 @@ namespace Colin.Core.Modulars.Tiles
         // 刷新走标记队列而不是立刻刷完, 让刷新器按时间预算把工作量摊到后面几帧
         Tile.Scene.Business.MarkMainThreadJob(() =>
         {
-          SetOperation(false);
-          _loading = false;
-          MarkRefreshAll();
+          using (StageRecorder.Tag("Chunk.LoadCompletion"))
+          {
+            SetOperation(false);
+            _loading = false;
+            MarkRefreshAll();
+          }
         });
       });
     }
@@ -433,6 +437,7 @@ namespace Colin.Core.Modulars.Tiles
       ref TileInfo info = ref this[0, 0, 0];
       string typeName;
       int typehash = 0;
+      int repairedTiles = 0;
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
@@ -449,8 +454,17 @@ namespace Colin.Core.Modulars.Tiles
             Kernals[count].Tile = Tile;
             Kernals[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
           }
+          else
+          {
+            // 哈希在注册表里对不上号, 一般是老存档带着已经删除或改名的物块类型
+            // 只能把格子按空的修复, 不然这区块以后存档的时候必然炸
+            info.Empty = true;
+            repairedTiles++;
+          }
         }
       }
+      if (repairedTiles > 0)
+        Console.WriteLine("Error", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块类型已失效, 已按空格子修复"));
       // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
       int handlerCount = reader.ReadInt32();
       Dictionary<string, TileHandler> namedTag = new();
@@ -498,10 +512,19 @@ namespace Colin.Core.Modulars.Tiles
       TileKernel tCom;
       TileHandler cCom;
       Span<TileInfo> infoSpan = Infos;
+      int repairedTiles = 0;
       for (int count = 0; count < infoSpan.Length; count++)
       {
-        infoSpan[count].SaveStep(writer);
         tCom = Kernals[count];
+        if (infoSpan[count].Empty is false && tCom is null)
+        {
+          // 格子有内容但行为缺失, 只能按空格子落盘, 不然存档中途就炸, 格子内容反正也读不回来
+          TileInfo repaired = infoSpan[count];
+          repaired.Empty = true;
+          infoSpan[count] = repaired;
+          repairedTiles++;
+        }
+        infoSpan[count].SaveStep(writer);
         if (!infoSpan[count].Empty)
         {
           Debug.Assert(tCom is not null);
@@ -510,6 +533,8 @@ namespace Colin.Core.Modulars.Tiles
           writer.Write(hash.Value);
         }
       }
+      if (repairedTiles > 0)
+        Console.WriteLine("Error", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的行为缺失, 已按空格子写入存档"));
       // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
       writer.Write(Handler.Count);
       for (int i = 0; i < Handler.Count; i++)
