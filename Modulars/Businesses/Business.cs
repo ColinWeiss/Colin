@@ -48,6 +48,8 @@ namespace Colin.Core.Modulars
     public override void DoUpdate(GameTime time)
     {
       // 先清掉后台线程攒下来的收尾作业, 单个作业出错不能影响后面排队的人
+      // 收尾作业也按时间预算消费, 成批区块同时完成时不会把一帧拖爆
+      long start = System.Diagnostics.Stopwatch.GetTimestamp();
       while (_mainThreadJobs.TryDequeue(out var job))
       {
         try
@@ -58,6 +60,8 @@ namespace Colin.Core.Modulars
         {
           Console.WriteLine("Error", string.Concat("主线程收尾作业执行异常: ", ex));
         }
+        if ((System.Diagnostics.Stopwatch.GetTimestamp() - start) * 1000.0 / System.Diagnostics.Stopwatch.Frequency >= BusinessLine.CommandBudgetMs)
+          break;
       }
       for (int index = 0; index < _businesses.Count; index++)
       {

@@ -1,6 +1,7 @@
 ﻿using Colin.Core.IO;
 using Colin.Core.Resources;
 using DeltaMachine.Core.Repair;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
@@ -381,11 +382,12 @@ namespace Colin.Core.Modulars.Tiles
       {
         DataIO.DoLoad(path, this, true);
         // 反序列化在后台做完就行, 收尾的刷新和状态复位回主线程排队执行, 不和游戏逻辑抢数据
+        // 刷新走标记队列而不是立刻刷完, 让刷新器按时间预算把工作量摊到后面几帧
         Tile.Scene.Business.MarkMainThreadJob(() =>
         {
           SetOperation(false);
           _loading = false;
-          DoRefreshAll();
+          MarkRefreshAll();
         });
       });
     }
@@ -399,16 +401,18 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     // 全量刷新只刷有内容的格子, 空格子没挂行为, 刷了也是空转, 还占队列
+    // 直接拿本区块的刷新队列一次入队, 逐格走 MarkRefresh 的字典查找太浪费
     // 格子边缘的衔接表现由渲染器的整块重绘兜底, 所以这里不需要往邻域扩散
     public void MarkRefreshAll()
     {
+      ConcurrentQueue<Point3> queue = Refresher.RefreshQueue.GetOrAdd(Coord, static _ => new ConcurrentQueue<Point3>());
       ref TileInfo info = ref this[0, 0, 0];
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
         if (info.Empty)
           continue;
-        Refresher.MarkRefresh(info.GetWCoord3(), 0);
+        queue.Enqueue(new Point3(info.ICoordX, info.ICoordY, info.ICoordZ));
       }
     }
 

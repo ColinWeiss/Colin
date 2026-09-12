@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Colin.Core.Modulars
 {
@@ -10,6 +11,12 @@ namespace Colin.Core.Modulars
     public Scene Scene { get; set; }
 
     public Business Business { get; set; }
+
+    /// <summary>
+    /// 每帧命令消费的时间预算, 单位毫秒.
+    /// <br>超预算的命令留在队列里下一帧接着执行, 避免成批的区块命令把一帧拖爆.</br>
+    /// </summary>
+    public static double CommandBudgetMs = 2.0;
 
     private ConcurrentQueue<IBusinessCase> _cache = new ConcurrentQueue<IBusinessCase>();
     private ConcurrentQueue<IBusinessCase> _current = new ConcurrentQueue<IBusinessCase>();
@@ -42,9 +49,13 @@ namespace Colin.Core.Modulars
 
     public void DoUpdate()
     {
+      // 按时间预算消费命令, 预算用完就停, 剩下的留在队列里下一帧接着执行
+      long start = Stopwatch.GetTimestamp();
       while (_current.TryDequeue(out var business))
       {
         business.Execute();
+        if ((Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency >= CommandBudgetMs)
+          break;
       }
     }
   }

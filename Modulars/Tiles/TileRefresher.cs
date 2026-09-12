@@ -24,6 +24,17 @@ namespace Colin.Core.Modulars.Tiles
     public ConcurrentDictionary<Point, ConcurrentQueue<Point3>> RefreshQueue = new();
 
     /// <summary>
+    /// 每帧刷新消费的时间预算, 单位毫秒, 超了就留到下一帧接着刷.
+    /// </summary>
+    public static double RefreshBudgetMs = 1.5;
+
+    /// <summary>
+    /// 排队的刷新数量超过这个值就当作整块加载, 不逐格通知渲染器.
+    /// <br>渲染器对新区块有自己的整块重绘, 逐格通知只会让重绘工作量翻好几倍.</br>
+    /// </summary>
+    public static int BulkNotifyThreshold = 256;
+
+    /// <summary>
     /// 在物块刷新时发生; 用于模块之间的联动事件.
     /// </summary>
     public event Action<Point3> OnRefresh = null;
@@ -49,7 +60,7 @@ namespace Colin.Core.Modulars.Tiles
       RefreshQueue[coords.cCoord].Enqueue(new Point3(coords.tCoord, wCoord.Z)); //建队
     }
 
-    public void DoRefresh(TileChunk chunk, int index, Point3 wCoord)
+    public void DoRefresh(TileChunk chunk, int index, Point3 wCoord, bool notifyRenderer = true)
     {
       ref TileInfo info = ref chunk[index]; //获取对应坐标的物块格的引用传递.
       if (info.IsNull)
@@ -66,7 +77,8 @@ namespace Colin.Core.Modulars.Tiles
         if (info.Empty)
           handler.Enable[info.Index] = false;
       }
-      OnRefresh?.Invoke(wCoord);
+      if (notifyRenderer)
+        OnRefresh?.Invoke(wCoord);
       _com.OnRefresh(Tile, chunk, index, wCoord);
       if (info.Empty)
       {
@@ -121,6 +133,9 @@ namespace Colin.Core.Modulars.Tiles
 
     protected override void OnPrepare()
     {
+      // 刷新消费按时间预算分帧, 一次把整个区块刷完会让那一帧明显变长
+      // 预算用完就直接返回, 没刷完的坐标还留在队列里, 下一帧接着刷
+      long start = Stopwatch.GetTimestamp();
       ConcurrentQueue<Point3> queue;
       TileChunk chunk;
       for (int i = 0; i < Tile.Chunks.Count; i++)
@@ -130,13 +145,15 @@ namespace Colin.Core.Modulars.Tiles
           continue;
         else
         {
-          if (RefreshQueue.ContainsKey(chunk.Coord))
+          if (RefreshQueue.TryGetValue(chunk.Coord, out queue) is false)
+            continue;
+          // 排队的数量多到像整块加载就不逐格通知渲染器, 渲染器对新区块有整块重绘, 逐个通知只会把重绘工作量翻好几倍
+          bool notifyRenderer = queue.Count <= BulkNotifyThreshold;
+          while (queue.TryDequeue(out Point3 cCoord))
           {
-            queue = RefreshQueue[chunk.Coord];
-            while (queue.TryDequeue(out Point3 cCoord))
-            {
-              DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord));
-            }
+            DoRefresh(chunk, chunk.GetIndex(cCoord), chunk.ConvertWorld(cCoord), notifyRenderer);
+            if ((Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency >= RefreshBudgetMs)
+              return;
           }
         }
       }
