@@ -40,5 +40,23 @@ namespace Colin.Core.Modulars.Businesses
       Flip();
       Drain(handler);
     }
+
+    /// <summary>
+    /// 波次结清: 自带首次批次结转, 于本帧内反复「结转 - 处理」直至排空,
+    /// 用以允许处理中派生的标记于同帧继续消费(同帧级联).
+    /// <br>波次上限为熔断: 耗尽后仍未处理的项自动滚入下一批, 不丢失、不阻塞, 防止效果互标导致死循环.</br>
+    /// </summary>
+    /// <param name="handler"></param>
+    /// <param name="maxWaves">波次上限, 用以熔断无界级联.</param>
+    public void Settle(Action<T> handler, int maxWaves = 16)
+    {
+      for (int wave = 0; wave < maxWaves; wave++)
+      {
+        Flip();
+        Drain(handler);
+        if (Marks.IsEmpty)
+          break;
+      }
+    }
   }
 }
