@@ -240,7 +240,6 @@ public sealed class AssetManager : IDisposable
           var asset = loader.LoadUntyped(ContextFor(physical), stream, key);
           _cache[cacheKey] = asset;
           AssetReloaded?.Invoke(key, cacheKey.AssetType, asset);
-          Console.WriteLine(string.Concat("检查到文件变更", key));
           reloaded++;
         }
         catch (Exception ex)

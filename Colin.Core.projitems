@@ -75,6 +75,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\D3D12Interop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\SharedTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\GrayScaleShader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\PixelPerfect2XShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Tinter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\VignetteShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
@@ -132,7 +133,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\IScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ScreenReprocess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Easing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\CircleShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Collisions\Collision.cs" />
@@ -157,6 +157,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Scene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ModulePostProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="..\Colin\Modulars\Ecses\Components\EcsComRenderData.cs" />

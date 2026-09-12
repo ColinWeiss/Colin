@@ -35,7 +35,7 @@ namespace Colin.Core.Common
     /// </summary>
     public RenderTarget2D SceneRenderTarget;
 
-    public ScreenReprocess ScreenReprocess = new ScreenReprocess();
+    public ModulePostProcessor ModulePostProcessor = new ModulePostProcessor();
 
     public SceneEvents Events;
 

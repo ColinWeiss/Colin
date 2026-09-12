@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Common.Debugs;
+using System.Text.RegularExpressions;
 
 namespace Colin.Core.Common
 {
@@ -54,6 +55,7 @@ namespace Colin.Core.Common
     {
       IRenderableISceneModule renderMode;
       RenderTarget2D frameRenderLayer;
+      Texture2D temp;
       using (DebugProfiler.Tag("(Raw)"))
       {
         for (int count = 0; count < RenderableComponents.Values.Count; count++)
@@ -79,19 +81,24 @@ namespace Colin.Core.Common
         {
           renderMode = RenderableComponents.Values.ElementAt(count);
           frameRenderLayer = renderMode.RawRt;
+          temp = null;
           if (renderMode.Presentation)
           {
+            if (Scene.ModulePostProcessor.Passes.TryGetValue(renderMode, out var pass))
             {
-              renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, batch);
-              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
-              CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
-              CoreInfo.Batch.End();
+              temp = pass.PostProcess(frameRenderLayer);
+              // TinterBridge.ProcessCore 的契约是"处理结果直接上屏", 内部会 SetRenderTarget(null) 且不恢复;
+              // 在场景合成管线里必须把绑定切回 SceneRenderTarget, 否则本层之后的所有绘制都进了背屏.
+              CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
             }
+            renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
+            CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
+            CoreInfo.Batch.Draw(temp == null ? frameRenderLayer : temp, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+            CoreInfo.Batch.End();
           }
         }
       }
     }
-
     /// <summary>
     /// 根据指定类型获取场景组件.
     /// </summary>
