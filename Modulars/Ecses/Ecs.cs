@@ -60,7 +60,6 @@ namespace Colin.Core.Modulars.Ecses
 
     public override void DoUpdate(GameTime time)
     {
-      using (DebugProfiler.Tag("ECS System"))
       {
         Entity _entity;
         Entitiesystem _currentSystem;
@@ -161,9 +160,6 @@ namespace Colin.Core.Modulars.Ecses
     {
       if (Entities[cmd.ID] is null)
       {
-        // 实体创建是常态事件, 只在调试模式记, 顺带带上类型名方便定位是谁在批量造实体
-        if (CoreInfo.Debug)
-          Console.Debug("Ecs", string.Concat(cmd.Entity.GetType().Name, " 实体创建, 文档名: ", cmd.Entity.Document?.Name));
         Entity result = cmd.Entity;
       //  result.Ecs = this;
      //   result.ID = cmd.ID;

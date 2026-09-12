@@ -27,7 +27,6 @@ namespace Colin.Core.Graphics
     }
     public void Update(GameTime gameTime)
     {
-      using (DebugProfiler.Tag("SpritePool"))
       {
         Sprite _sprite;
         for (int count = 0; count < Values.Count; count++)

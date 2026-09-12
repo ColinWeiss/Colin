@@ -55,7 +55,6 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.TargetRotation = 0f;
 
       UICamera.DoUpdate(time);
-      using (DebugProfiler.Tag("UIUpdate"))
         Root?.DoUpdate(time);
     }
 
@@ -68,7 +67,6 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
-      using (DebugProfiler.Tag("UI"))
       {
        // device.Clear(Color.Black);
         Root?.DoRender(device, batch);

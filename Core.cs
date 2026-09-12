@@ -139,7 +139,6 @@ namespace Colin.Core
       // 帧尖峰黑匣子, 自己用秒表测真实帧耗时, GameTime 在固定步长下是常数测不了尖峰
       HitchRecorder.OnFrame();
       TweenManager.Update();
-      DebugProfiler.NextTick();
       Assets.Manager.PumpReloads();
       if (!Started)
       {

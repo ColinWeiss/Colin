@@ -78,7 +78,6 @@ namespace Colin.Core.Common
     internal bool Started = false;
     public override sealed void Update(GameTime gameTime)
     {
-      using (DebugProfiler.Tag("Update-" + GetType().Name))
       {
         if (!Started)
         {
@@ -100,7 +99,6 @@ namespace Colin.Core.Common
     private bool _renderStarted = false;
     public override sealed void Draw(GameTime gameTime)
     {
-      using (DebugProfiler.Tag("Draw-" + GetType().Name))
       {
         if (_skipRender is true)
         {

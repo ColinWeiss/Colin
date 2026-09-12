@@ -59,7 +59,6 @@ namespace Colin.Core.Common
         if (_com.Enable)
         {
           using (StageRecorder.Tag(GetTag(_updateTags, _com.GetType(), "Upd:")))
-          using (DebugProfiler.Tag("(Components)"))
           {
             _com.DoUpdate(gameTime);
           }
@@ -72,7 +71,6 @@ namespace Colin.Core.Common
       IRenderableISceneModule renderMode;
       RenderTarget2D frameRenderLayer;
       Texture2D temp;
-      using (DebugProfiler.Tag("(Raw)"))
       {
         for (int count = 0; count < RenderableComponents.Values.Count; count++)
         {
@@ -82,7 +80,6 @@ namespace Colin.Core.Common
           CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
           if (renderMode.RawRtVisible)
           {
-            // using (DebugProfiler.Tag(renderMode.GetType().Name))
             using (StageRecorder.Tag(GetTag(_rawTags, renderMode.GetType(), "Raw:")))
             {
               renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
@@ -92,7 +89,6 @@ namespace Colin.Core.Common
       }
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Black);   // 每帧清场景合成目标: 否则半透明模块 (编辑器等) 的旧帧会永久残留.
-      using (DebugProfiler.Tag("(Re-render)"))
       {
         for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
         {
