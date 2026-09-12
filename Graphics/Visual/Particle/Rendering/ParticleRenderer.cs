@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Rendering
+namespace Colin.Core.Graphics.Visual.Particle.Rendering
 {
   /// <summary>四边形角点顶点 (实例化绘制的流 0 模板).</summary>
   public struct ParticleQuadVertex
@@ -190,12 +190,12 @@
         PremultiplyAlpha(premultiplied);
         _assetsSources[cacheName] = source;
         _textures[cacheName] = premultiplied;
-        Console.WriteLine("Remind", $"资产纹理已就绪: {virtualPath} ({source.Width}×{source.Height})");
+        Console.Log(ConsoleTextType.Remind, "Particle", $"资产纹理已就绪: {virtualPath} ({source.Width}×{source.Height})");
         return premultiplied;
       }
       catch (Exception exception)
       {
-        Console.WriteLine("Error", $"资产纹理加载失败 ({virtualPath}): {exception.Message}");
+        Console.Log(ConsoleTextType.Error, "Particle", $"资产纹理加载失败 ({virtualPath}): {exception.Message}");
         return null;
       }
     }
@@ -207,17 +207,17 @@
       {
         if (!File.Exists(path))
         {
-          Console.WriteLine("Error", $"自定义纹理文件不存在: {path}");
+          Console.Log(ConsoleTextType.Error, "Particle", $"自定义纹理文件不存在: {path}");
           return null;
         }
         Texture2D texture = Texture2D.FromFile(_device, path);
         PremultiplyAlpha(texture);
-        Console.WriteLine("Remind", $"自定义纹理已加载: {path} ({texture.Width}×{texture.Height})");
+        Console.Log(ConsoleTextType.Remind, "Particle", $"自定义纹理已加载: {path} ({texture.Width}×{texture.Height})");
         return texture;
       }
       catch (Exception exception)
       {
-        Console.WriteLine("Error", $"自定义纹理加载失败 ({path}): {exception.Message}");
+        Console.Log(ConsoleTextType.Error, "Particle", $"自定义纹理加载失败 ({path}): {exception.Message}");
         return null;
       }
     }
@@ -237,12 +237,12 @@
         Texture2D texture = Texture2D.FromFile(_device, tempPath);
         PremultiplyAlpha(texture);
         _textures[cacheName] = texture;
-        Console.WriteLine("Remind", $"嵌入纹理已加载: {cacheName} ({texture.Width}×{texture.Height})");
+        Console.Log(ConsoleTextType.Remind, "Particle", $"嵌入纹理已加载: {cacheName} ({texture.Width}×{texture.Height})");
         return texture;
       }
       catch (Exception exception)
       {
-        Console.WriteLine("Error", $"嵌入纹理解码失败 ({cacheName}): {exception.Message}");
+        Console.Log(ConsoleTextType.Error, "Particle", $"嵌入纹理解码失败 ({cacheName}): {exception.Message}");
         return null;
       }
       finally

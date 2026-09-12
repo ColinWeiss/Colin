@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.Graphics.Bridge;
 using Colin.Core.Graphics.Tinters;
 using Colin.Core.Graphics.Tweens;
@@ -84,9 +84,9 @@ namespace Colin.Core
       Assets.Manager.RegisterLoader(new EffectSourceLoader());
       // 热重载结果进日志: 成功带出新实例, 失败保留旧资产并报错 (冒烟/调试期间可见).
       Assets.Manager.AssetReloaded += (path, type, _) =>
-        Console.WriteLine("Remind", string.Concat("资产热重载: ", path, " (", type.Name, ")"));
+        Console.Log(ConsoleTextType.Remind, "Core", string.Concat("资产热重载: ", path, " (", type.Name, ")"));
       Assets.Manager.ReloadFailed += (path, ex) =>
-        Console.WriteLine("Error", string.Concat("资产热重载失败 '", path, "': ", ex.Message));
+        Console.Log(ConsoleTextType.Error, "Core", string.Concat("资产热重载失败 '", path, "': ", ex.Message));
       TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)Math.Round(1000f / TargetFrame));
       Components.Add(Singleton.Get<ControllerResponder>());
       Components.Add(Singleton.Get<MouseResponder>());
@@ -94,7 +94,7 @@ namespace Colin.Core
       Components.Add(SpritePool.Instance);
       Components.Add(FileDropProcessor.Instance);
       DoInitialize();
-      Console.WriteLine(CoreInfo.Tinter.Status);
+      Console.Log(ConsoleTextType.Normal, "Core", CoreInfo.Tinter.Status);
       base.Initialize();
     }
 
@@ -175,6 +175,8 @@ namespace Colin.Core
         base.Draw(gameTime);
       using (StageRecorder.Tag("Frame.SceneRender"))
         DoRender();
+      // 后渲染层, ImGui 这类覆盖层在这里画, 此时背板上已经是最终画面
+      CoreInfo.PostRender?.Invoke(gameTime);
     }
     public virtual void DoRender() { }
 

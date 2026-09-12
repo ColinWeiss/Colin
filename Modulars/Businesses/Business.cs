@@ -1,4 +1,4 @@
-﻿using Colin.Core.Modulars.Tiles;
+using Colin.Core.Modulars.Tiles;
 using System.Collections.Concurrent;
 
 namespace Colin.Core.Modulars
@@ -58,7 +58,7 @@ namespace Colin.Core.Modulars
         }
         catch (Exception ex)
         {
-          Console.WriteLine("Error", string.Concat("主线程收尾作业执行异常: ", ex));
+          Console.Log(ConsoleTextType.Error, "Business", string.Concat("主线程收尾作业执行异常: ", ex));
         }
         if ((System.Diagnostics.Stopwatch.GetTimestamp() - start) * 1000.0 / System.Diagnostics.Stopwatch.Frequency >= BusinessLine.CommandBudgetMs)
           break;

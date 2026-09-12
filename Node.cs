@@ -1,4 +1,4 @@
-﻿namespace Colin.Core
+namespace Colin.Core
 {
   /// <summary>
   /// 表示一类节点.
@@ -87,7 +87,7 @@
     protected void DoRemove(Node<T> node)
     {
       if (_children is null)
-        Console.WriteLine("Error", "EventNode Remove Failed; Children Is Null.");
+        Console.Log(ConsoleTextType.Error, "Node", "EventNode Remove Failed; Children Is Null.");
       else
         _children.Remove(node);
     }

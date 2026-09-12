@@ -32,12 +32,12 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
         byte[] mgfx = Convert.FromBase64String(ParticleCompiledShaders.RenderEffectBase64);
         _shared = new Effect(device, mgfx);
         LastSource = "嵌入 MGFX";
-        Console.WriteLine("Remind", "粒子渲染着色器已从嵌入 MGFX 加载.");
+        Console.Log(ConsoleTextType.Remind, "Particle", "粒子渲染着色器已从嵌入 MGFX 加载.");
         return _shared;
       }
       catch (Exception exception)
       {
-        Console.WriteLine("Error", $"嵌入 MGFX 加载失败: {exception.Message}");
+        Console.Log(ConsoleTextType.Error, "Particle", $"嵌入 MGFX 加载失败: {exception.Message}");
       }
 
       // —— 特性路径: EffectProcessor 同源进程内编译 ——
@@ -66,7 +66,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
       try
       {
         byte[] mgfx = ParticleEffectCompiler.CompileFromSource(ParticleShaderSource.RenderEffectSource);
-        Console.WriteLine("Remind", "粒子渲染着色器已由进程内 Effect 编译器生成.");
+        Console.Log(ConsoleTextType.Remind, "Particle", "粒子渲染着色器已由进程内 Effect 编译器生成.");
         return mgfx;
       }
       catch (Exception exception)
@@ -75,7 +75,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
         string message = "粒子渲染着色器进程内编译失败: " + exception.Message;
         if (!string.IsNullOrEmpty(diagnostics))
           message += Environment.NewLine + diagnostics;
-        Console.WriteLine("Error", message);
+        Console.Log(ConsoleTextType.Error, "Particle", message);
         throw new InvalidOperationException(message, exception);
       }
     }

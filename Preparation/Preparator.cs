@@ -1,4 +1,4 @@
-﻿using Colin.Core.Resources;
+using Colin.Core.Resources;
 using System.Threading.Tasks;
 
 namespace Colin.Core.Preparation
@@ -22,7 +22,7 @@ namespace Colin.Core.Preparation
       {
         // 运行时资产预加载: 扫描 <exe>/Assets 全目录, 命中已注册加载器的文件全部载入缓存.
         int loaded = Assets.Manager.LoadDirectory();
-        Console.WriteLine("Remind", string.Concat("运行时资产预加载完成: ", loaded, " 项."));
+        Console.Log(ConsoleTextType.Remind, "Assets", string.Concat("运行时资产预加载完成: ", loaded, " 项."));
         IPreExecution theTask;
         for (int count = 0; count < _preparatoryTasks.Count; count++)
         {
@@ -30,12 +30,12 @@ namespace Colin.Core.Preparation
           theTask.Prepare();
         }
         CodeResources.Load();
-        Console.WriteLine("Remind", "初始化加载完成.");
+        Console.Log(ConsoleTextType.Remind, "Assets", "初始化加载完成.");
         OnLoadComplete?.Invoke();
       });
 
       if (CoreInfo.Debug)
-        Console.WriteLine("Remind", "当前正以调试模式启动");
+        Console.Log(ConsoleTextType.Remind, "Assets", "当前正以调试模式启动");
       base.SceneInit();
     }
 

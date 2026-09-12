@@ -1,4 +1,4 @@
-﻿using SharpDX.D3DCompiler;
+using SharpDX.D3DCompiler;
 
 namespace Colin.Core.Graphics.Shaders
 {
@@ -42,7 +42,7 @@ namespace Colin.Core.Graphics.Shaders
       {
         if (result.HasErrors)
         {
-          Console.WriteLine("Error", result.HasErrors);
+          Console.Log(ConsoleTextType.Error, "Shader", string.Concat("着色器编译失败: ", result.HasErrors));
         }
       }
     }

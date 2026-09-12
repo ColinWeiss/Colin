@@ -1,4 +1,4 @@
-﻿using System.Text.Encodings.Web;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -59,7 +59,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Serialization
       }
       catch (Exception exception)
       {
-        Console.WriteLine("Error", $"读取粒子配置失败 ({path}): {exception.Message}");
+        Console.Log(ConsoleTextType.Error, "Particle", $"读取粒子配置失败 ({path}): {exception.Message}");
         config = null;
         return false;
       }
@@ -126,7 +126,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Serialization
       }
       catch (Exception exception)
       {
-        Console.WriteLine("Error", $"读取刀光配置失败 ({path}): {exception.Message}");
+        Console.Log(ConsoleTextType.Error, "Particle", $"读取刀光配置失败 ({path}): {exception.Message}");
         config = null;
         return false;
       }

@@ -28,6 +28,9 @@ namespace Colin.Core.Common
     }
     public void DoUpdate(GameTime time)
     {
+      // ImGui 调试界面想吃输入的时候游戏侧让路, 不然点一下调试按钮顺便把方块挖了
+      if (CoreInfo.UIWantInput)
+        return;
       Mouse.MouseHover?.TriggerCapture(GetMouseArgs<MouseHoverArgs>());
       if (MouseResponder.LeftClicked)
         Mouse.LeftClicked?.TriggerCapture(GetMouseArgs<LeftClickedArgs>());

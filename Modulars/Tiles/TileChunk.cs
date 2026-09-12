@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using Colin.Core.Resources;
 using DeltaMachine.Core.Repair;
@@ -215,7 +215,7 @@ namespace Colin.Core.Modulars.Tiles
       }
       catch
       {
-        Console.WriteLine("Error", "区块遍历异常, 请检查输入参数合理性.");
+        Console.Log(ConsoleTextType.Error, "TileChunk", "区块遍历异常, 请检查输入参数合理性.");
       }
     }
 
@@ -464,7 +464,7 @@ namespace Colin.Core.Modulars.Tiles
         }
       }
       if (repairedTiles > 0)
-        Console.WriteLine("Error", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块类型已失效, 已按空格子修复"));
+        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块类型已失效, 已按空格子修复"));
       // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
       int handlerCount = reader.ReadInt32();
       Dictionary<string, TileHandler> namedTag = new();
@@ -534,7 +534,7 @@ namespace Colin.Core.Modulars.Tiles
         }
       }
       if (repairedTiles > 0)
-        Console.WriteLine("Error", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的行为缺失, 已按空格子写入存档"));
+        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的行为缺失, 已按空格子写入存档"));
       // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
       writer.Write(Handler.Count);
       for (int i = 0; i < Handler.Count; i++)

@@ -34,6 +34,26 @@ namespace Colin.Core.Common.Debugs
     /// </summary>
     public static string LastReport;
 
+    /// <summary>
+    /// 近5秒的平均真实帧耗时, 给调试面板读.
+    /// </summary>
+    public static double LastAvgFrameMs;
+
+    /// <summary>
+    /// 近5秒的最大真实帧耗时, 给调试面板读.
+    /// </summary>
+    public static double LastMaxFrameMs;
+
+    /// <summary>
+    /// 近5秒的 GC 停顿合计, 给调试面板读.
+    /// </summary>
+    public static double LastWindowPauseMs;
+
+    /// <summary>
+    /// 近5秒的单次最大 GC 停顿, 给调试面板读.
+    /// </summary>
+    public static double LastMaxPauseMs;
+
     private static long _lastTimestamp;
     private static double _baselineMs = double.MaxValue;
     private static int _gen0, _gen1, _gen2;
@@ -47,7 +67,7 @@ namespace Colin.Core.Common.Debugs
     private static int _wGen0, _wGen1, _wGen2;
     private static double _wMaxPause;
     private static readonly StringBuilder _builder = new StringBuilder(8192);
-    private static readonly string _logPath = Path.Combine(AppContext.BaseDirectory, "hitch_report.txt");
+    private static readonly string _logPath = Path.Combine(Colin.Core.IO.BasicsDirectory.LogDir, "hitch_report.txt");
 
     // 落盘走独立线程, 同步写盘曾经在主线程上顶到一两百毫秒, 还会和 5 秒的区块卸载节奏撞车污染测量
     private static readonly BlockingCollection<string> _writeQueue = new BlockingCollection<string>(64);
@@ -65,6 +85,14 @@ namespace Colin.Core.Common.Debugs
 
     private static void WriteLoop()
     {
+      try
+      {
+        Directory.CreateDirectory(Colin.Core.IO.BasicsDirectory.LogDir);
+      }
+      catch
+      {
+        // 目录建不出来就只走控制台, 别拦着游戏
+      }
       foreach (string text in _writeQueue.GetConsumingEnumerable())
       {
         try
@@ -101,11 +129,6 @@ namespace Colin.Core.Common.Debugs
       _gen2 = gen2;
       _gcPauseTotal = pause;
 
-      GCMemoryInfo info = GC.GetGCMemoryInfo();
-      double maxSinglePause = 0;
-      foreach (TimeSpan p in info.PauseDurations)
-        maxSinglePause = Math.Max(maxSinglePause, p.TotalMilliseconds);
-
       // 基线取近期最好帧, 慢慢上浮以适应负载变化, 尖峰判定同时要求超过绝对下限和基线加余量
       double nowMs = now * 1000.0 / Stopwatch.Frequency;
       if (frameMs > 0)
@@ -118,7 +141,9 @@ namespace Colin.Core.Common.Debugs
         _wGen0 += d0;
         _wGen1 += d1;
         _wGen2 += d2;
-        _wMaxPause = Math.Max(_wMaxPause, maxSinglePause);
+        // 单帧GC停顿直接拿停顿增量当近似, 免得每帧去查堆快照, 那个可不便宜
+        if (pauseDelta > _wMaxPause)
+          _wMaxPause = pauseDelta;
       }
 
       if (Enable && frameMs >= AbsoluteFloorMs && frameMs >= _baselineMs + SpikeMarginMs)
@@ -126,9 +151,10 @@ namespace Colin.Core.Common.Debugs
         if (nowMs - _lastDump >= MinDumpIntervalMs)
         {
           _lastDump = nowMs;
-          Dump(frameMs, d0, d1, d2, pauseDelta, info);
+          Dump(frameMs, d0, d1, d2, pauseDelta);
         }
       }
+      nowMs = now * 1000.0 / Stopwatch.Frequency;
       if (nowMs - _lastSummary >= 5000.0 && _accumFrames > 0)
       {
         _lastSummary = nowMs;
@@ -137,11 +163,12 @@ namespace Colin.Core.Common.Debugs
       StageRecorder.ResetFrame();
     }
 
-    private static void Dump(double frameMs, int d0, int d1, int d2, double pauseDelta, in GCMemoryInfo info)
+    private static void Dump(double frameMs, int d0, int d1, int d2, double pauseDelta)
     {
       _builder.Clear();
       _builder.AppendLine("================ 帧尖峰 ================");
       _builder.AppendLine(string.Format("真实帧耗时 {0:F2} ms, 本帧GC停顿 {1:F2} ms, GC次数增量 0代={2} 1代={3} 2代={4}", frameMs, pauseDelta, d0, d1, d2));
+      GCMemoryInfo info = GC.GetGCMemoryInfo();
       _builder.AppendLine(string.Format("托管堆 {0:F1} MB, 堆碎片 {1:F1} MB, 已提交 {2:F1} MB", info.HeapSizeBytes / 1048576.0, info.FragmentedBytes / 1048576.0, info.TotalCommittedBytes / 1048576.0));
       _builder.AppendLine(string.Format("总帧数 {0}", Time.FrameCount));
       _builder.AppendLine("当帧阶段耗时(按耗时排序, 阶段有嵌套所以会有重复计入, 看相对占比):");
@@ -155,6 +182,12 @@ namespace Colin.Core.Common.Debugs
       _builder.Clear();
       _builder.AppendLine(string.Format("------ 近5秒: 平均真实帧 {0:F2} ms, 最大真实帧 {1:F2} ms, GC停顿合计 {2:F2} ms, 单次最大停顿 {3:F2} ms, GC次数 0代={4} 1代={5} 2代={6} ------",
         _accumFrameMs / Math.Max(1, _accumFrames), _maxFrameMs, _accumPauseMs, _wMaxPause, _wGen0, _wGen1, _wGen2));
+      LastAvgFrameMs = _accumFrameMs / Math.Max(1, _accumFrames);
+      LastMaxFrameMs = _maxFrameMs;
+      LastWindowPauseMs = _accumPauseMs;
+      LastMaxPauseMs = _wMaxPause;
+      _builder.AppendLine("近5秒稳态阶段成本(每帧均值, 降序, 阶段嵌套会重复计入, 看相对占比):");
+      StageRecorder.AppendWindowReport(_builder, 14, _accumFrames);
       _accumFrameMs = 0;
       _accumFrames = 0;
       _maxFrameMs = 0;

@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 
 namespace Colin.Core.Graphics.Visual.Particle
 {
@@ -77,7 +77,7 @@ namespace Colin.Core.Graphics.Visual.Particle
         GraphicsDevice = device ?? throw new ArgumentNullException(nameof(device));
         Renderer ??= new Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer(device);
         IsInitialized = true;
-        Console.WriteLine("Remind", $"粒子系统初始化完成.");
+        Console.Log(ConsoleTextType.Remind, "Particle", $"粒子系统初始化完成.");
       }
     }
 
@@ -100,7 +100,7 @@ namespace Colin.Core.Graphics.Visual.Particle
         }
         catch (Exception exception)
         {
-          Console.WriteLine("Error", "GPU 粒子策略创建失败, 回退 CPU: " + exception.Message);
+          Console.Log(ConsoleTextType.Error, "Particle", "GPU 粒子策略创建失败, 回退 CPU: " + exception.Message);
           CpuUpdateStrategy cpu = new CpuUpdateStrategy();
           cpu.Initialize(GraphicsDevice, capacity);
           StrategyPath = cpu.Name;

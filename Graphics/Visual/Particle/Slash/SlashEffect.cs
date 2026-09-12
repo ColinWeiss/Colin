@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+namespace Colin.Core.Graphics.Visual.Particle.Slash
 {
   /// <summary>
   /// 刀光效果实例 (独立大功能): 拉刀光 Mesh 本体 (<see cref="SlashArc"/>) + 与前缘角度绑定的刃花粒子层.
@@ -92,7 +92,7 @@
         }
         catch (Exception exception)
         {
-          Console.WriteLine("Error", $"嵌入纹理解码失败 ({pair.Key}): {exception.Message}");
+          Console.Log(ConsoleTextType.Error, "Fx", $"嵌入纹理解码失败 ({pair.Key}): {exception.Message}");
         }
       }
     }

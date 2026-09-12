@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Core.Inputs
 {
@@ -68,7 +68,7 @@ namespace Colin.Core.Inputs
           cursorPosition.Y -= 3;
         if (state.ThumbSticks.Right.Y < 0)
           cursorPosition.Y += 3;
-        //          Console.WriteLine( EntityInfo.ThumbSticks.Right );
+        //          Console.Log(ConsoleTextType.Normal, "Input",  EntityInfo.ThumbSticks.Right );
       }
       //      else
       //         EngineInfo.Engine.IsMouseVisible = true;

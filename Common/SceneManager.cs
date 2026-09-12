@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Common
+namespace Colin.Core.Common
 {
   public class SceneManager : ISingleton
   {
@@ -28,9 +28,9 @@
     public static void AddPermanentScene(string sceneIdentifier, Scene scene)
     {
       if (_permanentScenes.ContainsKey(sceneIdentifier))
-        Console.WriteLine("Error", "场景标识符重复.");
+        Console.Log(ConsoleTextType.Error, "Scene", "场景标识符重复.");
       else if (_permanentScenes.ContainsValue(scene))
-        Console.WriteLine("Error", "场景重复.");
+        Console.Log(ConsoleTextType.Error, "Scene", "场景重复.");
       else
         _permanentScenes.Add(sceneIdentifier, scene);
     }
@@ -39,7 +39,7 @@
       if (_permanentScenes.TryGetValue(sceneIdentifier, out Scene scene))
         SetScene(scene);
       else
-        Console.WriteLine("Error", "场景标识符错误.");
+        Console.Log(ConsoleTextType.Error, "Scene", "场景标识符错误.");
     }
     public static void SetPermanentScene(string sceneIdentifier, Scene scene)
     {

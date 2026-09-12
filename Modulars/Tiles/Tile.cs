@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using System.Collections.Concurrent;
 
@@ -104,7 +104,7 @@ namespace Colin.Core.Modulars.Tiles
     public void Start()
     {
       if (Context is null)
-        Console.WriteLine("Error", "物块模块信息设置为 NULL.");
+        Console.Log(ConsoleTextType.Error, "Tile", "物块模块信息设置为 NULL.");
     }
 
     /// <summary>
@@ -365,7 +365,7 @@ namespace Colin.Core.Modulars.Tiles
         Chunks.TryAdd(chunk.Coord, chunk);
       }
       else
-        Console.WriteLine("Error", string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
+        Console.Log(ConsoleTextType.Error, "Tile", string.Concat("加载 (", x, ",", y, ") 处的区块时出现异常."));
     }
 
     public void DoRawRender(GraphicsDevice device, SpriteBatch batch)

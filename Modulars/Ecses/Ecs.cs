@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Resources;
@@ -161,7 +161,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       if (Entities[cmd.ID] is null)
       {
-        Console.WriteLine(cmd.Entity.Document.Name);
+        Console.Log(ConsoleTextType.Normal, "Ecs", cmd.Entity.Document.Name);
         Entity result = cmd.Entity;
       //  result.Ecs = this;
      //   result.ID = cmd.ID;

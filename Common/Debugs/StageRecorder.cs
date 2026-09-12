@@ -12,6 +12,9 @@ namespace Colin.Core.Common.Debugs
   {
     private static readonly Dictionary<string, double> _times = new Dictionary<string, double>();
     private static readonly Dictionary<string, int> _counts = new Dictionary<string, int>();
+    // 窗口累计, 用来算稳态平均帧成本, 每帧数据先进这里, 摘要输出后统一清
+    private static readonly Dictionary<string, double> _windowTimes = new Dictionary<string, double>();
+    private static readonly Dictionary<string, int> _windowCounts = new Dictionary<string, int>();
     private static readonly Stack<(string name, long start)> _stack = new Stack<(string name, long start)>();
 
     /// <summary>
@@ -29,6 +32,14 @@ namespace Colin.Core.Common.Debugs
 
     internal static void ResetFrame()
     {
+      foreach (var pair in _times)
+      {
+        _windowTimes[pair.Key] = _windowTimes.GetValueOrDefault(pair.Key) + pair.Value;
+      }
+      foreach (var pair in _counts)
+      {
+        _windowCounts[pair.Key] = _windowCounts.GetValueOrDefault(pair.Key) + pair.Value;
+      }
       _times.Clear();
       _counts.Clear();
       _stack.Clear();
@@ -38,6 +49,25 @@ namespace Colin.Core.Common.Debugs
     {
       foreach (var pair in _times.OrderByDescending(p => p.Value).Take(top))
         builder.AppendLine(string.Format("  {0,9:F3} ms x{1,-3} {2}", pair.Value, _counts.GetValueOrDefault(pair.Key), pair.Key));
+    }
+
+    /// <summary>
+    /// 输出窗口内每阶段的每帧平均值, 用来看稳态下 7ms 都花在哪, 输出后清空窗口.
+    /// <br>注意阶段有嵌套, 同一段时间会被上层阶段重复计入, 看相对占比即可.</br>
+    /// </summary>
+    internal static void AppendWindowReport(StringBuilder builder, int top, double frames)
+    {
+      if (frames <= 0)
+      {
+        _windowTimes.Clear();
+        _windowCounts.Clear();
+        return;
+      }
+      foreach (var pair in _windowTimes.OrderByDescending(p => p.Value).Take(top))
+        builder.AppendLine(string.Format("  {0,7:F3} ms/帧 ({1,8:F0} ms合计 x{2,-5}) {3}",
+          pair.Value / frames, pair.Value, _windowCounts.GetValueOrDefault(pair.Key), pair.Key));
+      _windowTimes.Clear();
+      _windowCounts.Clear();
     }
 
     public readonly struct StageToken : IDisposable

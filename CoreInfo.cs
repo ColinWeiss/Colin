@@ -151,10 +151,26 @@ namespace Colin.Core
     /// </summary>
     public static IMEHandler IMEHandler;
 
+#if DEBUG
     /// <summary>
     /// 指示当前程序是否处于调试模式.
     /// </summary>
-    public static bool Debug = false;
+    public const bool Debug = true;
+#else
+    public const bool Debug = false;
+#endif
+
+    /// <summary>
+    /// 指示 ImGui 这类覆盖层界面当前是否想吃输入.
+    /// <br>为 true 的时候游戏侧输入应当让路, 不然点一下调试按钮顺便把方块挖了.</br>
+    /// </summary>
+    public static bool UIWantInput;
+
+    /// <summary>
+    /// 后渲染回调, 在每帧所有渲染完成后的背板上执行.
+    /// <br>给 ImGui 这类覆盖层用, 注册了就画, 没注册就跳过.</br>
+    /// </summary>
+    public static Action<GameTime> PostRender;
 
     /// <summary>
     /// 指示引擎是否运行于嵌入宿主 (如 Avalonia 控件) 之中;
@@ -183,9 +199,6 @@ namespace Colin.Core
         PreferMultiSampling = true,
         GraphicsProfile = GraphicsProfile.HiDef
       };
-#if DEBUG
-      Debug = true;
-#endif
     }
 
     /// <summary>
