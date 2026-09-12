@@ -1,5 +1,7 @@
 ﻿namespace Colin.Core.Graphics
 {
+  using System.Collections.Concurrent;
+
   /// <summary>
   /// 标识一张Sprite.
   /// <br>两种模式: 传入 <see cref="Texture2D"/> 为快照模式 (程序化纹理, 持有实例);
@@ -8,6 +10,9 @@
   /// </summary>
   public class Sprite
   {
+    // 路径视图的实例缓存, 同一张图全局只建一个 Sprite, 逐格 new 的开销就省下来了
+    private static readonly ConcurrentDictionary<string, Sprite> _pathViews = new ConcurrentDictionary<string, Sprite>();
+
     private Texture2D _source;
     private readonly string _virtualPath;      // 非空 = 路径视图模式 (Leemo 管线, 热重载实时跟随).
     private readonly int _frameMax;
@@ -34,14 +39,14 @@
     /// <summary>按构造时确定的分帧方式, 依据纹理尺寸重算帧格宽高 (热重载换图后调用).</summary>
     private void ApplyFrameSize(Texture2D texture)
     {
-      Frame.Width = texture.Width;
-      Frame.Height = texture.Height;
+      SharedFrame.Width = texture.Width;
+      SharedFrame.Height = texture.Height;
       if (_sliceFrames)
       {
         if (_direction is Direction.Vertical)
-          Frame.Height = texture.Height / _frameMax;
+          SharedFrame.Height = texture.Height / _frameMax;
         if (_direction is Direction.Horizontal)
-          Frame.Width = texture.Width / _frameMax;
+          SharedFrame.Width = texture.Width / _frameMax;
       }
     }
 
@@ -65,14 +70,16 @@
     public int Height => Source.Height;
 
     /// <summary>
-    /// 指示该 Sprite 的帧格刷新是否交由自动化运行程序.
+    /// 指示该 Sprite 的共享帧格刷新是否交由自动化运行程序.
+    /// <br>路径视图模式下实例是全局共享的, 改这个字段会影响所有用这张图的地方.</br>
     /// </summary>
-    public bool AutoUpdateFrame = true;
+    public bool AutoUpdateSharedFrame = true;
 
     /// <summary>
     /// 该纹理内置的帧格选取.
+    /// <br>路径视图模式下它是共享状态, 同一张图的所有使用者读写的是同一份.</br>
     /// </summary>
-    public Frame Frame;
+    public Frame SharedFrame;
 
     /// <summary>
     /// 纹理批绘制参数.
@@ -83,15 +90,14 @@
 
     private void AddThisToGraphicCoreSpritePool()
     {
-      if (SpritePool.Instance.ContainsKey(Source.Name))
+      // 后台线程也可能建 Sprite, 用 TryAdd 防止并发下重复添加炸掉
+      if (SpritePool.Instance.TryGetValue(Source.Name, out Sprite _sprite))
       {
-        Sprite _sprite;
-        SpritePool.Instance.TryGetValue(Source.Name, out _sprite);
         Depth = _sprite.Depth;
       }
       else
       {
-        SpritePool.Instance.Add(Source.Name, this);
+        SpritePool.Instance.TryAdd(Source.Name, this);
       }
     }
 
@@ -104,7 +110,7 @@
     {
       _source = texture;
       _direction = Direction.Vertical;
-      Frame.Direction = Direction.Vertical;
+      SharedFrame.Direction = Direction.Vertical;
       ApplyFrameSize(texture);
       AddThisToGraphicCoreSpritePool();
     }
@@ -115,9 +121,9 @@
       _frameMax = frameMax;
       _direction = direction;
       _sliceFrames = true;
-      Frame.IsLoop = isLoop;
-      Frame.IsPlay = isPlay;
-      Frame.Direction = direction;
+      SharedFrame.IsLoop = isLoop;
+      SharedFrame.IsPlay = isPlay;
+      SharedFrame.Direction = direction;
       ApplyFrameSize(texture);
       AddThisToGraphicCoreSpritePool();
     }
@@ -131,7 +137,7 @@
       _virtualPath = virtualPath;
       _source = Assets.Manager.Load<Texture2D>(virtualPath);
       _direction = Direction.Vertical;
-      Frame.Direction = Direction.Vertical;
+      SharedFrame.Direction = Direction.Vertical;
       ApplyFrameSize(_source);
       AddThisToGraphicCoreSpritePool();
     }
@@ -147,8 +153,12 @@
     /// <summary>
     /// 按无扩展名的 Textures 相对路径取 Sprite (如 "Gameplays/Items/Backpacks/Backpack");
     /// 返回路径视图 Sprite, 热重载实时跟随.
+    /// <br>同一路径全局只建一个实例并缓存, 注意 SharedFrame 是共享状态.</br>
     /// </summary>
-    public static Sprite Get(string path) => new Sprite("Textures/" + path.Replace('\\', '/') + ".png");
+    public static Sprite Get(string path)
+      => _pathViews.GetOrAdd(
+          "Textures/" + path.Replace('\\', '/') + ".png",
+          static virtualPath => new Sprite(virtualPath));
     public static Sprite Get(params string[] paths) => Get(Path.Combine(paths));
   }
 }

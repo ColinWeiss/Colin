@@ -375,11 +375,18 @@ namespace Colin.Core.Modulars.Tiles
     public void AsyncLoadChunk(string path)
     {
       _loading = true;
+      // 加载期间把格子标记成 Loading, 碰撞系统会把它当实心处理, 玩家不会踩空
+      SetOperation(true);
       Task.Run(() =>
       {
         DataIO.DoLoad(path, this, true);
-        DoRefreshAll();
-        _loading = false;
+        // 反序列化在后台做完就行, 收尾的刷新和状态复位回主线程排队执行, 不和游戏逻辑抢数据
+        Tile.Scene.Business.MarkMainThreadJob(() =>
+        {
+          SetOperation(false);
+          _loading = false;
+          DoRefreshAll();
+        });
       });
     }
 
@@ -391,12 +398,16 @@ namespace Colin.Core.Modulars.Tiles
       _loading = false;
     }
 
+    // 全量刷新只刷有内容的格子, 空格子没挂行为, 刷了也是空转, 还占队列
+    // 格子边缘的衔接表现由渲染器的整块重绘兜底, 所以这里不需要往邻域扩散
     public void MarkRefreshAll()
     {
       ref TileInfo info = ref this[0, 0, 0];
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
+        if (info.Empty)
+          continue;
         Refresher.MarkRefresh(info.GetWCoord3(), 0);
       }
     }
@@ -407,6 +418,8 @@ namespace Colin.Core.Modulars.Tiles
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
+        if (info.Empty)
+          continue;
         Refresher.DoRefresh(this, count, info.GetWCoord3());
       }
     }

@@ -33,9 +33,9 @@ namespace Colin.Core.Graphics
         for (int count = 0; count < Values.Count; count++)
         {
           _sprite = Values.ElementAt(count);
-          if (_sprite.AutoUpdateFrame && _sprite.Frame.FrameMax > 1
-              && _sprite.Frame.IsLoop && _sprite.Frame.IsPlay)
-            _sprite.Frame.UpdateFrame();
+          if (_sprite.AutoUpdateSharedFrame && _sprite.SharedFrame.FrameMax > 1
+              && _sprite.SharedFrame.IsLoop && _sprite.SharedFrame.IsPlay)
+            _sprite.SharedFrame.UpdateFrame();
         }
       }
     }

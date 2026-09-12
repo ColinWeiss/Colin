@@ -13,7 +13,7 @@
       {
         if (Adaptive is false)
         {
-          Frame currentFrame = _sprite.Frame;
+          Frame currentFrame = _sprite.SharedFrame;
           batch.Draw(
             _sprite.Source,
             Div.Layout.RenderTargetLocation + div.Layout.Anchor,
