@@ -74,9 +74,11 @@ namespace Colin.Core
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
-      // 初始化 Leemo.Assets 运行时资产管线 (rootDir 缺省为 <exe目录>/Assets, 与宿主工程的资源拷贝约定一致);
+      // 初始化 Leemo.Assets 运行时资产管线;
       // 调试构建开启热重载, 文件一改即排队, 主线程 Update 里 PumpReloads 落地.
-      Assets.Init(GraphicsDevice, hotReload: CoreInfo.Debug);
+      // 调试构建且检测到仓库布局时, 资产根直接指向源目录 DeltaMachine.Assets/Assets ——
+      // 加载与监视的都是你正在编辑的文件, 改完即热重载, 无需构建拷贝; 独立部署回退 <exe>/Assets.
+      Assets.Init(GraphicsDevice, rootDir: CoreInfo.Debug ? FindDevAssetsRoot() : null, hotReload: CoreInfo.Debug);
       // 注册 Colin 自定义资产的加载器 (计算着色器 / .fx 特效源码, 均为进程内编译).
       Assets.Manager.RegisterLoader(new ComputeShaderLoader());
       Assets.Manager.RegisterLoader(new EffectSourceLoader());
@@ -97,6 +99,22 @@ namespace Colin.Core
     }
 
     public virtual void DoInitialize() { }
+
+    /// <summary>
+    /// 向上搜索仓库源资产目录 (DeltaMachine.Assets/Assets, 以 Textures 子目录为存在标记).
+    /// 未命中 (独立部署/异构布局) 返回 null, 资产根回退 <exe目录>/Assets.
+    /// </summary>
+    private static string FindDevAssetsRoot()
+    {
+      DirectoryInfo dir = new DirectoryInfo(AppContext.BaseDirectory);
+      for (int depth = 0; dir is not null && depth < 8; depth++, dir = dir.Parent)
+      {
+        string candidate = Path.Combine(dir.FullName, "DeltaMachine.Assets", "Assets");
+        if (Directory.Exists(Path.Combine(candidate, "Textures")))
+          return candidate;
+      }
+      return null;
+    }
 
     protected override sealed void LoadContent()
     {

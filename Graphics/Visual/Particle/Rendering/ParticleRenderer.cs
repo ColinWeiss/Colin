@@ -31,6 +31,8 @@
     private readonly IndexBuffer _quadIndices;
     private VertexBuffer _idBuffer;
     private readonly Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
+    // "assets:" 纹理的源实例跟踪: 值与 Leemo 缓存中的当前实例不一致即说明发生热重载, 需重建预乘副本.
+    private readonly Dictionary<string, Texture2D> _assetsSources = new Dictionary<string, Texture2D>();
 
     /// <summary>混合模式映射.</summary>
     private static readonly Dictionary<ParticleBlendMode, BlendState> BlendStates = new Dictionary<ParticleBlendMode, BlendState>
@@ -136,8 +138,9 @@
 
     /// <summary>
     /// 解析纹理: 内置程序化纹理名 ("white"/"glow"/"blade"/"spark"/"smoke"),
-    /// 或 "file:绝对路径" 直接从磁盘加载 (编辑器自定义贴图), 结果按名缓存.
-    /// <br>"file:" 贴图加载时做 alpha 预乘 —— 加法混合 (刀光/发光) 下透明区域不再发白,
+    /// 或 "file:路径" 直接从磁盘加载 (编辑器自定义贴图),
+    /// 或 "assets:Leemo根相对路径" 经 Leemo.Assets 管线解析 (启动预加载, 支持热重载), 结果按名缓存.
+    /// <br>"file:"/"assets:" 贴图加载时做 alpha 预乘 —— 加法混合 (刀光/发光) 下透明区域不再发白,
     /// 任意尺寸、带透明通道的 PNG 均可直接使用; 加载失败回退 white 并输出错误日志.</br>
     /// </summary>
     public Texture2D ResolveTexture(string name)
@@ -149,14 +152,52 @@
         return cached;
 
       Texture2D texture = null;
-      if (name.StartsWith("file:"))
+      if (name.StartsWith("file:", System.StringComparison.Ordinal))
         texture = LoadFileTexture(name.Substring(5));
+      if (texture is null && name.StartsWith("assets:", System.StringComparison.Ordinal))
+        texture = LoadAssetsTexture(name.Substring(7), name);
       if (texture is null)
         texture = ParticleTextureFactory.Create(_device, name);
       if (texture is null)
         texture = ParticleTextureFactory.Create(_device, "white");
       _textures[name] = texture;
       return texture;
+    }
+
+    /// <summary>
+    /// 解析 "assets:" 纹理: 源纹理由 Leemo.Assets 管线管理 (启动预加载即缓存, 文件热重载后实例被替换),
+    /// 本渲染器持有其 alpha 预乘<b>副本</b> —— 检测到源实例更换 (热重载) 时副本自动重建, 旧副本即时释放.
+    /// </summary>
+    private Texture2D LoadAssetsTexture(string virtualPath, string cacheName)
+    {
+      try
+      {
+        if (!Leemo.Assets.Assets.Manager.TryGet<Texture2D>(virtualPath, out Texture2D source))
+          source = Leemo.Assets.Assets.Manager.Load<Texture2D>(virtualPath);
+
+        if (_textures.TryGetValue(cacheName, out Texture2D cached)
+            && _assetsSources.TryGetValue(cacheName, out Texture2D tracked)
+            && ReferenceEquals(tracked, source))
+          return cached;
+
+        // 源实例已更换 (首次加载或热重载): 重建预乘副本, 旧副本不再被引用, 即时释放.
+        if (cached is not null)
+          cached.Dispose();
+        Texture2D premultiplied = new Texture2D(_device, source.Width, source.Height);
+        Color[] pixels = new Color[source.Width * source.Height];
+        source.GetData(pixels);
+        premultiplied.SetData(pixels);
+        PremultiplyAlpha(premultiplied);
+        _assetsSources[cacheName] = source;
+        _textures[cacheName] = premultiplied;
+        Console.WriteLine("Remind", $"资产纹理已就绪: {virtualPath} ({source.Width}×{source.Height})");
+        return premultiplied;
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine("Error", $"资产纹理加载失败 ({virtualPath}): {exception.Message}");
+        return null;
+      }
     }
 
     /// <summary>从磁盘加载贴图并预乘 alpha (自定义纹理的统一入口).</summary>
@@ -241,6 +282,7 @@
       foreach (Texture2D texture in _textures.Values)
         texture?.Dispose();
       _textures.Clear();
+      _assetsSources.Clear();
       if (Shared == this)
         Shared = null;
     }
