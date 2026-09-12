@@ -30,6 +30,12 @@ namespace Colin.Core.Common.Debugs
 
     public static int GetCount(string name) => _counts.GetValueOrDefault(name);
 
+    /// <summary>
+    /// 当帧尚未结算的阶段耗时, 供外部按秒聚合.
+    /// <br>只在帧尾读, 下一帧开头的 ResetFrame 会把它清掉.</br>
+    /// </summary>
+    public static IEnumerable<KeyValuePair<string, double>> CurrentFrameStages => _times;
+
     internal static void ResetFrame()
     {
       foreach (var pair in _times)

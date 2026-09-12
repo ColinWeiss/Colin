@@ -15,10 +15,25 @@ namespace Colin.Core.Common.Debugs
 
     internal static StopwatchHierarchy RootNode => Instance.stopwatchStack[0];
 
+    // 报告是否脏, 每帧 NextTick 只置标记, 有人真去读报告了才重新生成
+    // 不然每帧都要克隆整棵探针树, 纯纯的 GC 压力, 面板没开也照付
+    private bool _reportDirty = true;
+
     /// <summary>
     /// 获取最近一轮的统计结果
     /// </summary>
-    public static List<ReportLine> RecentReport => Instance.recentReport;
+    public static List<ReportLine> RecentReport
+    {
+      get
+      {
+        if (Instance._reportDirty)
+        {
+          Instance.recentReport = GenerateReportLines();
+          Instance._reportDirty = false;
+        }
+        return Instance.recentReport;
+      }
+    }
 
     /// <summary>
     /// 获取最近一次重置时的的统计结果
@@ -31,11 +46,8 @@ namespace Colin.Core.Common.Debugs
 
     public static void NextTick()
     {
-      RootNode.report.totalTime = 0;
-      foreach (StopwatchHierarchy child in RootNode.hierarchyChildren)
-        RootNode.report.totalTime += child.report.totalTime;
       RootNode.report.count += 1;
-      Instance.recentReport = GenerateReportLines();
+      Instance._reportDirty = true;
       if (Instance.resetFlag)
       {
         Instance.recentResetReport = GenerateReportLines();
@@ -80,6 +92,10 @@ namespace Colin.Core.Common.Debugs
 
     private static List<ReportLine> GenerateReportLines()
     {
+      // 根节点总耗时 = 直接子节点之和, 原来在 NextTick 里算, 挪进来让懒生成路径也成立
+      RootNode.report.totalTime = 0;
+      foreach (StopwatchHierarchy child in RootNode.hierarchyChildren)
+        RootNode.report.totalTime += child.report.totalTime;
       List<ReportLine> reportLines = new();
       TraverseHierarchy(Instance.stopwatchStack[0], reportLines);
       return reportLines;
