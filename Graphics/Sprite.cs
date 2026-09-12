@@ -90,15 +90,11 @@
 
     private void AddThisToGraphicCoreSpritePool()
     {
-      // 后台线程也可能建 Sprite, 用 TryAdd 防止并发下重复添加炸掉
-      if (SpritePool.Instance.TryGetValue(Source.Name, out Sprite _sprite))
-      {
-        Depth = _sprite.Depth;
-      }
-      else
-      {
-        SpritePool.Instance.TryAdd(Source.Name, this);
-      }
+      // 注册进池子领深度号, 深度按注册顺序发, 决定贴图的绘制层级
+      // 后台线程也可能建 Sprite, Add 内部是原子占位, 抢不到就说明同名贴图已注册, 跟它对齐深度
+      if (SpritePool.Instance.Add(Source.Name, this) is false
+          && SpritePool.Instance.TryGetValue(Source.Name, out Sprite registered))
+        Depth = registered.Depth;
     }
 
     public static void New(Texture2D texture2D)
