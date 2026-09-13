@@ -563,17 +563,16 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
-      // 数组已释放说明这个区块早前卸载过, 这是一次迟到的重复存档, 直接跳过
       if (Infos is null)
       {
-        Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块数组已释放, 跳过重复存档: ", path));
+        if(CoreInfo.Debug)
+          Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块数组已释放, 跳过重复存档: ", path));
         return;
       }
-      // 上一个存档任务还在后台写: 再叠一个任务, 要么撞文件占用, 要么把数组提前还池
-      // 让正在写的那个任务读到被新区块覆写的数据, 产出短文件或错内容, 这里必须拦住
       if (_saving)
       {
-        Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块存档进行中, 跳过重复存档: ", path));
+        if (CoreInfo.Debug)
+          Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块存档进行中, 跳过重复存档: ", path));
         return;
       }
       _saving = true;

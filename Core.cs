@@ -137,7 +137,9 @@ namespace Colin.Core
         return;
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
       // 帧尖峰黑匣子, 自己用秒表测真实帧耗时, GameTime 在固定步长下是常数测不了尖峰
-      HitchRecorder.OnFrame();
+      // Debug 才开着, Release 下连静态构造的落盘线程都不会起来
+      if (CoreInfo.Debug)
+        HitchRecorder.OnFrame();
       TweenManager.Update();
       Assets.Manager.PumpReloads();
       if (!Started)

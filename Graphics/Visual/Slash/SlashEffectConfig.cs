@@ -100,7 +100,7 @@ namespace Colin.Core.Graphics.Visual.Slash
     /// <summary>是否启用.</summary>
     public bool Enabled = true;
 
-    /// <summary>纹理名: 内置 ("blade"/"glow"/"spark"/"smoke") / "file:路径" / "assets:Leemo根相对路径" (启动预加载, 支持热重载) / "embed:键" (旧版内嵌, 读取兼容).</summary>
+    /// <summary>纹理名: 内置 ("blade"/"glow"/"spark"/"smoke") / "assets:Leemo根相对路径" (启动预加载, 支持热重载) / "file:本地路径" (调试用).</summary>
     public string Texture = "blade";
 
     /// <summary>层颜色调制 (与顶点头尾渐变色相乘后再乘此色).</summary>
@@ -186,7 +186,7 @@ namespace Colin.Core.Graphics.Visual.Slash
     public bool Stretched = true;
     /// <summary>火花槽位上限.</summary>
     public int Capacity = 128;
-    /// <summary>刃花纹理名 (内置 spark/glow 或 "file:路径" / "assets:Leemo根相对路径" / "embed:键").</summary>
+    /// <summary>刃花纹理名 (内置 spark/glow 或 "assets:Leemo根相对路径" / "file:本地路径").</summary>
     public string Texture = "spark";
 
     /// <summary>深拷贝.</summary>
@@ -221,9 +221,8 @@ namespace Colin.Core.Graphics.Visual.Slash
   /// <br>- 阶段一 <b>挥动</b>: 前缘按 <see cref="SlashArcConfig.SweepCurve"/> 从起始角扫到结束角;</br>
   /// <br>- 阶段二 <b>收尾</b>: <see cref="SlashArcConfig.Finishes"/> 修饰器列表 (渐隐/收拢, 可同时叠加);</br>
   /// <br>- 本体贴图: <see cref="SlashArcConfig.Layers"/> 纹理层列表 (可叠加多层);</br>
-  /// <br>- 本体贴图推荐写 "assets:Leemo根相对路径" (如 "assets:Textures/daoguang/color.png"):
+  /// <br>- 本体贴图写 "assets:Leemo根相对路径" (如 "assets:Textures/daoguang/color.png"):
   /// 纹理由 Leemo.Assets 管线在启动预加载就绪, 并随文件热重载自动更新;</br>
-  /// <br>- <see cref="EmbeddedTextures"/>: 旧版内嵌贴图 (PNG base64, "embed:键") —— 仍可读取以兼容旧预制件, 新预制件不再内嵌.</br>
   /// </summary>
   [Serializable]
   public class SlashEffectConfig
@@ -236,9 +235,6 @@ namespace Colin.Core.Graphics.Visual.Slash
 
     /// <summary>刃花层 (沿前缘喷射) 参数.</summary>
     public SlashSparkConfig Sparks = new SlashSparkConfig();
-
-    /// <summary>嵌入纹理表 (键 → PNG base64) —— 预制件自带贴图, "embed:键" 由此解析.</summary>
-    public Dictionary<string, string> EmbeddedTextures = new Dictionary<string, string>();
 
     /// <summary>是否循环挥砍 (游戏内持续技/编辑器预览).</summary>
     public bool Looping = false;
@@ -274,9 +270,6 @@ namespace Colin.Core.Graphics.Visual.Slash
       Name = Name,
       Arc = Arc?.Clone() ?? new SlashArcConfig(),
       Sparks = Sparks?.Clone() ?? new SlashSparkConfig(),
-      EmbeddedTextures = EmbeddedTextures is null
-        ? new Dictionary<string, string>()
-        : new Dictionary<string, string>(EmbeddedTextures),
       Looping = Looping,
       RestTime = RestTime,
       Seed = Seed

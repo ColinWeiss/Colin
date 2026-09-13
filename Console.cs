@@ -76,16 +76,17 @@ namespace Colin.Core
       {
         // 目录建不出来就只走控制台, 别拦着游戏
       }
-      foreach (string line in _writeQueue.GetConsumingEnumerable())
+      try
       {
-        try
+        foreach (string line in _writeQueue.GetConsumingEnumerable())
         {
+
           File.AppendAllText(_logPath, line + Environment.NewLine);
         }
-        catch
-        {
-          // 日志写不进去也不能影响游戏本体, 静默吞掉
-        }
+      }
+      catch
+      {
+        // 日志写不进去也不能影响游戏本体, 静默吞掉
       }
     }
 

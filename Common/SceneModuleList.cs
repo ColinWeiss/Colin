@@ -58,7 +58,8 @@ namespace Colin.Core.Common
         _com = Components.Values.ElementAt(count);
         if (_com.Enable)
         {
-          using (StageRecorder.Tag(GetTag(_updateTags, _com.GetType(), "Upd:")))
+          // Debug 常量分支, Release 下 GetTag 调用整个被编译器消掉, 每帧白查的字典也省了
+          using (StageRecorder.Tag(CoreInfo.Debug ? GetTag(_updateTags, _com.GetType(), "Upd:") : null))
           {
             _com.DoUpdate(gameTime);
           }
@@ -80,7 +81,7 @@ namespace Colin.Core.Common
           CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
           if (renderMode.RawRtVisible)
           {
-            using (StageRecorder.Tag(GetTag(_rawTags, renderMode.GetType(), "Raw:")))
+            using (StageRecorder.Tag(CoreInfo.Debug ? GetTag(_rawTags, renderMode.GetType(), "Raw:") : null))
             {
               renderMode.DoRawRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
             }
@@ -97,7 +98,7 @@ namespace Colin.Core.Common
           temp = null;
           if (renderMode.Presentation)
           {
-            using (StageRecorder.Tag(GetTag(_presTags, renderMode.GetType(), "Pres:")))
+            using (StageRecorder.Tag(CoreInfo.Debug ? GetTag(_presTags, renderMode.GetType(), "Pres:") : null))
             {
               if (Scene.ModulePostProcessor.Passes.TryGetValue(renderMode, out var pass))
               {

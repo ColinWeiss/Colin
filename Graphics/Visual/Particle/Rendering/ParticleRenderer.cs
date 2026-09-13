@@ -222,35 +222,6 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
       }
     }
 
-    /// <summary>
-    /// 解码 PNG/JPG 字节为纹理并按名缓存 (预制件嵌入纹理的统一入口; alpha 预乘).
-    /// 已缓存直接返回 —— "embed:键" 纹理由此解析, 玩家机器上无需任何磁盘文件.
-    /// </summary>
-    public Texture2D LoadTextureBytes(string cacheName, byte[] imageData)
-    {
-      if (_textures.TryGetValue(cacheName, out Texture2D cached))
-        return cached;
-      string tempPath = Path.Combine(Path.GetTempPath(), "particle_embed_" + Math.Abs(cacheName.GetHashCode()) + ".png");
-      try
-      {
-        File.WriteAllBytes(tempPath, imageData);
-        Texture2D texture = Texture2D.FromFile(_device, tempPath);
-        PremultiplyAlpha(texture);
-        _textures[cacheName] = texture;
-        Console.Log(ConsoleTextType.Remind, "Particle", $"嵌入纹理已加载: {cacheName} ({texture.Width}×{texture.Height})");
-        return texture;
-      }
-      catch (Exception exception)
-      {
-        Console.Log(ConsoleTextType.Error, "Particle", $"嵌入纹理解码失败 ({cacheName}): {exception.Message}");
-        return null;
-      }
-      finally
-      {
-        try { File.Delete(tempPath); } catch { /* 临时文件清理失败可忽略. */ }
-      }
-    }
-
     /// <summary>alpha 预乘: 加法混合 (刀光/发光) 下透明区域不再发白.</summary>
     private void PremultiplyAlpha(Texture2D texture)
     {

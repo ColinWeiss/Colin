@@ -22,7 +22,10 @@ namespace Colin.Core.Common.Debugs
     /// </summary>
     public static StageToken Tag(string name)
     {
-      _stack.Push((name, Stopwatch.GetTimestamp()));
+      // 计时本身是纯调试开销, 用常量分支包住, Release 下编译器连推栈带计时一起消掉,
+      // 测量对象的工作照常执行, 调用点不用到处包 if
+      if (CoreInfo.Debug)
+        _stack.Push((name, Stopwatch.GetTimestamp()));
       return default;
     }
 
@@ -80,6 +83,8 @@ namespace Colin.Core.Common.Debugs
     {
       public void Dispose()
       {
+        if (CoreInfo.Debug is false)
+          return;
         if (_stack.Count == 0)
           return;
         (string name, long start) = _stack.Pop();
