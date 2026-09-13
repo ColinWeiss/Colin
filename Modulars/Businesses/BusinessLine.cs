@@ -22,6 +22,9 @@ namespace Colin.Core.Modulars
     private ConcurrentQueue<IBusinessCase> _current = new ConcurrentQueue<IBusinessCase>();
     public ConcurrentQueue<IBusinessCase> Cases => _current;
 
+    /// <summary>缓存加当前两条队列的总积压 (加载流程的收敛探针用).</summary>
+    public int Backlog => _cache.Count + _current.Count;
+
     /// <summary>
     /// 标记工作项至缓存队列.
     /// </summary>

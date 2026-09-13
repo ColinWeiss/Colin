@@ -19,6 +19,21 @@ namespace Colin.Core.Modulars
     public void MarkMainThreadJob(Action job)
       => _mainThreadJobs.Enqueue(job);
 
+    /// <summary>未处理的收尾作业数 (加载流程的收敛探针用).</summary>
+    public int PendingJobCount => _mainThreadJobs.Count;
+
+    /// <summary>所有业务线的命令积压总数 (加载流程的收敛探针用).</summary>
+    public int CommandBacklog
+    {
+      get
+      {
+        int total = 0;
+        foreach (BusinessLine line in _businesses.Values)
+          total += line.Backlog;
+        return total;
+      }
+    }
+
     /// <summary>
     /// 为指定业务线添加工作项.
     /// </summary>

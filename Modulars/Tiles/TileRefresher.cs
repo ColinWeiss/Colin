@@ -24,6 +24,18 @@ namespace Colin.Core.Modulars.Tiles
 
     public ConcurrentDictionary<Point, ConcurrentQueue<Point3>> RefreshQueue = new();
 
+    /// <summary>刷新积压总数 (加载流程的收敛探针用).</summary>
+    public int TotalQueued
+    {
+      get
+      {
+        int total = 0;
+        foreach (ConcurrentQueue<Point3> queue in RefreshQueue.Values)
+          total += queue.Count;
+        return total;
+      }
+    }
+
     /// <summary>
     /// 每帧刷新消费的时间预算, 单位毫秒, 超了就留到下一帧接着刷.
     /// </summary>

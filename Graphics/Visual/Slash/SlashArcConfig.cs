@@ -6,15 +6,6 @@ using CurveKey = Colin.Core.Graphics.Visual.Curve.CurveKey;
 
 namespace Colin.Core.Graphics.Visual.Slash
 {
-  /// <summary>旧版收起方式 (已被收尾修饰器列表取代; 仅用于加载旧 JSON 时合成修饰器).</summary>
-  public enum SlashRetireMode
-  {
-    /// <summary>渐隐.</summary>
-    Fade,
-    /// <summary>收拢.</summary>
-    Sweep
-  }
-
     /// <summary>
     /// 刀光本体 (弧形条带 Mesh) 配置. 一次完整的挥动明确分为两个阶段:
     /// <br>- <b>阶段一 挥动</b>: 前缘按 <see cref="SweepCurve"/> 进度曲线从 <see cref="ArcFrom"/>
@@ -69,27 +60,12 @@ namespace Colin.Core.Graphics.Visual.Slash
 
     // ---- 纹理层 (可叠加) ----
 
-    /// <summary>本体纹理层列表: 每层独立纹理/色调/UV 变换, 逐层绘制叠加;
-    /// 为空时回退到旧字段 <see cref="Texture"/> 单层绘制.</summary>
+    /// <summary>本体纹理层列表: 每层独立纹理/色调/UV 变换, 逐层绘制叠加.</summary>
     public List<SlashTextureLayer> Layers = new List<SlashTextureLayer>();
-
-    // ---- 旧字段兼容 (新配置不再使用; 加载旧 JSON 且无修饰器/无层时兜底) ----
-
-    /// <summary>[旧] 收起方式 —— Finishes 为空时据此合成收尾修饰器.</summary>
-    public SlashRetireMode Retire = SlashRetireMode.Sweep;
-    /// <summary>[旧] 渐隐时长.</summary>
-    public float FadeTime = 0.28f;
-    /// <summary>[旧] 收拢时长.</summary>
-    public float CatchupTime = 0.25f;
-    /// <summary>[旧] 单纹理名 —— Layers 为空时的兜底纹理.</summary>
-    public string Texture = "blade";
-    /// <summary>[旧] 未使用 (历史序列化兼容).</summary>
-    public float WidthPower = 1.5f;
 
     /// <summary>配置版本号 (编辑后自增).</summary>
     [JsonIgnore]
     public int Version;
-
     /// <summary>触发配置变更通知.</summary>
     public event Action<SlashArcConfig> Changed;
 
@@ -122,12 +98,7 @@ namespace Colin.Core.Graphics.Visual.Slash
       SweepTime = SweepTime,
       SweepCurve = SweepCurve?.Clone() ?? FloatCurve.Linear(),
       Finishes = Finishes?.Select(f => f?.Clone()).ToList() ?? new List<SlashFinishConfig>(),
-      Layers = Layers?.Select(l => l?.Clone()).ToList() ?? new List<SlashTextureLayer>(),
-      Retire = Retire,
-      FadeTime = FadeTime,
-      CatchupTime = CatchupTime,
-      Texture = Texture,
-      WidthPower = WidthPower
+      Layers = Layers?.Select(l => l?.Clone()).ToList() ?? new List<SlashTextureLayer>()
     };
   }
 }

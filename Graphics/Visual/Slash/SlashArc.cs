@@ -74,8 +74,7 @@ namespace Colin.Core.Graphics.Visual.Slash
       Array.Clear(_layerScrolls, 0, _layerScrolls.Length);
     }
 
-    /// <summary>同步启用的收尾修饰器 (配置版本变更或首次更新时重建;
-    /// 旧配置无修饰器时按 Retire/FadeTime/CatchupTime 合成兜底).</summary>
+    /// <summary>同步启用的收尾修饰器 (配置版本变更或首次更新时重建).</summary>
     private void SyncFinishes()
     {
       int stamp = Config.Version;
@@ -88,15 +87,6 @@ namespace Colin.Core.Graphics.Visual.Slash
         foreach (SlashFinishConfig finish in Config.Finishes)
           if (finish is not null && finish.Enabled)
             _activeFinishes.Add(finish);
-
-      // —— 旧配置兼容: 未配置收尾修饰器时按 Retire/FadeTime/CatchupTime 合成 ——
-      if (_activeFinishes.Count == 0)
-      {
-        if (Config.Retire == SlashRetireMode.Sweep)
-          _activeFinishes.Add(new SlashCollapseFinish { Duration = MathF.Max(1e-3f, Config.CatchupTime) });
-        else
-          _activeFinishes.Add(new SlashFadeFinish { Duration = MathF.Max(1e-3f, Config.FadeTime) });
-      }
     }
 
     /// <summary>推进动画 (由 SlashRenderer.TickAll 或调用方驱动).
@@ -218,10 +208,8 @@ namespace Colin.Core.Graphics.Visual.Slash
         float angleDeg = MathHelper.Lerp(_headDeg, tailDeg, t);
 
         // 顶点色渐隐: 全局透明度 (渐隐修饰器乘算) 恒参与;
-        // 旧 Sweep 收起配置再叠加静态尾端渐变 (头亮尾隐的既有观感).
-        float fade = globalFade;
-        if (config.Retire == SlashRetireMode.Sweep)
-          fade *= MathHelper.Lerp(1f, 0.35f, t);
+        // 叠加静态尾端渐变 (头亮尾隐的既有观感).
+        float fade = globalFade * MathHelper.Lerp(1f, 0.35f, t);
         PlacePoint(i, angleDeg, config, t, Math.Clamp(fade, 0f, 1f), radius, halfWidth);
       }
 

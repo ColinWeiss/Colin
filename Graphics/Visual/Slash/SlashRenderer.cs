@@ -123,7 +123,6 @@
 
       Matrix world = arc.TransformMatrix();
       List<SlashTextureLayer> layers = arc.Config.Layers;
-      bool drewAny = false;
       if (layers is not null)
       {
         for (int i = 0; i < layers.Count; i++)
@@ -131,16 +130,11 @@
           SlashTextureLayer layer = layers[i];
           if (layer is null || !layer.Enabled)
             continue;
-          drewAny = true;
           bool wrap = layer.UTiling != 1f || layer.UOffset != 0f || layer.ScrollSpeed != 0f;
           Vector4 uvTransform = new Vector4(layer.UTiling, layer.UOffset + arc.GetLayerScroll(i), layer.VScale, layer.Intensity);
           DrawPass(segments, layer.Texture, uvTransform, layer.Tint, world, camera, wrap);
         }
       }
-
-      // —— 无层配置: 回退到旧单纹理字段 (等价单层) ——
-      if (!drewAny)
-        DrawPass(segments, arc.Config.Texture, new Vector4(1f, 0f, 1f, 1f), Vector4.One, world, camera, wrap: false);
     }
 
     /// <summary>轨迹刀光 (世界坐标点列, 单纹理).</summary>
