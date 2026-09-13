@@ -1,5 +1,7 @@
 ﻿namespace Colin.Core.Modulars.Tiles
 {
+  using System.Threading;
+
   /// <summary>
   /// 物块指针集合.
   /// <br>用于管理物块指针; 运行时作缓存使用.</br>
@@ -12,12 +14,11 @@
     private static int _sortCache = 0;
     /// <summary>
     /// 更新排序缓存.
+    /// <br>世界生成在后台也会递增它, 用原子操作, 丢了序号会让两个结构物块叠在同一层.</br>
     /// </summary>
     public static int UpdateSortCache()
     {
-      int value = _sortCache;
-      _sortCache++;
-      return value;
+      return Interlocked.Increment(ref _sortCache) - 1;
     }
 
     /// <summary>
@@ -80,8 +81,8 @@
 
     /// <summary>
     /// 清空整个指针缓存.
-    /// <br>本来想把列表回收进池子, 但世界生成在后台线程也会写这本字典, 活着枚举必撞并发, 直接清最稳.</br>
-    /// <br>真正的大头是 AddPointer 里的平方级重排, 那个已经修掉了, 每帧这点列表开销交给 GC 可以接受.</br>
+    /// <br>后台读档和生成已经不直写这本字典了, 指针都由 OnChunkReady 在主线程收尾补上, 这里怎么清都安全.</br>
+    /// <br>渲染端每帧全量重建, 所以列表就不池化了, 每帧这点列表开销交给 GC 可以接受.</br>
     /// </summary>
     public void ClearToPool()
     {

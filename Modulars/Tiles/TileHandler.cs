@@ -64,6 +64,12 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public virtual void OnBuildProcess(TileBuilder builder, bool placeOrDestruct, int index, Point3 wCoord) { }
 
+    /// <summary>
+    /// 于区块数据在后台就位后, 主线程收尾时执行.
+    /// <br>后台读档和生成期间不碰主线程的共享缓存, 欠下的活儿在这里补.</br>
+    /// </summary>
+    public virtual void OnChunkReady() { }
+
     public virtual void SaveStep(BinaryWriter writer) { }
 
     public virtual void LoadStep(BinaryReader reader) { }

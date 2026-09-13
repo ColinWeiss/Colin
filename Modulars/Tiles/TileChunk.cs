@@ -374,6 +374,16 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    /// <summary>
+    /// 区块数据就位后的主线程收尾.
+    /// <br>后台读档和生成期间各 Handler 欠下的活儿在这里补, 比如结构物块的指针重建.</br>
+    /// </summary>
+    public void DoChunkReady()
+    {
+      for (int i = 0; i < Handler.Count; i++)
+        Handler[i].OnChunkReady();
+    }
+
     public void AsyncLoadChunk(string path)
     {
       _loading = true;
@@ -390,6 +400,7 @@ namespace Colin.Core.Modulars.Tiles
           {
             SetOperation(false);
             _loading = false;
+            DoChunkReady();
             MarkRefreshAll();
           }
         });
@@ -402,6 +413,7 @@ namespace Colin.Core.Modulars.Tiles
       DataIO.DoLoad(path, this); //同步执行, 不使用 await.
       MarkRefreshAll();
       _loading = false;
+      DoChunkReady();
     }
 
     // 全量刷新只刷有内容的格子, 空格子没挂行为, 刷了也是空转, 还占队列
