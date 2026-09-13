@@ -116,15 +116,27 @@ namespace Colin.Core.Resources
     }
     public static void LoadTable(string path)
     {
-      hashToSers.Clear();
-      using (FileStream fileStream = new FileStream(path, FileMode.Open))
+      // 新存档还没有表文件: 保留启动时构建的注册表, 这里绝不能先清后读
+      // 以前先 Clear 再开文件, 文件一缺反向表就被掏空, 之后所有哈希查询全返回 null
+      if (File.Exists(path) is false)
       {
-        JsonSerializerOptions options = new JsonSerializerOptions();
-        options.WriteIndented = true;
-        serToHashs = (Dictionary<string, int>)JsonSerializer.Deserialize(fileStream, serToHashs.GetType());
-        foreach (var item in serToHashs)
-          hashToSers.Add(item.Value, item.Key);
+        Console.Log(ConsoleTextType.Remind, "Resource", string.Concat("代码资产表不存在, 沿用运行时注册表: ", path));
+        return;
       }
+      Dictionary<string, int> loaded;
+      using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+        loaded = JsonSerializer.Deserialize<Dictionary<string, int>>(fileStream);
+      // 合并语义: 当前程序集的类型以注册表为准, 表里多出来的历史名字补进来, 老存档才能照常解析
+      // 全部在临时状态里准备妥当再原子替换, 中途任何一步失败都不会把注册表掏空
+      foreach (var item in loaded)
+        serToHashs.TryAdd(item.Key, item.Value);
+      Dictionary<int, string> reversed = new Dictionary<int, string>();
+      foreach (var item in serToHashs)
+      {
+        if (reversed.ContainsKey(item.Value) is false)
+          reversed.Add(item.Value, item.Key);
+      }
+      hashToSers = reversed;
     }
   }
 }

@@ -226,8 +226,9 @@ namespace Colin.Core.Modulars.Tiles
     public void DoInitialize()
     {
       int length = Width * Height * Depth;
-      Infos = new TileInfo[length];
-      Kernals = new TileKernel[length];
+      // 大数组从池里租, 区块反复装卸不再反复喂大对象堆
+      Infos = TileChunkArrayPool.RentInfos(length);
+      Kernals = TileChunkArrayPool.RentKernals(length);
       Handler = new List<TileHandler>();
       for (int count = 0; count < length; count++)
         CreateInfo(count);
@@ -391,13 +392,30 @@ namespace Colin.Core.Modulars.Tiles
       SetOperation(true);
       Task.Run(() =>
       {
-        DataIO.DoLoad(path, this, true);
+        Exception loadError = null;
+        try
+        {
+          DataIO.DoLoad(path, this, true);
+        }
+        catch (Exception exception)
+        {
+          loadError = exception;
+        }
         // 反序列化在后台做完就行, 收尾的刷新和状态复位回主线程排队执行, 不和游戏逻辑抢数据
         // 刷新走标记队列而不是立刻刷完, 让刷新器按时间预算把工作量摊到后面几帧
         Tile.Scene.Business.MarkMainThreadJob(() =>
         {
           using (StageRecorder.Tag("Chunk.LoadCompletion"))
           {
+            if (loadError is not null)
+            {
+              // 存档文件截断或损坏, 多半是上次闪退掐死了正在写的存档
+              // 把区块重建成空的兜底, 别让半个文件把加载流程卡死, 日志里会留下具体是哪个文件
+              Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块文件读取失败, 已按空区块重建: ", path, ", 原因: ", loadError.Message));
+              for (int count = 0; count < Infos.Length; count++)
+                CreateInfo(count);
+              Array.Clear(Kernals, 0, Kernals.Length);
+            }
             SetOperation(false);
             _loading = false;
             DoChunkReady();
@@ -488,6 +506,7 @@ namespace Colin.Core.Modulars.Tiles
       string typeName;
       int typehash = 0;
       int repairedTiles = 0;
+      int? firstBadHash = null;
       for (int count = 0; count < Infos.Length; count++)
       {
         info = ref this[count];
@@ -496,11 +515,12 @@ namespace Colin.Core.Modulars.Tiles
         {
           typehash = reader.ReadInt32();
           typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
-          Debug.Assert(typeName is not null);
           if (typeName is not null)
           {
             Kernals[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
-            Debug.Assert(Kernals[count] is not null);
+          }
+          if (Kernals[count] is not null)
+          {
             Kernals[count].Tile = Tile;
             Kernals[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
           }
@@ -508,13 +528,15 @@ namespace Colin.Core.Modulars.Tiles
           {
             // 哈希在注册表里对不上号, 一般是老存档带着已经删除或改名的物块类型
             // 只能把格子按空的修复, 不然这区块以后存档的时候必然炸
+            // 这里绝不能上 Debug.Assert, 那会绕过上面整个修复分支, 在 Debug 构建里直接 FailFast 杀进程
+            firstBadHash ??= typehash;
             info.Empty = true;
             repairedTiles++;
           }
         }
       }
       if (repairedTiles > 0)
-        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块类型已失效, 已按空格子修复"));
+        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块类型已失效, 已按空格子修复, 未知哈希: ", firstBadHash));
       // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
       int handlerCount = reader.ReadInt32();
       Dictionary<string, TileHandler> namedTag = new();
@@ -541,12 +563,54 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
+      // 数组已释放说明这个区块早前卸载过, 这是一次迟到的重复存档, 直接跳过
+      if (Infos is null)
+      {
+        Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块数组已释放, 跳过重复存档: ", path));
+        return;
+      }
+      // 上一个存档任务还在后台写: 再叠一个任务, 要么撞文件占用, 要么把数组提前还池
+      // 让正在写的那个任务读到被新区块覆写的数据, 产出短文件或错内容, 这里必须拦住
+      if (_saving)
+      {
+        Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块存档进行中, 跳过重复存档: ", path));
+        return;
+      }
       _saving = true;
       Task.Run(() =>
       {
-        DataIO.DoSave(path, this, true);
+        try
+        {
+          DataIO.DoSave(path, this, true);
+          // 先还池再清标志, 中间不留窗口: 还池之后 Infos 已是 null, 走 Infos 的守卫
+          // 若先清标志再还池, 主线程会在两步之间看到 可存档 状态, 又叠出一个空瓦片档
+          ReleaseArrays();
+        }
+        catch (Exception exception)
+        {
+          // 存档失败(典型是文件被上一轮任务占用): 数组留在原地不还池, 宁可漏存不可写坏
+          _saving = false;
+          Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块存档失败, 本区块保持未卸载状态: ", path, ", 原因: ", exception.Message));
+          return;
+        }
         _saving = false;
       });
+    }
+
+    /// <summary>
+    /// 把区块的两块大数组归还进数组池, 然后把字段置空.
+    /// <br>只能在确定没有任何线程再读写这块区块之后调用, 现在唯一的合法入口是异步存档落盘完成.</br>
+    /// <br>置空是故意的: 卸载之后再有人碰这块区块会当场空引用炸出来, 好过拿着陈旧数组悄悄出错.</br>
+    /// </summary>
+    private void ReleaseArrays()
+    {
+      TileInfo[] infos = Infos;
+      TileKernel[] kernals = Kernals;
+      if (infos is null && kernals is null)
+        return;
+      Infos = null;
+      Kernals = null;
+      TileChunkArrayPool.Return(infos, kernals);
     }
 
     public void SaveChunk(string path)
