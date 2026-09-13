@@ -172,6 +172,13 @@ public sealed unsafe class TinterBridge : IDisposable
     return _inputs[CurrentParity].Wrapper;
   }
 
+  /// <summary>诊断用: 当前帧输入缓冲的 MonoGame 视图 (探针采样用, 常规流程勿用).</summary>
+  public Texture2D PeekInput() => IsZeroCopy && _inputs.Length > 0 ? _inputs[CurrentParity].Wrapper : _fbOutput;
+
+  // —— 诊断探针锚点: 最近一次派发实际读取的输入 / 实际产出的输出 (供外部采样, 定位内容断链) ——
+  public static Texture2D DebugLastInput;
+  public static Texture2D DebugLastOutput;
+
   public void Dispose()
   {
     DisposeChain();
@@ -362,7 +369,12 @@ public sealed unsafe class TinterBridge : IDisposable
 
     // textures[0] = this frame's input, textures[k+1] = stage k's output
     var textures = new ReadWriteTexture2D<float4>[n + 1];
-    textures[0] = _inputs[p].CsTexture;
+    // 输入读上上帧的那块: D3D11 渲染与 D3D12 派发在两个无隐式同步的独立队列上,
+    // 同帧写读必然竞态 (compute 起跑时 D3D11 的整帧命令还没执行完, 读到的是透明旧内容).
+    // 三缓冲三帧一轮回, 错开两帧后写入侧必然早已完成; 代价是输入滞后两帧, 对特效可接受.
+    int inputIndex = (p + 1) % Parities;
+    textures[0] = _inputs[inputIndex].CsTexture;
+    DebugLastInput = _inputs[inputIndex].Wrapper;
     for (int k = 0; k < n; k++)
     {
       textures[k + 1] = _chain[k, p].CsTexture;
@@ -381,6 +393,7 @@ public sealed unsafe class TinterBridge : IDisposable
       // frame's BeginFrame wait); this frame's result becomes visible next frame.
       // (p - 1) mod Parities —— 与本帧写入端、上上帧读取端均错开.
       Texture2D result = _chain[n - 1, (p + Parities - 1) % Parities].Wrapper;
+      DebugLastOutput = result;
       _lastSubmittedValue = lastValue;
       _parity = (_parity + 1) % Parities;
       return result;
@@ -395,7 +408,9 @@ public sealed unsafe class TinterBridge : IDisposable
       _parity ^= 1;
     }
 
-    return _chain[n - 1, p].Wrapper;
+    Texture2D fresh = _chain[n - 1, p].Wrapper;
+    DebugLastOutput = fresh;
+    return fresh;
   }
 
   // 三缓冲: D3D12 (dispatch 写) 与 D3D11 (渲染读) 是无隐式同步的独立队列,
@@ -421,7 +436,11 @@ public sealed unsafe class TinterBridge : IDisposable
     for (int i = 0; i < _inputs.Length; i++)
     {
       _inputs[i] = SharedTexture.Create(_mgd, _d3d11, _csDevice, _d3d12Device, width, height);
+      // 新建的共享纹理内容是未初始化显存, 先清成透明, 不然第一次使用会闪噪声
+      _mgd.SetRenderTarget(_inputs[i].Wrapper);
+      _mgd.Clear(Microsoft.Xna.Framework.Color.Transparent);
     }
+    _mgd.SetRenderTarget(null);
 
     _width = width;
     _height = height;

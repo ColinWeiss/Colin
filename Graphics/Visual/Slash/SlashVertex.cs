@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+﻿namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 刀光条带顶点: 位置 (世界/局部 2D) + 纹理坐标 + 顶点色.

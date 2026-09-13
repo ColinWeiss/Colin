@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+﻿namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 条带网格构建器 (拉刀光核心): 把轨迹点列直接展开成三角带 Mesh ——

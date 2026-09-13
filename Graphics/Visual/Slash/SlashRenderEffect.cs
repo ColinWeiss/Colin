@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Colin.Core.Graphics.Visual.Particle.Slash
+namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 刀光渲染 Effect 加载器: 嵌入 MGFX 主路径 + EffectProcessor 进程内编译回退

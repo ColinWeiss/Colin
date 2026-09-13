@@ -1,9 +1,10 @@
+using Colin.Core.Graphics.Visual.Curve;
 ﻿using System.Text.Json.Serialization;
 
 using Colin.Core.Graphics.Visual.Particle;
-using CurveKey = Colin.Core.Graphics.Visual.Particle.CurveKey;
+using CurveKey = Colin.Core.Graphics.Visual.Curve.CurveKey;
 
-namespace Colin.Core.Graphics.Visual.Particle.Slash
+namespace Colin.Core.Graphics.Visual.Slash
 {
   // =====================================================================
   //  收尾修饰器 (阶段二): 挥动结束后的收尾表现, 一份配置可同时叠加多个.

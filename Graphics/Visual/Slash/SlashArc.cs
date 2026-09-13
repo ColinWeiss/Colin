@@ -1,4 +1,5 @@
-namespace Colin.Core.Graphics.Visual.Particle.Slash
+using Colin.Core.Graphics.Visual.Curve;
+namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 弧形刀光实例 (拉刀光 Mesh): 一次完整的挥动明确分为两个阶段 ——

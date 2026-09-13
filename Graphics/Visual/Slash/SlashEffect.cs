@@ -1,4 +1,4 @@
-namespace Colin.Core.Graphics.Visual.Particle.Slash
+namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 刀光效果实例 (独立大功能): 拉刀光 Mesh 本体 (<see cref="SlashArc"/>) + 与前缘角度绑定的刃花粒子层.
@@ -317,8 +317,8 @@ namespace Colin.Core.Graphics.Visual.Particle.Slash
       _sparkEmitter.Drag = sparks.Drag;
       _sparkEmitter.StretchedBillboard = sparks.Stretched;
       _sparkEmitter.ColorOverLife.Keys.Clear();
-      _sparkEmitter.ColorOverLife.Keys.Add(new Colin.Core.Graphics.Visual.Particle.ColorKey(0f, sparks.StartColor));
-      _sparkEmitter.ColorOverLife.Keys.Add(new Colin.Core.Graphics.Visual.Particle.ColorKey(1f, sparks.EndColor));
+      _sparkEmitter.ColorOverLife.Keys.Add(new Colin.Core.Graphics.Visual.Curve.ColorKey(0f, sparks.StartColor));
+      _sparkEmitter.ColorOverLife.Keys.Add(new Colin.Core.Graphics.Visual.Curve.ColorKey(1f, sparks.EndColor));
       if (_sparks is not null)
         _sparks.Config.Render.Texture = sparks.Texture;
       _sparkEmitter.NotifyChanged();   // 曲线版本自增 → GPU 曲线缓冲刷新; 容量变化走结构重建.

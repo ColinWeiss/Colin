@@ -1,9 +1,10 @@
+using Colin.Core.Graphics.Visual.Curve;
 ﻿using System.Text.Json.Serialization;
 
 using Colin.Core.Graphics.Visual.Particle;
-using CurveKey = Colin.Core.Graphics.Visual.Particle.CurveKey;
+using CurveKey = Colin.Core.Graphics.Visual.Curve.CurveKey;
 
-namespace Colin.Core.Graphics.Visual.Particle.Slash
+namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>旧版收起方式 (已被收尾修饰器列表取代; 仅用于加载旧 JSON 时合成修饰器).</summary>
   public enum SlashRetireMode

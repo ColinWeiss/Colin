@@ -1,3 +1,7 @@
+using FloatCurve = Colin.Core.Graphics.Visual.Curve.FloatCurve;
+using ColorCurve = Colin.Core.Graphics.Visual.Curve.ColorCurve;
+using CurveKey = Colin.Core.Graphics.Visual.Curve.CurveKey;
+using ColorKey = Colin.Core.Graphics.Visual.Curve.ColorKey;
 ﻿using System.Text.Json.Serialization;
 
 namespace Colin.Core.Graphics.Visual.Particle

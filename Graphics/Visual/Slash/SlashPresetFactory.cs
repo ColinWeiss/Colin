@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+﻿namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 刀光预设工厂 (工厂模式): 按名称创建 <see cref="SlashEffectConfig"/>.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Colin.Core.Graphics.Visual.Particle.Slash
+namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 预编译着色器字节 (嵌入资源): SlashRender.fx 经 mgfxc /Profile:DirectX_11 编译的

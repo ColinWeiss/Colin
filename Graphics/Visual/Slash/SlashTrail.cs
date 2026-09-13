@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+﻿namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 轨迹历史型刀光 (游戏内剑光): 挥砍时每帧 <see cref="AddPoint"/> 记录剑尖位置,

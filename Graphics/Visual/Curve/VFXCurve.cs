@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Colin.Core.Graphics.Visual.Particle
+namespace Colin.Core.Graphics.Visual.Curve
 {
   /// <summary>曲线插值模式 (控制点曲线: 关键帧即控制点).</summary>
   public enum CurveInterpolation

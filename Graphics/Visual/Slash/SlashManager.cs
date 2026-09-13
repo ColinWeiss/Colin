@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+﻿namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 刀光管理器 (单例): 统一持有活跃的 <see cref="SlashEffect"/>, 驱动每帧更新与渲染.

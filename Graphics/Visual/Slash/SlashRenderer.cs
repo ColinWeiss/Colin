@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Graphics.Visual.Particle.Slash
+﻿namespace Colin.Core.Graphics.Visual.Slash
 {
   /// <summary>
   /// 刀光渲染器 (静态共享): 管理所有活跃的 <see cref="SlashArc"/> / <see cref="SlashTrail"/>,
