@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// 高级自定义渲染系统.
   /// 处理AdvancedRender和DeferredRender的绘制
   /// </summary>
-  public class EcsAdvancedRenderSystem : Entitiesystem
+  public class EcsAdvancedRenderSystem : EcsSystem
   {
     public override void DoUpdate()
     {

@@ -15,10 +15,10 @@ namespace Colin.Core.Modulars.Ecses
   /// </summary>
   public class Ecs : SceneRenderModule, IOStep
   {
-    private Dictionary<Type, Entitiesystem> _systems;
-    public Dictionary<Type, Entitiesystem> Systems => _systems;
+    private Dictionary<Type, EcsSystem> _systems;
+    public Dictionary<Type, EcsSystem> Systems => _systems;
 
-    public T RegisterSystem<T>() where T : Entitiesystem, new()
+    public T RegisterSystem<T>() where T : EcsSystem, new()
     {
       T system = new T();
       system._ecs = this;
@@ -26,7 +26,7 @@ namespace Colin.Core.Modulars.Ecses
       _systems.Add(typeof(T), system);
       return system;
     }
-    public T GetSystem<T>() where T : Entitiesystem => (T)_systems.GetValueOrDefault(typeof(T));
+    public T GetSystem<T>() where T : EcsSystem => (T)_systems.GetValueOrDefault(typeof(T));
 
     public Entity[] Entities;
 
@@ -40,12 +40,12 @@ namespace Colin.Core.Modulars.Ecses
       Scene.Events.Keys.Register(KeysEvent);
       Entities = new Entity[2049];
       NeedClear = new bool[2049];
-      _systems = new Dictionary<Type, Entitiesystem>();
+      _systems = new Dictionary<Type, EcsSystem>();
       CreateCommands = new ConcurrentQueue<EcsCreateCommand>();
     }
     public override void Start()
     {
-      Entitiesystem _system;
+      EcsSystem _system;
       for (int sCount = 0; sCount < _systems.Values.Count; sCount++)
       {
         _system = _systems.Values.ElementAt(sCount);
@@ -62,7 +62,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       {
         Entity _entity;
-        Entitiesystem _currentSystem;
+        EcsSystem _currentSystem;
         EcsCreateCommand cmd;
         while (CreateCommands.Count > 0)
         {
@@ -108,7 +108,7 @@ namespace Colin.Core.Modulars.Ecses
     public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
       device.Clear(Color.Transparent);
-      Entitiesystem _system;
+      EcsSystem _system;
       for (int count = 0; count < _systems.Values.Count; count++)
       {
         _system = _systems.Values.ElementAt(count);

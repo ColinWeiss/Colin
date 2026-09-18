@@ -5,7 +5,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// <summary>
   /// 用以处理实体位移的系统.
   /// </summary>
-  public class EcsMoveSystem : Entitiesystem
+  public class EcsMoveSystem : EcsSystem
   {
     private EcsComTransform comTransform;
 

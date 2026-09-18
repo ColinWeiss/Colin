@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// <summary>
   /// 为EcsComScript提供生命周期钩子.
   /// </summary>
-  public class EcsScriptSystem : Entitiesystem
+  public class EcsScriptSystem : EcsSystem
   {
     public override void Reset()
     {

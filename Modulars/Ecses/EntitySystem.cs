@@ -3,7 +3,7 @@
   /// <summary>
   /// 实体系统喵
   /// </summary>
-  public class Entitiesystem
+  public class EcsSystem
   {
     internal Ecs _ecs;
     public Ecs Ecs => _ecs;

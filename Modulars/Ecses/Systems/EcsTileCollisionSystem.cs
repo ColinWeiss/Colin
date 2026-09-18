@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
   /// <summary>
   /// 用以处理实体与物块碰撞的系统.
   /// </summary>
-  public class EcsTileCollisionSystem : Entitiesystem
+  public class EcsTileCollisionSystem : EcsSystem
   {
     private EcsComTransform comTransform;
     private EcsComTileInteract comPhysic;
