@@ -347,10 +347,20 @@ namespace Colin.Core.Modulars.Tiles
       // 创建一个区块要分配好几 MB 的数组, 这里的耗时和 GC 压力都会进尖峰报告的 Chunk.Create
       using (StageRecorder.Tag("Chunk.Create"))
       {
-        TileChunk chunk = new TileChunk(this, new Point(x, y));
-        chunk.DoInitialize();
-        Chunks[chunk.Coord] = chunk;
+        Chunks[new Point(x, y)] = CreateChunkUnpublished(new Point(x, y));
       }
+    }
+
+    /// <summary>
+    /// 只构造并初始化区块对象, 不发布进 <see cref="Chunks"/>.
+    /// <br>供后台物化流程在区块就绪前于后台线程持有它; 发布之前主线程看不到这个区块.</br>
+    /// <br>分配规模与 <see cref="CreateEmptyChunk(int, int, int?)"/> 相同, 区别只在于是否进字典.</br>
+    /// </summary>
+    public TileChunk CreateChunkUnpublished(Point coord)
+    {
+      TileChunk chunk = new TileChunk(this, coord);
+      chunk.DoInitialize();
+      return chunk;
     }
 
     /// <summary>

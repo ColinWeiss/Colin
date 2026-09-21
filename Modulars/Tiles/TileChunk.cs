@@ -387,9 +387,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncLoadChunk(string path)
     {
-      _loading = true;
-      // 加载期间把格子标记成 Loading, 碰撞系统会把它当实心处理, 玩家不会踩空
-      SetOperation(true);
+      PrepareLoading();
       Task.Run(() =>
       {
         Exception loadError = null;
@@ -406,23 +404,62 @@ namespace Colin.Core.Modulars.Tiles
         Tile.Scene.Business.MarkMainThreadJob(() =>
         {
           using (StageRecorder.Tag("Chunk.LoadCompletion"))
-          {
-            if (loadError is not null)
-            {
-              // 存档文件截断或损坏, 多半是上次闪退掐死了正在写的存档
-              // 把区块重建成空的兜底, 别让半个文件把加载流程卡死, 日志里会留下具体是哪个文件
-              Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块文件读取失败, 已按空区块重建: ", path, ", 原因: ", loadError.Message));
-              for (int count = 0; count < Infos.Length; count++)
-                CreateInfo(count);
-              Array.Clear(Kernals, 0, Kernals.Length);
-            }
-            SetOperation(false);
-            _loading = false;
-            DoChunkReady();
-            MarkRefreshAll();
-          }
+            CompleteLoad(path, loadError);
         });
       });
+    }
+
+    /// <summary>
+    /// 把区块置为加载中状态: 格子标 Loading, 碰撞系统会把它当实心处理, 玩家不会踩空.
+    /// <br>后台物化流程在把区块发布进 Chunks 之前调用, 保证世界看到的第一帧就是实心的.</br>
+    /// </summary>
+    public void PrepareLoading()
+    {
+      _loading = true;
+      SetOperation(true);
+    }
+
+    /// <summary>
+    /// 在当前(后台)线程上执行读档, 并把收尾作业排回主线程.
+    /// <br>与 <see cref="AsyncLoadChunk"/> 的差别: 不再自起 Task, 供已经在后台线程上的物化流程复用.</br>
+    /// <br>调用前需先 <see cref="PrepareLoading"/>, 调用方负责把区块发布进 Tile.Chunks.</br>
+    /// </summary>
+    public void LoadOffThread(string path)
+    {
+      Exception loadError = null;
+      try
+      {
+        DataIO.DoLoad(path, this, true);
+      }
+      catch (Exception exception)
+      {
+        loadError = exception;
+      }
+      Tile.Scene.Business.MarkMainThreadJob(() =>
+      {
+        using (StageRecorder.Tag("Chunk.LoadCompletion"))
+          CompleteLoad(path, loadError);
+      });
+    }
+
+    /// <summary>
+    /// 读档完成的主线程收尾: 坏档兜底重建、状态复位、补 Handler 欠账、整块标刷.
+    /// </summary>
+    private void CompleteLoad(string path, Exception loadError)
+    {
+      if (loadError is not null)
+      {
+        // 存档文件截断或损坏, 多半是上次闪退掐死了正在写的存档
+        // 把区块重建成空的兜底, 别让半个文件把加载流程卡死, 日志里会留下具体是哪个文件
+        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块文件读取失败, 已按空区块重建: ", path, ", 原因: ", loadError.Message));
+        for (int count = 0; count < Infos.Length; count++)
+          CreateInfo(count);
+        Array.Clear(Kernals, 0, Kernals.Length);
+      }
+      SetOperation(false);
+      _loading = false;
+      DoChunkReady();
+      MarkRefreshAll();
     }
 
     public void LoadChunk(string path)
