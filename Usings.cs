@@ -24,6 +24,7 @@ global using Console = Colin.Core.Console;
 global using Keys = Microsoft.Xna.Framework.Input.Keys;
 global using Rectangle = Microsoft.Xna.Framework.Rectangle;
 global using RectangleF = Colin.Core.RectangleF;
+global using Point = Microsoft.Xna.Framework.Point;
 global using Vector2 = Microsoft.Xna.Framework.Vector2;
 global using Vector3 = Microsoft.Xna.Framework.Vector3;
 global using Vector4 = Microsoft.Xna.Framework.Vector4;
