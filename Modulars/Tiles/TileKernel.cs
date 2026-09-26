@@ -22,6 +22,22 @@ namespace Colin.Core.Modulars.Tiles
     public ITileSpriteFormat SpriteFormat;
 
     /// <summary>
+    /// 该物块在小地图上展示的颜色.
+    /// <br>由区域数据 (TileRegionHandler) 在放置时读走, 亦可被中央色表或运行时数据覆盖.</br>
+    /// </summary>
+    public Color MapColor = new Color(112, 106, 98);
+
+    /// <summary>
+    /// 该物块在小地图上是否展示名称.
+    /// </summary>
+    public bool ShowMapName = false;
+
+    /// <summary>
+    /// 该物块在小地图上的名称; 为空时回退到物块内核标识的末段.
+    /// </summary>
+    public string MapName = null;
+
+    /// <summary>
     /// 指示该物块行为所属的 Tile 模块.
     /// </summary>
     public Tile Tile { get; internal set; }
