@@ -6,7 +6,7 @@ namespace Colin.Core.Modulars.Tiles
   /// 物块内核.
   /// <br>用以定制分种类物块相关行为.</br>
   /// </summary>
-  public class TileKernel : ICodeResource
+  public class TileKernel : ICodeRes, ICodeResPreload
   {
     private string _identifier;
     public string Identifier
@@ -80,5 +80,7 @@ namespace Colin.Core.Modulars.Tiles
     }
 
     public void DoInitialize() { }
+
+    public virtual void PreLoad() { }
   }
 }

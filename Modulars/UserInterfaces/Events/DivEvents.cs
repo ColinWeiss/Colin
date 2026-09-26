@@ -18,6 +18,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public DivEventNode<RightDownArgs> RightDown;
     public DivEventNode<RightUpArgs> RightUp;
     public DivEventNode<ScrollDownArgs> ScrollDown;
+    public DivEventNode<ScrollClickedArgs> ScrollClicked;
     public DivEventNode<ScrollUpArgs> ScrollUp;
 
     public DivEventNode<KeysClickedArgs> KeysClicked;
@@ -47,6 +48,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightUp.Div = div;
       ScrollDown = new DivEventNode<ScrollDownArgs>();
       ScrollDown.Div = div;
+      ScrollClicked = new DivEventNode<ScrollClickedArgs>();
+      ScrollClicked.Div = div;
       ScrollUp = new DivEventNode<ScrollUpArgs>();
       ScrollUp.Div = div;
       KeysClicked = new DivEventNode<KeysClickedArgs>();
@@ -120,6 +123,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown += MouseBlockOutEvent;
       RightUp += MouseBlockOutEvent;
       ScrollDown += MouseBlockOutEvent;
+      ScrollClicked += MouseBlockOutEvent;
       ScrollUp += MouseBlockOutEvent;
       KeysClicked += KeysBlockOutEvent;
       KeysClicking += KeysBlockOutEvent;
@@ -197,6 +201,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown.Append(node.RightDown);
       RightUp.Append(node.RightUp);
       ScrollDown.Append(node.ScrollDown);
+      ScrollClicked.Append(node.ScrollClicked);
       ScrollUp.Append(node.ScrollUp);
       KeysClicking.Append(node.KeysClicking);
       KeysDown.Append(node.KeysDown);
@@ -214,6 +219,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightClicking.Insert(index, node.RightClicking);
       RightDown.Insert(index, node.RightDown);
       RightUp.Insert(index, node.RightUp);
+      ScrollDown.Insert(index, node.ScrollDown);
+      ScrollClicked.Insert(index, node.ScrollClicked);
+      ScrollUp.Insert(index, node.ScrollUp);
       KeysClicking.Insert(index, node.KeysClicking);
       KeysDown.Insert(index, node.KeysDown);
       KeysClicked.Insert(index, node.KeysClicked);
@@ -231,6 +239,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown.Register(node.RightDown);
       RightUp.Register(node.RightUp);
       ScrollDown.Register(node.ScrollDown);
+      ScrollClicked.Register(node.ScrollClicked);
       ScrollUp.Register(node.ScrollUp);
       KeysClicking.Register(node.KeysClicking);
       KeysDown.Register(node.KeysDown);
@@ -249,6 +258,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown.Remove(node.RightDown);
       RightUp.Remove(node.RightUp);
       ScrollDown.Remove(node.ScrollDown);
+      ScrollClicked.Remove(node.ScrollClicked);
       ScrollUp.Remove(node.ScrollUp);
       KeysClicking.Remove(node.KeysClicking);
       KeysDown.Remove(node.KeysDown);
@@ -268,6 +278,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown.Dispose();
       RightUp.Dispose();
       ScrollDown.Dispose();
+      ScrollClicked.Dispose();
       ScrollUp.Dispose();
       KeysClicked.Dispose();
       KeysClicking.Dispose();
@@ -282,6 +293,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown.Div = null;
       RightUp.Div = null;
       ScrollDown.Div = null;
+      ScrollClicked.Div = null;
       ScrollUp.Div = null;
       KeysClicked.Div = null;
       KeysClicking.Div = null;
@@ -299,6 +311,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       RightDown -= MouseBlockOutEvent;
       RightUp -= MouseBlockOutEvent;
       ScrollDown -= MouseBlockOutEvent;
+      ScrollClicked -= MouseBlockOutEvent;
       ScrollUp -= MouseBlockOutEvent;
       KeysClicked -= KeysBlockOutEvent;
       KeysClicking -= KeysBlockOutEvent;

@@ -3,7 +3,7 @@
   /// <summary>
   /// 表示程序中的代码资源.
   /// </summary>
-  public interface ICodeResource
+  public interface ICodeRes
   {
     public void DoInitialize();
   }

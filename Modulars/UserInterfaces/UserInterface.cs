@@ -96,6 +96,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       Scene.Events.Mouse.RightDown.Register(root.Events.RightDown);
       Scene.Events.Mouse.RightUp.Register(root.Events.RightUp);
       Scene.Events.Mouse.ScrollDown.Register(root.Events.ScrollDown);
+      Scene.Events.Mouse.ScrollClicked.Register(root.Events.ScrollClicked);
       Scene.Events.Mouse.ScrollUp.Register(root.Events.ScrollUp);
 
       Scene.Events.Keys.KeysClicked.Register(root.Events.KeysClicked);

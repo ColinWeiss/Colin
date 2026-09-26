@@ -13,7 +13,7 @@ namespace Colin.Core.Modulars.Ecses
   /// <summary>
   /// 实体.
   /// </summary>
-  public class Entity : IGameContent<Entity>, ICodeResource, IDoBlockable
+  public class Entity : IGameContent<Entity>, ICodeRes, IDoBlockable
   {
     private string _identifier;
     public string Identifier

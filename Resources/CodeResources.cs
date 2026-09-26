@@ -22,7 +22,7 @@ namespace Colin.Core.Resources
     {
       foreach (Type item in Assembly.GetExecutingAssembly().GetTypes())
       {
-        if (!item.IsAbstract && _codeResourceTypes.Contains(item) && item.GetInterfaces().Contains(typeof(ICodeResource)))
+        if (!item.IsAbstract && _codeResourceTypes.Contains(item) && item.GetInterfaces().Contains(typeof(ICodeRes)))
         {
           Type resources = typeof(CodeResources<>);
           Type resource = resources.MakeGenericType(item);
@@ -31,7 +31,7 @@ namespace Colin.Core.Resources
       }
     }
   }
-  public class CodeResources<T0> where T0 : ICodeResource
+  public class CodeResources<T0> where T0 : ICodeRes
   {
     public static Dictionary<Type, T0> Resources = new Dictionary<Type, T0>();
     public static Dictionary<string, int> serToHashs = new Dictionary<string, int>();
@@ -95,7 +95,10 @@ namespace Colin.Core.Resources
       {
         if (!item.IsAbstract && item.IsSubclassOf(typeof(T0)))
         {
-          Resources.Add(item, (T0)Activator.CreateInstance(item));
+          T0 obj = (T0)Activator.CreateInstance(item);
+          if (obj is ICodeResPreload pre)
+            pre.PreLoad();
+          Resources.Add(item, obj);
           serToResourceTypes.Add(item.FullName, item);
           serToHashs.Add(item.FullName, item.FullName.GetMsnHashCode());
         }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -122,6 +122,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\IBusinessCase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComVelLimit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\EcsComInterfaces.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Montages\Mont.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Montages\MontController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Montages\MontCue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Montages\MontPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\ITileSpriteFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileBuilder.cs" />
@@ -189,7 +193,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Point3.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeRes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResPreload.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\CodeResources.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\MathExt.cs" />

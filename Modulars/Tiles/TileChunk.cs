@@ -600,18 +600,8 @@ namespace Colin.Core.Modulars.Tiles
 
     public void AsyncSaveChunk(string path)
     {
-      if (Infos is null)
-      {
-        if(CoreInfo.Debug)
-          Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块数组已释放, 跳过重复存档: ", path));
+      if (Infos is null || _saving)
         return;
-      }
-      if (_saving)
-      {
-        if (CoreInfo.Debug)
-          Console.Log(ConsoleTextType.Remind, "TileChunk", string.Concat("区块存档进行中, 跳过重复存档: ", path));
-        return;
-      }
       _saving = true;
       Task.Run(() =>
       {
