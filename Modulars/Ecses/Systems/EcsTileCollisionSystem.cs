@@ -44,6 +44,13 @@ namespace Colin.Core.Modulars.Ecses.Systems
       if (comPhysic.IgnoreTile)
         return;
 
+      // 点状碰撞: 掉落物/弹幕等单点实体走专用分支.
+      if (comPhysic.PointLike)
+      {
+        HandlePointCollision(Entity);
+        return;
+      }
+
       RectangleF bounds = GetHitBox(Entity);
       RectangleF previousBounds = bounds;
       previousBounds.Offset(-comTransform.DeltaVelocity);
@@ -162,6 +169,185 @@ namespace Colin.Core.Modulars.Ecses.Systems
           }
         }
         comTransform.Vel = deltaVel / Time.DeltaTime;
+      }
+    }
+
+    /// <summary>
+    /// 水平扫掠时判定点的上浮量, 用以避免贴地滑行时把脚下踩着的物块误判成墙壁.
+    /// </summary>
+    private const float PointSideLift = 0.01f;
+
+    /// <summary>
+    /// 以碰撞盒底部中点作为唯一碰撞点处理物块碰撞.
+    /// <br>位移路径按不超过单个物块尺寸的步长扫掠采样, 防止高速穿透;</br>
+    /// <br>斜坡只做表面贴合, 无需上坡起点检测, 从根源上避免矩形碰撞的斜坡「起飞」问题.</br>
+    /// </summary>
+    private void HandlePointCollision(Entity Entity)
+    {
+      RectangleF bounds = GetHitBox(Entity);
+      Vector2 deltaVel = comTransform.DeltaVelocity;
+
+      comPhysic.CollisionLeft = false;
+      comPhysic.CollisionRight = false;
+      comPhysic.CollisionBottom = false;
+      comPhysic.CollisionTop = false;
+      comPhysic.SlopeCollision = false;
+      comPhysic.IsOnSlope = false;
+
+      // 锚点: 碰撞盒底部中点.
+      Vector2 anchor = new Vector2(bounds.Center.X, bounds.Bottom);
+
+      SweepPointAxis(ref anchor, ref deltaVel, false);
+      SweepPointAxis(ref anchor, ref deltaVel, true);
+
+      // 碰撞系统只修正速度, 实际位移由 EcsMoveSystem 统一施加.
+      comTransform.Vel = Time.DeltaTime != 0 ? deltaVel / Time.DeltaTime : comTransform.Vel;
+    }
+
+    /// <summary>
+    /// 沿单一坐标轴对碰撞点做步进扫掠.
+    /// <br>水平无位移时不判定; 垂直即使无位移也判定支撑(脚下物块是否依然实心).</br>
+    /// </summary>
+    /// <param name="anchor">碰撞点(碰撞盒底部中点), 接触时会被收拢到接触面上.</param>
+    /// <param name="deltaVel">本帧位移, 接触时会被截断到接触面.</param>
+    /// <param name="vertical">是否沿垂直轴扫掠.</param>
+    private void SweepPointAxis(ref Vector2 anchor, ref Vector2 deltaVel, bool vertical)
+    {
+      float delta = vertical ? deltaVel.Y : deltaVel.X;
+      if (!vertical && delta == 0)
+        return;
+
+      float from = vertical ? anchor.Y : anchor.X;
+      // 水平判定点上浮一小段, 与脚下物块所在的格子错开.
+      float side = vertical ? anchor.X : anchor.Y - PointSideLift;
+      int stepLength = Tile.Context.TileLength;
+      int steps = Math.Max(1, (int)Math.Ceiling(Math.Abs(delta) / stepLength));
+      float stride = delta / steps;
+      // 水平方向不对起始格做碰撞(不对当前物块碰撞); 垂直方向以起始采样判定支撑.
+      Vector2 startPoint = vertical ? new Vector2(side, from) : new Vector2(from, side);
+      Point ignoreTile = vertical ? new Point(int.MinValue, int.MinValue)
+                                  : new Point((int)Math.Floor(startPoint.X / Tile.Context.TileSize.X),
+                                              (int)Math.Floor(startPoint.Y / Tile.Context.TileSize.Y));
+      // 上升时跳过起始采样, 允许离开脚下的物块.
+      int start = vertical && delta < 0 ? 1 : 0;
+
+      for (int i = start; i <= steps; i++)
+      {
+        float coord = from + stride * i;
+        Vector2 point = vertical ? new Vector2(side, coord) : new Vector2(coord, side);
+        if (SweepPointSample(ref anchor, ref deltaVel, point, vertical, ignoreTile))
+          return;
+      }
+    }
+
+    /// <summary>
+    /// 判定扫掠采样点所在物块: 命中实心物块或斜坡时收拢位移并记录碰撞状态.
+    /// </summary>
+    /// <param name="ignoreTile">跳过判定的物块格(水平扫掠时的起始格).</param>
+    /// <returns>是否发生接触, 接触后本次扫掠终止.</returns>
+    private bool SweepPointSample(ref Vector2 anchor, ref Vector2 deltaVel, Vector2 point, bool vertical, Point ignoreTile)
+    {
+      int tileX = (int)Math.Floor(point.X / Tile.Context.TileSize.X);
+      int tileY = (int)Math.Floor(point.Y / Tile.Context.TileSize.Y);
+      if (tileX == ignoreTile.X && tileY == ignoreTile.Y)
+        return false;
+      ref TileInfo info = ref Tile[tileX, tileY, comPhysic.Layer];
+      if (info.IsNull)
+        return false;
+      if (info.Collision == TileSolid.None && !info.Loading)
+        return false;
+
+      RectangleF target = GetTileBounds(ref info);
+
+      if (vertical)
+      {
+        if (info.Collision == TileSolid.SlopeLeftUp || info.Collision == TileSolid.SlopeRightUp)
+        {
+          // 地面斜坡: 实心侧在坡线下方, 下落与站立时贴合坡面, 上升时允许跳离.
+          float surfaceY = GetSlopeSurfaceYAtX(info.Collision, target, point.X);
+          if (point.Y <= surfaceY || deltaVel.Y < 0)
+            return false;
+          deltaVel.Y = surfaceY - anchor.Y;
+          anchor.Y = surfaceY;
+          comPhysic.SlopeCollision = true;
+          comPhysic.IsOnSlope = true;
+          comPhysic.SlopeNormal = GetSlopeNormal(info.Collision);
+          comPhysic.CollisionBottom = true;
+          return true;
+        }
+        if (info.Collision == TileSolid.SlopeLeftDown || info.Collision == TileSolid.SlopeRightDown)
+        {
+          // 天花板斜坡: 实心侧在坡线上方, 仅上升时贴合.
+          float surfaceY = GetSlopeSurfaceYAtX(info.Collision, target, point.X);
+          if (point.Y >= surfaceY || deltaVel.Y > 0)
+            return false;
+          deltaVel.Y = surfaceY - anchor.Y;
+          anchor.Y = surfaceY;
+          comPhysic.SlopeCollision = true;
+          comPhysic.IsOnSlope = true;
+          comPhysic.SlopeNormal = GetSlopeNormal(info.Collision);
+          comPhysic.CollisionTop = true;
+          return true;
+        }
+        // 普通实心物块(含 Loading 占位).
+        if (deltaVel.Y >= 0)
+        {
+          deltaVel.Y = target.Top - anchor.Y;
+          anchor.Y = target.Top;
+          comPhysic.CollisionBottom = true;
+        }
+        else
+        {
+          deltaVel.Y = target.Bottom - anchor.Y;
+          anchor.Y = target.Bottom;
+          comPhysic.CollisionTop = true;
+        }
+        return true;
+      }
+
+      // 水平方向: 斜坡交由垂直扫掠做表面贴合, 不作为墙壁.
+      if (info.Collision != TileSolid.Sturdy && !info.Loading)
+        return false;
+      if (deltaVel.X > 0)
+      {
+        deltaVel.X = target.Left - anchor.X;
+        anchor.X = target.Left;
+        comPhysic.CollisionRight = true;
+      }
+      else
+      {
+        deltaVel.X = target.Right - anchor.X;
+        anchor.X = target.Right;
+        comPhysic.CollisionLeft = true;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// 获取斜坡表面在指定 X 坐标处的 Y 值(点状碰撞用).
+    /// </summary>
+    private float GetSlopeSurfaceYAtX(TileSolid slopeType, RectangleF target, float x)
+    {
+      switch (slopeType)
+      {
+        case TileSolid.SlopeLeftUp:
+          // '/' 左下→右上
+          return target.Bottom - (x - target.Left);
+
+        case TileSolid.SlopeRightUp:
+          // '\' 右下→左上
+          return target.Bottom - (target.Right - x);
+
+        case TileSolid.SlopeLeftDown:
+          // 天花板 '\' 左上→右下
+          return target.Top + (x - target.Left);
+
+        case TileSolid.SlopeRightDown:
+          // 天花板 '/' 右上→左下
+          return target.Top + (target.Right - x);
+
+        default:
+          return 0;
       }
     }
 

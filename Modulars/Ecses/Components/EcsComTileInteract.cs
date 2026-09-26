@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Modulars.Ecses.Systems;
+using SharpDX.Direct3D9;
 
 namespace Colin.Core.Modulars.Ecses.Components
 {
@@ -22,6 +23,12 @@ namespace Colin.Core.Modulars.Ecses.Components
     /// </summary>
     public bool IgnoreTile;
 
+    /// <summary>
+    /// 指示碰撞是否启用点状计算.
+    /// <br>启用后, 实体只以碰撞盒底部中点这一个点参与物块碰撞, 适用于掉落物/弹幕等无需严格碰撞的实体.</br>
+    /// <br>该值默认为 <see langword="true"/>; 角色/生物等需要严格矩形碰撞的实体应显式设为 <see langword="false"/>.</br>
+    /// </summary>
+    public bool PointLike = true;
 
     /// <summary>
     /// 指示基础碰撞盒是否拥有左侧碰撞状态.
@@ -69,6 +76,7 @@ namespace Colin.Core.Modulars.Ecses.Components
     public void DoInitialize()
     {
       IgnoreTile = false;
+      PointLike = true;
     }
     public void Reset()
     {
