@@ -1,11 +1,9 @@
 using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using Colin.Core.Resources;
-using DeltaMachine.Core.Repair;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
@@ -249,11 +247,14 @@ namespace Colin.Core.Modulars.Tiles
       Infos[index].WCoordY = CoordY * Tile.Context.ChunkHeight + Infos[index].ICoordY;
     }
 
+
+
     public Point MouseChunk
     {
       get
       {
-        var mouseT = (GameFramework.MouseWorld / Tile.Context.TileSizeF).ToPoint();
+        var mw = Tile.Scene.Camera.ConvertToWorld(MouseResponder.Position);
+        var mouseT = (mw / Tile.Context.TileSizeF).ToPoint();
         return mouseT - Bounds.Location;
       }
     }
