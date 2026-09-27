@@ -190,7 +190,6 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
         PremultiplyAlpha(premultiplied);
         _assetsSources[cacheName] = source;
         _textures[cacheName] = premultiplied;
-        Console.Log(ConsoleTextType.Remind, "Particle", $"资产纹理已就绪: {virtualPath} ({source.Width}×{source.Height})");
         return premultiplied;
       }
       catch (Exception exception)

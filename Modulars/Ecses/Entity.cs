@@ -26,13 +26,18 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
-    internal Dictionary<Type, IEcsCom> _components;
+    internal TypeSnapshotTable<IEcsCom> _components;
     /// <summary>
     /// 实体组件列表.
     /// </summary>
-    public Dictionary<Type, IEcsCom> Components => _components;
+    public TypeSnapshotTable<IEcsCom> Components => _components;
     public bool HasCom<T>() where T : IEcsCom => _components.ContainsKey(typeof(T));
-    public T GetCom<T>() where T : IEcsCom => (T)_components?.GetValueOrDefault(typeof(T), null);
+    public T GetCom<T>() where T : IEcsCom
+    {
+      if (_components is null)
+        return default;
+      return _components.TryGetValue(typeof(T), out IEcsCom component) ? (T)component : default;
+    }
     public T RegisterCom<T>() where T : class, IEcsCom, new() => RegisterCom(new T()) as T;
     public IEcsCom RegisterCom(IEcsCom component)
     {
@@ -104,12 +109,12 @@ namespace Colin.Core.Modulars.Ecses
       if (Inited)
         return;
       Inited = true;
-      _components = new Dictionary<Type, IEcsCom>();
+      _components = new TypeSnapshotTable<IEcsCom>();
       _comDoc = RegisterCom<EcsComDoc>();
       _comTransform = RegisterCom<EcsComTransform>();
       ComAdded();
       for (int count = 0; count < _components.Count; count++)
-        _components.Values.ElementAt(count).DoInitialize();
+        _components[count].DoInitialize();
       SetDefaults();
     }
     /// <summary>
@@ -129,7 +134,7 @@ namespace Colin.Core.Modulars.Ecses
       Type type;
       for (int i = 0; i < Components.Count; i++)
       {
-        type = Components.Values.ElementAt(i).GetType();
+        type = Components[i].GetType();
         if (t.Components[type] is IEcsComCloneable cloneCom)
         {
           cloneCom.Clone(Components[type]);
@@ -145,7 +150,7 @@ namespace Colin.Core.Modulars.Ecses
       Type type;
       for (int i = 0; i < Components.Count; i++)
       {
-        type = Components.Values.ElementAt(i).GetType();
+        type = Components[i].GetType();
         if (result.Components[type] is IEcsComCloneable cloneCom)
         {
           cloneCom.Clone(Components[type]);
@@ -158,7 +163,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       for (int i = 0; i < Components.Count; i++)
       {
-        if (Components.ElementAt(i).Value is IEcsComIO io)
+        if (Components[i] is IEcsComIO io)
           io.SaveStep(writer);
       }
     }
@@ -166,7 +171,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       for (int i = 0; i < Components.Count; i++)
       {
-        if (Components.ElementAt(i).Value is IEcsComIO io)
+        if (Components[i] is IEcsComIO io)
           io.LoadStep(reader);
       }
     }

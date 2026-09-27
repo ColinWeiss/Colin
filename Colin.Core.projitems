@@ -9,6 +9,7 @@
     <Import_RootNamespace>Colin.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory).gitignore" />
     <None Include="$(MSBuildThisFileDirectory)app.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Assets\README.md" />
     <None Include="$(MSBuildThisFileDirectory)Colin.Core.sln" />
@@ -26,8 +27,11 @@
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FreeTypeSharp.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\StbImageSharp.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\StbTrueTypeSharp.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\mgpipeline.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.Framework.Content.Pipeline.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.Common.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.ImGuiNet.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\SharpDX.D3DCompiler.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\System.CommandLine.dll" />
     <None Include="$(MSBuildThisFileDirectory)Libs\YamlDotNet.dll" />
@@ -264,6 +268,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Singleton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Time.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Triangle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mathematical\TypeSnapshotTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Content\bin\Windows\Content\" />

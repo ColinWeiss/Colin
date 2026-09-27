@@ -1,6 +1,7 @@
 using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
 using Colin.Core.IO;
+using Colin.Core.Mathematical;
 using Colin.Core.Resources;
 using SharpDX;
 using System.Collections.Concurrent;
@@ -15,8 +16,8 @@ namespace Colin.Core.Modulars.Ecses
   /// </summary>
   public class Ecs : SceneRenderModule, IOStep
   {
-    private Dictionary<Type, EcsSystem> _systems;
-    public Dictionary<Type, EcsSystem> Systems => _systems;
+    private TypeSnapshotTable<EcsSystem> _systems;
+    public TypeSnapshotTable<EcsSystem> Systems => _systems;
 
     public T RegisterSystem<T>() where T : EcsSystem, new()
     {
@@ -26,11 +27,13 @@ namespace Colin.Core.Modulars.Ecses
       _systems.Add(typeof(T), system);
       return system;
     }
-    public T GetSystem<T>() where T : EcsSystem => (T)_systems.GetValueOrDefault(typeof(T));
+    public T GetSystem<T>() where T : EcsSystem => _systems.TryGetValue(typeof(T), out EcsSystem system) ? (T)system : default;
 
     public Entity[] Entities;
 
     public bool[] NeedClear;
+
+    private readonly HashSet<int> _reservedSlots = new HashSet<int>();
 
     public KeysEventNode KeysEvent;
 
@@ -40,15 +43,16 @@ namespace Colin.Core.Modulars.Ecses
       Scene.Events.Keys.Register(KeysEvent);
       Entities = new Entity[2049];
       NeedClear = new bool[2049];
-      _systems = new Dictionary<Type, EcsSystem>();
+      _reservedSlots.Clear();
+      _systems = new TypeSnapshotTable<EcsSystem>();
       CreateCommands = new ConcurrentQueue<EcsCreateCommand>();
     }
     public override void Start()
     {
       EcsSystem _system;
-      for (int sCount = 0; sCount < _systems.Values.Count; sCount++)
+      for (int sCount = 0; sCount < _systems.Count; sCount++)
       {
-        _system = _systems.Values.ElementAt(sCount);
+        _system = _systems[sCount];
         _system.Start();
       }
     }
@@ -71,15 +75,14 @@ namespace Colin.Core.Modulars.Ecses
         }
           for (int count = 0; count < Systems.Count; count++)
         {
-          _currentSystem = Systems.ElementAt(count).Value;
+          _currentSystem = Systems[count];
           _currentSystem.Reset();
         }
         for (int count = 0; count < Systems.Count; count++)
         {
-          _currentSystem = Systems.ElementAt(count).Value;
+          _currentSystem = Systems[count];
           _currentSystem.DoUpdate();
         }
-        Dictionary<Type, IEcsCom>.ValueCollection coms;
         IEcsCom com;
         for (int count = 0; count < Entities.Length; count++)
         {
@@ -88,10 +91,9 @@ namespace Colin.Core.Modulars.Ecses
             continue;
           if (NeedClear[_entity.ID])
           {
-            coms = _entity._components.Values;
-            for (int i = 0; i < coms.Count; i++)
+            for (int i = 0; i < _entity._components.Count; i++)
             {
-              com = coms.ElementAt(i);
+              com = _entity._components[i];
               if (com is IEcsComFinalize unLoadCom)
                 unLoadCom.DoFinalize();
             }
@@ -109,9 +111,9 @@ namespace Colin.Core.Modulars.Ecses
     {
       device.Clear(Color.Transparent);
       EcsSystem _system;
-      for (int count = 0; count < _systems.Values.Count; count++)
+      for (int count = 0; count < _systems.Count; count++)
       {
-        _system = _systems.Values.ElementAt(count);
+        _system = _systems[count];
         _system.DoRender(device, batch);
       }
     }
@@ -142,16 +144,16 @@ namespace Colin.Core.Modulars.Ecses
       EcsCreateCommand cmd;
       for (int count = 0; count < Entities.Length; count++)
       {
-        if (Entities[count] is null)
-        {
-          result = new T();
-          result.Ecs = this;
-          result.ID = count;
-          result.DoInitialize();
-          cmd = new EcsCreateCommand(this, result, count);
-          CreateCommands.Enqueue(cmd);
-          return result;
-        }
+        if (Entities[count] is not null || _reservedSlots.Contains(count))
+          continue;
+        result = new T();
+        result.Ecs = this;
+        result.ID = count;
+        result.DoInitialize();
+        _reservedSlots.Add(count);
+        cmd = new EcsCreateCommand(this, result, count);
+        CreateCommands.Enqueue(cmd);
+        return result;
       }
       return null;
     }
@@ -161,12 +163,10 @@ namespace Colin.Core.Modulars.Ecses
       if (Entities[cmd.ID] is null)
       {
         Entity result = cmd.Entity;
-      //  result.Ecs = this;
-     //   result.ID = cmd.ID;
-      //  result.DoInitialize();
         OnCreate?.Invoke(result);
         Entities[cmd.ID] = result;
       }
+      _reservedSlots.Remove(cmd.ID);
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       for (int count = 0; count < Entities.Length; count++)
       {
-        if (Entities[count] is null)
+        if (Entities[count] is null && _reservedSlots.Contains(count) is false)
         {
           Entities[count] = target;
           target.ID = count;
@@ -195,7 +195,7 @@ namespace Colin.Core.Modulars.Ecses
     {
       for (int count = 0; count < Entities.Length; count++)
       {
-        if (Entities[count] is null)
+        if (Entities[count] is null && _reservedSlots.Contains(count) is false)
         {
           entity = CodeResources<Entity>.GetFromType(entity.GetType());
           entity.ID = count;

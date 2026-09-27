@@ -77,7 +77,6 @@ namespace Colin.Core.Graphics.Visual.Particle
         GraphicsDevice = device ?? throw new ArgumentNullException(nameof(device));
         Renderer ??= new Colin.Core.Graphics.Visual.Particle.Rendering.ParticleRenderer(device);
         IsInitialized = true;
-        Console.Log(ConsoleTextType.Remind, "Particle", $"粒子系统初始化完成.");
       }
     }
 

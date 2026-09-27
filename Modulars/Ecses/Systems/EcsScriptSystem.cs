@@ -1,5 +1,5 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
-using static System.Collections.Generic.Dictionary<System.Type, Colin.Core.Modulars.Ecses.IEcsCom>;
+﻿using Colin.Core.Mathematical;
+using Colin.Core.Modulars.Ecses.Components;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {
@@ -11,14 +11,16 @@ namespace Colin.Core.Modulars.Ecses.Systems
     public override void Reset()
     {
       Entity _current;
+      TypeSnapshotTable<IEcsCom> coms;
       for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
         _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
-        foreach (IEcsCom component in _current.Components.Values)
+        coms = _current.Components;
+        for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          if (component is IResetable resetableCom && resetableCom.ResetEnable)
+          if (coms[comCount] is IResetable resetableCom && resetableCom.ResetEnable)
           {
             resetableCom.Reset();
             resetableCom.ResetEnable = true;
@@ -31,40 +33,39 @@ namespace Colin.Core.Modulars.Ecses.Systems
     {
       Entity _current;
       IEcsCom _EntityCom;
-      Dictionary<Type, IEcsCom> comDic;
-      ValueCollection coms;
+      TypeSnapshotTable<IEcsCom> coms;
       for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
         _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
-        comDic = _current.Components;
-        coms = comDic.Values;
-        foreach (IEcsCom component in coms)
+        coms = _current.Components;
+        for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          if (component is EcsComScript script && script._updateStarted is false)
+          if (coms[comCount] is EcsComScript script && script._updateStarted is false)
           {
             script.UpdateStart();
             script._updateStarted = true;
           }
         }
-        foreach (IEcsCom component in coms)
-          if (component is EcsComScript script && script.UpdateEnable)
+        for (int comCount = 0; comCount < coms.Count; comCount++)
+        {
+          if (coms[comCount] is EcsComScript script && script.UpdateEnable)
             script.DoUpdate();
+        }
       }
       for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
         _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
-        comDic = _current.Components;
-        coms = comDic.Values;
+        coms = _current.Components;
         for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          _EntityCom = coms.ElementAt(comCount);
+          _EntityCom = coms[comCount];
           if (_EntityCom is IEcsComRemovable removableCom && removableCom.NeedClear)
           {
-            comDic.Remove(_EntityCom.GetType());
+            coms.Remove(_EntityCom.GetType());
             comCount--;
           }
         }

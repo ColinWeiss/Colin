@@ -129,16 +129,16 @@ namespace Colin.Core.Resources
       Dictionary<string, int> loaded;
       using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
         loaded = JsonSerializer.Deserialize<Dictionary<string, int>>(fileStream);
-      // 合并语义: 当前程序集的类型以注册表为准, 表里多出来的历史名字补进来, 老存档才能照常解析
-      // 全部在临时状态里准备妥当再原子替换, 中途任何一步失败都不会把注册表掏空
+      Dictionary<string, int> merged = new Dictionary<string, int>(serToHashs);
       foreach (var item in loaded)
-        serToHashs.TryAdd(item.Key, item.Value);
+        merged.TryAdd(item.Key, item.Value);
       Dictionary<int, string> reversed = new Dictionary<int, string>();
-      foreach (var item in serToHashs)
+      foreach (var item in merged)
       {
         if (reversed.ContainsKey(item.Value) is false)
           reversed.Add(item.Value, item.Key);
       }
+      serToHashs = merged;
       hashToSers = reversed;
     }
   }

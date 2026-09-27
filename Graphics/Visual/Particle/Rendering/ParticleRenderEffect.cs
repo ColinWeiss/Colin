@@ -32,7 +32,6 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
         byte[] mgfx = Convert.FromBase64String(ParticleCompiledShaders.RenderEffectBase64);
         _shared = new Effect(device, mgfx);
         LastSource = "嵌入 MGFX";
-        Console.Log(ConsoleTextType.Remind, "Particle", "粒子渲染着色器已从嵌入 MGFX 加载.");
         return _shared;
       }
       catch (Exception exception)

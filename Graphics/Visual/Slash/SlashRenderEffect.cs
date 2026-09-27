@@ -20,7 +20,6 @@ namespace Colin.Core.Graphics.Visual.Slash
       {
         byte[] mgfx = Convert.FromBase64String(SlashCompiledShaders.RenderEffectBase64);
         _shared = new Effect(device, mgfx);
-        Console.Log(ConsoleTextType.Remind, "Fx", "刀光渲染着色器已从嵌入 MGFX 加载.");
         return _shared;
       }
       catch (Exception exception)
@@ -46,7 +45,6 @@ namespace Colin.Core.Graphics.Visual.Slash
       try
       {
         byte[] mgfx = Colin.Core.Graphics.Visual.Particle.Rendering.ParticleEffectCompiler.CompileFromSource(SlashShaderSource.RenderEffectSource);
-        Console.Log(ConsoleTextType.Remind, "Fx", "刀光渲染着色器已由进程内 Effect 编译器生成.");
         return mgfx;
       }
       catch (Exception exception)

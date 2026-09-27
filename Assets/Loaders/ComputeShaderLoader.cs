@@ -11,20 +11,20 @@ namespace Leemo.Assets;
 /// </summary>
 public sealed class ComputeShaderLoader : IAssetLoader<ComputeShader>
 {
-    public IEnumerable<string> Extensions { get; } = new[] { ".hlsl", ".cso" };
+  public IEnumerable<string> Extensions { get; } = new[] { ".hlsl", ".cso" };
 
-    public ComputeShader Load(AssetLoadContext ctx, Stream stream, string path)
-    {
-        using var ms = new MemoryStream();
-        stream.CopyTo(ms);
-        var bytes = ms.ToArray();
+  public ComputeShader Load(AssetLoadContext ctx, Stream stream, string path)
+  {
+    using var ms = new MemoryStream();
+    stream.CopyTo(ms);
+    var bytes = ms.ToArray();
 
-        if (path.EndsWith(".cso", StringComparison.OrdinalIgnoreCase))
-            return new ComputeShader(ctx.GraphicsDevice, bytes);
+    if (path.EndsWith(".cso", StringComparison.OrdinalIgnoreCase))
+      return new ComputeShader(ctx.GraphicsDevice, bytes);
 
-        using ShaderBytecode bytecode = ShaderBytecode.Compile(bytes, "Main", "cs_5_0", ShaderFlags.Debug);
-        if (bytecode is null || bytecode.Data is null || bytecode.Data.Length == 0)
-            throw new InvalidDataException($"Leemo.Assets: 计算着色器编译无产物 '{path}'.");
-        return new ComputeShader(ctx.GraphicsDevice, bytecode.Data);
-    }
+    using ShaderBytecode bytecode = ShaderBytecode.Compile(bytes, "Main", "cs_5_0", ShaderFlags.Debug);
+    if (bytecode is null || bytecode.Data is null || bytecode.Data.Length == 0)
+      throw new InvalidDataException($"Leemo.Assets: 计算着色器编译无产物 '{path}'.");
+    return new ComputeShader(ctx.GraphicsDevice, bytecode.Data);
+  }
 }

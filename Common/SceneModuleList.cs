@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Mathematical;
 using System.Text.RegularExpressions;
 
 namespace Colin.Core.Common
@@ -12,9 +13,9 @@ namespace Colin.Core.Common
 
     public SceneModuleList(Scene scene) => Scene = scene;
 
-    public Dictionary<Type, ISceneModule> Components = new Dictionary<Type, ISceneModule>();
+    public TypeSnapshotTable<ISceneModule> Components = new TypeSnapshotTable<ISceneModule>();
 
-    public Dictionary<Type, IRenderableISceneModule> RenderableComponents = new Dictionary<Type, IRenderableISceneModule>();
+    public TypeSnapshotTable<IRenderableISceneModule> RenderableComponents = new TypeSnapshotTable<IRenderableISceneModule>();
 
     // 逐模块的阶段标签缓存一份, 不然每帧每模块都拼字符串
     private readonly Dictionary<Type, string> _updateTags = new Dictionary<Type, string>();
@@ -44,7 +45,7 @@ namespace Colin.Core.Common
       ISceneModule _com;
       for (int count = 0; count < Components.Count; count++)
       {
-        _com = Components.Values.ElementAt(count);
+        _com = Components[count];
         if (_com.Enable)
           _com.Start();
       }
@@ -55,7 +56,7 @@ namespace Colin.Core.Common
       ISceneModule _com;
       for (int count = 0; count < Components.Count; count++)
       {
-        _com = Components.Values.ElementAt(count);
+        _com = Components[count];
         if (_com.Enable)
         {
           // Debug 常量分支, Release 下 GetTag 调用整个被编译器消掉, 每帧白查的字典也省了
@@ -73,9 +74,9 @@ namespace Colin.Core.Common
       RenderTarget2D frameRenderLayer;
       Texture2D temp;
       {
-        for (int count = 0; count < RenderableComponents.Values.Count; count++)
+        for (int count = 0; count < RenderableComponents.Count; count++)
         {
-          renderMode = RenderableComponents.Values.ElementAt(count);
+          renderMode = RenderableComponents[count];
           frameRenderLayer = renderMode.RawRt;
           CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(frameRenderLayer);
           CoreInfo.Graphics.GraphicsDevice.Clear(Color.Transparent);
@@ -91,9 +92,9 @@ namespace Colin.Core.Common
       CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
       CoreInfo.Graphics.GraphicsDevice.Clear(Color.Black);   // 每帧清场景合成目标: 否则半透明模块 (编辑器等) 的旧帧会永久残留.
       {
-        for (int count = RenderableComponents.Values.Count - 1; count >= 0; count--)
+        for (int count = RenderableComponents.Count - 1; count >= 0; count--)
         {
-          renderMode = RenderableComponents.Values.ElementAt(count);
+          renderMode = RenderableComponents[count];
           frameRenderLayer = renderMode.RawRt;
           temp = null;
           if (renderMode.Presentation)
@@ -121,14 +122,24 @@ namespace Colin.Core.Common
     /// </summary>
     /// <typeparam name="T">指定的 <see cref="ISceneModule"/> 类型.</typeparam>
     /// <returns>如果成功获取, 那么返回指定对象, 否则返回 <see langword="null"/>.</returns>
-    public T GetModule<T>() where T : ISceneModule => (T)Components.GetValueOrDefault(typeof(T), null);
+    public T GetModule<T>() where T : ISceneModule
+    {
+      if (Components.TryGetValue(typeof(T), out ISceneModule module))
+        return (T)module;
+      return default;
+    }
 
     /// <summary>
     /// 根据指定类型获取场景渲染组件.
     /// </summary>
     /// <typeparam name="T">指定的 <see cref="IRenderableISceneModule"/> 类型.</typeparam>
     /// <returns>如果成功获取, 那么返回指定对象, 否则返回 <see langword="null"/>.</returns>
-    public T GetRenderModule<T>() where T : IRenderableISceneModule => (T)RenderableComponents.GetValueOrDefault(typeof(T), null);
+    public T GetRenderModule<T>() where T : IRenderableISceneModule
+    {
+      if (RenderableComponents.TryGetValue(typeof(T), out IRenderableISceneModule module))
+        return (T)module;
+      return default;
+    }
 
     /// <summary>
     /// 根据指定类型删除场景模块.
@@ -187,7 +198,7 @@ namespace Colin.Core.Common
 
     public KeyValuePair<Type, ISceneModule> ElementAt(int index)
     {
-      return Components.ElementAt(index);
+      return new KeyValuePair<Type, ISceneModule>(Components.KeyAt(index), Components[index]);
     }
 
     public void Add(ISceneModule sceneMode)
@@ -235,11 +246,11 @@ namespace Colin.Core.Common
     public void Dispose()
     {
       for (int count = 0; count < Components.Count; count++)
-        Components.Values.ElementAt(count).Dispose();
+        Components[count].Dispose();
       for (int count = 0; count < RenderableComponents.Count; count++)
       {
-        RenderableComponents.Values.ElementAt(count).RawRt.Dispose();
-        RenderableComponents.Values.ElementAt(count).Dispose();
+        RenderableComponents[count].RawRt.Dispose();
+        RenderableComponents[count].Dispose();
       }
     }
   }

@@ -516,8 +516,8 @@ namespace Colin.Core.Modulars.Tiles
               continue;
             int ix = info.ICoordX;
             int iy = info.ICoordY;
-            bool onEdge = (dx == 0 || (dx == 1 ? ix == lastX : ix == 0))
-                       && (dy == 0 || (dy == 1 ? iy == lastY : iy == 0));
+            bool onEdge = (dx == 0 || (dx == 1 ? ix == 0 : ix == lastX))
+                       && (dy == 0 || (dy == 1 ? iy == 0 : iy == lastY));
             if (onEdge is false)
               continue;
             queue.Enqueue(new Point3(ix, iy, info.ICoordZ));

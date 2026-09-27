@@ -136,6 +136,8 @@ namespace Colin.Core.Common
           {
             _sizeMismatchFrames = 0;
             Events.InvokeSizeChange(this, EventArgs.Empty);
+            // 广播链里的重建回调可能绑定过 RT (如巨图携带), 呈现前必须解绑
+            CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
             base.Draw(gameTime);
             return;
           }

@@ -1,3 +1,4 @@
+using Colin.Core.Mathematical;
 using Colin.Core.Modulars.Tiles;
 using System.Collections.Concurrent;
 
@@ -8,7 +9,7 @@ namespace Colin.Core.Modulars
   /// </summary>
   public class Business : SceneModule
   {
-    private Dictionary<Type, BusinessLine> _businesses = new Dictionary<Type, BusinessLine>();
+    private readonly TypeSnapshotTable<BusinessLine> _businesses = new TypeSnapshotTable<BusinessLine>();
 
     private ConcurrentQueue<Action> _mainThreadJobs = new ConcurrentQueue<Action>();
 
@@ -28,8 +29,8 @@ namespace Colin.Core.Modulars
       get
       {
         int total = 0;
-        foreach (BusinessLine line in _businesses.Values)
-          total += line.Backlog;
+        for (int index = 0; index < _businesses.Count; index++)
+          total += _businesses[index].Backlog;
         return total;
       }
     }
@@ -57,7 +58,7 @@ namespace Colin.Core.Modulars
     {
       T t = new T();
       t.Scene = Scene;
-      _businesses[typeof(T)] = t;
+      _businesses.Set(typeof(T), t);
     }
 
     public override void DoUpdate(GameTime time)
@@ -80,11 +81,11 @@ namespace Colin.Core.Modulars
       }
       for (int index = 0; index < _businesses.Count; index++)
       {
-        _businesses.ElementAt(index).Value.DoPrepare();
+        _businesses[index].DoPrepare();
       }
       for (int index = 0; index < _businesses.Count; index++)
       {
-        _businesses.ElementAt(index).Value.DoUpdate();
+        _businesses[index].DoUpdate();
       }
       base.DoUpdate(time);
     }
