@@ -45,7 +45,7 @@
     /// <param name="max">Max.</param>
     public static float NextFloat(this Random rand, float max)
     {
-      return (float)new Random().NextDouble() * max;
+      return (float)rand.NextDouble() * max;
     }
 
 

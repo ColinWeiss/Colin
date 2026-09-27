@@ -13,6 +13,10 @@
     // 路径视图的实例缓存, 同一张图全局只建一个 Sprite, 逐格 new 的开销就省下来了
     private static readonly ConcurrentDictionary<string, Sprite> _pathViews = new ConcurrentDictionary<string, Sprite>();
 
+    // 原始路径直查缓存: 调用方传入的通常是稳定字段/字面量引用,
+    // 命中时免去每次拼接归一化键的字符串分配 (逐格绘制的热路径)
+    private static readonly ConcurrentDictionary<string, Sprite> _rawViews = new ConcurrentDictionary<string, Sprite>();
+
     private Texture2D _source;
     private readonly string _virtualPath;      // 非空 = 路径视图模式 (Leemo 管线, 热重载实时跟随).
     private readonly int _frameMax;
@@ -152,9 +156,13 @@
     /// <br>同一路径全局只建一个实例并缓存, 注意 SharedFrame 是共享状态.</br>
     /// </summary>
     public static Sprite Get(string path)
-      => _pathViews.GetOrAdd(
-          "Textures/" + path.Replace('\\', '/') + ".png",
-          static virtualPath => new Sprite(virtualPath));
+      => _rawViews.TryGetValue(path, out Sprite cached)
+        ? cached
+        : _rawViews.GetOrAdd(
+            path,
+            static raw => _pathViews.GetOrAdd(
+                "Textures/" + raw.Replace('\\', '/') + ".png",
+                static virtualPath => new Sprite(virtualPath)));
     public static Sprite Get(params string[] paths) => Get(Path.Combine(paths));
   }
 }

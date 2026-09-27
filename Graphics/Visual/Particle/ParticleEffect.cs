@@ -71,7 +71,7 @@
     private bool _capacityDirty;
     private int[] _builtCapacities = Array.Empty<int>();
     private int _strategyCapacity;
-    private Random _seedRandom = new Random();
+    private Random _seedRandom = Random.Shared;
 
     /// <summary>效果实例标识 (诊断与日志).</summary>
     public int Id { get; } = _nextId++;

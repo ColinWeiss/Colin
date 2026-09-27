@@ -4,7 +4,7 @@
 
   public StrangeTreeGenerator()
   {
-    random = new Random();
+    random = Random.Shared;
   }
 
   public StrangeTreeGenerator(int seed)

@@ -80,7 +80,6 @@ namespace Colin.Core
       {
         foreach (string line in _writeQueue.GetConsumingEnumerable())
         {
-
           File.AppendAllText(_logPath, line + Environment.NewLine);
         }
       }

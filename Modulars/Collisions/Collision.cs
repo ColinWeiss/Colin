@@ -17,6 +17,7 @@
     {
       LayerIdentifiers.Add(layerName, (byte)LayerIdentifiers.Count);
       ColliderLayers.Add(new List<Collider>());
+      _layersVersion++;
     }
 
     public List<List<Collider>> ColliderLayers = new List<List<Collider>>();
@@ -27,6 +28,7 @@
     /// <param name="collider"></param>
     public bool AddCollider(Collider collider, string layerName = "Default Layer")
     {
+      _layersVersion++;
       if (string.IsNullOrEmpty(collider.LayerName) || string.IsNullOrWhiteSpace(collider.LayerName))
         collider.LayerName = layerName;
       if (LayerIdentifiers.ContainsKey(collider.LayerName))
@@ -56,10 +58,27 @@
     /// <returns></returns>
     public bool RemoveCollider(Collider collider)
     {
+      _layersVersion++;
       return ColliderLayers[collider.Layer].Remove(collider);
     }
 
     public const int Block = 1920;
+
+    // —— 分块缓存 ——
+    // 同一层在同一帧内、同一共享模式下, 分块结果对所有询问碰撞器完全相同,
+    // 因此每层每模式只建一次、整帧复用 (原先每个碰撞器×每层重建一次, O(n²) 且大量堆分配).
+    // 碰撞体增删会递增 _layersVersion 使缓存失效; 字典实例跨帧复用, 重建时只做 Clear.
+    private CacheEntry[] _blockCacheShared;
+    private CacheEntry[] _blockCachePrivate;
+    private long _frameStamp;
+    private long _layersVersion;
+
+    private struct CacheEntry
+    {
+      public long Frame;
+      public long Version;
+      public Dictionary<Point, List<Collider>> Map;
+    }
 
     public event Action<Collider, Collider> OnAabb;
 
@@ -77,6 +96,7 @@
 
     public void DoUpdate(GameTime time)
     {
+      _frameStamp++;
       List<Collider> layer;
 
       int startX;
@@ -135,16 +155,38 @@
 
     /// <summary>
     /// 为指定层执行分块操作并返回分块字典.
+    /// <br>同一帧内同层同模式的结果会被缓存复用; 层列表版本号变化时重建.</br>
     /// </summary>
     /// <param name="layerIndex">层索引.</param>
     /// <param name="colliderShare">同一个Collider是否允许被多个分块List共享; 若为 <see langword="true"/>, 则允许, 否则按左上角坐标取模.</param>
     /// <returns></returns>
     private Dictionary<Point, List<Collider>> DoBlock(int layerIndex, bool colliderShare = true)
     {
-      var result = new Dictionary<Point, List<Collider>>();
+      CacheEntry[] cache = colliderShare ? _blockCacheShared : _blockCachePrivate;
+      if (cache is null || cache.Length <= layerIndex)
+      {
+        Array.Resize(ref cache, Math.Max(ColliderLayers.Count, layerIndex + 1));
+        if (colliderShare)
+          _blockCacheShared = cache;
+        else
+          _blockCachePrivate = cache;
+      }
+      ref CacheEntry entry = ref cache[layerIndex];
+      if (entry.Map is not null && entry.Frame == _frameStamp && entry.Version == _layersVersion)
+        return entry.Map;
+      // 版本失效的旧图此刻不应有进行中的遍历 (增删碰撞体只发生在碰撞阶段之外), 可安全清空重建
+      if (entry.Map is null)
+        entry.Map = new Dictionary<Point, List<Collider>>();
+      else
+        entry.Map.Clear();
+      entry.Frame = _frameStamp;
+      entry.Version = _layersVersion;
+
+      var result = entry.Map;
       Collider target;
       RectangleF bounds;
       Point blockCoord;
+      List<Collider> block;
       int startX;
       int endX;
       int startY;
@@ -161,9 +203,9 @@
         if (colliderShare)
         {
           blockCoord = new Point(startX, startY);
-          if (!result.ContainsKey(blockCoord))
-            result[blockCoord] = new List<Collider>();
-          result[blockCoord].Add(target);
+          if (!result.TryGetValue(blockCoord, out block))
+            result[blockCoord] = block = new List<Collider>();
+          block.Add(target);
         }
         else
         {
@@ -172,9 +214,9 @@
             for (int y = startY; y <= endY; y++)
             {
               blockCoord = new Point(x, y);
-              if (!result.ContainsKey(blockCoord))
-                result[blockCoord] = new List<Collider>();
-              result[blockCoord].Add(target);
+              if (!result.TryGetValue(blockCoord, out block))
+                result[blockCoord] = block = new List<Collider>();
+              block.Add(target);
             }
           }
         }
@@ -186,14 +228,13 @@
     {
       Collider a;
       Collider b;
-      Point coord;
       Point aCoord;
       Point bCoord;
       List<Collider> block;
-      for (int layerIndex = 0; layerIndex < layer.Count; layerIndex++)
+      foreach (KeyValuePair<Point, List<Collider>> blocks in layer)
       {
-        coord = layer.ElementAt(layerIndex).Key;
-        block = layer.ElementAt(layerIndex).Value;
+        Point coord = blocks.Key;
+        block = blocks.Value;
         for (int i = 0; i < block.Count; i++)
         {
           a = block[i];

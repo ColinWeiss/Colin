@@ -50,7 +50,7 @@ namespace Colin.Core.Graphics.Visual.Slash
     private float _sparkCarry;
     private float _afterGlow;
     private readonly List<Colin.Core.Graphics.Visual.Particle.ParticleSpawnInit> _spawnBatch = new List<Colin.Core.Graphics.Visual.Particle.ParticleSpawnInit>(32);
-    private Random _random = new Random();
+    private Random _random = Random.Shared;
 
     /// <summary>由管理器或用户创建; 图形设备缺省取粒子管理器/引擎设备.</summary>
     public SlashEffect(SlashEffectConfig config, GraphicsDevice device = null)
