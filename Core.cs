@@ -162,21 +162,11 @@ namespace Colin.Core
     {
       if (!Visiable)
         return;
-      //GraphicsDevice.Clear(Color.Transparent);
-
-      /*  CoreModule module;
-        for (int count = 0; count < Modules.Count; count++)
-        {
-          module = Modules[count];
-          module.DoRender(GraphicsDevice, CoreInfo.Batch);
-        }*/
       CoreInfo.Tinter.BeginFrame();
-      // 场景本体的渲染同样在 base.Draw 里, 和 base.Update 一起构成主线程两大桶
       using (StageRecorder.Tag("Frame.BaseDraw"))
         base.Draw(gameTime);
       using (StageRecorder.Tag("Frame.SceneRender"))
         DoRender();
-      // 后渲染层, ImGui 这类覆盖层在这里画, 此时背板上已经是最终画面
       CoreInfo.PostRender?.Invoke(gameTime);
     }
     public virtual void DoRender() { }

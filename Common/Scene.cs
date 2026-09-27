@@ -114,6 +114,17 @@ namespace Colin.Core.Common
         Modules.DoRender(CoreInfo.Batch);
         SceneRender();
         CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(null);
+        // 自愈: 场景若曾带错位尺寸的 RT (如历史版本在后台线程构建场景时读到 Draw 段绑定的 RT 尺寸),
+        // 渲染全程会被拉伸糊掉且无人纠正. 此刻已解绑 RT, Viewport 必为背屏真值; 错位就广播一次尺寸变化,
+        // 场景与各模块按现有 ClientSizeChanged 链路重建, 本帧跳过呈现, 下一帧起用新 RT.
+        if (SceneRenderTarget is null || SceneRenderTarget.IsDisposed
+          || SceneRenderTarget.Width != CoreInfo.ViewWidth
+          || SceneRenderTarget.Height != CoreInfo.ViewHeight)
+        {
+          Events.InvokeSizeChange(this, EventArgs.Empty);
+          base.Draw(gameTime);
+          return;
+        }
         CoreInfo.Batch.Begin();
         CoreInfo.Batch.Draw(SceneRenderTarget, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
         CoreInfo.Batch.End();
