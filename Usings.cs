@@ -6,11 +6,6 @@ global using Colin.Core.Graphics.Visual.Particle;
 global using Colin.Core.Graphics.Visual.Particle.Rendering;
 global using Colin.Core.Graphics.Visual.Serialization;
 global using Colin.Core.Graphics.Visual.Slash;
-// Colin.Editor 是可选手柄 (仅宿主游戏导入), 引擎单独编译 (如 Colin.NUnit) 时不存在,
-// 这行全局 using 由宿主工程定义的 COLIN_EDITOR 门控.
-#if COLIN_EDITOR
-global using Colin.Editor.Particle;
-#endif
 global using Colin.Core.Inputs;
 global using Colin.Core.Preparation;
 global using Leemo.Assets;

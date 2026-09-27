@@ -545,6 +545,9 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       div._parent = null;
       div._root = null;
+      div._upperScissor = null;
+      div._upperBatch = null;
+      div._upperCanvas = null;
       Events.Remove(div.Events);
       return Children.Remove(div);
     }
@@ -577,23 +580,6 @@ namespace Colin.Core.Modulars.UserInterfaces
     }
 
     public void Do(Action<Div> action) => action(this);
-
-    /// <summary>
-    /// 检查该划分元素是否为某个划分元素的后代.
-    /// </summary>
-    /// <param name="div"></param>
-    /// <returns></returns>
-    public bool DescendantsOf(Div div)
-    {
-      if (div._parent is not null)
-      {
-        if (div._parent.Equals(div))
-          return true;
-        else
-          return div._parent.DescendantsOf(div);
-      }
-      return false;
-    }
 
     /// <summary>
     /// 判断该划分元素是否包含屏幕上的指定点.
