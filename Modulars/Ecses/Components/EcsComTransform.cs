@@ -1,5 +1,4 @@
 ﻿using Colin.Core.IO;
-using DeltaMachine.Core;
 
 namespace Colin.Core.Modulars.Ecses.Components
 {
