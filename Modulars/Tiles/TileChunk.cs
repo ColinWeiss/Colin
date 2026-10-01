@@ -358,22 +358,15 @@ namespace Colin.Core.Modulars.Tiles
     internal bool _loading = false;
     internal bool _operation = false;
     public bool InOperation => _operation || _loading || _saving;
+    /// <summary>
+    /// 区块数据尚未就位 (生成中或读档中).
+    /// <br>此期间格子内容是后台线程正在写入的半成品, 碰撞等主线程消费方应把它整体当实心占位.</br>
+    /// <br>不包含 <see cref="_saving"/>: 存档中的区块数据是完整的, 照常参与碰撞.</br>
+    /// </summary>
+    public bool AwaitingData => _operation || _loading;
     public void SetOperation(bool flag)
     {
-      if (flag)
-      {
-        _operation = true;
-        Span<TileInfo> info = Infos;
-        for (int i = 0; i < Infos.Length; i++)
-          info[i].Loading = true;
-      }
-      else
-      {
-        _operation = false;
-        Span<TileInfo> info = Infos;
-        for (int i = 0; i < Infos.Length; i++)
-          info[i].Loading = false;
-      }
+      _operation = flag;
     }
 
     /// <summary>
@@ -508,19 +501,42 @@ namespace Colin.Core.Modulars.Tiles
             continue;
           // 邻居还在加载的话不用管, 它自己就位时也会走这里把我们的贴边补刷
           ConcurrentQueue<Point3> queue = Refresher.RefreshQueue.GetOrAdd(neighbor.Coord, static _ => new ConcurrentQueue<Point3>());
-          ref TileInfo info = ref neighbor[0, 0, 0];
-          for (int count = 0; count < neighbor.Infos.Length; count++)
+          // 正方向只需要一条贴边, 对角只需要一格; 直接按坐标取, 不再全扫 18432 格再按 onEdge 过滤
+          if (dx == 0)
           {
-            info = ref neighbor[count];
-            if (info.Empty)
-              continue;
-            int ix = info.ICoordX;
-            int iy = info.ICoordY;
-            bool onEdge = (dx == 0 || (dx == 1 ? ix == 0 : ix == lastX))
-                       && (dy == 0 || (dy == 1 ? iy == 0 : iy == lastY));
-            if (onEdge is false)
-              continue;
-            queue.Enqueue(new Point3(ix, iy, info.ICoordZ));
+            int iy = dy == 1 ? 0 : lastY;
+            for (int ix = 0; ix <= lastX; ix++)
+              for (int z = 0; z < Depth; z++)
+              {
+                ref TileInfo info = ref neighbor[ix, iy, z];
+                if (info.Empty)
+                  continue;
+                queue.Enqueue(new Point3(ix, iy, info.ICoordZ));
+              }
+          }
+          else if (dy == 0)
+          {
+            int ix = dx == 1 ? 0 : lastX;
+            for (int iy = 0; iy <= lastY; iy++)
+              for (int z = 0; z < Depth; z++)
+              {
+                ref TileInfo info = ref neighbor[ix, iy, z];
+                if (info.Empty)
+                  continue;
+                queue.Enqueue(new Point3(ix, iy, info.ICoordZ));
+              }
+          }
+          else
+          {
+            int ix = dx == 1 ? 0 : lastX;
+            int iy = dy == 1 ? 0 : lastY;
+            for (int z = 0; z < Depth; z++)
+            {
+              ref TileInfo info = ref neighbor[ix, iy, z];
+              if (info.Empty)
+                continue;
+              queue.Enqueue(new Point3(ix, iy, info.ICoordZ));
+            }
           }
         }
       }

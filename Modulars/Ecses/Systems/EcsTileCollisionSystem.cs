@@ -13,6 +13,16 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
     public Tile Tile => Ecs.Scene.GetModule<Tile>();
 
+    /// <summary>
+    /// 指定世界坐标所在区块的数据是否尚未就位 (生成中或读档中).
+    /// <br>此期间整块按实心占位, 替代逐格的 Loading 标记.</br>
+    /// </summary>
+    private bool IsChunkAwaitingData(int worldX, int worldY)
+    {
+      TileChunk chunk = Tile.GetChunkForWorldCoord(worldX, worldY);
+      return chunk is not null && chunk.AwaitingData;
+    }
+
     public override void DoUpdate()
     {
       Entity _current;
@@ -124,7 +134,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
               continue;
           }
 
-          if ((isSlope || info.Collision == TileSolid.Sturdy || info.Loading) &&
+          if ((isSlope || info.Collision == TileSolid.Sturdy || IsChunkAwaitingData(x, y)) &&
               !previousBounds.Intersects(target))
           {
             depth = GetEmbed(next, target, comTransform.DeltaVelocity);
@@ -254,7 +264,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       ref TileInfo info = ref Tile[tileX, tileY, comPhysic.Layer];
       if (info.IsNull)
         return false;
-      if (info.Collision == TileSolid.None && !info.Loading)
+      if (info.Collision == TileSolid.None && !IsChunkAwaitingData(tileX, tileY))
         return false;
 
       RectangleF target = GetTileBounds(ref info);
@@ -289,7 +299,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
           comPhysic.CollisionTop = true;
           return true;
         }
-        // 普通实心物块(含 Loading 占位).
+        // 普通实心物块(区块数据未就位时同样按实心占位).
         if (deltaVel.Y >= 0)
         {
           deltaVel.Y = target.Top - anchor.Y;
@@ -306,7 +316,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
 
       // 水平方向: 斜坡交由垂直扫掠做表面贴合, 不作为墙壁.
-      if (info.Collision != TileSolid.Sturdy && !info.Loading)
+      if (info.Collision != TileSolid.Sturdy && !IsChunkAwaitingData(tileX, tileY))
         return false;
       if (deltaVel.X > 0)
       {
@@ -664,7 +674,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
                             roofInfo.Collision == TileSolid.SlopeRightUp ||
                             roofInfo.Collision == TileSolid.SlopeLeftDown ||
                             roofInfo.Collision == TileSolid.SlopeRightDown ||
-                            roofInfo.Loading;
+                            IsChunkAwaitingData(rx, headTopTile);
         if (!isCollidable)
           continue;
 

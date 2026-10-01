@@ -31,8 +31,6 @@ namespace Colin.Core.Modulars.Tiles
 
     public bool Empty;
 
-    public bool Loading;
-
     private bool _isNull;
     public bool IsNull => _isNull;
 
