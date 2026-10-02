@@ -18,14 +18,16 @@ namespace Colin.Core
     public static string[] StartupParameter;
 
     /// <summary>
-    ///用于初始化和控制图形设备的显示.
+    /// 用于初始化和控制图形设备的显示.
+    /// <br>开放成公开的:模组要访问图形设备管理器,不必再绕道.</br>
     /// </summary>
-    internal static GraphicsDeviceManager Graphics { get; set; }
+    public static GraphicsDeviceManager Graphics { get; set; }
 
     /// <summary>
     /// 纹理批管道.
+    /// <br>开放成公开的:模组画东西直接用它,不用自己再 new 一个 SpriteBatch.</br>
     /// </summary>
-    internal static SpriteBatch Batch { get; set; }
+    public static SpriteBatch Batch { get; set; }
 
     /// <summary>
     /// Compute Sharp 桥接.
