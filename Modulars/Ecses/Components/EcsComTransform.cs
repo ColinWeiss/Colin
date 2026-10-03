@@ -94,24 +94,25 @@ namespace Colin.Core.Modulars.Ecses.Components
       Scale = Vector2.One;
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public void SaveStep(TagCompound data)
     {
-      writer.Write(Translation.X);
-      writer.Write(Translation.Y);
-      writer.Write(Vel.X);
-      writer.Write(Vel.Y);
-      writer.Write(Size.X);
-      writer.Write(Size.Y);
+      data["X"] = Translation.X;
+      data["Y"] = Translation.Y;
+      data["VelX"] = Vel.X;
+      data["VelY"] = Vel.Y;
+      data["SizeX"] = Size.X;
+      data["SizeY"] = Size.Y;
     }
 
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(TagCompound data)
     {
-      Translation.X = reader.ReadSingle();
-      Translation.Y = reader.ReadSingle();
-      Vel.X = reader.ReadSingle();
-      Vel.Y = reader.ReadSingle();
-      Size.X = reader.ReadSingle();
-      Size.Y = reader.ReadSingle();
+      //键不在就让现值留着, 少一个键不至于把实体拍回原点
+      Translation.X = data.GetFloat("X", Translation.X);
+      Translation.Y = data.GetFloat("Y", Translation.Y);
+      Vel.X = data.GetFloat("VelX", Vel.X);
+      Vel.Y = data.GetFloat("VelY", Vel.Y);
+      Size.X = data.GetFloat("SizeX", Size.X);
+      Size.Y = data.GetFloat("SizeY", Size.Y);
     }
   }
 }

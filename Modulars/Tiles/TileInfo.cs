@@ -4,8 +4,9 @@ namespace Colin.Core.Modulars.Tiles
 {
   /// <summary>
   /// 表示瓦片地图中的单个瓦片的基本信息.
+  /// <br>[!] 结构体不参与逐格存取: 区块存档把格子摊成批量数组整存整取, 见 <see cref="TileChunk"/>.</br>
   /// </summary>
-  public struct TileInfo : IOStep
+  public struct TileInfo
   {
     public TileSolid Collision;
 
@@ -37,30 +38,6 @@ namespace Colin.Core.Modulars.Tiles
     public int GetSeed()
     {
       return WCoordX * 17 + WCoordY + ICoordX * 137 + ICoordY;
-    }
-
-    public void LoadStep(BinaryReader reader)
-    {
-      Collision = (TileSolid)reader.ReadInt32();
-      WCoordX = reader.ReadInt32();
-      WCoordY = reader.ReadInt32();
-      ICoordX = reader.ReadInt16();
-      ICoordY = reader.ReadInt16();
-      ICoordZ = reader.ReadInt16();
-      Empty = reader.ReadBoolean();
-      Index = reader.ReadInt32();
-    }
-
-    public void SaveStep(BinaryWriter writer)
-    {
-      writer.Write((int)Collision);
-      writer.Write(WCoordX);
-      writer.Write(WCoordY);
-      writer.Write(ICoordX);
-      writer.Write(ICoordY);
-      writer.Write(ICoordZ);
-      writer.Write(Empty);
-      writer.Write(Index);
     }
 
     internal static TileInfo _null = new TileInfo()

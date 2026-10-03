@@ -1,4 +1,4 @@
-using Colin.Core.Common.Debugs;
+﻿using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using Colin.Core.Resources;
 using System.Collections.Concurrent;
@@ -554,64 +554,62 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(TagCompound data)
     {
-      ref TileInfo info = ref this[0, 0, 0];
-      string typeName;
-      int typehash = 0;
+      int length = Infos.Length;
+      //大数组先整段收下来, 后面逐格只做下标和赋值
+      int[] collisions = data.GetArray<int>("Collision");
+      TagSeq nameList = data.GetSeq("KernelNames");
+      int[] slots = data.GetArray<int>("KernelSlots");
+      string[] nameTable = new string[nameList?.Count ?? 0];
+      for (int i = 0; i < nameTable.Length; i++)
+        nameTable[i] = nameList.GetString(i, string.Empty);
+      Array.Clear(Kernals, 0, Kernals.Length); //租来的数组可能有上一位区块的旧账, 先清干净
       int repairedTiles = 0;
-      int? firstBadHash = null;
-      for (int count = 0; count < Infos.Length; count++)
+      string firstBadName = null;
+      for (int count = 0; count < length; count++)
       {
-        info = ref this[count];
-        info.LoadStep(reader);
-        if (!info.Empty)
+        ref TileInfo info = ref this[count];
+        //位置类字段跟生成时一样按索引现算, 档里只存真状态, 不存推得出来的冗余
+        info.Index = count;
+        info.ICoordX = (short)(count % (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight) % Tile.Context.ChunkWidth);
+        info.ICoordY = (short)(count % (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight) / Tile.Context.ChunkWidth);
+        info.ICoordZ = (short)(count / (Tile.Context.ChunkWidth * Tile.Context.ChunkHeight));
+        info.WCoordX = CoordX * Tile.Context.ChunkWidth + info.ICoordX;
+        info.WCoordY = CoordY * Tile.Context.ChunkHeight + info.ICoordY;
+        info.Collision = collisions is not null && count < collisions.Length ? (TileSolid)collisions[count] : default;
+        //空档约定: 行为槽位为负就是空格子, Empty 不再单独落盘
+        int slot = slots is not null && count < slots.Length ? slots[count] : -1;
+        info.Empty = slot < 0;
+        if (slot >= 0)
         {
-          typehash = reader.ReadInt32();
-          typeName = CodeResources<TileKernel>.GetTypeNameFromHash(typehash);
-          if (typeName is not null)
+          string typeName = slot < nameTable.Length ? nameTable[slot] : null;
+          TileKernel kernel = typeName is null ? null : CodeResources<TileKernel>.GetFromTypeName(typeName);
+          if (kernel is not null)
           {
-            Kernals[count] = CodeResources<TileKernel>.GetFromTypeName(typeName);
-          }
-          if (Kernals[count] is not null)
-          {
-            Kernals[count].Tile = Tile;
-            Kernals[count].OnInitialize(Tile, this, info.Index); //执行行为初始化放置
+            Kernals[count] = kernel;
+            kernel.Tile = Tile;
+            kernel.OnInitialize(Tile, this, info.Index); //执行行为初始化放置
           }
           else
           {
-            // 哈希在注册表里对不上号, 一般是老存档带着已经删除或改名的物块类型
+            // 行为名在注册表里对不上号, 一般是存档带着已经删除或改名的物块类型
             // 只能把格子按空的修复, 不然这区块以后存档的时候必然炸
-            // 这里绝不能上 Debug.Assert, 那会绕过上面整个修复分支, 在 Debug 构建里直接 FailFast 杀进程
-            firstBadHash ??= typehash;
-            info.Empty = true;
+            firstBadName ??= typeName ?? "?";
             repairedTiles++;
           }
         }
       }
       if (repairedTiles > 0)
-        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块类型已失效, 已按空格子修复, 未知哈希: ", firstBadHash));
-      // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
-      int handlerCount = reader.ReadInt32();
-      Dictionary<string, TileHandler> namedTag = new();
+        Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的物块行为已失效, 已按空格子修复, 未知行为: ", firstBadName));
+      // Handler 各占一个键(键名是 Handler 类名): 档里有的才读, 档里没有的(新加的 Handler)保持默认,
+      // 档里多出来的键(被删掉的 Handler)没人读就自然跳过, 都不会像以前那样校验失败当场炸
+      TagCompound handlers = data.GetCompound("Handlers");
       for (int i = 0; i < Handler.Count; i++)
-        namedTag[Handler[i].GetType().Name] = Handler[i];
-      for (int i = 0; i < handlerCount; i++)
       {
-        int check = reader.ReadInt32();
-        if (check != 20250225)
-        {
-          Debug.Fail("校验码失败, 区块存档格式损坏");
-        }
-        string name = reader.ReadString();
-        if (namedTag.TryGetValue(name, out var matchedHandler))
-        {
-          matchedHandler.LoadStep(reader);
-        }
-        else
-        {
-          Debug.Fail("找不到Named Tag：" + name);
-        }
+        TagCompound handlerData = handlers?.GetCompound(Handler[i].GetType().Name);
+        if (handlerData is not null)
+          Handler[i].LoadStep(handlerData);
       }
     }
 
@@ -663,14 +661,18 @@ namespace Colin.Core.Modulars.Tiles
       _saving = false;
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public void SaveStep(TagCompound data)
     {
-      int? hash;
-      TileKernel tCom;
-      TileHandler cCom;
       Span<TileInfo> infoSpan = Infos;
+      int length = infoSpan.Length;
+      //逐格数据全部摊成批量数组整存整取: 一格一组键值对这种事在物块这里是想都不要想的
+      int[] collisions = new int[length];
+      int[] slots = new int[length];
+      Dictionary<string, int> nameIds = new Dictionary<string, int>();
+      List<string> nameList = new List<string>();
+      TileKernel tCom;
       int repairedTiles = 0;
-      for (int count = 0; count < infoSpan.Length; count++)
+      for (int count = 0; count < length; count++)
       {
         tCom = Kernals[count];
         if (infoSpan[count].Empty is false && tCom is null)
@@ -681,29 +683,44 @@ namespace Colin.Core.Modulars.Tiles
           infoSpan[count] = repaired;
           repairedTiles++;
         }
-        infoSpan[count].SaveStep(writer);
-        if (!infoSpan[count].Empty)
+        collisions[count] = (int)infoSpan[count].Collision;
+        if (infoSpan[count].Empty is false)
         {
-          Debug.Assert(tCom is not null);
-          hash = CodeResources<TileKernel>.GetHashFromTypeName(tCom.Identifier);
-          Debug.Assert(hash.HasValue);
-          writer.Write(hash.Value);
+          // 行为类型直接存类型名, 谁先出现谁占号, 整份档里每种行为只记一份全文
+          string name = tCom.Identifier;
+          if (nameIds.TryGetValue(name, out int id) is false)
+          {
+            id = nameList.Count;
+            nameIds[name] = id;
+            nameList.Add(name);
+          }
+          slots[count] = id;
+        }
+        else
+        {
+          // 空档约定: 槽位负数就是空格子, Empty 不再单独落盘
+          slots[count] = -1;
         }
       }
       if (repairedTiles > 0)
         Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块(", CoordX, ",", CoordY, ")有 ", repairedTiles, " 个格子的行为缺失, 已按空格子写入存档"));
-      // 加入Named Tag, 保证TileHandler变动时其他模块能够正常读取
-      writer.Write(Handler.Count);
+      data["Collision"] = collisions;
+      data["KernelSlots"] = slots;
+      TagSeq nameTags = new TagSeq(TagType.String);
+      for (int i = 0; i < nameList.Count; i++)
+        nameTags.Add(nameList[i]);
+      data["KernelNames"] = nameTags;
+      // Handler 各占一个键(键名是 Handler 类名), 谁的数据谁自己往里塞
+      TagCompound handlers = new TagCompound();
       for (int i = 0; i < Handler.Count; i++)
       {
-        writer.Write(20250225);
-        cCom = Handler.ElementAt(i);
-        string name = cCom.GetType().Name;
-        writer.Write(name);
-        cCom.SaveStep(writer);
+        TileHandler handler = Handler[i];
+        TagCompound handlerData = new TagCompound();
+        handler.SaveStep(handlerData);
+        handlers[handler.GetType().Name] = handlerData;
       }
-      //2025.2.22: 将区块行为与物块本身行为区分, 以支持更自由的数据存储.
-      //例如之前不允许空物块存储数据, 但现在允许于 TileHandler 存储.
+      data["Handlers"] = handlers;
+      //2025.2.22 的设计沿用: 区块行为与物块本身行为区分, 空物块也能在 Handler 里有数据.
     }
 
     /// <summary>

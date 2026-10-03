@@ -196,38 +196,49 @@ namespace Colin.Core.Common
       base.Dispose(disposing);
     }
 
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(TagCompound data)
     {
-      LoadScene(reader);
+      LoadScene(data.GetCompound("Scene"));
       ISceneModule module;
       for (int count = 0; count < Modules.Count; count++)
       {
         module = Modules.ElementAt(count).Value;
         if (module is IOStep io)
         {
-          io.LoadStep(reader);
+          //模块各占一个键(键名是模块类型全名); 档里还没有这个键(新模块碰上老存档)就保持默认
+          TagCompound moduleData = data.GetCompound(module.GetType().FullName);
+          if (moduleData is null)
+            continue;
+          io.LoadStep(moduleData);
         }
       }
-      LoadModulesPost(reader);
+      LoadModulesPost(data.GetCompound("Post"));
     }
-    public virtual void LoadScene(BinaryReader reader) { }
-    public virtual void LoadModulesPost(BinaryReader reader) { }
+    public virtual void LoadScene(TagCompound data) { }
+    public virtual void LoadModulesPost(TagCompound data) { }
 
-    public void SaveStep(BinaryWriter writer)
+    public void SaveStep(TagCompound data)
     {
-      SaveScene(writer);
+      TagCompound sceneData = new TagCompound();
+      SaveScene(sceneData);
+      data["Scene"] = sceneData;
+      TagCompound moduleData;
       ISceneModule module;
       for (int count = 0; count < Modules.Count; count++)
       {
         module = Modules.ElementAt(count).Value;
         if (module is IOStep io)
         {
-          io.SaveStep(writer);
+          moduleData = new TagCompound();
+          io.SaveStep(moduleData);
+          data[module.GetType().FullName] = moduleData;
         }
       }
-      SaveModulesPost(writer);
+      TagCompound postData = new TagCompound();
+      SaveModulesPost(postData);
+      data["Post"] = postData;
     }
-    public virtual void SaveScene(BinaryWriter writer) { }
-    public virtual void SaveModulesPost(BinaryWriter writer) { }
+    public virtual void SaveScene(TagCompound data) { }
+    public virtual void SaveModulesPost(TagCompound data) { }
   }
 }

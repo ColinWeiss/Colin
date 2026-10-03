@@ -155,6 +155,20 @@ namespace Colin.Core.Resources
     }
 
     /// <summary>
+    /// 按类型名建实例;查不到(模组被卸载等)返回 default 而不是炸,读档端好走占位转换。
+    /// <br>存档里现在直接写类型名,这条比按哈希查的更常用。</br>
+    /// </summary>
+    public static T0 TryCreateFromTypeName(string typeName)
+    {
+      if (typeName is null)
+        return default;
+      T0 prototype = GetFromTypeName(typeName);
+      if (prototype is null)
+        return default;
+      return (T0)Activator.CreateInstance(prototype.GetType());
+    }
+
+    /// <summary>
     /// 按哈希建实例;查不到(模组被卸载等)返回 default 而不是炸,读档端好走占位转换。
     /// </summary>
     public static T0 TryCreateNewInstance(int hashValue)

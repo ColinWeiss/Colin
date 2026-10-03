@@ -46,22 +46,5 @@
       Width = width;
       Height = height;
     }
-
-    internal void LoadStep(BinaryReader reader)
-    {
-      _loadComplete = true;
-      X = reader.ReadInt32();
-      Y = reader.ReadInt32();
-      Width = reader.ReadInt32();
-      Height = reader.ReadInt32();
-    }
-
-    internal void SaveStep(BinaryWriter writer)
-    {
-      writer.Write(X);
-      writer.Write(Y);
-      writer.Write(Width);
-      writer.Write(Height);
-    }
   }
 }

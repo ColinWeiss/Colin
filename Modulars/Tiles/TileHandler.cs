@@ -70,9 +70,14 @@ namespace Colin.Core.Modulars.Tiles
     /// </summary>
     public virtual void OnChunkReady() { }
 
-    public virtual void SaveStep(BinaryWriter writer) { }
+    /// <summary>
+    /// 存档: 往键值组里塞这个 Handler 的数据.
+    /// <br>逐格的海量数据请摊成数组塞一个键, 别一格开一组键值对.</br>
+    /// </summary>
+    public virtual void SaveStep(TagCompound data) { }
 
-    public virtual void LoadStep(BinaryReader reader) { }
+    /// <summary>读档: 从键值组里按键取值; 键不在就让字段保持默认.</summary>
+    public virtual void LoadStep(TagCompound data) { }
 
     /// <summary>
     /// 判断指定相对于该物块坐标具有指定偏移位置处的物块是否具有相同的行为方式.

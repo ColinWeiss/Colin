@@ -18,41 +18,12 @@ namespace Colin.Core.Extensions
         Point.Right,
         Point.Down
       };
-
-      public void LoadStep(BinaryReader reader)
-      {
-        p.X = reader.ReadInt32();
-        p.Y = reader.ReadInt32();
-      }
     }
     extension(Point p)
     {
       public Point3 ToPoint3()
       {
         return new Point3(p.X, p.Y, 0);
-      }
-      public void SaveStep(BinaryWriter writer)
-      {
-        writer.Write(p.X);
-        writer.Write(p.Y);
-      }
-    }
-    extension(ref Point3 p)
-    {
-      public void LoadStep(BinaryReader reader)
-      {
-        p.X = reader.ReadInt32();
-        p.Y = reader.ReadInt32();
-        p.Z = reader.ReadInt32();
-      }
-    }
-    extension(Point3 p)
-    {
-      public void SaveStep(BinaryWriter writer)
-      {
-        writer.Write(p.X);
-        writer.Write(p.Y);
-        writer.Write(p.Z);
       }
     }
   }

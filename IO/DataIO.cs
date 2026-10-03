@@ -14,32 +14,29 @@ namespace Colin.Core.IO
   {
     public static void DoSave(string filePath, IOStep step, bool async = false)
     {
+      //先把数据整成键值组再落盘: 存的人只管往里塞键值对, 落盘格式统一走 TagIO.
+      TagCompound root = new TagCompound();
+      step.SaveStep(root);
       if (async)
       {
-        using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
-        using (BinaryWriter writer = new BinaryWriter(fs))
-          step.SaveStep(writer);
+        using FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true);
+        TagIO.Write(fs, root);
       }
       else
       {
-        using (FileStream fs = new FileStream(filePath, FileMode.Create))
-        using (BinaryWriter writer = new BinaryWriter(fs))
-          step.SaveStep(writer);
+        TagIO.Write(filePath, root);
       }
     }
     public static void DoLoad(string filePath, IOStep step, bool async = false)
     {
       if (async)
       {
-        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, true))
-        using (BinaryReader reader = new BinaryReader(fs))
-          step.LoadStep(reader);
+        using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, true);
+        step.LoadStep(TagIO.Read(fs));
       }
       else
       {
-        using (FileStream fs = new FileStream(filePath, FileMode.Open))
-        using (BinaryReader reader = new BinaryReader(fs))
-          step.LoadStep(reader);
+        step.LoadStep(TagIO.Read(filePath));
       }
     }
   }

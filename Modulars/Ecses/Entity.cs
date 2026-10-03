@@ -1,4 +1,5 @@
-﻿using Colin.Core.Mathematical;
+﻿using Colin.Core.IO;
+using Colin.Core.Mathematical;
 using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
 
@@ -159,20 +160,30 @@ namespace Colin.Core.Modulars.Ecses
       return result;
     }
 
-    public void SaveStep(BinaryWriter writer)
+    public void SaveStep(TagCompound data)
     {
+      //组件各占一个键, 键名就是组件类型全名; 组件集合变了, 档里多出来的键没人读就自然跳过
       for (int i = 0; i < Components.Count; i++)
       {
         if (Components[i] is IEcsComIO io)
-          io.SaveStep(writer);
+        {
+          TagCompound comData = new TagCompound();
+          io.SaveStep(comData);
+          data[Components[i].GetType().FullName] = comData;
+        }
       }
     }
-    public void LoadStep(BinaryReader reader)
+    public void LoadStep(TagCompound data)
     {
       for (int i = 0; i < Components.Count; i++)
       {
         if (Components[i] is IEcsComIO io)
-          io.LoadStep(reader);
+        {
+          TagCompound comData = data.GetCompound(Components[i].GetType().FullName);
+          if (comData is null)
+            continue; //档里没有这个组件的键(新组件碰上老存档), 让它保持默认值
+          io.LoadStep(comData);
+        }
       }
     }
 
