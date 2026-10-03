@@ -259,6 +259,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivRoundedRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivSdfIconRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIBatch.cs" />

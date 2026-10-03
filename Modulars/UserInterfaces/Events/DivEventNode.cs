@@ -5,6 +5,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
   public class DivEventNode<T> : EventNode<T> where T : IEventBase
   {
     public Div Div { get; set; }
+
     public override bool CheckCondition()
     {
       if (Div is null || Div.Disposed || Div.IsVisible is false || Div.Interact.IsInteractive is false)

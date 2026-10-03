@@ -9,6 +9,23 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public DivEventNode<MouseHoverArgs> MouseHover;
 
+    /// <summary>
+    /// 悬停开始:鼠标这一帧刚落到元素上时触发一次.
+    /// <br>这是本地算出来的边缘事件,只触发本节点,不参与捕获/冒泡。</br>
+    /// </summary>
+    public DivEventNode<MouseHoverArgs> HoverBegan;
+
+    /// <summary>
+    /// 悬停结束:鼠标这一帧刚离开元素时触发一次;元素隐藏也会按离开处理.
+    /// </summary>
+    public DivEventNode<MouseHoverArgs> HoverEnded;
+
+    /// <summary>
+    /// 指示鼠标当前是否悬停在元素上;每帧随交互状态刷新.
+    /// <br>做悬停反馈(变色/亮边)直接每帧看它;要"进/出那一刻"做事就挂 <see cref="HoverBegan"/> / <see cref="HoverEnded"/>.</br>
+    /// </summary>
+    public bool IsHovered;
+
     public DivEventNode<LeftClickedArgs> LeftClicked;
     public DivEventNode<LeftClickingArgs> LeftClicking;
     public DivEventNode<LeftDownArgs> LeftDown;
@@ -30,6 +47,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       _div = div;
       MouseHover = new DivEventNode<MouseHoverArgs>();
       MouseHover.Div = div;
+      HoverBegan = new DivEventNode<MouseHoverArgs>();
+      HoverBegan.Div = div;
+      HoverEnded = new DivEventNode<MouseHoverArgs>();
+      HoverEnded.Div = div;
       LeftClicked = new DivEventNode<LeftClickedArgs>();
       LeftClicked.Div = div;
       LeftClicking = new DivEventNode<LeftClickingArgs>();
@@ -152,6 +173,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         Div.Interact.Interaction = true;
       else
         Div.Interact.Interaction = false;
+      //悬停状态与进出边缘:反馈变色每帧看 IsHovered 就行,进出那一刻靠这对边缘事件.
+      IsHovered = Div.Interact.Interaction;
+      if (IsHovered && Div.Interact.InteractionLast is false)
+        HoverBegan.TriggerSelf(new MouseHoverArgs { Sender = Div, MousePos = mousePos });
+      else if (IsHovered is false && Div.Interact.InteractionLast)
+        HoverEnded.TriggerSelf(new MouseHoverArgs { Sender = Div, MousePos = mousePos });
       if (MouseResponder.LeftUp)
         DraggingState = false;
       if (DraggingState && Div.Interact.IsDraggable)
@@ -192,6 +219,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Append(DivEvents node)
     {
       MouseHover.Append(node.MouseHover);
+      HoverBegan.Append(node.HoverBegan);
+      HoverEnded.Append(node.HoverEnded);
       LeftClicked.Append(node.LeftClicked);
       LeftClicking.Append(node.LeftClicking);
       LeftDown.Append(node.LeftDown);
@@ -211,6 +240,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Insert(int index, DivEvents node)
     {
       MouseHover.Insert(index, node.MouseHover);
+      HoverBegan.Insert(index, node.HoverBegan);
+      HoverEnded.Insert(index, node.HoverEnded);
       LeftClicked.Insert(index, node.LeftClicked);
       LeftClicking.Insert(index, node.LeftClicking);
       LeftDown.Insert(index, node.LeftDown);
@@ -230,6 +261,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Register(DivEvents node)
     {
       MouseHover.Register(node.MouseHover);
+      HoverBegan.Register(node.HoverBegan);
+      HoverEnded.Register(node.HoverEnded);
       LeftClicked.Register(node.LeftClicked);
       LeftClicking.Register(node.LeftClicking);
       LeftDown.Register(node.LeftDown);
@@ -249,6 +282,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public void Remove(DivEvents node)
     {
       MouseHover.Remove(node.MouseHover);
+      HoverBegan.Remove(node.HoverBegan);
+      HoverEnded.Remove(node.HoverEnded);
       LeftClicked.Remove(node.LeftClicked);
       LeftClicking.Remove(node.LeftClicking);
       LeftDown.Remove(node.LeftDown);
@@ -269,6 +304,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     {
       _div = null;
       MouseHover.Dispose();
+      HoverBegan.Dispose();
+      HoverEnded.Dispose();
       LeftClicked.Dispose();
       LeftClicking.Dispose();
       LeftDown.Dispose();

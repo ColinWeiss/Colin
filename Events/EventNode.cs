@@ -38,6 +38,13 @@
     }
 
     /// <summary>
+    /// 只触发本节点自身的事件处理, 不走捕获/冒泡级联.
+    /// <br>悬停进出这类由元素本地计算出的边缘事件用它, 别从场景泵那边全树乱窜; 事件发送者取 args.Sender.</br>
+    /// </summary>
+    public void TriggerSelf(T args)
+      => Event?.Invoke(args.Sender, args);
+
+    /// <summary>
     /// 触发条件检查.
     /// </summary>
     public virtual bool CheckCondition() => true;
