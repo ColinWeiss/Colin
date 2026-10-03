@@ -171,6 +171,13 @@ public sealed class AssetManager : IDisposable
     _cache.Clear();
   }
 
+  /// <summary>
+  /// 枚举当前缓存里所有 T 类型资产的虚拟路径(归一化相对路径).
+  /// <br>典型用途:模组卸载前把这一批纹理名从精灵池里摘掉,再 Dispose 资产本体.</br>
+  /// </summary>
+  public IEnumerable<string> LoadedPathsOf<T>()
+    => _cache.Keys.Where(key => key.AssetType == typeof(T)).Select(key => key.Path);
+
   // ---------- 热重载 ----------
 
   /// <summary>开启文件监视.变更事件进入排队, 等待主线程 PumpReloads() 落地.</summary>

@@ -154,6 +154,20 @@ namespace Colin.Core.Resources
       return (T0)Activator.CreateInstance(GetFromTypeName(typeName).GetType());
     }
 
+    /// <summary>
+    /// 按哈希建实例;查不到(模组被卸载等)返回 default 而不是炸,读档端好走占位转换。
+    /// </summary>
+    public static T0 TryCreateNewInstance(int hashValue)
+    {
+      string typeName = GetTypeNameFromHash(hashValue);
+      if (typeName is null)
+        return default;
+      T0 prototype = GetFromTypeName(typeName);
+      if (prototype is null)
+        return default;
+      return (T0)Activator.CreateInstance(prototype.GetType());
+    }
+
     public void Load()
     {
       Resources.Clear();
