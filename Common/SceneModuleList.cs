@@ -72,7 +72,6 @@ namespace Colin.Core.Common
     {
       IRenderableISceneModule renderMode;
       RenderTarget2D frameRenderLayer;
-      Texture2D temp;
       {
         for (int count = 0; count < RenderableComponents.Count; count++)
         {
@@ -96,22 +95,22 @@ namespace Colin.Core.Common
         {
           renderMode = RenderableComponents[count];
           frameRenderLayer = renderMode.RawRt;
-          temp = null;
           if (renderMode.Presentation)
           {
             using (StageRecorder.Tag(CoreInfo.Debug ? GetTag(_presTags, renderMode.GetType(), "Pres:") : null))
             {
               if (Scene.ModulePostProcessor.Passes.TryGetValue(renderMode, out var pass))
               {
-                temp = pass.PostProcess(frameRenderLayer);
-                // TinterBridge.ProcessCore 的契约是"处理结果直接上屏", 内部会 SetRenderTarget(null) 且不恢复;
-                // 在场景合成管线里必须把绑定切回 SceneRenderTarget, 否则本层之后的所有绘制都进了背屏.
                 CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
               }
               renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
-              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
-              CoreInfo.Batch.Draw(temp == null ? frameRenderLayer : temp, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              // 模块调色曲线直连: 有曲线就把 Effect 挂进本次绘制原地调色, 无曲线 (默认形状) 返回 null 零开销直通.
+              Effect moduleCurveEffect = RSModuleCurve.GetEffect(renderMode);
+              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: moduleCurveEffect, rasterizerState: RasterizerState.CullNone);
+              CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
               CoreInfo.Batch.End();
+              if (moduleCurveEffect is not null)
+                CoreInfo.Graphics.GraphicsDevice.Textures[1] = null; // 清掉 LUT 残留绑定, 免得后面声明了 t1 却没设纹理的着色器捡到脏数据.
             }
           }
         }

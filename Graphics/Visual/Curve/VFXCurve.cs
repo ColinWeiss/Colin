@@ -10,7 +10,9 @@ namespace Colin.Core.Graphics.Visual.Curve
     /// <summary>线性 + SmoothStep 缓动.</summary>
     SmoothStep,
     /// <summary>Catmull-Rom 样条 —— 过控制点的平滑曲线 (默认, 推荐塑形用).</summary>
-    CatmullRom
+    CatmullRom,
+    /// <summary>均匀三次 B 样条 —— 不过控制点, 控制点构成包络, 曲率最柔和.</summary>
+    BSpline
   }
 
   /// <summary>标量曲线关键帧.</summary>
@@ -97,6 +99,10 @@ namespace Colin.Core.Graphics.Visual.Curve
           float p0 = keys[Math.Max(0, k - 1)].Value;
           float p3 = keys[Math.Min(keys.Count - 1, k + 2)].Value;
           return CurveMath.CatmullRom(p0, a.Value, b.Value, p3, f);
+        case CurveInterpolation.BSpline:
+          float b0 = keys[Math.Max(0, k - 1)].Value;
+          float b3 = keys[Math.Min(keys.Count - 1, k + 2)].Value;
+          return CurveMath.BSpline(b0, a.Value, b.Value, b3, f);
         default:
           return a.Value + (b.Value - a.Value) * f;
       }
@@ -263,6 +269,17 @@ namespace Colin.Core.Graphics.Visual.Curve
         + (-p0 + p2) * f
         + (2f * p0 - 5f * p1 + 4f * p2 - p3) * f2
         + (-p0 + 3f * p1 - 3f * p2 + p3) * f3);
+    }
+
+    /// <summary>均匀三次 B 样条段 (不过控制点; 段 [p1,p2] 由 p0~p3 共同决定).</summary>
+    public static float BSpline(float p0, float p1, float p2, float p3, float f)
+    {
+      float f2 = f * f;
+      float f3 = f2 * f;
+      return (1f / 6f) * ((-p0 + 3f * p1 - 3f * p2 + p3) * f3
+        + (3f * p0 - 6f * p1 + 3f * p2) * f2
+        + (-3f * p0 + 3f * p1) * f
+        + (p0 + 4f * p1 + p2));
     }
 
     /// <summary>端点时间钉死规则 (MoveKey 共用): 首键恒 0, 末键恒 1,

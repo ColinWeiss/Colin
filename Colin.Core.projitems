@@ -185,6 +185,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneModuleList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ModulePostProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\RSModuleCurve.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="..\Colin\Modulars\Ecses\Components\EcsComRenderData.cs" />

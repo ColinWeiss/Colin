@@ -62,7 +62,7 @@ namespace Colin.Core.Resources
       }
       _externalPrototypes.Add(prototype);
       AddToTable(prototype);
-      Console.Log(ConsoleTextType.Remind, "Resource", "外部类型注册进代码资产表: " + type.FullName);
+      Console.Log(ConsoleTextType.Remind, "Resource", "外部类型: " + type.FullName);
     }
 
     /// <summary>把一个外部注册的类型从表里摘掉(模组卸载时用);摘到了返回 true.</summary>
