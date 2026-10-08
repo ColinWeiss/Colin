@@ -23,9 +23,7 @@ namespace Colin.Core.Graphics.Shaders
       GraphicsDevice = graphicsDevice;
       
       D3dDevice = GraphicsDevice.Handle as Device;
-      D3dDeviceContext = GraphicsDevice.GetType().GetField("_d3dContext", BindingFlags.Instance | BindingFlags.NonPublic)
-          .GetValue(GraphicsDevice)
-          as DeviceContext;
+      D3dDeviceContext = D3dDevice.ImmediateContext.QueryInterface<DeviceContext>();
       D3dComputeShader = new(D3dDevice, data);
     }
 
