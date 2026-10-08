@@ -104,12 +104,12 @@ namespace Colin.Core.Common
                 CoreInfo.Graphics.GraphicsDevice.SetRenderTarget(Scene.SceneRenderTarget);
               }
               renderMode.DoRegenerateRender(CoreInfo.Graphics.GraphicsDevice, CoreInfo.Batch);
-              // 模块调色曲线直连: 有曲线就把 Effect 挂进本次绘制原地调色, 无曲线 (默认形状) 返回 null 零开销直通.
-              Effect moduleCurveEffect = RSModuleCurve.GetEffect(renderMode);
-              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: moduleCurveEffect, rasterizerState: RasterizerState.CullNone);
-              CoreInfo.Batch.Draw(frameRenderLayer, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
+              // 模块调色图层链: 无生效图层原样返回直通, 有则逐层 ping-pong 应用并返回承载结果的 scratch 纹理.
+              Texture2D moduleCurveContent = RSModuleCurve.Apply(renderMode, frameRenderLayer);
+              CoreInfo.Batch.Begin(SpriteSortMode.Deferred, rasterizerState: RasterizerState.CullNone);
+              CoreInfo.Batch.Draw(moduleCurveContent, new Rectangle(0, 0, CoreInfo.ViewWidth, CoreInfo.ViewHeight), Color.White);
               CoreInfo.Batch.End();
-              if (moduleCurveEffect is not null)
+              if (moduleCurveContent != frameRenderLayer)
                 CoreInfo.Graphics.GraphicsDevice.Textures[1] = null; // 清掉 LUT 残留绑定, 免得后面声明了 t1 却没设纹理的着色器捡到脏数据.
             }
           }

@@ -71,8 +71,8 @@ namespace Colin.Core.Graphics.Visual.Curve
     /// <summary>默认构造: 恒定值 1 的曲线.</summary>
     public static FloatCurve Constant(float value = 1f) => new FloatCurve { Keys = { new CurveKey(0f, value), new CurveKey(1f, value) } };
 
-    /// <summary>线性进度曲线 (0 → 1): 用作进度语义曲线 (纵轴=完成度) 的默认形状.</summary>
-    public static FloatCurve Linear() => new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) } };
+    /// <summary>线性进度曲线 (0 → 1): 用作进度语义曲线 (纵轴=完成度) 的默认形状. 插值同样为线性, 否则两点间会被默认的 CatmullRom 拉成 S 形.</summary>
+    public static FloatCurve Linear() => new FloatCurve { Keys = { new CurveKey(0f, 0f), new CurveKey(1f, 1f) }, Interpolation = CurveInterpolation.Linear };
 
     /// <summary>在时间点 t (0~1) 求值, 溢出区间时取端点值.</summary>
     public float Evaluate(float t)
