@@ -21,9 +21,8 @@ namespace Colin.Core.Graphics.Shaders
     public ComputeShader(GraphicsDevice graphicsDevice, byte[] data)
     {
       GraphicsDevice = graphicsDevice;
-      D3dDevice = GraphicsDevice.GetType().GetField("_d3dDevice", BindingFlags.Instance | BindingFlags.NonPublic)
-          .GetValue(GraphicsDevice)
-          as Device;
+      
+      D3dDevice = GraphicsDevice.Handle as Device;
       D3dDeviceContext = GraphicsDevice.GetType().GetField("_d3dContext", BindingFlags.Instance | BindingFlags.NonPublic)
           .GetValue(GraphicsDevice)
           as DeviceContext;
