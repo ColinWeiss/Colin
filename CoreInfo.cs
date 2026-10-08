@@ -11,7 +11,6 @@ namespace Colin.Core
   {
     /// <summary>
     /// 全局非种子敏感随机源 (线程安全).
-    /// <br>种子敏感场景 (世界生成/可复现特效) 请改用显式 <c>new Random(seed)</c> 或 TerrainNoise 哈希.</br>
     /// </summary>
     public static Random Rand => Random.Shared;
 

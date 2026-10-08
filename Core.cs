@@ -74,15 +74,9 @@ namespace Colin.Core
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
-      // 初始化 Leemo.Assets 运行时资产管线;
-      // 调试构建开启热重载, 文件一改即排队, 主线程 Update 里 PumpReloads 落地.
-      // 调试构建且检测到仓库布局时, 资产根直接指向源目录 DeltaMachine.Assets/Assets ——
-      // 加载与监视的都是你正在编辑的文件, 改完即热重载, 无需构建拷贝; 独立部署回退 <exe>/Assets.
       Assets.Init(GraphicsDevice, rootDir: CoreInfo.Debug ? FindDevAssetsRoot() : null, hotReload: CoreInfo.Debug);
-      // 注册 Colin 自定义资产的加载器 (计算着色器 / .fx 特效源码, 均为进程内编译).
       Assets.Manager.RegisterLoader(new ComputeShaderLoader());
       Assets.Manager.RegisterLoader(new EffectSourceLoader());
-      // 热重载结果进日志: 成功带出新实例, 失败保留旧资产并报错 (冒烟/调试期间可见).
       Assets.Manager.AssetReloaded += (path, type, _) =>
         Console.Log(ConsoleTextType.Remind, "Core", string.Concat("资产热重载: ", path, " (", type.Name, ")"));
       Assets.Manager.ReloadFailed += (path, ex) =>

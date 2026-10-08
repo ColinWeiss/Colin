@@ -1,5 +1,4 @@
 ﻿using Colin.Core.Modulars.Ecses.Systems;
-using SharpDX.Direct3D9;
 
 namespace Colin.Core.Modulars.Ecses.Components
 {

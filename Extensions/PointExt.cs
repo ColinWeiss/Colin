@@ -1,5 +1,4 @@
 ﻿using Colin.Core.IO;
-using SharpDX.Direct3D9;
 
 namespace Colin.Core.Extensions
 {

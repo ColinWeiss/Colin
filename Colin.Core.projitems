@@ -18,23 +18,6 @@
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\Rendering\ParticleRender.mgfx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Slash\SlashRender.fx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Slash\SlashRender.mgfx" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\Cyotek.Drawing.BitmapFont.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Base.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.MonoGame.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Rasterizers.FreeType.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Rasterizers.SixLabors.Fonts.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FontStashSharp.Rasterizers.StbTrueTypeSharp.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\FreeTypeSharp.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\StbImageSharp.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\FontStashSharp\StbTrueTypeSharp.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\mgpipeline.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.Framework.Content.Pipeline.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.Common.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.ImGuiNet.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\SharpDX.D3DCompiler.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\System.CommandLine.dll" />
-    <None Include="$(MSBuildThisFileDirectory)Libs\YamlDotNet.dll" />
     <None Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkArrayPool.md" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
@@ -292,5 +275,6 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Content\bin\Windows\Content\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\Windows\net10.0-windows7.0\Content\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Libs\" />
   </ItemGroup>
 </Project>
