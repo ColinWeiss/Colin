@@ -275,6 +275,5 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Content\bin\Windows\Content\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\Windows\net10.0-windows7.0\Content\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Libs\" />
   </ItemGroup>
 </Project>
