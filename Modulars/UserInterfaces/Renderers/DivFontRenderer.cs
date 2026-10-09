@@ -32,10 +32,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     {
       IgnoreColorCommand = false
     };
-    public DynamicSpriteFont Font;
+    public SpriteFontBase Font;
     private string _text;
     private Vector2 _measureCache;
-    private DynamicSpriteFont _measureFont;
+    private SpriteFontBase _measureFont;
     private bool _measureDirty = true;
 
     public string Text
@@ -78,7 +78,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
       base.OnDivInitialize();
     }
 
-    private static DynamicSpriteFont font = Assets.Font("Fonts/Unifont.ttf").GetFont(16);
+    private static SpriteFontBase font = Assets.Font("Fonts/Unifont.ttf").GetFont(16);
     public override void OnBinded()
     {
       if (Font == null)
