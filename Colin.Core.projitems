@@ -19,6 +19,9 @@
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Slash\SlashRender.fx" />
     <None Include="$(MSBuildThisFileDirectory)Graphics\Visual\Slash\SlashRender.mgfx" />
     <None Include="$(MSBuildThisFileDirectory)Libs\ComputeSharp.MonoGame.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.Common.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.IMEHelper.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Libs\MonoGame.ImGuiNet.dll" />
     <None Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkArrayPool.md" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>

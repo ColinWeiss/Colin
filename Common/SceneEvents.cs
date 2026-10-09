@@ -57,7 +57,7 @@ namespace Colin.Core.Common
 
       Keys[] lasts = KeyboardResponder.StateLast.GetPressedKeys();
       Keys[] current = KeyboardResponder.State.GetPressedKeys();
-      if (CoreInfo.IMEHandler.Enabled is false)
+      if (CoreInfo.IMEHandler is null || CoreInfo.IMEHandler?.Enabled is false)
       {
         foreach (var key in lasts)
           if (!current.Contains(key))

@@ -58,7 +58,7 @@ namespace Colin.Core.Common
         SceneInit();
         CoreInfo.Core.Window.ClientSizeChanged += Events.InvokeSizeChange;
         CoreInfo.Core.Window.OrientationChanged += Events.InvokeSizeChange;
-        CoreInfo.IMEHandler.TextInput += Events.OnTextInput;
+        CoreInfo.IMEHandler?.TextInput += Events.OnTextInput;
       }
       base.Initialize();
     }
@@ -191,7 +191,7 @@ namespace Colin.Core.Common
       {
         CoreInfo.Core.Window.ClientSizeChanged -= Events.InvokeSizeChange;
         CoreInfo.Core.Window.OrientationChanged -= Events.InvokeSizeChange;
-        CoreInfo.IMEHandler.TextInput -= Events.OnTextInput;
+        CoreInfo.IMEHandler?.TextInput -= Events.OnTextInput;
       }
       base.Dispose(disposing);
     }
