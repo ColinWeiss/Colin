@@ -1,4 +1,5 @@
 ﻿using SharpDX.Direct3D11;
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Colin.Core.Graphics.Shaders
@@ -15,6 +16,10 @@ namespace Colin.Core.Graphics.Shaders
 
     private byte[] _buffer;
     private bool _bufferDirty = true;
+    private BinaryWriter _writer;
+
+    // GetShaderResourceView 是各纹理类型的内部方法, GetMethod 查找+Invoke 开销大, 按具体 Type 缓存查找结果
+    private static readonly ConcurrentDictionary<Type, MethodInfo> _srvGetterCache = new();
 
     private int _bufferBegin = -1;
 
@@ -34,6 +39,8 @@ namespace Colin.Core.Graphics.Shaders
         CBuffer.Dispose();
       }
       _buffer = new byte[bufferLength];
+      _writer?.Dispose();
+      _writer = new BinaryWriter(new MemoryStream(_buffer));
       BufferDescription description = default(BufferDescription);
       description.SizeInBytes = bufferLength;
       description.Usage = ResourceUsage.Default;
@@ -66,7 +73,7 @@ namespace Colin.Core.Graphics.Shaders
     /// </summary>
     public int SetBufferData(int start, params object[] objects)
     {
-      BinaryWriter writer = new BinaryWriter(new MemoryStream(_buffer));
+      BinaryWriter writer = _writer;
       writer.Seek(start, SeekOrigin.Begin);
       for (int i = 0; i < objects.Length; i++)
       {
@@ -109,6 +116,71 @@ namespace Colin.Core.Graphics.Shaders
       D3dDeviceContext.ComputeShader.Set(D3dComputeShader);
     }
 
+    // 定位到 _bufferBegin 并按 16 字节对齐: 从当前位置写 size 字节会跨界时推进到下一边界, 值不跨越寄存器
+    private void PrepareWrite(int size)
+    {
+      long position = _writer.Seek(_bufferBegin, SeekOrigin.Begin);
+      if (position % 16 + size > 16)
+        _writer.BaseStream.Seek((position / 16 + 1) * 16, SeekOrigin.Begin);
+    }
+
+    private void FinishWrite()
+    {
+      _bufferBegin = (int)_writer.BaseStream.Position;
+    }
+
+    public void DataBatchAdd(int item)
+    {
+      PrepareWrite(4);
+      _writer.Write(item);
+      FinishWrite();
+    }
+
+    public void DataBatchAdd(float item)
+    {
+      PrepareWrite(4);
+      _writer.Write(item);
+      FinishWrite();
+    }
+
+    public void DataBatchAdd(Point item)
+    {
+      PrepareWrite(8);
+      _writer.Write(item.X);
+      _writer.Write(item.Y);
+      FinishWrite();
+    }
+
+    public void DataBatchAdd(Vector2 item)
+    {
+      PrepareWrite(8);
+      _writer.Write(item.X);
+      _writer.Write(item.Y);
+      FinishWrite();
+    }
+
+    public void DataBatchAdd(Vector3 item)
+    {
+      PrepareWrite(12);
+      _writer.Write(item.X);
+      _writer.Write(item.Y);
+      _writer.Write(item.Z);
+      FinishWrite();
+    }
+
+    public void DataBatchAdd(Vector4 item)
+    {
+      PrepareWrite(16);
+      _writer.Write(item.X);
+      _writer.Write(item.Y);
+      _writer.Write(item.Z);
+      _writer.Write(item.W);
+      FinishWrite();
+    }
+
+    /// <summary>
+    /// 兜底入口: 未覆盖的类型(如元组)走 SetBufferData 的反射分派
+    /// </summary>
     public void DataBatchAdd(object item)
     {
       _bufferBegin = SetBufferData(_bufferBegin, item);
@@ -139,9 +211,9 @@ namespace Colin.Core.Graphics.Shaders
         D3dDeviceContext.ComputeShader.SetShaderResource(slot, null);
         return;
       }
-      D3dDeviceContext.ComputeShader.SetShaderResource(slot, texture.GetType()
-          .GetMethod("GetShaderResourceView", BindingFlags.Instance | BindingFlags.NonPublic)
-          .Invoke(texture, null) as ShaderResourceView);
+      MethodInfo getter = _srvGetterCache.GetOrAdd(texture.GetType(), static t =>
+          t.GetMethod("GetShaderResourceView", BindingFlags.Instance | BindingFlags.NonPublic));
+      D3dDeviceContext.ComputeShader.SetShaderResource(slot, getter.Invoke(texture, null) as ShaderResourceView);
     }
     public void SetUnorderedTexture2D(int slot, UnorderedAccessTexture2D texture)
     {
