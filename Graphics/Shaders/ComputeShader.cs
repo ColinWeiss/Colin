@@ -127,6 +127,7 @@ namespace Colin.Core.Graphics.Shaders
     private void FinishWrite()
     {
       _bufferBegin = (int)_writer.BaseStream.Position;
+      _bufferDirty = true;
     }
 
     public void DataBatchAdd(int item)
