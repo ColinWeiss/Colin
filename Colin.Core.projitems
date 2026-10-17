@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Angle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\AssetManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\Assets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Assets\EngineAssets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IAssetLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\DeferralSe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\BuiltinLoaders.cs" />

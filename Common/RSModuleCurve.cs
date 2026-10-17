@@ -1,17 +1,11 @@
 using Colin.Core.Graphics.Visual.Curve;
-using System.Text.Json;
-// XNA 自带 Curve/CurveKey (Microsoft.Xna.Framework), 与 VFX 曲线的 CurveKey 重名, 统一钉到本工程这份.
+using Colin.Core.IO;
 using CurveKey = Colin.Core.Graphics.Visual.Curve.CurveKey;
 
 namespace Colin.Core.Common
 {
-  /// <summary>
-  /// 调色图层: 每个图层只控制 R/G/B/亮度/饱和度 其中一种通道, 按所在列表的顺序依次应用.
-  /// <br>PS 式重映射语义: 横轴 = 原始颜色 0~255 (归一 0~1), 纵轴 = 输出颜色 0~1, 45° = 不变 (饱和度为恒 1 因子).</br>
-  /// </summary>
   public sealed class RSModuleCurveLayer
   {
-    /// <summary>通道: 0=亮度 1=饱和度 2=R 3=G 4=B.</summary>
     public int Channel;
 
     public FloatCurve Curve;
@@ -31,14 +25,12 @@ namespace Colin.Core.Common
       Curve = RSModuleCurveSet.DefaultCurve(channel);
     }
 
-    /// <summary>该图层是否为所在通道的恒等形状 (45°/恒 1) —— 应用链路据此跳过空图层.</summary>
     public bool IsIdentity
     {
       get
       {
         if (Curve is null)
           return true;
-        // 引用 + 版本双比对: 重置图层会换上新的恒等实例 (Version 同为 0), 只看版本会漏检.
         if (!ReferenceEquals(_identityCurve, Curve) || _identityKey != Curve.Version)
         {
           _identity = RSModuleCurveSet.IsIdentityShape(Channel, Curve);
@@ -49,7 +41,6 @@ namespace Colin.Core.Common
       }
     }
 
-    /// <summary>该图层曲线的 LUT (256x1, r = 重映射输出); 曲线编辑或替换后首次取用时重烘焙.</summary>
     public Texture2D Lut
     {
       get
@@ -70,7 +61,6 @@ namespace Colin.Core.Common
       for (int i = 0; i < RSModuleCurveSet.LutBins; i++)
       {
         float value = i / (float)(RSModuleCurveSet.LutBins - 1);
-        // 重映射输出钳 0~1 (样条过冲在此收口), 输出恒在 0~255 内不反色.
         data[i] = new Vector4(Math.Clamp(Curve.Evaluate(value), 0f, 1f), 0f, 0f, 1f);
       }
       _lut.SetData(data);
@@ -79,43 +69,32 @@ namespace Colin.Core.Common
     }
   }
 
-  /// <summary>
-  /// 场景渲染模块的调色图层集 —— 图层按列表顺序依次应用, 每层只控制 R/G/B/亮度/饱和度 其中一种通道.
-  /// <br>全部图层恒等 (或无图层) 时等价于不调色, 呈现管线据此跳过整条特效链路;</br>
-  /// <br>图层增删/换序使 <see cref="StructureVersion"/> 自增, 与各层曲线 <see cref="FloatCurve.Version"/> 一起驱动恒等判定与 LUT 重烘焙.</br>
-  /// </summary>
   public sealed class RSModuleCurveSet
   {
-    /// <summary>通道数: 亮度 / 饱和度 / R / G / B.</summary>
     public const int ChannelCount = 5;
 
-    /// <summary>通道显示名 (索引即通道序号).</summary>
     public static readonly string[] ChannelNames = { "亮度", "饱和度", "R", "G", "B" };
 
-    /// <summary>每层 LUT 的采样位数 (横轴 256 档).</summary>
     public const int LutBins = 256;
 
     public bool Enabled = true;
 
-    /// <summary>图层列表 (处理顺序 = 列表顺序, 自上而下).</summary>
     public List<RSModuleCurveLayer> Layers = new List<RSModuleCurveLayer>();
 
-    /// <summary>图层结构版本号 (增删/换序自增).</summary>
     public int StructureVersion;
-
-    /// <summary>指示本图层集是否曾从磁盘文件载入.</summary>
-    public bool LoadedFromFile { get; private set; }
 
     public RSModuleCurveSet() => MarkSaved();
 
-    /// <summary>新增一个控制指定通道的图层 (追加到末尾).</summary>
-    public void AddLayer(int channel)
+    public bool AddLayer(int channel)
     {
+      for (int i = 0; i < Layers.Count; i++)
+        if (Layers[i].Channel == channel)
+          return false;
       Layers.Add(new RSModuleCurveLayer(channel));
       StructureVersion++;
+      return true;
     }
 
-    /// <summary>删除指定序号的图层.</summary>
     public void RemoveLayerAt(int index)
     {
       if (index < 0 || index >= Layers.Count)
@@ -124,7 +103,6 @@ namespace Colin.Core.Common
       StructureVersion++;
     }
 
-    /// <summary>把 from 序号的图层移动到 to 序号 (自由调整处理顺序).</summary>
     public void MoveLayer(int from, int to)
     {
       from = Math.Clamp(from, 0, Layers.Count - 1);
@@ -137,7 +115,6 @@ namespace Colin.Core.Common
       StructureVersion++;
     }
 
-    /// <summary>清空全部图层并重新启用 (还原为不调色).</summary>
     public void ResetAll()
     {
       Enabled = true;
@@ -145,7 +122,6 @@ namespace Colin.Core.Common
       StructureVersion++;
     }
 
-    /// <summary>通道默认曲线: 重映射通道 (亮度/R/G/B) 为 45° 恒等线, 饱和度为恒 1 因子.</summary>
     public static FloatCurve DefaultCurve(int channel) => channel == 1 ? FloatCurve.Constant(1f) : FloatCurve.Linear();
 
     internal static bool IsIdentityShape(int channel, FloatCurve curve)
@@ -161,12 +137,11 @@ namespace Colin.Core.Common
       && curve.Keys[0].Time == 0f && curve.Keys[0].Value == 1f
       && curve.Keys[1].Time == 1f && curve.Keys[1].Value == 1f;
 
-    /// <summary>图层集是否等价于不调色 (无图层或全部图层恒等).</summary>
     public bool IsIdentity
     {
       get
       {
-        int key = VersionKey;
+        long key = VersionKey;
         if (key != _identityKey)
         {
           _identity = true;
@@ -181,45 +156,103 @@ namespace Colin.Core.Common
         return _identity;
       }
     }
-    private int _identityKey = int.MinValue;
+    private long _identityKey = long.MinValue;
     private bool _identity;
 
-    private int VersionKey
+    /// <summary>
+    /// 结构版本占高位、各曲线版本和占低位, 合成 64 位变更键.
+    /// <br>不能把两者相加: ResetAll 会 StructureVersion+1 同时移除贡献了同量版本的曲线, 键不变化导致
+    /// IsIdentity/IsDirty/LUT 银行等缓存全部漏检.</br>
+    /// </summary>
+    internal long VersionKey
     {
       get
       {
-        int key = StructureVersion;
+        long key = (long)StructureVersion << 32;
         for (int i = 0; i < Layers.Count; i++)
-          key += Layers[i].Curve is null ? 0 : Layers[i].Curve.Version;
+          key += (uint)(Layers[i].Curve is null ? 0 : Layers[i].Curve.Version);
         return key;
       }
     }
 
-    // —— 未保存标记 (调试面板提示用) ——
+    private long _savedKey;
 
-    private int _savedKey;
-
-    /// <summary>指示自上次保存/载入后图层或曲线是否又被编辑过.</summary>
     public bool IsDirty => VersionKey != _savedKey;
 
-    /// <summary>把当前编辑状态标记为已保存.</summary>
     public void MarkSaved() => _savedKey = VersionKey;
 
-    // —— 序列化 ——
-
-    private sealed class CurveSetDto
+    public TagCompound ToTag()
     {
-      public bool Enabled;
-      public List<RSModuleCurveLayer> Layers;
+      TagCompound root = new TagCompound();
+      root["Enabled"] = Enabled;
+      TagSeq layers = new TagSeq();
+      for (int i = 0; i < Layers.Count; i++)
+      {
+        TagCompound layerTag = new TagCompound();
+        layerTag["Channel"] = Layers[i].Channel;
+        layerTag["Curve"] = CurveToTag(Layers[i].Curve);
+        layers.Add(layerTag);
+      }
+      root["Layers"] = layers;
+      return root;
     }
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    public void LoadFrom(TagCompound root)
     {
-      WriteIndented = true,
-      IncludeFields = true
-    };
+      Enabled = root.GetBool("Enabled", true);
+      Layers.Clear();
+      bool[] seenChannels = new bool[ChannelCount];
+      TagSeq layers = root.GetSeq("Layers");
+      if (layers is not null)
+        for (int i = 0; i < layers.Count; i++)
+        {
+          TagCompound layerTag = layers.GetCompound(i);
+          if (layerTag is null)
+            continue;
+          int channel = layerTag.GetInt("Channel", 0);
+          if (channel < 0 || channel >= ChannelCount || seenChannels[channel])
+            continue;
+          seenChannels[channel] = true;
+          RSModuleCurveLayer layer = new RSModuleCurveLayer(channel);
+          layer.Curve = CurveFromTag(layerTag.GetCompound("Curve"), channel);
+          Layers.Add(layer);
+        }
+      StructureVersion++;
+      MarkSaved();
+    }
 
-    /// <summary>控制点非法值统一收口: 排序, 首尾钉死在 0 / 1, 中间点钳进 0~1.</summary>
+    public static TagCompound CurveToTag(FloatCurve curve)
+    {
+      TagCompound tag = new TagCompound();
+      tag["Interpolation"] = (int)curve.Interpolation;
+      float[] times = new float[curve.Keys.Count];
+      float[] values = new float[curve.Keys.Count];
+      for (int i = 0; i < curve.Keys.Count; i++)
+      {
+        times[i] = curve.Keys[i].Time;
+        values[i] = curve.Keys[i].Value;
+      }
+      tag["Times"] = times;
+      tag["Values"] = values;
+      return tag;
+    }
+
+    public static FloatCurve CurveFromTag(TagCompound tag, int channel)
+    {
+      if (tag is null)
+        return DefaultCurve(channel);
+      float[] times = tag.GetArray<float>("Times");
+      float[] values = tag.GetArray<float>("Values");
+      if (times is null || values is null || times.Length != values.Length || times.Length == 0)
+        return DefaultCurve(channel);
+      FloatCurve curve = new FloatCurve();
+      curve.Interpolation = (CurveInterpolation)tag.GetInt("Interpolation", (int)CurveInterpolation.CatmullRom);
+      for (int i = 0; i < times.Length; i++)
+        curve.Keys.Add(new CurveKey(times[i], values[i]));
+      Sanitize(curve);
+      return curve;
+    }
+
     private static void Sanitize(FloatCurve curve)
     {
       curve.Keys ??= new List<CurveKey>();
@@ -234,130 +267,127 @@ namespace Colin.Core.Common
       }
       curve.Interpolation = Enum.IsDefined(curve.Interpolation) ? curve.Interpolation : CurveInterpolation.CatmullRom;
     }
-
-    /// <summary>从文件载入; 文件缺失返回空图层集, 内容异常报警告并回退默认.</summary>
-    public static RSModuleCurveSet Load(Type moduleType)
-    {
-      RSModuleCurveSet set = new RSModuleCurveSet();
-      string file = RSModuleCurve.FileOf(moduleType);
-      if (File.Exists(file) is false)
-        return set;
-      try
-      {
-        CurveSetDto dto = JsonSerializer.Deserialize<CurveSetDto>(File.ReadAllText(file), JsonOptions);
-        if (dto is not null)
-        {
-          set.Enabled = dto.Enabled;
-          set.Layers.Clear();
-          if (dto.Layers is not null)
-            foreach (RSModuleCurveLayer layer in dto.Layers)
-            {
-              if (layer.Channel < 0 || layer.Channel >= ChannelCount)
-                continue;
-              layer.Curve ??= DefaultCurve(layer.Channel);
-              if (layer.Curve.Keys is null || layer.Curve.Keys.Count == 0)
-                layer.Curve = DefaultCurve(layer.Channel);
-              else
-                Sanitize(layer.Curve);
-              set.Layers.Add(layer);
-            }
-          set.LoadedFromFile = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        Console.Log(ConsoleTextType.Warning, "RSModuleCurve",
-          string.Concat("曲线文件载入失败 '", file, "', 使用默认图层: ", ex.Message));
-        set = new RSModuleCurveSet();
-      }
-      set.MarkSaved();
-      return set;
-    }
-
-    /// <summary>保存为以模块类名命名的 json 文件.</summary>
-    public void Save(Type moduleType)
-    {
-      string file = RSModuleCurve.FileOf(moduleType);
-      Directory.CreateDirectory(RSModuleCurve.DirectoryPath);
-      CurveSetDto dto = new CurveSetDto
-      {
-        Enabled = Enabled,
-        Layers = Layers
-      };
-      File.WriteAllText(file, JsonSerializer.Serialize(dto, JsonOptions));
-      MarkSaved();
-      LoadedFromFile = true;
-      Console.Log(ConsoleTextType.Normal, "RSModuleCurve", string.Concat("已保存曲线: ", file));
-    }
   }
 
-  /// <summary>
-  /// 渲染模块调色图层的管理器: 以 <see cref="IRenderableISceneModule"/> 类型为键缓存图层集,
-  /// 文件存于游戏根目录的 <c>Assets/Visual/RSModuleCurve</c> 下, 以模块类名命名, 游戏运行时按需读取.
-  /// <br><see cref="Apply"/> 对无图层/全恒等的模块零开销直通 (原样返回内容纹理); 有图层时逐层 ping-pong 应用并返回承载结果的 scratch.</br>
-  /// </summary>
   public static class RSModuleCurve
   {
-    private static readonly Dictionary<Type, RSModuleCurveSet> Sets = new Dictionary<Type, RSModuleCurveSet>();
+    private static readonly Dictionary<string, RSModuleCurveSet> Sets = new Dictionary<string, RSModuleCurveSet>();
 
-    private static readonly Dictionary<Type, bool> BindStates = new Dictionary<Type, bool>();
+    private static readonly Dictionary<object, bool> BindStates = new Dictionary<object, bool>();
 
-    /// <summary>各模块类型的调色 scratch (ping-pong 双缓冲, B 侧只在出现第二个图层时才建).</summary>
-    private static readonly Dictionary<Type, RenderTarget2D[]> Scratches = new Dictionary<Type, RenderTarget2D[]>();
+    private static readonly Dictionary<object, string> ChronoStates = new Dictionary<object, string>();
+
+    private static readonly Dictionary<object, RenderTarget2D[]> Scratches = new Dictionary<object, RenderTarget2D[]>();
+
+    private static readonly Dictionary<Type, string[]> ChronoScratchNames = new Dictionary<Type, string[]>();
+
+    private static Dictionary<string, RSModuleCurveSet> _chronoA;
+
+    private static Dictionary<string, RSModuleCurveSet> _chronoB;
+
+    private static float _chronoBlend;
 
     private static Effect _effect;
     private static EffectParameter _modeParam;
     private static EffectParameter _lutParam;
+    private static EffectParameter _blendParam;
     private static bool _effectBroken;
 
-    /// <summary>曲线文件目录 (游戏根目录 / Assets / Visual / RSModuleCurve).</summary>
-    public static string DirectoryPath => Path.Combine(AppContext.BaseDirectory, "Assets", "Visual", "RSModuleCurve");
+    public static RSModuleCurveSet GetOrLoad(Type moduleType) => Get(moduleType.Name);
 
-    /// <summary>模块类型对应的曲线文件路径.</summary>
-    public static string FileOf(Type moduleType) => Path.Combine(DirectoryPath, moduleType.Name + ".json");
-
-    /// <summary>指示该模块是否已有曲线文件.</summary>
-    public static bool HasFile(Type moduleType) => File.Exists(FileOf(moduleType));
-
-    /// <summary>取模块的图层集 (无文件时返回空图层集并缓存).</summary>
-    public static RSModuleCurveSet GetOrLoad(Type moduleType)
+    public static RSModuleCurveSet Get(string typeName)
     {
-      if (Sets.TryGetValue(moduleType, out RSModuleCurveSet set))
-        return set;
-      set = RSModuleCurveSet.Load(moduleType);
-      Sets[moduleType] = set;
+      if (Sets.TryGetValue(typeName, out RSModuleCurveSet set) is false)
+        Sets[typeName] = set = new RSModuleCurveSet();
       return set;
     }
 
-    /// <summary>丢弃缓存并从磁盘重新读取.</summary>
-    public static RSModuleCurveSet Reload(Type moduleType)
+    /// <summary>把当前所有非恒等的模块曲线组打包成预设包的 ModuleCurves 段.</summary>
+    public static TagSeq CaptureToTag()
     {
-      Sets.Remove(moduleType);
-      return GetOrLoad(moduleType);
+      TagSeq seq = new TagSeq();
+      foreach (KeyValuePair<string, RSModuleCurveSet> pair in Sets)
+      {
+        RSModuleCurveSet set = pair.Value;
+        if (set.Enabled is false || set.IsIdentity)
+          continue;
+        TagCompound entry = new TagCompound();
+        entry["Module"] = pair.Key;
+        entry["Curves"] = set.ToTag();
+        seq.Add(entry);
+      }
+      return seq;
     }
 
-    /// <summary>删除曲线文件并把缓存还原为默认.</summary>
-    public static void DeleteFile(Type moduleType)
+    /// <summary>用预设包的 ModuleCurves 段整体替换运行时曲线组; 传 null 等于只清空.</summary>
+    public static void ApplyPreset(TagSeq moduleCurves)
     {
-      string file = FileOf(moduleType);
-      if (File.Exists(file))
+      Sets.Clear();
+      if (moduleCurves is null)
+        return;
+      for (int i = 0; i < moduleCurves.Count; i++)
       {
-        File.Delete(file);
-        Console.Log(ConsoleTextType.Normal, "RSModuleCurve", string.Concat("已删除曲线文件: ", file));
+        TagCompound entry = moduleCurves.GetCompound(i);
+        if (entry is null)
+          continue;
+        string module = entry.GetString("Module", string.Empty);
+        TagCompound curves = entry.GetCompound("Curves");
+        if (module.Length == 0 || curves is null)
+          continue;
+        RSModuleCurveSet set = new RSModuleCurveSet();
+        set.LoadFrom(curves);
+        Sets[module] = set;
       }
-      Sets.Remove(moduleType);
     }
 
     /// <summary>
-    /// 把模块的调色图层按顺序应用到 contentRt 上, 返回承载结果的纹理.
-    /// <br>无生效图层时原样返回 contentRt (零开销直通); 有图层时逐层 ping-pong 应用并返回最后一个 scratch ——
-    /// 调用方把返回值画进原目标即可 ( Scratch 与 contentRt 同尺寸, 不改变合成坐标). 无返回值语义上的副作用.</br>
-    /// <br>必须在调用方自己的 batch.Begin 之前调用 —— 内部会临时借用 batch 完成各层绘制并恢复渲染目标.</br>
+    /// 时间插值覆盖: 两个"模块类型名 → 曲线组"字典与混合系数; 传 (null, null, 0) 恢复运行时曲线组.
+    /// <br>某模块只在一侧有曲线时该侧全额生效, 两侧都有时按系数把两组各自完整作用的结果逐值混合.</br>
     /// </summary>
+    public static void SetChronoOverride(Dictionary<string, RSModuleCurveSet> a, Dictionary<string, RSModuleCurveSet> b, float blend)
+    {
+      _chronoA = a;
+      _chronoB = b;
+      _chronoBlend = Math.Clamp(blend, 0f, 1f);
+    }
+
+    public static IReadOnlyDictionary<string, RSModuleCurveSet> ChronoSetsA => _chronoA;
+
+    public static IReadOnlyDictionary<string, RSModuleCurveSet> ChronoSetsB => _chronoB;
+
+    public static float ChronoBlend => _chronoBlend;
+
     public static Texture2D Apply(IRenderableISceneModule module, Texture2D contentRt)
     {
-      RSModuleCurveSet set = GetOrLoad(module.GetType());
-      if (ShouldBind(set, module.GetType()) is false)
+      Type type = module.GetType();
+      if (_chronoA is null && _chronoB is null)
+        return RunLayers(GetOrLoad(type), type, type.Name, contentRt, "RSModuleCurve");
+      RSModuleCurveSet setA = null;
+      RSModuleCurveSet setB = null;
+      _chronoA?.TryGetValue(type.Name, out setA);
+      _chronoB?.TryGetValue(type.Name, out setB);
+      bool hasA = setA is not null && setA.Enabled && setA.IsIdentity is false;
+      bool hasB = setB is not null && setB.Enabled && setB.IsIdentity is false;
+      if (hasA is false && hasB is false)
+        return RunLayers(GetOrLoad(type), type, type.Name, contentRt, "RSModuleCurve");
+      if (hasB is false)
+        return RunLayers(setA, type, type.Name, contentRt, "RSModuleCurve");
+      if (hasA is false)
+        return RunLayers(setB, type, type.Name, contentRt, "RSModuleCurve");
+      return RunBlended(setA, setB, _chronoBlend, type, type.Name, contentRt);
+    }
+
+    internal static Texture2D RunLayers(RSModuleCurveSet set, object key, string targetName, Texture2D contentRt, string logTag)
+    {
+      bool bind = set.Enabled && set.IsIdentity is false;
+      if (logTag is not null && (BindStates.TryGetValue(key, out bool last) is false || last != bind))
+      {
+        BindStates[key] = bind;
+        Console.Log(ConsoleTextType.Remind, logTag, string.Concat(
+          bind ? "曲线生效: " : "曲线旁路: ", targetName,
+          bind ? string.Empty : set.Enabled ? " (全部图层恒等)" : " (已停用)"));
+      }
+      if (bind is false)
         return contentRt;
       Effect effect = AcquireEffect();
       if (effect is null || _modeParam is null || _lutParam is null)
@@ -365,7 +395,7 @@ namespace Colin.Core.Common
 
       GraphicsDevice device = CoreInfo.Graphics.GraphicsDevice;
       RenderTargetBinding[] restore = device.GetRenderTargets();
-      RenderTarget2D scratchA = GetScratch(module.GetType(), 0, contentRt.Width, contentRt.Height);
+      RenderTarget2D scratchA = GetScratch(key, 0, contentRt.Width, contentRt.Height);
       Texture2D input = contentRt;
       bool applied = false;
       foreach (RSModuleCurveLayer layer in set.Layers)
@@ -373,7 +403,7 @@ namespace Colin.Core.Common
         if (layer.IsIdentity)
           continue;
         RenderTarget2D output = input == scratchA
-          ? GetScratch(module.GetType(), 1, contentRt.Width, contentRt.Height)
+          ? GetScratch(key, 1, contentRt.Width, contentRt.Height)
           : scratchA;
         _modeParam.SetValue((float)layer.Channel);
         _lutParam.SetValue(layer.Lut);
@@ -392,10 +422,65 @@ namespace Colin.Core.Common
       return applied ? input : contentRt;
     }
 
-    private static RenderTarget2D GetScratch(Type type, int index, int width, int height)
+    private static Texture2D RunBlended(RSModuleCurveSet setA, RSModuleCurveSet setB, float blend, Type type, string targetName, Texture2D contentRt)
     {
-      if (Scratches.TryGetValue(type, out RenderTarget2D[] pair) is false)
-        Scratches[type] = pair = new RenderTarget2D[2];
+      float f = Math.Clamp(blend, 0f, 1f);
+      string state = f <= 0f ? "本时段" : f >= 1f ? "下一时段" : "混合";
+      if (ChronoStates.TryGetValue(type, out string last) is false || last != state)
+      {
+        ChronoStates[type] = state;
+        Console.Log(ConsoleTextType.Remind, "RSModuleCurve", string.Concat("时段曲线: ", targetName, " → ", state));
+      }
+      string[] keys = ChronoKeys(type);
+      Texture2D resultA = f >= 1f ? contentRt : RunLayers(setA, keys[0], targetName, contentRt, null);
+      if (f <= 0f)
+        return resultA;
+      Texture2D resultB = RunLayers(setB, keys[1], targetName, contentRt, null);
+      if (f >= 1f)
+        return resultB;
+      if (resultA == contentRt && resultB == contentRt)
+        return contentRt;
+      if (resultB == contentRt)
+        return resultA;
+      if (resultA == contentRt)
+        return resultB;
+      Effect effect = AcquireEffect();
+      if (effect is null || _modeParam is null || _lutParam is null || _blendParam is null)
+        return resultA;
+      GraphicsDevice device = CoreInfo.Graphics.GraphicsDevice;
+      RenderTargetBinding[] restore = device.GetRenderTargets();
+      RenderTarget2D output = GetScratch(keys[2], 0, contentRt.Width, contentRt.Height);
+      _modeParam.SetValue(5f);
+      _blendParam.SetValue(f);
+      _lutParam.SetValue(resultB);
+      device.SetRenderTarget(output);
+      device.Clear(Color.Transparent);
+      CoreInfo.Batch.Begin(SpriteSortMode.Deferred, effect: effect);
+      CoreInfo.Batch.Draw(resultA, new Rectangle(0, 0, output.Width, output.Height), Color.White);
+      CoreInfo.Batch.End();
+      if (restore.Length > 0)
+        device.SetRenderTargets(restore);
+      else
+        device.SetRenderTarget(null);
+      return output;
+    }
+
+    private static string[] ChronoKeys(Type type)
+    {
+      if (ChronoScratchNames.TryGetValue(type, out string[] keys) is false)
+        ChronoScratchNames[type] = keys = new[]
+        {
+          string.Concat(type.Name, "#ChronoA"),
+          string.Concat(type.Name, "#ChronoB"),
+          string.Concat(type.Name, "#ChronoBlend")
+        };
+      return keys;
+    }
+
+    private static RenderTarget2D GetScratch(object key, int index, int width, int height)
+    {
+      if (Scratches.TryGetValue(key, out RenderTarget2D[] pair) is false)
+        Scratches[key] = pair = new RenderTarget2D[2];
       RenderTarget2D scratch = pair[index];
       if (scratch is null || scratch.IsDisposed || scratch.Width != width || scratch.Height != height)
       {
@@ -406,31 +491,16 @@ namespace Colin.Core.Common
       return scratch;
     }
 
-    /// <summary>
-    /// 生效判定 + 状态翻转日志 (生效/旁路只在一进一出时各记一条, 方便当场看出曲线挂在哪一环).
-    /// </summary>
-    private static bool ShouldBind(RSModuleCurveSet set, Type type)
-    {
-      bool bind = set.Enabled && set.IsIdentity is false;
-      if (BindStates.TryGetValue(type, out bool last) is false || last != bind)
-      {
-        BindStates[type] = bind;
-        Console.Log(ConsoleTextType.Remind, "RSModuleCurve", string.Concat(
-          bind ? "曲线生效: " : "曲线旁路: ", type.Name,
-          bind ? string.Empty : set.Enabled ? " (全部图层恒等)" : " (已停用)"));
-      }
-      return bind;
-    }
-
     private static Effect AcquireEffect()
     {
       if (_effect is not null || _effectBroken)
         return _effect;
       try
       {
-        _effect = Assets.Effect("Effects/RSModuleCurve.fx");
+        _effect = EngineAssets.Effect("Effects/RSModuleCurve.fx");
         _modeParam = _effect.Parameters["layerMode"];
         _lutParam = _effect.Parameters["curveLut"];
+        _blendParam = _effect.Parameters["chronoBlend"];
       }
       catch (Exception ex)
       {
