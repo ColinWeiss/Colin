@@ -20,10 +20,9 @@ namespace Colin.Core.Modulars.Ecses.Systems
         coms = _current.Components;
         for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          if (coms[comCount] is IResetable resetableCom && resetableCom.ResetEnable)
+          if (coms[comCount] is IResetable resetableCom)
           {
             resetableCom.Reset();
-            resetableCom.ResetEnable = true;
           }
         }
       }
