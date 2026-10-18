@@ -149,7 +149,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
             absV = -v;
             if (absV.X < absV.Y)
             {
-              if (!stepped && TryStepUp(ref deltaVel, bounds, ref next, Entity))
+              if (!stepped && TryStepUp(x, ref deltaVel, bounds, ref next, Entity))
               {
                 stepped = true;
                 break;
@@ -192,15 +192,13 @@ namespace Colin.Core.Modulars.Ecses.Systems
       }
     }
 
-    private bool TryStepUp(ref Vector2 deltaVel, RectangleF bounds, ref RectangleF next, Entity entity)
+    private bool TryStepUp(int tileX, ref Vector2 deltaVel, RectangleF bounds, ref RectangleF next, Entity entity)
     {
       if (deltaVel.X == 0 || deltaVel.Y < 0)
         return false;
       if (!comPhysic.PreviousCollisionBottom && !comPhysic.CollisionBottom && !comPhysic.IsOnSlope)
         return false;
 
-      float probeX = deltaVel.X > 0 ? bounds.Right + 0.001f : bounds.Left - 0.001f;
-      int tileX = (int)Math.Floor(probeX / Tile.Context.TileSize.X);
       int footY = (int)Math.Floor((bounds.Bottom - 0.001f) / Tile.Context.TileSize.Y);
       int headY = (int)Math.Floor((bounds.Top + 0.001f) / Tile.Context.TileSize.Y);
 
