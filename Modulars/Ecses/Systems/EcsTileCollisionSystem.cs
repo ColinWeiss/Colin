@@ -23,6 +23,10 @@ namespace Colin.Core.Modulars.Ecses.Systems
       return chunk is not null && chunk.AwaitingData;
     }
 
+    private float MaxStepHeight => Tile.Context.TileLength;
+
+    private const float MinStepUpHeight = 0.5f;
+
     public override void DoUpdate()
     {
       Entity _current;
@@ -98,6 +102,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
 
       float xt = 0;
       float yt = 0;
+      bool stepped = false;
 
       bool positiveX = deltaVel.X > 0;
       bool positiveY = deltaVel.Y > 0;
@@ -144,6 +149,11 @@ namespace Colin.Core.Modulars.Ecses.Systems
             absV = -v;
             if (absV.X < absV.Y)
             {
+              if (!stepped && TryStepUp(ref deltaVel, bounds, ref next, Entity))
+              {
+                stepped = true;
+                break;
+              }
               if (deltaVel.X < 0 && next.Left < target.Right)
               {
                 xt = (bounds.Left - target.Right) / Math.Abs(deltaVel.X);
@@ -180,6 +190,82 @@ namespace Colin.Core.Modulars.Ecses.Systems
         }
         comTransform.Vel = deltaVel / Time.DeltaTime;
       }
+    }
+
+    private bool TryStepUp(ref Vector2 deltaVel, RectangleF bounds, ref RectangleF next, Entity entity)
+    {
+      if (deltaVel.X == 0 || deltaVel.Y < 0)
+        return false;
+      if (!comPhysic.PreviousCollisionBottom && !comPhysic.CollisionBottom && !comPhysic.IsOnSlope)
+        return false;
+
+      float probeX = deltaVel.X > 0 ? bounds.Right + 0.001f : bounds.Left - 0.001f;
+      int tileX = (int)Math.Floor(probeX / Tile.Context.TileSize.X);
+      int footY = (int)Math.Floor((bounds.Bottom - 0.001f) / Tile.Context.TileSize.Y);
+      int headY = (int)Math.Floor((bounds.Top + 0.001f) / Tile.Context.TileSize.Y);
+
+      for (int y = footY; y >= headY - 1; y--)
+      {
+        ref TileInfo info = ref Tile[tileX, y, comPhysic.Layer];
+        if (info.IsNull)
+          continue;
+        if (IsChunkAwaitingData(tileX, y))
+          return false;
+        if (info.Collision != TileSolid.Sturdy)
+          continue;
+
+        RectangleF target = GetTileBounds(ref info);
+        float stepUp = bounds.Bottom - target.Top;
+        if (stepUp <= MinStepUpHeight || stepUp > MaxStepHeight)
+          return false;
+
+        RectangleF stepped = bounds;
+        stepped.Offset(deltaVel.X, -stepUp);
+        if (OverlapsSolid(stepped))
+          return false;
+
+        comTransform.Translation.Y -= stepUp;
+        deltaVel.Y = 0f;
+        next = GetHitBox(entity);
+        next.Location += deltaVel;
+        comPhysic.CollisionBottom = true;
+        comPhysic.IsOnSlope = false;
+        return true;
+      }
+      return false;
+    }
+
+    private bool OverlapsSolid(RectangleF rect)
+    {
+      int left = (int)Math.Floor((float)rect.Left / Tile.Context.TileSize.X);
+      int right = (int)Math.Floor(((float)rect.Right - 0.001f) / Tile.Context.TileSize.X);
+      int top = (int)Math.Floor((float)rect.Top / Tile.Context.TileSize.Y);
+      int bottom = (int)Math.Floor(((float)rect.Bottom - 0.001f) / Tile.Context.TileSize.Y);
+
+      for (int x = left; x <= right; x++)
+      {
+        for (int y = top; y <= bottom; y++)
+        {
+          ref TileInfo info = ref Tile[x, y, comPhysic.Layer];
+          if (info.IsNull)
+            continue;
+          if (info.Collision == TileSolid.None && !IsChunkAwaitingData(x, y))
+            continue;
+          if (rect.Intersects(GetTileBounds(ref info)))
+            return true;
+        }
+      }
+      return false;
+    }
+
+    private RectangleF GetComHitBox()
+    {
+      return new RectangleF(
+          comTransform.Translation.X + comPhysic.Hitbox.X,
+          comTransform.Translation.Y + comPhysic.Hitbox.Y,
+          comTransform.Size.X + comPhysic.Hitbox.Width,
+          comTransform.Size.Y + comPhysic.Hitbox.Height
+          );
     }
 
     /// <summary>
@@ -318,6 +404,23 @@ namespace Colin.Core.Modulars.Ecses.Systems
       // 水平方向: 斜坡交由垂直扫掠做表面贴合, 不作为墙壁.
       if (info.Collision != TileSolid.Sturdy && !IsChunkAwaitingData(tileX, tileY))
         return false;
+      float stepUp = anchor.Y - target.Top;
+      if (stepUp > MinStepUpHeight && stepUp <= MaxStepHeight &&
+          info.Collision == TileSolid.Sturdy && !IsChunkAwaitingData(tileX, tileY) &&
+          (comPhysic.PreviousCollisionBottom || comPhysic.PreviousSlopeCollision) &&
+          deltaVel.Y >= 0)
+      {
+        RectangleF stepped = GetComHitBox();
+        stepped.Offset(deltaVel.X, -stepUp);
+        if (!OverlapsSolid(stepped))
+        {
+          anchor.Y = target.Top;
+          deltaVel.Y = 0f;
+          comPhysic.CollisionBottom = true;
+          comPhysic.IsOnSlope = false;
+          return true;
+        }
+      }
       if (deltaVel.X > 0)
       {
         deltaVel.X = target.Left - anchor.X;
