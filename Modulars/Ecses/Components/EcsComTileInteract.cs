@@ -65,6 +65,8 @@ namespace Colin.Core.Modulars.Ecses.Components
 
     public bool PreviousSlopeCollision;
 
+    public float StepUpLift;
+
     /// <summary>
     /// 指示基础碰撞盒.
     /// <br>其中, X、Y 用作针对 <see cref="Transform2D.Translation"/> 的偏移.</br>

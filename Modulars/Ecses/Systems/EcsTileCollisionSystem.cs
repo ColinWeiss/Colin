@@ -46,6 +46,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
           comPhysic.PreviousCollisionTop = comPhysic.CollisionTop;
           comPhysic.PreviousCollisionBottom = comPhysic.CollisionBottom;
           comPhysic.PreviousSlopeCollision = comPhysic.SlopeCollision;
+          comPhysic.StepUpLift = 0;
           HandleCollision(_current);
         }
       }
@@ -228,6 +229,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
         next.Location += deltaVel;
         comPhysic.CollisionBottom = true;
         comPhysic.IsOnSlope = false;
+        comPhysic.StepUpLift = stepUp;
         return true;
       }
       return false;
@@ -412,10 +414,12 @@ namespace Colin.Core.Modulars.Ecses.Systems
         stepped.Offset(deltaVel.X, -stepUp);
         if (!OverlapsSolid(stepped))
         {
+          comTransform.Translation.Y -= stepUp;
           anchor.Y = target.Top;
           deltaVel.Y = 0f;
           comPhysic.CollisionBottom = true;
           comPhysic.IsOnSlope = false;
+          comPhysic.StepUpLift = stepUp;
           return true;
         }
       }

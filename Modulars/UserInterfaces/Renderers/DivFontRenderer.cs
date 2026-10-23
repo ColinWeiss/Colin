@@ -83,13 +83,16 @@ namespace Colin.Core.Modulars.UserInterfaces.Renderers
     {
       if (Font == null)
         Font = font;
+      RichTextLayout.AutoEllipsisMethod = AutoEllipsisMethod.None;
       base.OnBinded();
     }
     public override void RenderStep(GraphicsDevice device, SpriteBatch batch)
     {
-      RichTextLayout.AutoEllipsisMethod = AutoEllipsisMethod.None;
-      RichTextLayout.Font = Font;
-      RichTextLayout.Text = Text;
+      //富文本排版缓存被 Font/Text 写入打穿, 逐帧无条件赋值会让每个 Label 每帧全量重排 —— 仅在真变化时写入.
+      if (RichTextLayout.Font != Font)
+        RichTextLayout.Font = Font;
+      if (RichTextLayout.Text != Text)
+        RichTextLayout.Text = Text;
       RichTextLayout.Draw(DivFontStashRenderer.Instance,
         Div.Layout.RenderTargetLocation + div.Layout.Anchor,
         div.Design.Color,

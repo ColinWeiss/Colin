@@ -166,12 +166,12 @@ namespace Colin.Core.Common.Debugs
     private static void Dump(double frameMs, int d0, int d1, int d2, double pauseDelta)
     {
       _builder.Clear();
-      _builder.AppendLine("================ 帧尖峰 ================");
-      _builder.AppendLine(string.Format("真实帧耗时 {0:F2} ms, 本帧GC停顿 {1:F2} ms, GC次数增量 0代={2} 1代={3} 2代={4}", frameMs, pauseDelta, d0, d1, d2));
+  //    _builder.AppendLine("================ 帧尖峰 ================");
+   //   _builder.AppendLine(string.Format("真实帧耗时 {0:F2} ms, 本帧GC停顿 {1:F2} ms, GC次数增量 0代={2} 1代={3} 2代={4}", frameMs, pauseDelta, d0, d1, d2));
       GCMemoryInfo info = GC.GetGCMemoryInfo();
-      _builder.AppendLine(string.Format("托管堆 {0:F1} MB, 堆碎片 {1:F1} MB, 已提交 {2:F1} MB", info.HeapSizeBytes / 1048576.0, info.FragmentedBytes / 1048576.0, info.TotalCommittedBytes / 1048576.0));
-      _builder.AppendLine(string.Format("总帧数 {0}", Time.FrameCount));
-      _builder.AppendLine("当帧阶段耗时(按耗时排序, 阶段有嵌套所以会有重复计入, 看相对占比):");
+   //   _builder.AppendLine(string.Format("托管堆 {0:F1} MB, 堆碎片 {1:F1} MB, 已提交 {2:F1} MB", info.HeapSizeBytes / 1048576.0, info.FragmentedBytes / 1048576.0, info.TotalCommittedBytes / 1048576.0));
+   //   _builder.AppendLine(string.Format("总帧数 {0}", Time.FrameCount));
+  //    _builder.AppendLine("当帧阶段耗时(按耗时排序, 阶段有嵌套所以会有重复计入, 看相对占比):");
       StageRecorder.AppendReport(_builder, 18);
       _builder.AppendLine();
       Flush(_builder.ToString());
@@ -180,13 +180,13 @@ namespace Colin.Core.Common.Debugs
     private static void DumpSummary()
     {
       _builder.Clear();
-      _builder.AppendLine(string.Format("------ 近5秒: 平均真实帧 {0:F2} ms, 最大真实帧 {1:F2} ms, GC停顿合计 {2:F2} ms, 单次最大停顿 {3:F2} ms, GC次数 0代={4} 1代={5} 2代={6} ------",
-        _accumFrameMs / Math.Max(1, _accumFrames), _maxFrameMs, _accumPauseMs, _wMaxPause, _wGen0, _wGen1, _wGen2));
+  //    _builder.AppendLine(string.Format("------ 近5秒: 平均真实帧 {0:F2} ms, 最大真实帧 {1:F2} ms, GC停顿合计 {2:F2} ms, 单次最大停顿 {3:F2} ms, GC次数 0代={4} 1代={5} 2代={6} ------",
+  //      _accumFrameMs / Math.Max(1, _accumFrames), _maxFrameMs, _accumPauseMs, _wMaxPause, _wGen0, _wGen1, _wGen2));
       LastAvgFrameMs = _accumFrameMs / Math.Max(1, _accumFrames);
       LastMaxFrameMs = _maxFrameMs;
       LastWindowPauseMs = _accumPauseMs;
       LastMaxPauseMs = _wMaxPause;
-      _builder.AppendLine("近5秒稳态阶段成本(每帧均值, 降序, 阶段嵌套会重复计入, 看相对占比):");
+ //     _builder.AppendLine("近5秒稳态阶段成本(每帧均值, 降序, 阶段嵌套会重复计入, 看相对占比):");
       StageRecorder.AppendWindowReport(_builder, 14, _accumFrames);
       _accumFrameMs = 0;
       _accumFrames = 0;
