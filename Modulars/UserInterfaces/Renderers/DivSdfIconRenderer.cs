@@ -29,6 +29,12 @@
     private SdfIconKind _kind;
     private float _morph;
 
+    /// <summary>当前图标种类 (文档序列化读取用).</summary>
+    public SdfIconKind Kind => _kind;
+
+    /// <summary>当前形态渐变参数 (文档序列化读取用).</summary>
+    public float Morph => _morph;
+
     public override void OnDivInitialize()
     {
       _pixel = Sprite.Get("Pixel");

@@ -36,6 +36,10 @@
       else if (Direction == Direction.Horizontal)
         TotalSize.X -= DivInterval;
       lastDiv = null;
+      //标记本帧由本控制器摆放的子级 (编辑器展示/交互判定用); Manual 子级已在上方跳过, 置假清掉旧标记
+      List<Div> arranged = div.Children;
+      for (int index = 0; index < arranged.Count; index++)
+        arranged[index].LayoutArranged = arranged[index].LayoutOwnership != DivLayoutOwnership.Manual;
       if (AutoSetSize)
         div.Layout.SetSize(TotalSize);
       base.Layout(div, ref layout);
@@ -57,6 +61,8 @@
     }
     public void CalculateLayout(Div division)
     {
+      if (division.LayoutOwnership == DivLayoutOwnership.Manual)
+        return;
       switch (Direction)
       {
         case Direction.Vertical:
@@ -73,6 +79,8 @@
     }
     private void Portrait(Div division)
     {
+      if (division.LayoutOwnership == DivLayoutOwnership.Manual)
+        return;
       if (lastDiv != null)
       {
         switch (Toward)
@@ -105,6 +113,8 @@
     }
     private void Transverse(Div div)
     {
+      if (div.LayoutOwnership == DivLayoutOwnership.Manual)
+        return;
       if (lastDiv != null)
       {
         switch (Toward)

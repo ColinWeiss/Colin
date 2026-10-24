@@ -20,6 +20,7 @@
     public override void DivInit()
     {
       Register(Fill);
+      Fill.LayoutScripted = true;
       base.DivInit();
     }
     public override void OnUpdate(GameTime time)
@@ -46,7 +47,7 @@
         division.Layout.Width = (int)(Percentage * Layout.Width);
       else if (Toward == Direction.Left)
       {
-        division.Layout.Left = Layout.Width - (int)(Percentage * Layout.Width) + FillOffset.Y;
+        division.Layout.Left = Layout.Width - (int)(Percentage * Layout.Width) + FillOffset.X;
         division.Layout.Width = (int)(Percentage * Layout.Width);
       }
     }

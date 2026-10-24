@@ -151,6 +151,12 @@
     }
 
     /// <summary>
+    /// 路径视图 Sprite 的原始路径 (Get 传入的无扩展名 Textures 相对路径); 经纹理构造的实例为 null.
+    /// <br>界面文档序列化依据它还原图集引用.</br>
+    /// </summary>
+    public string RawPath;
+
+    /// <summary>
     /// 按无扩展名的 Textures 相对路径取 Sprite (如 "Gameplays/Items/Backpacks/Backpack");
     /// 返回路径视图 Sprite, 热重载实时跟随.
     /// <br>同一路径全局只建一个实例并缓存, 注意 SharedFrame 是共享状态.</br>
@@ -160,9 +166,25 @@
         ? cached
         : _rawViews.GetOrAdd(
             path,
-            static raw => _pathViews.GetOrAdd(
-                "Textures/" + raw.Replace('\\', '/') + ".png",
-                static virtualPath => new Sprite(virtualPath)));
+            static raw =>
+            {
+              Sprite sprite = _pathViews.GetOrAdd(
+                  ToVirtualPath(raw),
+                  static virtualPath => new Sprite(virtualPath));
+              sprite.RawPath = raw;
+              return sprite;
+            });
     public static Sprite Get(params string[] paths) => Get(Path.Combine(paths));
+
+    /// <summary>
+    /// 按无扩展名的 Textures 相对路径取 Sprite; 资源不存在时静默返回 null 而非抛出.
+    /// <br>供渲染器等可选资源绑定兜底; 命中时与 <see cref="Get(string)"/> 为同一缓存实例.</br>
+    /// </summary>
+    public static Sprite TryGet(string path)
+      => Assets.Manager.Exists<Texture2D>(ToVirtualPath(path)) ? Get(path) : null;
+    public static Sprite TryGet(params string[] paths) => TryGet(Path.Combine(paths));
+
+    private static string ToVirtualPath(string raw)
+      => "Textures/" + raw.Replace('\\', '/') + ".png";
   }
 }

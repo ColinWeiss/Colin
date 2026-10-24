@@ -16,6 +16,8 @@
       get => left;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (left == value)
           return;
         left = value;
@@ -43,6 +45,8 @@
       get => top;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (top == value)
           return;
         top = value;
@@ -136,6 +140,8 @@
     /// <param name="top">顶部坐标.</param>
     public void SetLocation(float left, float top)
     {
+      if (float.IsFinite(left) is false || float.IsFinite(top) is false)
+        return;
       if (this.left == left && this.top == top)
         return;
       this.left = left;
@@ -178,6 +184,8 @@
       get => width;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         value = Math.Clamp(value, 0, int.MaxValue);
         if (width == value)
           return;
@@ -195,6 +203,8 @@
       get => height;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         value = Math.Clamp(value, 0, int.MaxValue);
         if (height == value)
           return;
@@ -254,6 +264,8 @@
       get => rotation;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (rotation == value)
           return;
         rotation = value;
@@ -266,6 +278,8 @@
     /// <param name="radian">弧度</param>
     public void ClockwiseRad(float radian)
     {
+      if (float.IsFinite(radian) is false)
+        return;
       rotation += radian;
       dirty = true;
     }
@@ -275,6 +289,8 @@
     /// <param name="radian">弧度</param>
     public void AntiClockwiseRad(float radian)
     {
+      if (float.IsFinite(radian) is false)
+        return;
       rotation -= radian;
       dirty = true;
     }
@@ -285,6 +301,8 @@
       get => anchorX;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (anchorX == value)
           return;
         anchorX = value;
@@ -297,6 +315,8 @@
       get => anchorY;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (anchorY == value)
           return;
         anchorY = value;
@@ -326,6 +346,8 @@
       get => scaleX;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (scaleX == value)
           return;
         scaleX = value;
@@ -342,6 +364,8 @@
       get => scaleY;
       set
       {
+        if (float.IsFinite(value) is false)
+          return;
         if (scaleY == value)
           return;
         scaleY = value;

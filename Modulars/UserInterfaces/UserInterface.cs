@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Common.Debugs;
+using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -11,6 +12,21 @@ namespace Colin.Core.Modulars.UserInterfaces
     public Div Focus;
 
     public Div LastFocus;
+
+    /// <summary>
+    /// 指示是否启用键盘/手柄焦点导航.
+    /// <br>Tab 于全部可选中元素间循环; 方向键/十字键仅在已有焦点时向最近方向移动, 避免抢占游戏键位.</br>
+    /// <br>可选中元素即 <see cref="InteractStyle.IsSelectable"/> 为真的可见元素, 预制件 (Button/InputTextBox) 默认置真.</br>
+    /// </summary>
+    public static bool FocusNavigation = true;
+
+    /// <summary>
+    /// 挂起全部界面元素的交互响应 (层级编辑器编辑模式下防止拖拽误触游戏逻辑).
+    /// <br>置真时所有 Div 事件节点命中判定直接失败, 界面只渲染不响应.</br>
+    /// </summary>
+    public static bool InteractionSuspended;
+
+    private readonly List<Div> _focusables = new List<Div>(64);
 
     private DivRoot _contianer = new DivRoot("NomalContainer");
 
@@ -49,13 +65,107 @@ namespace Colin.Core.Modulars.UserInterfaces
       else
         UICamera.TargetZoom = Vector2.One;
 
-      if (KeyboardResponder.Clicked(Keys.F6))
-        UICamera.TargetRotation = 3.14f;
-      if (KeyboardResponder.Clicked(Keys.F7))
-        UICamera.TargetRotation = 0f;
-
       UICamera.DoUpdate(time);
         Root?.DoUpdate(time);
+      if (FocusNavigation)
+        UpdateFocusNavigation();
+    }
+
+    private void UpdateFocusNavigation()
+    {
+      if (KeyboardResponder.Clicked(Keys.Tab))
+      {
+        CollectFocusables(Root);
+        if (_focusables.Count == 0)
+          return;
+        int index = _focusables.IndexOf(Focus);
+        Focus = index < 0 ? _focusables[0] : _focusables[(index + 1) % _focusables.Count];
+        return;
+      }
+      if (Focus is null)
+        return;
+      int dx = 0, dy = 0;
+      if (KeyboardResponder.Clicked(Keys.Left) || PadClicked(0))
+        dx = -1;
+      else if (KeyboardResponder.Clicked(Keys.Right) || PadClicked(1))
+        dx = 1;
+      else if (KeyboardResponder.Clicked(Keys.Up) || PadClicked(2))
+        dy = -1;
+      else if (KeyboardResponder.Clicked(Keys.Down) || PadClicked(3))
+        dy = 1;
+      if (dx == 0 && dy == 0)
+        return;
+      CollectFocusables(Root);
+      if (_focusables.Count == 0)
+        return;
+      _focusables.Remove(Focus);
+      if (_focusables.Count == 0)
+        return;
+      Rectangle current = Focus.Layout.Bounds;
+      Point center = current.Center;
+      Div best = null;
+      long bestScore = long.MaxValue;
+      for (int index = 0; index < _focusables.Count; index++)
+      {
+        Div candidate = _focusables[index];
+        Point candidateCenter = candidate.Layout.Bounds.Center;
+        int offsetX = candidateCenter.X - center.X;
+        int offsetY = candidateCenter.Y - center.Y;
+        if (dx != 0)
+        {
+          if (Math.Sign(offsetX) != dx || Math.Abs(offsetX) < Math.Abs(offsetY) * 2)
+            continue;
+          long score = Math.Abs(offsetX) + Math.Abs(offsetY) * 4L;
+          if (score < bestScore)
+          {
+            bestScore = score;
+            best = candidate;
+          }
+        }
+        else
+        {
+          if (Math.Sign(offsetY) != dy || Math.Abs(offsetY) < Math.Abs(offsetX) * 2)
+            continue;
+          long score = Math.Abs(offsetY) + Math.Abs(offsetX) * 4L;
+          if (score < bestScore)
+          {
+            bestScore = score;
+            best = candidate;
+          }
+        }
+      }
+      if (best is not null)
+        Focus = best;
+    }
+
+    private static bool PadClicked(int direction)
+    {
+      GamePadDPad current = ControllerResponder.state.DPad;
+      GamePadDPad last = ControllerResponder.stateLast.DPad;
+      return direction switch
+      {
+        0 => current.Left == ButtonState.Pressed && last.Left == ButtonState.Released,
+        1 => current.Right == ButtonState.Pressed && last.Right == ButtonState.Released,
+        2 => current.Up == ButtonState.Pressed && last.Up == ButtonState.Released,
+        _ => current.Down == ButtonState.Pressed && last.Down == ButtonState.Released,
+      };
+    }
+
+    private void CollectFocusables(Div div)
+    {
+      _focusables.Clear();
+      CollectFocusables(div, _focusables);
+    }
+
+    private static void CollectFocusables(Div div, List<Div> results)
+    {
+      if (div is null || div.IsVisible is false || div.IsCulled)
+        return;
+      if (div is not DivRoot && div.Interact.IsSelectable && div.Interact.IsInteractive)
+        results.Add(div);
+      List<Div> children = div.Children;
+      for (int count = 0; count < children.Count; count++)
+        CollectFocusables(children[count], results);
     }
 
     public void BatchNormalBegin(Div div, BlendState blendState)

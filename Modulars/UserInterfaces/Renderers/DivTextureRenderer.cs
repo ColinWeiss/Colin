@@ -53,12 +53,12 @@
     }
     public DivTextureRenderer Bind(string path)
     {
-      _sprite = Sprite.Get(path);
+      Bind(Sprite.TryGet(path)); //寻不到时静默留空, 渲染跳过
       return this;
     }
     public DivTextureRenderer Bind(params string[] path)
     {
-      _sprite = Sprite.Get(path);
+      Bind(Sprite.TryGet(path));
       return this;
     }
   }

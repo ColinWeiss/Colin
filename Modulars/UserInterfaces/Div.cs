@@ -3,14 +3,44 @@
 namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
+  /// 指示划分元素布局的归属方.
+  /// </summary>
+  public enum DivLayoutOwnership
+  {
+    /// <summary>
+    /// 未声明: 排列控制器/预制件可在运行期把自动标记升级为 <see cref="Scripted"/>.
+    /// </summary>
+    Auto,
+    /// <summary>
+    /// 代码接管: 布局被逐帧回写, 编辑器锁定移动/缩放 (拖了会被弹回).
+    /// </summary>
+    Scripted,
+    /// <summary>
+    /// 手动布局: 排列控制器跳过该子级 (不计入尺寸也不摆放), 编辑器自由手 K, 以编辑器/文档为准.
+    /// </summary>
+    Manual,
+  }
+
+  /// <summary>
   /// 指代用户交互界面中的一个划分元素.
   /// </summary>
   public class Div : IDisposable
   {
     /// <summary>
     /// 划分元素的名称.
+    /// <br>于文档加载后可经 <see cref="Rename"/> 修改.</br>
     /// </summary>
-    public readonly string Name;
+    public string Name { get; private set; }
+
+    /// <summary>
+    /// 重命名划分元素.
+    /// </summary>
+    public void Rename(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        return;
+      Name = name;
+    }
 
     private bool isVisible = true;
     /// <summary>
@@ -26,6 +56,40 @@ namespace Colin.Core.Modulars.UserInterfaces
         for (int count = 0; count < children.Count; count++)
           children[count].IsVisible = value;
         isVisible = value;
+      }
+    }
+
+    /// <summary>
+    /// 指示划分元素是否被裁剪剔除.
+    /// <br>被剔除的元素不更新、不渲染、不响应事件; 与 <see cref="IsVisible"/> 相互独立, 不会被可见性级联重置 —— 供滚动视口虚拟化等外部批量剔除使用.</br>
+    /// </summary>
+    public bool IsCulled = false;
+
+    /// <summary>
+    /// 指示本帧是否被线性排列控制器摆放 (编辑器展示与交互判定用, 逐帧刷新).
+    /// <br>拖拽/缩放这类元素时编辑器会自动把它转为 <see cref="DivLayoutOwnership.Manual"/> —— 拖动即脱离排列流, 与样式烘焙同一手势.</br>
+    /// </summary>
+    public bool LayoutArranged;
+
+    /// <summary>
+    /// 布局归属声明 (见 <see cref="DivLayoutOwnership"/>).
+    /// <br><see cref="DivLayoutOwnership.Manual"/> 声明后排列控制器不再摆它 —— 这是把代码固定布局迁入文档/编辑器手 K 的出口.</br>
+    /// <br>约定: 把元素标成 <see cref="DivLayoutOwnership.Scripted"/> 的类型必须自行保证尺寸 (自设或支持 Auto 测量).</br>
+    /// </summary>
+    public DivLayoutOwnership LayoutOwnership { get; set; } = DivLayoutOwnership.Auto;
+
+    /// <summary>
+    /// 布局是否由代码接管; 即 <see cref="LayoutOwnership"/> 为 <see cref="DivLayoutOwnership.Scripted"/>.
+    /// <br>置真等效于声明 <see cref="DivLayoutOwnership.Scripted"/>; 置假回落到 <see cref="DivLayoutOwnership.Auto"/> (不动已声明的 Manual).</br>
+    /// </summary>
+    public bool LayoutScripted
+    {
+      get => LayoutOwnership == DivLayoutOwnership.Scripted;
+      set
+      {
+        if (LayoutOwnership == DivLayoutOwnership.Manual)
+          return;
+        LayoutOwnership = value ? DivLayoutOwnership.Scripted : DivLayoutOwnership.Auto;
       }
     }
 
@@ -49,20 +113,6 @@ namespace Colin.Core.Modulars.UserInterfaces
         IsVisible = false;
       else
         Controller.DoHibernate(this);
-    }
-
-    private bool isHidden = false;
-    public bool IsHidden
-    {
-      get => isHidden;
-      set
-      {
-        //遍历改用 for 循环而非 ForEach 委托, 避免逐帧闭包分配.
-        List<Div> children = Children;
-        for (int count = 0; count < children.Count; count++)
-          children[count].isHidden = value;
-        isHidden = value;
-      }
     }
 
     /// <summary>
@@ -108,6 +158,22 @@ namespace Colin.Core.Modulars.UserInterfaces
       _renderer = new T();
       _renderer.div = this;
       _renderer.OnBinded();
+      if (InitializationCompleted)
+        _renderer.OnDivInitialize();
+      return _renderer as T;
+    }
+
+    /// <summary>
+    /// 绑定一个已构造好的渲染器实例 (文档加载与编辑器替换渲染器用).
+    /// <br>生命周期与 <see cref="BindRenderer{T}"/> 一致: 立即 <see cref="DivRenderer.OnBinded"/>, 已完成初始化的元素补发 <see cref="DivRenderer.OnDivInitialize"/>.</br>
+    /// </summary>
+    public T BindRenderer<T>(T renderer) where T : DivRenderer
+    {
+      _renderer = renderer;
+      _renderer.div = this;
+      _renderer.OnBinded();
+      if (InitializationCompleted)
+        _renderer.OnDivInitialize();
       return _renderer as T;
     }
     public T GetRenderer<T>() where T : DivRenderer
@@ -128,6 +194,20 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       _controller = new T();
       _controller.OnBinded(this);
+      if (InitializationCompleted)
+        _controller.OnDivInitialize(this);
+      return _controller as T;
+    }
+
+    /// <summary>
+    /// 绑定一个已构造好的控制器实例 (文档加载与编辑器替换控制器用).
+    /// </summary>
+    public T BindController<T>(T controller) where T : DivController
+    {
+      _controller = controller;
+      _controller.OnBinded(this);
+      if (InitializationCompleted)
+        _controller.OnDivInitialize(this);
       return _controller as T;
     }
     public T GetController<T>() where T : DivController
@@ -329,7 +409,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     public void DoUpdate(GameTime time)
     {
       PreUpdate(time);
-      if (!IsVisible)
+      if (IsVisible is false || IsCulled)
         return;
       if (this is DivRoot is false)
       {
@@ -385,21 +465,54 @@ namespace Colin.Core.Modulars.UserInterfaces
       }
       if (Children.Count > 0)
       {
-        //容器聚合: 期望尺寸为全部子级于相对坐标下向右/下方向的最大延伸.
-        float right = 0f, bottom = 0f;
+        //容器聚合缓存: 子级结构未变且无待算/新算布局时直接复用上一帧结果.
         List<Div> children = Children;
-        for (int count = 0; count < children.Count; count++)
+        bool valid = _desiredValid && _desiredCount == children.Count && _desiredStructure == _structureVersion;
+        if (valid)
         {
-          Div child = children[count];
-          if (child.Layout.Right > right)
-            right = child.Layout.Right;
-          if (child.Layout.Bottom > bottom)
-            bottom = child.Layout.Bottom;
+          for (int count = 0; count < children.Count; count++)
+          {
+            Div child = children[count];
+            if (child.Layout.IsDirty || child.Layout.TransformStamp > _desiredMaxStamp)
+            {
+              valid = false;
+              break;
+            }
+          }
         }
-        return new Vector2(right, bottom);
+        if (valid is false)
+        {
+          //期望尺寸为全部子级于相对坐标下向右/下方向的最大延伸.
+          float right = 0f, bottom = 0f;
+          uint maxStamp = 0;
+          for (int count = 0; count < children.Count; count++)
+          {
+            Div child = children[count];
+            if (child.Layout.Right > right)
+              right = child.Layout.Right;
+            if (child.Layout.Bottom > bottom)
+              bottom = child.Layout.Bottom;
+            if (child.Layout.TransformStamp > maxStamp)
+              maxStamp = child.Layout.TransformStamp;
+          }
+          _desiredCache = new Vector2(right, bottom);
+          _desiredMaxStamp = maxStamp;
+          _desiredCount = children.Count;
+          _desiredStructure = _structureVersion;
+          _desiredValid = true;
+        }
+        return _desiredCache;
       }
       return new Vector2(Layout.Width, Layout.Height);
     }
+
+    private Vector2 _desiredCache;
+    private bool _desiredValid;
+    private uint _desiredMaxStamp;
+    private int _desiredCount;
+    private uint _desiredStructure;
+
+    private uint _structureVersion;
 
     /// <summary>
     /// 发生于 <see cref="DoUpdate(GameTime)"/> 第一帧执行时.
@@ -453,14 +566,14 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      if (!IsVisible && !IsHidden)
+      if (IsVisible is false || IsCulled)
         return;
       if (IsCanvas)
       {
         //切换渲染目标前提交既有批次内容.
         UIBatch.Flush();
         device.SetRenderTarget(Canvas);
-        device.Clear(Color.Black);
+        device.Clear(Color.Transparent);
       }
 
       BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
@@ -533,6 +646,25 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (doInit)
         div.DoInitialize();
       Children.Add(div);
+      _structureVersion++;
+      return true;
+    }
+
+    /// <summary>
+    /// 于子级序列的指定位置插入子元素 (层级编辑器重排用).
+    /// </summary>
+    public virtual bool Insert(int index, Div div, bool doInit = false)
+    {
+      div._parent = this;
+      div._module = _module;
+      div._root = _root;
+      div.Layout.Invalidate();
+      index = Math.Clamp(index, 0, Children.Count);
+      Events.Insert(index, div.Events);
+      if (doInit)
+        div.DoInitialize();
+      Children.Insert(index, div);
+      _structureVersion++;
       return true;
     }
 
@@ -549,7 +681,10 @@ namespace Colin.Core.Modulars.UserInterfaces
       div._upperBatch = null;
       div._upperCanvas = null;
       Events.Remove(div.Events);
-      return Children.Remove(div);
+      bool removed = Children.Remove(div);
+      if (removed)
+        _structureVersion++;
+      return removed;
     }
 
     /// <summary>

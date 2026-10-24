@@ -261,6 +261,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\InputTextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\ProgressBar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\ScrollView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivFontRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
@@ -269,6 +270,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivTextureRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIBatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UITheme.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\IUIDocumentCustomizable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\UIDocument.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\UIDocumentParts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\UIDocumentRegistry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UserInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Debugs\HitchRecorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Debugs\StageRecorder.cs" />

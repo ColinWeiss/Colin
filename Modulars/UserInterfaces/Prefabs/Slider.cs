@@ -25,10 +25,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
     public void Bind(Div list, Div view)
     {
       if (View is not null)
-        View.Events.LeftUp -= WheelEvent;
+      {
+        View.Events.ScrollDown -= WheelEvent;
+        View.Events.ScrollUp -= WheelEvent;
+      }
       List = list;
       View = view;
-      View.Events.LeftUp += WheelEvent;
+      View.Events.ScrollDown += WheelEvent;
+      View.Events.ScrollUp += WheelEvent;
     }
     private void WheelEvent(object sender, MouseArgs args)
     {
@@ -47,7 +51,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       {
         Block = new Div("Block");
         Block.BindRenderer<DivPixelRenderer>();
-        Block.Design.Color = new Color(255, 223, 135);
+        Block.Design.Color = UITheme.SliderBlock;
         if (Direction is Direction.Vertical)
         {
           Block.Layout.Width = Layout.Width;
@@ -68,7 +72,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       Block.Interact.IsDraggable = true;
       Register(Block);
       base.DivInit();
+      _blockBase = Block.Design.Color;
     }
+
+    private Color _blockBase;
+
     public override void OnUpdate(GameTime time)
     {
       //容器尺寸不足以容纳滑块时钳制区间退化为空, 收拢到下界, 避免越界与 Precent 出现 NaN.
@@ -88,6 +96,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       Precent = new Vector2(
         rangeX > 0f ? (Block.Layout.Left - minX) / rangeX : 0f,
         rangeY > 0f ? (Block.Layout.Top - minY) / rangeY : 0f);
+
+      //状态反馈: 拖拽中最亮, 悬停次之, 以 DivInit 捕获的底色乘算, 不吃掉外部改色.
+      float tint = Block.Events.DraggingState ? 1.2f : Block.Interact.Interaction ? 1.08f : 1f;
+      Block.Design.Color = new Color(
+        (int)Math.Clamp(_blockBase.R * tint, 0, 255),
+        (int)Math.Clamp(_blockBase.G * tint, 0, 255),
+        (int)Math.Clamp(_blockBase.B * tint, 0, 255),
+        _blockBase.A);
 
       base.OnUpdate(time);
     }

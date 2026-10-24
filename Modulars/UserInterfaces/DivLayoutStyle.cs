@@ -27,6 +27,11 @@
     /// <br>两侧留白为零即为停靠填满; 该轴向的尺寸模式被忽略.</br>
     /// </summary>
     Stretch,
+    /// <summary>
+    /// 百分比定位: 锚定于父级内容区内按 <see cref="DivLayoutStyle.PercentPoint"/> 指定的比例点 (0 即起始边, 1 即结束边).
+    /// </br>
+    /// </summary>
+    Percent,
   }
 
   /// <summary>
@@ -43,16 +48,22 @@
     /// </summary>
     Percent,
     /// <summary>
-    /// 自适应: 尺寸取自 <see cref="Div.MeasureDesired"/> 的内容测量结果.
+    /// 自适应: 尺寸取自 <see cref="Div.MeasureDesired"/> 的内容测量结果, 并附加 <see cref="DivLayoutStyle.AutoExtra"/>.
     /// </summary>
     Auto,
+    /// <summary>
+    /// 匹配: 尺寸取自锚点目标 (见 <see cref="DivLayoutStyle.AnchorTarget"/>) 的同轴尺寸, 并附加 <see cref="DivLayoutStyle.MatchOffset"/>.
+    /// <br>用于跨元素跟随 (如血条宽度跟随快捷栏); 目标失效时保持自身当前尺寸. 位置仍按本元素的轴向锚定相对父级解析, 不随目标.</br>
+    /// </summary>
+    Match,
   }
 
   /// <summary>
-  /// 划分元素的布局样式: 声明式锚定 / 停靠 / 百分比尺寸 / 自适应尺寸.
+  /// 划分元素的布局样式: 声明式锚定 / 停靠 / 百分比定位 / 百分比尺寸 / 自适应尺寸 / 跨元素匹配.
   /// <br>水平轴与垂直轴相互独立; 全部为默认值时布局系统不做任何干预, 与手动布局完全兼容.</br>
   /// <br>布局样式的解析发生于每帧控制器布局之后、 <see cref="Div.LayoutCalculate"/> 之前, 解析结果经布局脏标记机制进入变换计算.</br>
   /// <br>[!] 同一轴向上, 布局样式与逐帧重排子级的组控制器 (如 <c>LinearMenuController</c>) 不应同时使用.</br>
+  /// <br>[!] <see cref="DivSizeMode.Match"/> 引用其他元素, 相互引用不会死锁 (各读对方上一帧结果), 但可能振荡; 请保持引用为单向.</br>
   /// </summary>
   public struct DivLayoutStyle
   {
@@ -104,6 +115,36 @@
     public float PercentHeight;
 
     /// <summary>
+    /// 匹配尺寸的锚点目标元素 (通常为兄弟级, 如血条匹配快捷栏宽度).
+    /// <br>仅于尺寸模式为 <see cref="DivSizeMode.Match"/> 时生效; 为空或已释放时保持自身当前尺寸.</br>
+    /// </summary>
+    public Div AnchorTarget;
+
+    /// <summary>
+    /// 匹配尺寸的附加偏移.
+    /// <br>仅于尺寸模式为 <see cref="DivSizeMode.Match"/> 时生效; X 附加于宽度, Y 附加于高度.</br>
+    /// </summary>
+    public Vector2 MatchOffset;
+
+    /// <summary>
+    /// 自适应尺寸在内容测量结果之外的附加量 (如四周镶边; 前导留白由子级自身位置体现).
+    /// <br>仅于尺寸模式为 <see cref="DivSizeMode.Auto"/> 时生效; X 附加于宽度, Y 附加于高度.</br>
+    /// </summary>
+    public Vector2 AutoExtra;
+
+    /// <summary>
+    /// 百分比定位点, 相对父级内容区, 0 即起始边, 1 即结束边.
+    /// <br>仅于 <see cref="Horizontal"/> / <see cref="Vertical"/> 为 <see cref="DivAxisAnchor.Percent"/> 时生效; 水平轴取 X, 垂直轴取 Y.</br>
+    /// </summary>
+    public Vector2 PercentPoint;
+
+    /// <summary>
+    /// 文档还原用: 锚点目标的元素名 (见 <see cref="Documents.UIDocument"/>).
+    /// <br>代码直接设 <see cref="AnchorTarget"/>; 该暂存名仅在文档读入时填写, 还原后由文档解析为元素引用.</br>
+    /// </summary>
+    public string AnchorTargetName;
+
+    /// <summary>
     /// 创建停靠填满父级内容区的布局样式.
     /// </summary>
     /// <param name="margin">四周留白.</param>
@@ -151,7 +192,7 @@
       if (WidthMode == DivSizeMode.Auto || HeightMode == DivSizeMode.Auto)
         desired = div.MeasureDesired();
 
-      //解析尺寸; 结果供 Center / End 位置解析使用.
+      //解析尺寸; 结果供 Center / End / Percent 位置解析使用.
       float width;
       switch (WidthMode)
       {
@@ -160,8 +201,17 @@
           div.Layout.Width = width;
           break;
         case DivSizeMode.Auto:
-          width = MathF.Max(0f, desired.X);
+          width = MathF.Max(0f, desired.X + AutoExtra.X);
           div.Layout.Width = width;
+          break;
+        case DivSizeMode.Match:
+          if (AnchorTarget is Div target && target.Disposed is false && ReferenceEquals(target, div) is false)
+          {
+            width = MathF.Max(0f, target.Layout.Width + MatchOffset.X);
+            div.Layout.Width = width;
+          }
+          else
+            width = div.Layout.Width;
           break;
         default:
           width = div.Layout.Width;
@@ -175,8 +225,17 @@
           div.Layout.Height = height;
           break;
         case DivSizeMode.Auto:
-          height = MathF.Max(0f, desired.Y);
+          height = MathF.Max(0f, desired.Y + AutoExtra.Y);
           div.Layout.Height = height;
+          break;
+        case DivSizeMode.Match:
+          if (AnchorTarget is Div targetY && targetY.Disposed is false && ReferenceEquals(targetY, div) is false)
+          {
+            height = MathF.Max(0f, targetY.Layout.Height + MatchOffset.Y);
+            div.Layout.Height = height;
+          }
+          else
+            height = div.Layout.Height;
           break;
         default:
           height = div.Layout.Height;
@@ -195,6 +254,9 @@
         case DivAxisAnchor.End:
           div.Layout.Left = contentEndX - width - OffsetEnd.X;
           break;
+        case DivAxisAnchor.Percent:
+          div.Layout.Left = contentBeginX + contentWidth * PercentPoint.X + OffsetBegin.X;
+          break;
         case DivAxisAnchor.Stretch:
           div.Layout.Left = contentBeginX + OffsetBegin.X;
           div.Layout.Width = MathF.Max(0f, contentWidth - OffsetBegin.X - OffsetEnd.X);
@@ -210,6 +272,9 @@
           break;
         case DivAxisAnchor.End:
           div.Layout.Top = contentEndY - height - OffsetEnd.Y;
+          break;
+        case DivAxisAnchor.Percent:
+          div.Layout.Top = contentBeginY + contentHeight * PercentPoint.Y + OffsetBegin.Y;
           break;
         case DivAxisAnchor.Stretch:
           div.Layout.Top = contentBeginY + OffsetBegin.Y;

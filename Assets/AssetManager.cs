@@ -147,6 +147,10 @@ public sealed class AssetManager : IDisposable
     return false;
   }
 
+  /// <summary>仅判断资产文件是否存在, 不触发加载 (可选资源静默兜底用).</summary>
+  public bool Exists<T>(string path)
+    => File.Exists(PhysicalPath(NormalizePath(path)));
+
   /// <summary>缓存中是否存在该资产.</summary>
   public bool IsLoaded<T>(string path) =>
       _cache.ContainsKey(new CacheKey(typeof(T), NormalizePath(path)));

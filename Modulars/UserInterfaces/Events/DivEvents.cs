@@ -42,44 +42,38 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
     public DivEventNode<KeysClickingArgs> KeysClicking;
     public DivEventNode<KeysDownArgs> KeysDown;
 
-    public DivEvents(Div div) : base()
+    public DivEvents(Div div)
     {
       _div = div;
-      MouseHover = new DivEventNode<MouseHoverArgs>();
-      MouseHover.Div = div;
-      HoverBegan = new DivEventNode<MouseHoverArgs>();
-      HoverBegan.Div = div;
-      HoverEnded = new DivEventNode<MouseHoverArgs>();
-      HoverEnded.Div = div;
-      LeftClicked = new DivEventNode<LeftClickedArgs>();
-      LeftClicked.Div = div;
-      LeftClicking = new DivEventNode<LeftClickingArgs>();
-      LeftClicking.Div = div;
-      LeftDown = new DivEventNode<LeftDownArgs>();
-      LeftDown.Div = div;
-      LeftUp = new DivEventNode<LeftUpArgs>();
-      LeftUp.Div = div;
-      RightClicked = new DivEventNode<RightClickedArgs>();
-      RightClicked.Div = div;
-      RightClicking = new DivEventNode<RightClickingArgs>();
-      RightClicking.Div = div;
-      RightDown = new DivEventNode<RightDownArgs>();
-      RightDown.Div = div;
-      RightUp = new DivEventNode<RightUpArgs>();
-      RightUp.Div = div;
-      ScrollDown = new DivEventNode<ScrollDownArgs>();
-      ScrollDown.Div = div;
-      ScrollClicked = new DivEventNode<ScrollClickedArgs>();
-      ScrollClicked.Div = div;
-      ScrollUp = new DivEventNode<ScrollUpArgs>();
-      ScrollUp.Div = div;
-      KeysClicked = new DivEventNode<KeysClickedArgs>();
-      KeysClicked.Div = div;
-      KeysClicking = new DivEventNode<KeysClickingArgs>();
-      KeysClicking.Div = div;
-      KeysDown = new DivEventNode<KeysDownArgs>();
-      KeysDown.Div = div;
+      MouseHover = new DivEventNode<MouseHoverArgs> { Div = div };
+      HoverBegan = new DivEventNode<MouseHoverArgs> { Div = div };
+      HoverEnded = new DivEventNode<MouseHoverArgs> { Div = div };
+      LeftClicked = new DivEventNode<LeftClickedArgs> { Div = div };
+      LeftClicking = new DivEventNode<LeftClickingArgs> { Div = div };
+      LeftDown = new DivEventNode<LeftDownArgs> { Div = div };
+      LeftUp = new DivEventNode<LeftUpArgs> { Div = div };
+      RightClicked = new DivEventNode<RightClickedArgs> { Div = div };
+      RightClicking = new DivEventNode<RightClickingArgs> { Div = div };
+      RightDown = new DivEventNode<RightDownArgs> { Div = div };
+      RightUp = new DivEventNode<RightUpArgs> { Div = div };
+      ScrollDown = new DivEventNode<ScrollDownArgs> { Div = div };
+      ScrollClicked = new DivEventNode<ScrollClickedArgs> { Div = div };
+      ScrollUp = new DivEventNode<ScrollUpArgs> { Div = div };
+      KeysClicked = new DivEventNode<KeysClickedArgs> { Div = div };
+      KeysClicking = new DivEventNode<KeysClickingArgs> { Div = div };
+      KeysDown = new DivEventNode<KeysDownArgs> { Div = div };
+      //通道顺序即各批量方法的处理顺序, 须与上方节点一一对应.
+      _channels = new IDivEventChannel[]
+      {
+        MouseHover, HoverBegan, HoverEnded,
+        LeftClicked, LeftClicking, LeftDown, LeftUp,
+        RightClicked, RightClicking, RightDown, RightUp,
+        ScrollDown, ScrollClicked, ScrollUp,
+        KeysClicked, KeysClicking, KeysDown,
+      };
     }
+
+    private readonly IDivEventChannel[] _channels;
 
     public bool MouseCapture;
 
@@ -218,123 +212,36 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     public void Append(DivEvents node)
     {
-      MouseHover.Append(node.MouseHover);
-      HoverBegan.Append(node.HoverBegan);
-      HoverEnded.Append(node.HoverEnded);
-      LeftClicked.Append(node.LeftClicked);
-      LeftClicking.Append(node.LeftClicking);
-      LeftDown.Append(node.LeftDown);
-      LeftUp.Append(node.LeftUp);
-      RightClicked.Append(node.RightClicked);
-      RightClicking.Append(node.RightClicking);
-      RightDown.Append(node.RightDown);
-      RightUp.Append(node.RightUp);
-      ScrollDown.Append(node.ScrollDown);
-      ScrollClicked.Append(node.ScrollClicked);
-      ScrollUp.Append(node.ScrollUp);
-      KeysClicking.Append(node.KeysClicking);
-      KeysDown.Append(node.KeysDown);
-      KeysClicked.Append(node.KeysClicked);
+      for (int index = 0; index < _channels.Length; index++)
+        _channels[index].ChannelAppend(node._channels[index]);
     }
 
     public void Insert(int index, DivEvents node)
     {
-      MouseHover.Insert(index, node.MouseHover);
-      HoverBegan.Insert(index, node.HoverBegan);
-      HoverEnded.Insert(index, node.HoverEnded);
-      LeftClicked.Insert(index, node.LeftClicked);
-      LeftClicking.Insert(index, node.LeftClicking);
-      LeftDown.Insert(index, node.LeftDown);
-      LeftUp.Insert(index, node.LeftUp);
-      RightClicked.Insert(index, node.RightClicked);
-      RightClicking.Insert(index, node.RightClicking);
-      RightDown.Insert(index, node.RightDown);
-      RightUp.Insert(index, node.RightUp);
-      ScrollDown.Insert(index, node.ScrollDown);
-      ScrollClicked.Insert(index, node.ScrollClicked);
-      ScrollUp.Insert(index, node.ScrollUp);
-      KeysClicking.Insert(index, node.KeysClicking);
-      KeysDown.Insert(index, node.KeysDown);
-      KeysClicked.Insert(index, node.KeysClicked);
+      for (int channel = 0; channel < _channels.Length; channel++)
+        _channels[channel].ChannelInsert(index, node._channels[channel]);
     }
 
     public void Register(DivEvents node)
     {
-      MouseHover.Register(node.MouseHover);
-      HoverBegan.Register(node.HoverBegan);
-      HoverEnded.Register(node.HoverEnded);
-      LeftClicked.Register(node.LeftClicked);
-      LeftClicking.Register(node.LeftClicking);
-      LeftDown.Register(node.LeftDown);
-      LeftUp.Register(node.LeftUp);
-      RightClicked.Register(node.RightClicked);
-      RightClicking.Register(node.RightClicking);
-      RightDown.Register(node.RightDown);
-      RightUp.Register(node.RightUp);
-      ScrollDown.Register(node.ScrollDown);
-      ScrollClicked.Register(node.ScrollClicked);
-      ScrollUp.Register(node.ScrollUp);
-      KeysClicking.Register(node.KeysClicking);
-      KeysDown.Register(node.KeysDown);
-      KeysClicked.Register(node.KeysClicked);
+      for (int index = 0; index < _channels.Length; index++)
+        _channels[index].ChannelRegister(node._channels[index]);
     }
 
     public void Remove(DivEvents node)
     {
-      MouseHover.Remove(node.MouseHover);
-      HoverBegan.Remove(node.HoverBegan);
-      HoverEnded.Remove(node.HoverEnded);
-      LeftClicked.Remove(node.LeftClicked);
-      LeftClicking.Remove(node.LeftClicking);
-      LeftDown.Remove(node.LeftDown);
-      LeftUp.Remove(node.LeftUp);
-      RightClicked.Remove(node.RightClicked);
-      RightClicking.Remove(node.RightClicking);
-      RightDown.Remove(node.RightDown);
-      RightUp.Remove(node.RightUp);
-      ScrollDown.Remove(node.ScrollDown);
-      ScrollClicked.Remove(node.ScrollClicked);
-      ScrollUp.Remove(node.ScrollUp);
-      KeysClicking.Remove(node.KeysClicking);
-      KeysDown.Remove(node.KeysDown);
-      KeysClicked.Remove(node.KeysClicked);
+      for (int index = 0; index < _channels.Length; index++)
+        _channels[index].ChannelRemove(node._channels[index]);
     }
 
     public void Dispose()
     {
       _div = null;
-      MouseHover.Dispose();
-      HoverBegan.Dispose();
-      HoverEnded.Dispose();
-      LeftClicked.Dispose();
-      LeftClicking.Dispose();
-      LeftDown.Dispose();
-      LeftUp.Dispose();
-      RightClicked.Dispose();
-      RightClicking.Dispose();
-      RightDown.Dispose();
-      RightUp.Dispose();
-      ScrollDown.Dispose();
-      ScrollClicked.Dispose();
-      ScrollUp.Dispose();
-      KeysClicked.Dispose();
-      KeysClicking.Dispose();
-      KeysDown.Dispose();
-      MouseHover.Div = null;
-      LeftClicked.Div = null;
-      LeftClicking.Div = null;
-      LeftDown.Div = null;
-      LeftUp.Div = null;
-      RightClicked.Div = null;
-      RightClicking.Div = null;
-      RightDown.Div = null;
-      RightUp.Div = null;
-      ScrollDown.Div = null;
-      ScrollClicked.Div = null;
-      ScrollUp.Div = null;
-      KeysClicked.Div = null;
-      KeysClicking.Div = null;
-      KeysDown.Div = null;
+      for (int index = 0; index < _channels.Length; index++)
+      {
+        _channels[index].ChannelDispose();
+        _channels[index].Div = null;
+      }
       MouseHover -= MouseBlockOutEvent;
       LeftClicking -= MouseBlockOutEvent;
       LeftClicking -= Drag;

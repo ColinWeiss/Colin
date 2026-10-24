@@ -54,6 +54,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
 
     public override void DivInit()
     {
+      Interact.IsSelectable = true;
       Text = "";
       Register(Label);
       //点击文本框就明确把焦点拿到手:不指望外层的点击分发顺路带上,自己管自己最稳。
@@ -64,6 +65,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       };
       Module.Scene.Events.TextInput += IMEHandler_TextInput;
       base.DivInit();
+    }
+
+    public override void Dispose()
+    {
+      var sceneEvents = Module?.Scene?.Events;
+      if (sceneEvents is not null)
+        sceneEvents.TextInput -= IMEHandler_TextInput;
+      base.Dispose();
     }
 
     private void IMEHandler_TextInput(object sender, TextInputEventArgs e)
@@ -137,9 +146,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
       else
         CursorPosition = Text.Length;
 
-      DisplayText = Text.Insert(CursorPosition, "|");
+      //光标指示符仅在编辑态拼入, 避免未编辑时每帧字符串分配.
       if (Editing)
-        Label.SetText(DisplayText);
+        Label.SetText(DisplayText = Text.Insert(CursorPosition, "|"));
       else
         Label.SetText(Text);
 

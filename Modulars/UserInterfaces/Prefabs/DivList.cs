@@ -41,6 +41,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Prefabs
         linear.DivInterval = 4;
       }
       base.Register(List);
+      List.LayoutScripted = true;
       base.DivInit();
     }
     public override void LayoutCalculate(ref DivLayout layout)
