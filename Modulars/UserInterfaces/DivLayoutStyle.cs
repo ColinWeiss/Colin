@@ -29,9 +29,16 @@
     Stretch,
     /// <summary>
     /// 百分比定位: 锚定于父级内容区内按 <see cref="DivLayoutStyle.PercentPoint"/> 指定的比例点 (0 即起始边, 1 即结束边).
-    /// </br>
     /// </summary>
     Percent,
+    /// <summary>
+    /// 排于参照区间之前: 本元素的结束边贴住参照起始边 (左/上侧外贴), <see cref="DivLayoutStyle.OffsetEnd"/> 为与参照的间隙.
+    /// </summary>
+    Before,
+    /// <summary>
+    /// 排于参照区间之后: 本元素的起始边贴住参照结束边 (右/下侧外贴), <see cref="DivLayoutStyle.OffsetBegin"/> 为与参照的间隙.
+    /// </summary>
+    After,
   }
 
   /// <summary>
@@ -53,7 +60,7 @@
     Auto,
     /// <summary>
     /// 匹配: 尺寸取自锚点目标 (见 <see cref="DivLayoutStyle.AnchorTarget"/>) 的同轴尺寸, 并附加 <see cref="DivLayoutStyle.MatchOffset"/>.
-    /// <br>用于跨元素跟随 (如血条宽度跟随快捷栏); 目标失效时保持自身当前尺寸. 位置仍按本元素的轴向锚定相对父级解析, 不随目标.</br>
+    /// <br>用于跨元素跟随 (如血条宽度跟随快捷栏); 目标失效时保持自身当前尺寸.</br>
     /// </summary>
     Match,
   }
@@ -115,8 +122,9 @@
     public float PercentHeight;
 
     /// <summary>
-    /// 匹配尺寸的锚点目标元素 (通常为兄弟级, 如血条匹配快捷栏宽度).
-    /// <br>仅于尺寸模式为 <see cref="DivSizeMode.Match"/> 时生效; 为空或已释放时保持自身当前尺寸.</br>
+    /// 锚点目标元素 (通常为兄弟级, 如血条跟随快捷栏).
+    /// <br>尺寸模式为 <see cref="DivSizeMode.Match"/> 时取其同轴尺寸; 轴向锚定 (Begin/Center/End/Percent/Stretch)
+    /// 设有目标时位置改以目标矩形为参照 (贴着目标排), 未设时以父级内容区为参照. 为空或已释放时全部按父级解析.</br>
     /// </summary>
     public Div AnchorTarget;
 
@@ -242,43 +250,80 @@
           break;
       }
 
-      //解析位置; Stretch 模式的尺寸由内容区与两侧留白推导, 覆盖此前解析的尺寸.
+      //轴锚参照矩形: 设有锚点目标时取目标的矩形 (同父用相对坐标, 跨父经屏幕坐标差换算, 均为上一帧结果),
+      //未设时取父级内容区 —— 位置锚定从此可"贴着另一个元素排".
+      float refBeginX = contentBeginX, refSpanX = contentWidth, refEndX = contentEndX;
+      float refBeginY = contentBeginY, refSpanY = contentHeight, refEndY = contentEndY;
+      if (AnchorTarget is Div anchorRef && anchorRef.Disposed is false && ReferenceEquals(anchorRef, div) is false)
+      {
+        float targetLeft, targetTop;
+        if (anchorRef.Parent == parent)
+        {
+          targetLeft = anchorRef.Layout.Left;
+          targetTop = anchorRef.Layout.Top;
+        }
+        else
+        {
+          targetLeft = anchorRef.Layout.ScreenLocation.X - parent.Layout.ScreenLocation.X;
+          targetTop = anchorRef.Layout.ScreenLocation.Y - parent.Layout.ScreenLocation.Y;
+        }
+        refBeginX = targetLeft;
+        refSpanX = anchorRef.Layout.Width;
+        refEndX = targetLeft + refSpanX;
+        refBeginY = targetTop;
+        refSpanY = anchorRef.Layout.Height;
+        refEndY = targetTop + refSpanY;
+      }
+
+      //解析位置; Stretch 模式的尺寸由参照矩形与两侧留白推导, 覆盖此前解析的尺寸.
       switch (Horizontal)
       {
         case DivAxisAnchor.Begin:
-          div.Layout.Left = contentBeginX + OffsetBegin.X;
+          div.Layout.Left = refBeginX + OffsetBegin.X;
           break;
         case DivAxisAnchor.Center:
-          div.Layout.Left = contentBeginX + (contentWidth - width) / 2 + OffsetBegin.X;
+          div.Layout.Left = refBeginX + (refSpanX - width) / 2 + OffsetBegin.X;
           break;
         case DivAxisAnchor.End:
-          div.Layout.Left = contentEndX - width - OffsetEnd.X;
+          div.Layout.Left = refEndX - width - OffsetEnd.X;
           break;
         case DivAxisAnchor.Percent:
-          div.Layout.Left = contentBeginX + contentWidth * PercentPoint.X + OffsetBegin.X;
+          div.Layout.Left = refBeginX + refSpanX * PercentPoint.X + OffsetBegin.X;
+          break;
+        case DivAxisAnchor.Before:
+          div.Layout.Left = refBeginX - width - OffsetEnd.X;
+          break;
+        case DivAxisAnchor.After:
+          div.Layout.Left = refEndX + OffsetBegin.X;
           break;
         case DivAxisAnchor.Stretch:
-          div.Layout.Left = contentBeginX + OffsetBegin.X;
-          div.Layout.Width = MathF.Max(0f, contentWidth - OffsetBegin.X - OffsetEnd.X);
+          div.Layout.Left = refBeginX + OffsetBegin.X;
+          div.Layout.Width = MathF.Max(0f, refSpanX - OffsetBegin.X - OffsetEnd.X);
           break;
       }
       switch (Vertical)
       {
         case DivAxisAnchor.Begin:
-          div.Layout.Top = contentBeginY + OffsetBegin.Y;
+          div.Layout.Top = refBeginY + OffsetBegin.Y;
           break;
         case DivAxisAnchor.Center:
-          div.Layout.Top = contentBeginY + (contentHeight - height) / 2 + OffsetBegin.Y;
+          div.Layout.Top = refBeginY + (refSpanY - height) / 2 + OffsetBegin.Y;
           break;
         case DivAxisAnchor.End:
-          div.Layout.Top = contentEndY - height - OffsetEnd.Y;
+          div.Layout.Top = refEndY - height - OffsetEnd.Y;
           break;
         case DivAxisAnchor.Percent:
-          div.Layout.Top = contentBeginY + contentHeight * PercentPoint.Y + OffsetBegin.Y;
+          div.Layout.Top = refBeginY + refSpanY * PercentPoint.Y + OffsetBegin.Y;
+          break;
+        case DivAxisAnchor.Before:
+          div.Layout.Top = refBeginY - height - OffsetEnd.Y;
+          break;
+        case DivAxisAnchor.After:
+          div.Layout.Top = refEndY + OffsetBegin.Y;
           break;
         case DivAxisAnchor.Stretch:
-          div.Layout.Top = contentBeginY + OffsetBegin.Y;
-          div.Layout.Height = MathF.Max(0f, contentHeight - OffsetBegin.Y - OffsetEnd.Y);
+          div.Layout.Top = refBeginY + OffsetBegin.Y;
+          div.Layout.Height = MathF.Max(0f, refSpanY - OffsetBegin.Y - OffsetEnd.Y);
           break;
       }
     }
