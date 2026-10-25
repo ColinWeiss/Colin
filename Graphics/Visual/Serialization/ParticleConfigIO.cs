@@ -4,8 +4,7 @@ namespace Colin.Core.Graphics.Visual.Serialization
 {
   /// <summary>
   /// 粒子配置的 JSON 读写入口 (编辑器的文件对话框直读直存, 另存为本就该绕过缓存).
-  /// <br>序列化内核 (共享选项/向量转换器/深拷贝) 在 <see cref="VFXConfigSerialization"/>;
-  /// 刀光的读写入口在 <see cref="SlashConfigIO"/>; 运行时加载一律走 Leemo 管线的 Loader.</br>
+  /// <br>序列化内核 (共享选项/向量转换器/深拷贝) 在 <see cref="VFXConfigSerialization"/>.</br>
   /// </summary>
   public static class ParticleConfigIO
   {

@@ -5,9 +5,7 @@ using System.Text.Json.Serialization;
 namespace Colin.Core.Graphics.Visual.Serialization
 {
   /// <summary>
-  /// 粒子/刀光配置的 JSON 序列化内核: 共享选项 + XNA 向量类型转换器 + 通用深拷贝.
-  /// <br>读写入口按资产分家: 粒子在 <see cref="ParticleConfigIO"/>, 刀光在 <see cref="SlashConfigIO"/>,
-  /// 这里只放两边共用的公共件, 不做任何文件 IO.</br>
+  /// VFX 配置的 JSON 序列化内核: 共享选项 + XNA 向量类型转换器 + 通用深拷贝.
   /// </summary>
   public static class VFXConfigSerialization
   {
