@@ -64,6 +64,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Documents
       TagCompound tag = new TagCompound();
       tag["Type"] = key;
       tag["Name"] = div.Name;
+      tag["Id"] = div.Id;
       if (div.LayoutOwnership != DivLayoutOwnership.Auto)
         tag["Ownership"] = (int)div.LayoutOwnership;
 
@@ -165,6 +166,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Documents
       if (div is null)
         return null;
       div.Rename(tag.GetString("Name", div.Name));
+      div.BindId(tag.GetString("Id"));
       div.LayoutOwnership = (DivLayoutOwnership)Math.Clamp(tag.GetInt("Ownership"), 0, 2);
 
       ReadLayout(div, tag.GetCompound("Layout"));

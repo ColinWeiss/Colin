@@ -1,4 +1,5 @@
 ﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Modulars.UserInterfaces.Animation;
 using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Core.Modulars.UserInterfaces
@@ -60,6 +61,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     }
     public override void DoUpdate(GameTime time)
     {
+      UpdateStamp++;
       if(CoreInfo.ViewSizeF.X >= 1921 || CoreInfo.ViewSizeF.Y >= 1081)
         UICamera.TargetZoom = CoreInfo.ViewSizeF / new Vector2(1920, 1080);
       else
@@ -69,7 +71,16 @@ namespace Colin.Core.Modulars.UserInterfaces
         Root?.DoUpdate(time);
       if (FocusNavigation)
         UpdateFocusNavigation();
+      //动画播放器: 于整树布局写入全部完成之后采样回写 —— 采样值当帧渲染即可见, 不会被样式/布局覆盖
+      for (int index = AnimationPlayers.Count - 1; index >= 0; index--)
+        AnimationPlayers[index].Tick(this, (float)time.ElapsedGameTime.TotalSeconds);
     }
+
+    /// <summary>挂在本界面上的动画播放器 (编辑器预览与运行时播放共用); 于每帧 DoUpdate 末尾被驱动.</summary>
+    public readonly List<AnimationPlayer> AnimationPlayers = new List<AnimationPlayer>();
+
+    /// <summary>模块更新计数 (诊断用: 编辑器读数据此判断本界面模块是否仍在被驱动).</summary>
+    public uint UpdateStamp;
 
     private void UpdateFocusNavigation()
     {

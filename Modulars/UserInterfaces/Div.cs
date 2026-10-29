@@ -33,6 +33,18 @@ namespace Colin.Core.Modulars.UserInterfaces
     public string Name { get; private set; }
 
     /// <summary>
+    /// 划分元素的稳定标识 (构造时生成, 重命名不变).
+    /// <br>文档序列化携带; 动画轨道等跨会话引用一律以它寻址.</br>
+    /// </summary>
+    public string Id { get; private set; } = Guid.NewGuid().ToString("N");
+
+    internal void BindId(string id)
+    {
+      if (string.IsNullOrEmpty(id) is false)
+        Id = id;
+    }
+
+    /// <summary>
     /// 重命名划分元素.
     /// </summary>
     public void Rename(string name)

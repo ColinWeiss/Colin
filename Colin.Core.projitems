@@ -163,6 +163,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\IGameContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivLayoutStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Animation\AnimationClip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Animation\AnimationGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Animation\AnimationMath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Animation\AnimationPlayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Animation\DivAnimatable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Events\DivEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Events\DivEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Preparation\IPreExecution.cs" />
