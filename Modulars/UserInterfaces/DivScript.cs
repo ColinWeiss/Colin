@@ -73,6 +73,11 @@ namespace Colin.Core.Modulars.UserInterfaces
     protected virtual void OnUnbind() { }
 
     /// <summary>子树初始化完成后调用 (此刻可以读子级测量结果、给内部件设作者态参数).</summary>
+    /// <summary>
+    /// 这个脚本是否<b>自持结构</b>: 它在 <see cref="OnBind"/> 里创建内部节点 (Button 的 Text、Form 的 View/边框…).
+    /// <br>导出时不再递归它的子级 —— 否则"生成代码建一遍 + 脚本再建一遍"会建出两套.</br>
+    /// </summary>
+    public virtual bool OwnsStructure => false;
     protected virtual void OnStructureReady() { }
 
     /// <summary>元素第一次更新时 (与 <see cref="Div.Start"/> 同帧, 在它之后).</summary>

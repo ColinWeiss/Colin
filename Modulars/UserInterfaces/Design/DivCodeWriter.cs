@@ -104,7 +104,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
       Dictionary<Div, string> localOf = new Dictionary<Div, string>();
       HashSet<string> usedLocals = new HashSet<string>(StringComparer.Ordinal);
       HashSet<string> usedHandles = new HashSet<string>(StringComparer.Ordinal);
-      Collect(root, null, nodes, localOf, usedLocals, usedHandles);
+      Collect(root, null, nodes, localOf, usedLocals, usedHandles, report.Notes);
       report.Nodes = nodes.Count;
       //根节点不新建: 它就是 Build(parent) 要填内容的那个节点 —— 否则 Create 里会多套一层同名节点.
       if (nodes.Count > 0)
@@ -216,20 +216,27 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
     }
 
     private static void Collect(Div div, Node parent, List<Node> nodes, Dictionary<Div, string> localOf,
-      HashSet<string> usedLocals, HashSet<string> usedHandles)
+      HashSet<string> usedLocals, HashSet<string> usedHandles, List<string> notes)
     {
       string local = UniqueName("_ui", div.Name, usedLocals);
       string handle = UniqueName(string.Empty, div.Name, usedHandles);
       Node node = new Node { Div = div, Parent = parent, Local = local, Handle = handle };
       nodes.Add(node);
       localOf[div] = local;
+      //脚本自持结构: 它的子级由 OnBind 现建, 生成代码只写 BindScript —— 否则会建出两套.
+      if (div.Script is { OwnsStructure: true })
+      {
+        notes?.Add(string.Concat("节点 ", div.Name, " 的脚本 ", div.Script.GetType().Name,
+          " 自持结构: 其子级不出现在生成代码里, 由脚本在绑定期重建"));
+        return;
+      }
       List<Div> children = div.Children;
       for (int index = 0; index < children.Count; index++)
       {
         Div child = children[index];
         if (child is null)
           continue;
-        Collect(child, node, nodes, localOf, usedLocals, usedHandles);
+        Collect(child, node, nodes, localOf, usedLocals, usedHandles, notes);
       }
     }
 
