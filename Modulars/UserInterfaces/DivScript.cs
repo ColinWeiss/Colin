@@ -1,4 +1,5 @@
 using Colin.Core.Events;
+using Colin.Core.Modulars.UserInterfaces.Events;
 using Microsoft.Xna.Framework.Input;
 
 namespace Colin.Core.Modulars.UserInterfaces
@@ -78,6 +79,19 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <br>导出时不再递归它的子级 —— 否则"生成代码建一遍 + 脚本再建一遍"会建出两套.</br>
     /// </summary>
     public virtual bool OwnsStructure => false;
+
+    // —— 宿主快捷访问: 脚本里绝大多数代码都在读写宿主节点, 这几个转发让迁移后的代码不必满屏 Owner. —— //
+    /// <summary>宿主节点的事件总线.</summary>
+    protected DivEvents Events => Owner.Events;
+
+    /// <summary>宿主节点所在的界面根.</summary>
+    protected Div Root => Owner.Root;
+
+    /// <summary>宿主节点名.</summary>
+    protected string Name => Owner.Name;
+
+    /// <summary>把子节点挂到宿主 (旧 <c>Register</c> 的语义: 结构挂载, 不走虚分派).</summary>
+    protected bool Register(Div div, bool doInit = false) => Owner.Attach(div, doInit);
     protected virtual void OnStructureReady() { }
 
     /// <summary>元素第一次更新时 (与 <see cref="Div.Start"/> 同帧, 在它之后).</summary>
