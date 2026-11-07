@@ -36,8 +36,17 @@ namespace Colin.Core.Modulars.UserInterfaces
       return page;
     }
 
+    /// <summary>
+    /// 页面标识匹配: 传脚本类型 → 按挂的脚本认; 传 Div 子类 (过渡期的旧页面类) → 按节点类型认.
+    /// </summary>
     private static bool HasScript(Div div, Type scriptType)
-      => div?.Script is not null && scriptType.IsInstanceOfType(div.Script);
+    {
+      if (div is null || scriptType is null)
+        return false;
+      if (typeof(Div).IsAssignableFrom(scriptType))
+        return scriptType.IsInstanceOfType(div);
+      return div.Script is not null && scriptType.IsInstanceOfType(div.Script);
+    }
 
     private static Div FindByScript(Div node, Type scriptType)
     {
