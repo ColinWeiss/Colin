@@ -66,6 +66,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     internal void UpdateInternal(GameTime time) => OnUpdate(time);
 
     internal void LayoutInternal(ref DivLayout layout) => OnLayoutCalculate(ref layout);
+    internal void RenderInternal(GraphicsDevice device, SpriteBatch batch) => OnRender(device, batch);
 
     /// <summary>绑定: 取子节点、挂事件 (用下面的 OnClick/OnKey/OnHover 才会自动解绑).</summary>
     protected virtual void OnBind() { }
@@ -105,6 +106,12 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     /// <summary>布局推导: 位于 Div.LayoutCalculate 之后、布局事件之前.</summary>
     protected virtual void OnLayoutCalculate(ref DivLayout layout) { }
+
+    /// <summary>
+    /// 自定义绘制 (在渲染器之前、子级之前).
+    /// <br>[!] 只有"绘制与这个视图的状态密不可分"时才用它 (地图视口/Tip 浮窗); 普通的贴图/九宫/文字请用渲染器组件.</br>
+    /// </summary>
+    protected virtual void OnRender(GraphicsDevice device, SpriteBatch batch) { }
 
     /// <summary>
     /// 作者态参数: 交给代码生成器写进"绑定脚本 + 参数"那一段.
