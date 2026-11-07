@@ -595,22 +595,11 @@ namespace Colin.Core.Modulars.UserInterfaces
       _script = null;
     }
 
-    /// <summary>
-    /// [过渡] 类型自带的默认脚本: 新代码请用 <see cref="BindScript{T}"/> 显式绑定.
-    /// <br>保留它只是为了让还没迁到 "Div + 脚本" 的旧类继续工作.</br>
-    /// </summary>
-    protected virtual DivScript CreateScript() => null;
-
-    /// <summary>确保脚本进入绑定状态 (幂等; 初始化末尾与重绑时调用). 没有脚本时尝试 <see cref="CreateScript"/>.</summary>
+    /// <summary>确保脚本进入绑定状态 (幂等; 初始化末尾与重绑时调用).</summary>
     public void EnsureScript()
     {
       if (Disposed)
         return;
-      if (_script is null)
-      {
-        _script = CreateScript();
-        _script?.Attach(this);
-      }
       _script?.BindInternal();
     }
 

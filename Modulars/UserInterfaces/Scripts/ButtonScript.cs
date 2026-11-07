@@ -54,6 +54,21 @@ namespace Colin.Core.Modulars.UserInterfaces.Scripts
       RecaptureColors();
     }
 
+    /// <summary>设置按钮文字 (Text 子节点).</summary>
+    public void SetText(string text)
+    {
+      Div node = Owner?.GetChild(TextNodeName);
+      if (node is null)
+      {
+        node = new Div(TextNodeName);
+        node.BindRenderer(new DivFontRenderer());
+        Owner?.Attach(node);
+        _font = node.Renderer as DivFontRenderer;
+      }
+      _font ??= node.Renderer as DivFontRenderer ?? node.BindRenderer(new DivFontRenderer());
+      node.SetText(text);
+    }
+
     /// <summary>以当前颜色为基准重新捕获状态机的乘算底色.</summary>
     public void RecaptureColors()
     {

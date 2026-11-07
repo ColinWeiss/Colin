@@ -7,7 +7,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Scripts
   /// 列表容器行为: 一个内容容器的裁剪视口 + 线性排列 + 可选外部滚动条.
   /// <br>节点形状: 子级 <c>"List"</c> 是内容容器.</br>
   /// </summary>
-  public sealed class DivListScript : DivScript
+  public class DivListScript : DivScript
   {
     /// <summary>内容容器子节点的约定名字.</summary>
     public const string ListNodeName = "List";

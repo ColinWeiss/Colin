@@ -259,8 +259,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIUniqueAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivPageHost.cs" />
 <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Compat\UILegacyShims.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Compat\DivRootShim.cs" />
 <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\ButtonScript.cs" />
 <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\SliderScript.cs" />
 <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\ScrollViewScript.cs" />

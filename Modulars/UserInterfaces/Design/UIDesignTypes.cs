@@ -12,7 +12,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
 
   /// <summary>
   /// 编辑器"添加子级"用的界面类型目录 —— 靠<b>反射自动发现</b>, 不需要任何登记表.
-  /// <br>收录条件: 非抽象、非泛型、非页面根 (<see cref="DivRoot"/> 不能嵌套)、能用名字构造出来.</br>
+  /// <br>收录条件: 非抽象、非泛型、能用名字构造出来.</br>
   /// <br>[!] 名字即键: 生成代码写 <c>new T("名字")</c>, 所以"能用名字构造"是硬条件.</br>
   /// </summary>
   public static class UIDesignTypes
@@ -87,8 +87,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
       if (type is null || type.IsAbstract || typeof(Div).IsAssignableFrom(type) is false)
         return null;
       //页面根不能当子级嵌套: 造出来只会是一棵假的界面
-      if (typeof(DivRoot).IsAssignableFrom(type))
-        return null;
       ConstructorInfo[] constructors = type.GetConstructors();
       for (int index = 0; index < constructors.Length; index++)
       {
@@ -148,8 +146,6 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
           if (type.IsAbstract || type.IsGenericTypeDefinition || type.IsNested)
             continue;
           if (typeof(Div).IsAssignableFrom(type) is false)
-            continue;
-          if (typeof(DivRoot).IsAssignableFrom(type))
             continue;
           if (CanConstruct(type) is false)
             continue;
