@@ -7,7 +7,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Scripts
   /// <br>节点形状: 自身绑像素渲染器, 子级 <c>"Text"</c> 挂字体渲染器 (由 <see cref="DivFactory.Button"/> 或编辑器给出).</br>
   /// <br>[!] 状态机以绑定时刻的颜色为基准做乘算, 不吃掉作者设置的颜色; 运行期改色后调 <see cref="RecaptureColors"/>.</br>
   /// </summary>
-  public sealed class ButtonScript : DivScript
+  /// <summary>按钮脚本. 可继承: 领域按钮 (存档条目/模组行…) 覆写它来加自己的外观与点击.</summary>
+  public class ButtonScript : DivScript
   {
     /// <summary>文字子节点的约定名字.</summary>
     public const string TextNodeName = "Text";
