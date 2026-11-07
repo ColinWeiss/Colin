@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 指示划分元素于单一轴向上的锚定方式.
@@ -147,10 +147,27 @@
     public Vector2 PercentPoint;
 
     /// <summary>
-    /// 文档还原用: 锚点目标的元素名 (见 <see cref="Documents.UIDocument"/>).
-    /// <br>代码直接设 <see cref="AnchorTarget"/>; 该暂存名仅在文档读入时填写, 还原后由文档解析为元素引用.</br>
+    /// 锚点目标的元素名 (仅为兼容历史文档而保留; 生成代码直接设 <see cref="AnchorTarget"/> 对象引用).
+    /// <br>代码应当只设 <see cref="AnchorTarget"/>; 该暂存名已不参与任何解析.</br>
     /// </summary>
     public string AnchorTargetName;
+
+    /// <summary>
+    /// 是否声明了任何布局样式 (全默认 = 布局系统不做任何干预, 与手动布局完全兼容).
+    /// <br>编辑器用它区分"这个元素有没有样式"和"清除样式"; 生成代码用它决定要不要写 Style 段.</br>
+    /// </summary>
+    public bool IsAuthored => Horizontal != DivAxisAnchor.None
+      || Vertical != DivAxisAnchor.None
+      || WidthMode != DivSizeMode.Fixed
+      || HeightMode != DivSizeMode.Fixed
+      || OffsetBegin != Vector2.Zero
+      || OffsetEnd != Vector2.Zero
+      || PercentWidth != 0f
+      || PercentHeight != 0f
+      || PercentPoint != Vector2.Zero
+      || MatchOffset != Vector2.Zero
+      || AutoExtra != Vector2.Zero
+      || AnchorTarget is not null;
 
     /// <summary>
     /// 创建停靠填满父级内容区的布局样式.
@@ -254,7 +271,10 @@
       //未设时取父级内容区 —— 位置锚定从此可"贴着另一个元素排".
       float refBeginX = contentBeginX, refSpanX = contentWidth, refEndX = contentEndX;
       float refBeginY = contentBeginY, refSpanY = contentHeight, refEndY = contentEndY;
-      if (AnchorTarget is Div anchorRef && anchorRef.Disposed is false && ReferenceEquals(anchorRef, div) is false)
+      Div anchorRef = AnchorTarget is Div candidate && candidate.Disposed is false && ReferenceEquals(candidate, div) is false
+        ? candidate
+        : null;
+      if (anchorRef is not null)
       {
         float targetLeft, targetTop;
         if (anchorRef.Parent == parent)
@@ -274,6 +294,9 @@
         refSpanY = anchorRef.Layout.Height;
         refEndY = targetTop + refSpanY;
       }
+      //Before/After 的语义是"贴着另一个元素"(两支相接): 没有可用的锚点目标时该轴不定位,
+      //否则它会拿父级内容区当参照, 把元素甩到父级外 (旧血条载入后跑到屏幕外就是这么来的).
+      bool placeBeforeOrAfter = anchorRef is not null;
 
       //解析位置; Stretch 模式的尺寸由参照矩形与两侧留白推导, 覆盖此前解析的尺寸.
       switch (Horizontal)
@@ -291,10 +314,12 @@
           div.Layout.Left = refBeginX + refSpanX * PercentPoint.X + OffsetBegin.X;
           break;
         case DivAxisAnchor.Before:
-          div.Layout.Left = refBeginX - width - OffsetEnd.X;
+          if (placeBeforeOrAfter)
+            div.Layout.Left = refBeginX - width - OffsetEnd.X;
           break;
         case DivAxisAnchor.After:
-          div.Layout.Left = refEndX + OffsetBegin.X;
+          if (placeBeforeOrAfter)
+            div.Layout.Left = refEndX + OffsetBegin.X;
           break;
         case DivAxisAnchor.Stretch:
           div.Layout.Left = refBeginX + OffsetBegin.X;
@@ -316,10 +341,12 @@
           div.Layout.Top = refBeginY + refSpanY * PercentPoint.Y + OffsetBegin.Y;
           break;
         case DivAxisAnchor.Before:
-          div.Layout.Top = refBeginY - height - OffsetEnd.Y;
+          if (placeBeforeOrAfter)
+            div.Layout.Top = refBeginY - height - OffsetEnd.Y;
           break;
         case DivAxisAnchor.After:
-          div.Layout.Top = refEndY + OffsetBegin.Y;
+          if (placeBeforeOrAfter)
+            div.Layout.Top = refEndY + OffsetBegin.Y;
           break;
         case DivAxisAnchor.Stretch:
           div.Layout.Top = refBeginY + OffsetBegin.Y;

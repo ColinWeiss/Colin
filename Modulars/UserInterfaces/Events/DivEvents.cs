@@ -1,4 +1,4 @@
-﻿using Colin.Core.Events;
+using Colin.Core.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces.Events
 {
@@ -71,6 +71,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         ScrollDown, ScrollClicked, ScrollUp,
         KeysClicked, KeysClicking, KeysDown,
       };
+      //拖拽/锁定是元素自身的行为, 与"捕获/阻止冒泡"开关无关, 直接常驻.
+      //[!] 捕获与阻止冒泡不再逐通道挂空处理器 (每个元素 17 个委托的空转):
+      //    它们由 DivEventNode.OnBeforeInvoke 在派发前统一登记, 语义与顺序保持不变.
+      LeftClicking += Drag;
+      LeftClicked += DragEnd;
+      RightClicking += Lock;
     }
 
     private readonly IDivEventChannel[] _channels;
@@ -91,10 +97,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
 
     private void Drag(object sender, MouseArgs args)
     {
-      Vector2 mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
+      UserInterface module = Div.Module;
+      if (module is null)
+        return;
+      Vector2 mousePos = module.UICamera.ConvertToWorld(MouseResponder.Position);
       if (!DivLock)
         DivLock = true;
-      Div.Module.Focus = Div;
+      module.Focus = Div;
       if (!Div.Interact.IsDraggable)
         return;
       DraggingState = true;
@@ -123,45 +132,13 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
       if (!DivLock)
         DivLock = true;
     }
-    public void DoBlockOut()
-    {
-      MouseHover += MouseBlockOutEvent;
-      LeftClicking += MouseBlockOutEvent;
-      LeftClicking += Drag;
-      LeftDown += MouseBlockOutEvent;
-      LeftClicked += MouseBlockOutEvent;
-      LeftClicked += DragEnd;
-      LeftUp += MouseBlockOutEvent;
-      RightClicked += MouseBlockOutEvent;
-      RightClicking += MouseBlockOutEvent;
-      RightClicking += Lock;
-      RightDown += MouseBlockOutEvent;
-      RightUp += MouseBlockOutEvent;
-      ScrollDown += MouseBlockOutEvent;
-      ScrollClicked += MouseBlockOutEvent;
-      ScrollUp += MouseBlockOutEvent;
-      KeysClicked += KeysBlockOutEvent;
-      KeysClicking += KeysBlockOutEvent;
-      KeysDown += KeysBlockOutEvent;
-    }
-    private void MouseBlockOutEvent(object sender, MouseArgs args)
-    {
-      if (MouseCapture)
-        args.IsCapture = true;
-      if (MouseBubbling)
-        args.StopBubbling = true;
-    }
-    private void KeysBlockOutEvent(object sender, KeysArgs args)
-    {
-      if (KeysCapture)
-        args.IsCapture = true;
-      if (KeysBubbling)
-        args.StopBubbling = true;
-    }
 
     public void DoUpdate()
     {
-      Vector2 mousePos = Div.Module.UICamera.ConvertToWorld(MouseResponder.Position);
+      UserInterface module = Div.Module;
+      if (module is null)
+        return;
+      Vector2 mousePos = module.UICamera.ConvertToWorld(MouseResponder.Position);
       Div.Interact.InteractionLast = Div.Interact.Interaction;
       if (Div.ContainsScreenPoint(mousePos.ToPoint()) && Div.Interact.IsInteractive)
         Div.Interact.Interaction = true;
@@ -191,11 +168,14 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
           Div.Layout.Left = _resultLocation.X;
           Div.Layout.Top = _resultLocation.Y;
         }
-        if (Div.Interact.IsDraggable && Div.Interact.DragLimit != Rectangle.Empty)
+        if (Div.Interact.DragLimit != Rectangle.Empty)
         {
-          //限制区域小于元素自身时钳制区间退化为空, 收拢到原点, 避免 ArgumentException.
-          Div.Layout.Left = Math.Clamp(Div.Layout.Left, 0, Math.Max(0, Div.Interact.DragLimit.Width - Div.Layout.Width));
-          Div.Layout.Top = Math.Clamp(Div.Layout.Top, 0, Math.Max(0, Div.Interact.DragLimit.Height - Div.Layout.Height));
+          //限制矩形是"可摆放区域"的绝对坐标, 原点必须参与钳制 (旧实现把 X/Y 当 0, 限定区整体偏移).
+          Rectangle limit = Div.Interact.DragLimit;
+          float maxLeft = Math.Max(limit.X, limit.X + limit.Width - Div.Layout.Width);
+          float maxTop = Math.Max(limit.Y, limit.Y + limit.Height - Div.Layout.Height);
+          Div.Layout.Left = Math.Clamp(Div.Layout.Left, limit.X, maxLeft);
+          Div.Layout.Top = Math.Clamp(Div.Layout.Top, limit.Y, maxTop);
         }
       }
       if (Div.Module.Focus == Div && Div.Module.LastFocus != Div)
@@ -242,24 +222,9 @@ namespace Colin.Core.Modulars.UserInterfaces.Events
         _channels[index].ChannelDispose();
         _channels[index].Div = null;
       }
-      MouseHover -= MouseBlockOutEvent;
-      LeftClicking -= MouseBlockOutEvent;
       LeftClicking -= Drag;
-      LeftDown -= MouseBlockOutEvent;
-      LeftClicked -= MouseBlockOutEvent;
       LeftClicked -= DragEnd;
-      LeftUp -= MouseBlockOutEvent;
-      RightClicked -= MouseBlockOutEvent;
-      RightClicking -= MouseBlockOutEvent;
       RightClicking -= Lock;
-      RightDown -= MouseBlockOutEvent;
-      RightUp -= MouseBlockOutEvent;
-      ScrollDown -= MouseBlockOutEvent;
-      ScrollClicked -= MouseBlockOutEvent;
-      ScrollUp -= MouseBlockOutEvent;
-      KeysClicked -= KeysBlockOutEvent;
-      KeysClicking -= KeysBlockOutEvent;
-      KeysDown -= KeysBlockOutEvent;
     }
   }
 }

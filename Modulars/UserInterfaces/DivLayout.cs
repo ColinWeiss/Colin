@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces
+namespace Colin.Core.Modulars.UserInterfaces
 {
   /// <summary>
   /// 划分元素的布局信息.
@@ -580,11 +580,10 @@
       Matrix local = CalculateTransform(div);
 
       div.Layout.renderTargetTransform = local;
-      if (parent is not null)
+      //画布的子级在"画布像素坐标系"里绘制 (画布自身的缩放/轴点只在合成那一步生效), 因此不再乘父级变换;
+      //也不再把平移硬写成 (left, top) —— 那会把子级自身的旋转/缩放轴心一起抹掉.
+      if (parent is not null && parent.IsCanvas is false)
         div.Layout.renderTargetTransform *= parent.Layout.renderTargetTransform;
-
-      if (parent is not null && parent.IsCanvas)
-        div.Layout.renderTargetTransform.Translation = new Vector3(div.Layout.left, div.Layout.top, 0);
 
       div.Layout.renderTargetBounds.X = div.Layout.renderTargetLeft = (int)div.Layout.renderTargetTransform.Translation.X;
       div.Layout.renderTargetBounds.Y = div.Layout.renderTargetTop = (int)div.Layout.renderTargetTransform.Translation.Y;
@@ -597,6 +596,12 @@
         div.Layout.scissorRectangle.Y = div.Layout.renderTargetBounds.Y + div.Layout.ScissorTop;
         div.Layout.scissorRectangle.Width = div.Layout.ScissorWidth;
         div.Layout.scissorRectangle.Height = div.Layout.ScissorHeight;
+      }
+      else
+      {
+        //关掉剪裁后必须归零: 旧实现只在启用时写, 关掉之后 <see cref="ScissorRectangle"/> 会一直是上一次的陈旧矩形
+        //(对它做 Get 的地方会以为还在裁剪).
+        div.Layout.scissorRectangle = default;
       }
 
       div.Layout.screenTransform = local;

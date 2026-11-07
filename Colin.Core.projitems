@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -141,7 +141,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePointer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TilePointerSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRelative.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\DivList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Node.cs" />
     <Compile Include="..\Colin\Events\MouseEventNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileCheck\FileToMD5.cs" />
@@ -206,7 +205,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkArrayPool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\Point3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeRes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Resources\ICodeResPreload.cs" />
@@ -254,19 +252,32 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileSpriteSheet.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRoot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\DivGradientController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Controllers\LinearMenuController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivDesign.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Div.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIUniqueAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivPageHost.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Compat\UILegacyShims.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Compat\DivRootShim.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\ButtonScript.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\SliderScript.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\ScrollViewScript.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\DivListScript.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\InputTextBoxScript.cs" />
+<Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Scripts\ProgressBarScript.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivScript.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\DivCodeWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\UIDesignParts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\UIDesignPaths.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\UIDesignTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\UIDesignInlineAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\UIDesignValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Design\UIDesignScripts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\DivRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\InteractStyle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Button.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\InputTextBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\Label.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\ProgressBar.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Prefabs\ScrollView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivFontRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivNinecutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Renderers\DivPixelRenderer.cs" />
@@ -276,10 +287,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mathematical\RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIBatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UITheme.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\IUIDocumentCustomizable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\UIDocument.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\UIDocumentParts.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\Documents\UIDocumentRegistry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UIPageScripts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\UserInterfaces\UserInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Debugs\HitchRecorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Debugs\StageRecorder.cs" />

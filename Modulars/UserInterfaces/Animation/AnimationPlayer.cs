@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Modulars.UserInterfaces.Animation
+namespace Colin.Core.Modulars.UserInterfaces.Animation
 {
   /// <summary>
   /// 动画播放器: 编辑器预览与运行时播放共用.
@@ -60,33 +60,49 @@
       }
       if (IsPlaying)
       {
-        Time += deltaTime * Speed;
+        //[!] 播放头按"方向"推进: 往返模式必须是 +step/-step, 而不是"只增然后再镜像一次" ——
+        //    旧实现里 Time 只增, PingPong 会把 1.0 映成 0.0 再映成 0.9, 表现为两帧一跳的闪烁, 且永远回不到正向.
+        float duration = MathF.Max(0f, Clip.Duration);
+        float step = deltaTime * Speed;
         switch (Clip.Loop)
         {
           case ClipLoopMode.Once:
-            if (Time >= Clip.Duration)
+            Time += step;
+            if (Time >= duration)
             {
-              Time = Clip.Duration;
+              Time = duration;
               IsPlaying = false;
             }
+            else if (Time < 0f)
+              Time = 0f;
             break;
           case ClipLoopMode.Loop:
-            if (Time >= Clip.Duration)
-              Time %= Clip.Duration;
+            Time += step;
+            if (duration <= 0f)
+              Time = 0f;
+            else
+            {
+              Time %= duration;
+              if (Time < 0f)
+                Time += duration;
+            }
             break;
           case ClipLoopMode.PingPong:
-            if (_pingPongForward && Time >= Clip.Duration)
+            Time += _pingPongForward ? step : -step;
+            if (_pingPongForward)
             {
-              Time = MathF.Max(0f, Clip.Duration - (Time - Clip.Duration));
-              _pingPongForward = false;
+              if (Time >= duration)
+              {
+                Time = duration - (Time - duration);
+                _pingPongForward = false;
+              }
             }
-            else if (_pingPongForward is false && Time <= 0f)
+            else if (Time <= 0f)
             {
-              Time = MathF.Min(Clip.Duration, -Time);
+              Time = -Time;
               _pingPongForward = true;
             }
-            if (_pingPongForward is false)
-              Time = Clip.Duration - Time;
+            Time = Math.Clamp(Time, 0f, duration);
             break;
         }
       }
@@ -144,7 +160,8 @@
 
     private void Restore(UserInterface ui)
     {
-      if (Clip is null)
+      //ui 为空 (编辑器切换片段等无界面上下文的场景) 时跳过回写, 不能炸
+      if (Clip is null || ui is null)
         return;
       foreach (KeyValuePair<(string TargetId, string Property), float[]> pair in _snapshot)
       {

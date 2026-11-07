@@ -1,4 +1,4 @@
-﻿using Colin.Core.Modulars.UserInterfaces.Events;
+using Colin.Core.Modulars.UserInterfaces.Events;
 
 namespace Colin.Core.Modulars.UserInterfaces
 {
@@ -34,15 +34,9 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     /// <summary>
     /// 划分元素的稳定标识 (构造时生成, 重命名不变).
-    /// <br>文档序列化携带; 动画轨道等跨会话引用一律以它寻址.</br>
+    /// <br>动画轨道与跨会话引用一律以它寻址 (见 <c>DivFinder.FindById</c>).</br>
     /// </summary>
     public string Id { get; private set; } = Guid.NewGuid().ToString("N");
-
-    internal void BindId(string id)
-    {
-      if (string.IsNullOrEmpty(id) is false)
-        Id = id;
-    }
 
     /// <summary>
     /// 重命名划分元素.
@@ -56,18 +50,28 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     private bool isVisible = true;
     /// <summary>
-    /// 指示划分元素是否可见.
+    /// 指示划分元素<b>自身</b>是否可见.
+    /// <br>[!] 这是作者态, <b>不向下级联</b> —— 关掉父级不会改写子级的作者值, 打开父级也不会。
+    /// 子级"实际是否显示"请看 <see cref="IsVisibleInTree"/>。</br>
     /// </summary>
     public bool IsVisible
     {
       get => isVisible;
-      set
+      set => isVisible = value;
+    }
+
+    /// <summary>
+    /// 指示本元素及其全部祖先是否都可见 (派生值; 不做缓存, 深度即调用次数).
+    /// <br>更新/渲染靠递归入口自然收敛, 但事件命中与"这个元素现在能不能被看到"必须用它。</br>
+    /// </summary>
+    public bool IsVisibleInTree
+    {
+      get
       {
-        //遍历改用 for 循环而非 ForEach 委托, 避免逐帧闭包分配.
-        List<Div> children = Children;
-        for (int count = 0; count < children.Count; count++)
-          children[count].IsVisible = value;
-        isVisible = value;
+        for (Div node = this; node is not null; node = node._parent)
+          if (node.isVisible is false)
+            return false;
+        return true;
       }
     }
 
@@ -136,6 +140,203 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       return Children.Find(a => a.Name == name);
     }
+
+    /// <summary>
+    /// 按路径取后代元素: <c>"View/Panel/StartButton"</c> 相对本元素; <c>"/"</c> 开头则从根开始.
+    /// <br>文档驱动的界面里, 逻辑靠"名字路径"定位节点 (热重载后重新绑即可), 不必长期持有引用.</br>
+    /// </summary>
+    public Div Find(string path)
+    {
+      if (string.IsNullOrEmpty(path))
+        return null;
+      bool fromRoot = path[0] == '/';
+      Div current = fromRoot ? Root ?? this : this;
+      int start = fromRoot ? 1 : 0;
+      for (int cursor = start; cursor <= path.Length; cursor++)
+      {
+        if (cursor < path.Length && path[cursor] != '/')
+          continue;
+        if (cursor > start)
+        {
+          current = current?.GetChild(path.Substring(start, cursor - start));
+          if (current is null)
+            return null;
+        }
+        start = cursor + 1;
+      }
+      return current;
+    }
+
+    /// <summary>按路径取后代元素并转成指定类型; 找不到或类型不符返回 null.</summary>
+    public T Find<T>(string path) where T : Div => Find(path) as T;
+
+    /// <summary>
+    /// 深度优先找第一个指定类型的后代 (不含自身).
+    /// <br>[!] 用它而不是 <c>GetChild(名字) as T</c>: 名字是文档里的可改数据, 类型才是代码契约 — 同名副本/改名都不该骗过逻辑.</br>
+    /// <br>[!] 类型标了 <see cref="UIUniqueAttribute"/> 而树上出现多个时, 会打一条警告并列出各自的路径 —— 不会静默找错.</br>
+    /// </summary>
+    public Div FindFirst(Type type) => FindFirst(type, null);
+
+    /// <summary>深度优先找第一个满足条件的指定类型后代.</summary>
+    public Div FindFirst(Type type, Func<Div, bool> filter)
+    {
+      if (type is null || Disposed)
+        return null;
+      Div found = FindFirstCore(type, filter);
+      //唯一类型出现多份只查一次/报一次: 避免每帧为了诊断反复遍历 (这个 API 会被宿主每帧调用)
+      if (found is not null && IsUniqueType(type) && _uniqueWarned.Contains(type) is false)
+        WarnDuplicateUnique(type, filter, found);
+      return found;
+    }
+
+    /// <summary>深度优先找第一个指定类型的后代.</summary>
+    public T FindFirst<T>() where T : Div => FindFirst(typeof(T), null) as T;
+
+    /// <summary>深度优先找第一个满足条件的指定类型后代; 多实例场景用它显式挑 (例如 <c>slot =&gt; slot.OwnerIndex == 1</c>).</summary>
+    public T FindFirst<T>(Func<T, bool> filter) where T : Div
+      => FindFirst(typeof(T), filter is null ? null : node => node is T typed && filter(typed)) as T;
+
+    /// <summary>收集所有指定类型的后代 (不含自身; 跳过视图副本). 多实例场景用它自己决定取哪个.</summary>
+    public List<Div> FindAll(Type type, List<Div> results = null)
+    {
+      List<Div> list = results ?? new List<Div>();
+      if (type is null || Disposed)
+        return list;
+      List<Div> children = Children;
+      for (int index = 0; index < children.Count; index++)
+      {
+        Div child = children[index];
+        if (child is null || child.Disposed)
+          continue;
+        if (type.IsInstanceOfType(child))
+          list.Add(child);
+        child.FindAll(type, list);
+      }
+      return list;
+    }
+
+    /// <summary>收集所有指定类型的后代.</summary>
+    public List<T> FindAll<T>() where T : Div
+    {
+      List<Div> raw = FindAll(typeof(T));
+      List<T> result = new List<T>(raw.Count);
+      for (int index = 0; index < raw.Count; index++)
+        result.Add((T)raw[index]);
+      return result;
+    }
+
+    /// <summary>深度优先找第一个挂着指定脚本的元素 (含自身).</summary>
+    public Div FindScript<T>() where T : DivScript => FindScriptCore<T>(this);
+
+    private static Div FindScriptCore<T>(Div node) where T : DivScript
+    {
+      if (node is null || node.Disposed)
+        return null;
+      if (node.HasScript<T>())
+        return node;
+      List<Div> children = node.Children;
+      for (int index = 0; index < children.Count; index++)
+      {
+        Div found = FindScriptCore<T>(children[index]);
+        if (found is not null)
+          return found;
+      }
+      return null;
+    }
+
+    /// <summary>收集所有挂着指定脚本的后代 (可带过滤; 跳过已释放节点).</summary>
+    public List<Div> FindAllScripts<T>(List<Div> results = null, Func<Div, bool> filter = null) where T : DivScript
+    {
+      List<Div> list = results ?? new List<Div>();
+      if (Disposed)
+        return list;
+      List<Div> children = Children;
+      for (int index = 0; index < children.Count; index++)
+      {
+        Div child = children[index];
+        if (child is null || child.Disposed)
+          continue;
+        if (child.HasScript<T>() && (filter is null || filter(child)))
+          list.Add(child);
+        child.FindAllScripts<T>(list, filter);
+      }
+      return list;
+    }
+
+    private Div FindFirstCore(Type type, Func<Div, bool> filter)
+    {
+      List<Div> children = Children;
+      for (int index = 0; index < children.Count; index++)
+      {
+        Div child = children[index];
+        if (child is null || child.Disposed)
+          continue;
+        if (type.IsInstanceOfType(child) && (filter is null || filter(child)))
+          return child;
+        Div nested = child.FindFirstCore(type, filter);
+        if (nested is not null)
+          return nested;
+      }
+      return null;
+    }
+
+    /// <summary>唯一类型出现多份时的告警 (同一类型只报一次, 附路径方便定位).</summary>
+    private void WarnDuplicateUnique(Type type, Func<Div, bool> filter, Div used)
+    {
+      List<Div> all = new List<Div>();
+      FindAll(type, all);
+      int count = 0;
+      for (int index = 0; index < all.Count; index++)
+        if (filter is null || filter(all[index]))
+          count++;
+      if (count <= 1)
+        return;
+      lock (_uniqueWarned)
+      {
+        if (_uniqueWarned.Add(type) is false)
+          return;
+      }
+      string paths = string.Empty;
+      int listed = 0;
+      for (int index = 0; index < all.Count && listed < 4; index++)
+      {
+        if (filter is not null && filter(all[index]) is false)
+          continue;
+        paths = string.Concat(paths, listed == 0 ? string.Empty : " | ", DescribePath(all[index]));
+        listed++;
+      }
+      Console.Log(ConsoleTextType.Warning, "UI",
+        string.Concat(type.Name, " 标记为唯一, 但树上找到 ", count.ToString(), " 个: ", paths,
+          " —— 本次使用 ", DescribePath(used), "; 多余的那个请删掉或用 FindFirst(filter) 显式指定"));
+    }
+
+    private static readonly HashSet<Type> _uniqueWarned = new HashSet<Type>();
+    private static readonly Dictionary<Type, bool> _uniqueTypes = new Dictionary<Type, bool>();
+
+    private static bool IsUniqueType(Type type)
+    {
+      if (_uniqueTypes.TryGetValue(type, out bool unique))
+        return unique;
+      unique = type.IsDefined(typeof(UIUniqueAttribute), true);
+      _uniqueTypes[type] = unique;
+      return unique;
+    }
+
+    /// <summary>可读路径 (从根到本元素), 诊断/日志用.</summary>
+    public string DescribePath()
+    {
+      List<Div> chain = new List<Div>();
+      Div node = this;
+      while (node is not null && chain.Count < 16)
+      {
+        chain.Add(node);
+        node = node.Parent;
+      }
+      chain.Reverse();
+      return string.Join("/", chain.Select(item => item.Name));
+    }
+
+    private static string DescribePath(Div div) => div is null ? "(null)" : div.DescribePath();
 
     /// <summary>
     /// 指示划分元素的布局样式
@@ -236,66 +437,54 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public Div Parent => _parent;
 
-    private Div _upperCanvas;
     /// <summary>
     /// 获取划分元素可溯到的最近的上一层画布元素.
+    /// <br>[!] 不做缓存: 重挂载/改 <see cref="UseBatch"/> / 改剪裁开关都会让缓存失效,
+    /// 而祖先链本来就短 (指针跳几次), 省下的时间不值得换这一类"搬到新父级后还按旧祖先裁剪"的错.</br>
     /// </summary>
     public Div UpperCanvas
     {
       get
       {
-        if (_parent is null)
-          return null;
-        if (_upperCanvas is null)
-        {
-          Div result;
-          if (Parent.IsCanvas)
-            result = Parent;
-          else
-            result = Parent.UpperCanvas;
-          _upperCanvas = result;
-        }
-        return _upperCanvas;
+        for (Div node = _parent; node is not null; node = node._parent)
+          if (node.IsCanvas)
+            return node;
+        return null;
       }
     }
 
-    private Div _upperScissor;
+    /// <summary>
+    /// 获取划分元素可溯到的最近一层启用了剪裁的祖先.
+    /// <br>画布是剪裁边界: 不会再向画布之外找 (画布内容自行裁剪).
+    /// </summary>
     public Div UpperScissor
     {
       get
       {
-        if (_parent is null || IsCanvas)
+        if (IsCanvas)
           return null;
-        if (_upperScissor is null)
+        for (Div node = _parent; node is not null; node = node._parent)
         {
-          Div result;
-          if (Parent.Layout.ScissorEnable && !Parent.IsCanvas)
-            result = Parent;
-          else
-            result = Parent.UpperScissor;
-          _upperScissor = result;
+          if (node.IsCanvas)
+            return null;
+          if (node.Layout.ScissorEnable)
+            return node;
         }
-        return _upperScissor;
+        return null;
       }
     }
 
-    private Div _upperBatch;
+    /// <summary>
+    /// 获取划分元素可溯到的最近的批次容器 (<see cref="UseBatch"/> 为真的祖先).
+    /// </summary>
     public Div UpperBatch
     {
       get
       {
-        if (_parent is null)
-          return null;
-        if (_upperBatch is null)
-        {
-          Div result;
-          if (Parent.UseBatch)
-            result = Parent;
-          else
-            result = Parent.UpperBatch;
-          _upperBatch = result;
-        }
-        return _upperBatch;
+        for (Div node = _parent; node is not null; node = node._parent)
+          if (node.UseBatch)
+            return node;
+        return null;
       }
     }
 
@@ -330,18 +519,127 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public UserInterface Module => _module;
 
-    internal DivRoot _root;
+    internal Div _root;
     /// <summary>
     /// 获取划分元素之「阈点」.
     /// </summary>
-    public DivRoot Root => _root;
+    public Div Root => _root;
 
     /// <summary>
     /// 指示该划分元素是否为可作为渲染目标的画布元素.
+    /// <br>[!] 这是结构身份, 只能在构造后、初始化前确定 (见 <see cref="MarkAsCanvas"/>); 运行期不可改。</br>
     /// </summary>
-    public readonly bool IsCanvas;
+    public bool IsCanvas { get; private set; }
+
+    /// <summary>
+    /// 把本元素标记为画布 (渲染目标).
+    /// <br>供"由生成代码重建结构"与文档反序列化使用 —— 画布身份无法用 <c>new T("名字")</c> 表达,
+    /// 只能由 <c>X.UI.cs</c> 在建节点后补一句.</br>
+    /// </summary>
+    public void MarkAsCanvas() => IsCanvas = true;
 
     public bool InitializationCompleted = false;
+
+    /// <summary>
+    /// 指示本元素是否为"界面根" (原 <c>DivRoot</c> 的职责): 尺寸每帧同步视口, 并充当子树里最近的根.
+    /// <br>[!] 与 <see cref="IsCanvas"/> 一样是结构身份, 请在初始化前设置 (生成代码/工厂里紧跟 <c>new Div</c>).</br>
+    /// </summary>
+    public bool IsRoot { get; private set; }
+
+    /// <summary>把本元素标记为界面根 (视口尺寸同步).</summary>
+    public void MarkAsRoot()
+    {
+      IsRoot = true;
+      _root = this;
+    }
+
+    private DivScript _script;
+
+    /// <summary>
+    /// 本元素的行为脚本 (见 <see cref="DivScript"/>): 结构留在 Div, 事件/逐帧逻辑写脚本.
+    /// <br>由 <see cref="BindScript{T}"/> 绑定 (生成代码 / 手写工厂), 随初始化与重绑驱动.</br>
+    /// </summary>
+    public DivScript Script => _script;
+
+    /// <summary>
+    /// 绑定行为脚本 (替换既有脚本; 已初始化时立刻绑定, 否则等到初始化末尾).
+    /// <br>同一个节点只保留一个脚本 —— 换脚本就是换控件.</br>
+    /// </summary>
+    public T BindScript<T>(T script) where T : DivScript
+    {
+      if (script is null)
+        return null;
+      if (ReferenceEquals(_script, script))
+      {
+        _script.BindInternal();
+        return script;
+      }
+      _script?.UnbindInternal();
+      _script = script;
+      _script.Attach(this);
+      if (InitializationCompleted)
+        _script.BindInternal();
+      return script;
+    }
+
+    /// <summary>取本元素上指定类型的脚本; 没有 (或类型不符) 返回 null.</summary>
+    public T GetScript<T>() where T : DivScript => _script as T;
+
+    /// <summary>本元素是否挂着指定类型的脚本.</summary>
+    public bool HasScript<T>() where T : DivScript => _script is T;
+
+    /// <summary>解绑并移除脚本 (节点保留, 行为消失).</summary>
+    public void UnbindScript()
+    {
+      _script?.UnbindInternal();
+      _script = null;
+    }
+
+    /// <summary>
+    /// [过渡] 类型自带的默认脚本: 新代码请用 <see cref="BindScript{T}"/> 显式绑定.
+    /// <br>保留它只是为了让还没迁到 "Div + 脚本" 的旧类继续工作.</br>
+    /// </summary>
+    protected virtual DivScript CreateScript() => null;
+
+    /// <summary>确保脚本进入绑定状态 (幂等; 初始化末尾与重绑时调用). 没有脚本时尝试 <see cref="CreateScript"/>.</summary>
+    public void EnsureScript()
+    {
+      if (Disposed)
+        return;
+      if (_script is null)
+      {
+        _script = CreateScript();
+        _script?.Attach(this);
+      }
+      _script?.BindInternal();
+    }
+
+    /// <summary>重绑: 先解绑再绑, 保证事件不叠加.</summary>
+    public void RebindScript()
+    {
+      if (Disposed || _script is null)
+        return;
+      _script.UnbindInternal();
+      _script.BindInternal();
+    }
+
+    /// <summary>本元素及整棵子树的脚本全部重绑; 返回重绑的脚本数.</summary>
+    public int RebindScriptTree()
+    {
+      if (Disposed)
+        return 0;
+      int count = 0;
+      if (_script is not null)
+      {
+        _script.UnbindInternal();
+        _script.BindInternal();
+        count++;
+      }
+      List<Div> nodes = Children;
+      for (int index = 0; index < nodes.Count; index++)
+        count += nodes[index].RebindScriptTree();
+      return count;
+    }
 
     /// <summary>
     /// 实例化一个划分元素, 并用名称加以区分.
@@ -353,18 +651,21 @@ namespace Colin.Core.Modulars.UserInterfaces
       Name = name;
       Children = new List<Div>();
       Events = new DivEvents(this);
-      Events.DoBlockOut();
       Layout.Scale = Vector2.One;
       Interact.IsInteractive = true;
       Design.Color = Color.White;
       IsCanvas = isCanvas;
     }
 
+    /// <summary>
+    /// 重建画布渲染目标并同步布局尺寸.
+    /// <br>[!] 不碰 <see cref="DivLayout.Anchor"/> —— 轴点是作者态布局数据, 不该被"重建渲染目标"顺带改写
+    /// (旧实现这么干, 和 <c>Form.LayoutCalculate</c> 每帧写的视图中心轴点互相打架).</br>
+    /// </summary>
     public void SetCanvas(float width, float height)
     {
       Layout.Width = width;
       Layout.Height = height;
-      Layout.Anchor = new Vector2(Layout.Width / 2, Layout.Height / 2);
       Canvas?.Dispose();
       Canvas = RenderTargetExt.CreateDefault((int)width, (int)height);
     }
@@ -382,8 +683,10 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public void DoInitialize()
     {
-      if (this is DivRoot divThreshold)
-        _root = divThreshold;
+      if (Disposed)
+        return;
+      if (IsRoot)
+        _root = this;
       if (Parent is not null)
       {
         _module = _parent._module;
@@ -392,6 +695,12 @@ namespace Colin.Core.Modulars.UserInterfaces
       if (InitializationCompleted)
         return;
       DivInit();
+      BuildUI();
+      if (IsRoot)
+      {
+        Layout.Width = CoreInfo.ViewWidth;
+        Layout.Height = CoreInfo.ViewHeight;
+      }
       _controller?.OnDivInitialize(this);
       _renderer?.OnDivInitialize();
       DivLayout.Calculate(this);
@@ -403,9 +712,29 @@ namespace Colin.Core.Modulars.UserInterfaces
           Layout.Height = 1;
         SetCanvas(Layout.Width, Layout.Height);
       }
-      ForEach(child => child?.DoInitialize());
+      //子级逐个初始化 (用下标循环而不是 ForEach(lambda): 这里每帧不跑, 但每节点一次委托分配也没必要).
+      List<Div> nodes = Children;
+      for (int index = 0; index < nodes.Count; index++)
+        nodes[index]?.DoInitialize();
+      //子树已全部初始化: 此时才允许读子级尺寸、往节点里塞内容 (见 OnStructureReady).
+      //[!] 先置位再调用: 就绪钩子里新 Attach 的子级必须能被自动初始化 (见 AttachDirect).
       InitializationCompleted = true;
+      EnsureScript();
+      OnStructureReady();
+      _script?.StructureReadyInternal();
     }
+
+    /// <summary>
+    /// 子树初始化完成后调用 (每个元素一次): 读子级测量结果、给内部件设作者态参数、挂一次性引用.
+    /// <br>脚本的同名钩子 (<see cref="DivScript"/> 的 <c>OnStructureReady</c>) 在本方法之后调用.</br>
+    /// </summary>
+    /// <summary>
+    /// 结构挂钩点: 手写页面/面板可以在建自己的子级 (生成代码走静态 builder, 不依赖它).
+    /// <br>由 <see cref="DoInitialize"/> 在 <see cref="DivInit"/> 之后、子级初始化之前调用.</br>
+    /// </summary>
+    public virtual void BuildUI() { }
+
+    public virtual void OnStructureReady() { }
 
     /// <summary>
     /// 发生于划分元素执行 <see cref="DoInitialize"/> 时, 可于此自定义初始化操作.
@@ -420,17 +749,25 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="time">游戏计时状态快照.</param>
     public void DoUpdate(GameTime time)
     {
+      if (Disposed)
+        return;
+      _script?.PreUpdateInternal(time);
       PreUpdate(time);
+      if (IsRoot is false)
+      {
+        //只补空, 不清空: 父级为空时把 module 抹掉会让"临时摘下来再挂回去"的节点丢上下文.
+        _module ??= Parent?._module;
+        _root ??= Parent?._root;
+      }
+      //焦点状态镜像: InteractStyle.Focus/FocusLast 是对外契约的一部分, 不能是永远为假的死字段.
+      Interact.FocusLast = Interact.Focus;
+      Interact.Focus = _module is not null && ReferenceEquals(_module.Focus, this);
       if (IsVisible is false || IsCulled)
         return;
-      if (this is DivRoot is false)
-      {
-        _module = Parent?._module;
-        _root = Parent?._root;
-      }
       if (!_started)
       {
         Start(time);
+        _script?.StartInternal(time);
         _started = true;
       }
       Controller?.Layout(this, ref Layout);
@@ -438,6 +775,7 @@ namespace Colin.Core.Modulars.UserInterfaces
       Controller?.Design(this, ref Design);
       Style.Apply(this, Parent);
       LayoutCalculate(ref Layout);
+      _script?.LayoutInternal(ref Layout);
       LayoutEvent?.Invoke(this);
       InteractCalculate(ref Interact);
       DesignCalculate(ref Design);
@@ -446,15 +784,36 @@ namespace Colin.Core.Modulars.UserInterfaces
         EnsureCanvasSize();
       CalculateScissorBounds();
       Events.DoUpdate();
+      //事件处理器可能把自己释放掉 (关弹窗/删条目): 释放后别再继续跑本帧的更新与子级遍历.
+      if (Disposed)
+        return;
       OnUpdate(time);
+      _script?.UpdateInternal(time);
       UpdateChildren(time);
     }
 
-    public virtual void LayoutCalculate(ref DivLayout layout) { }
+    /// <summary>
+    /// 布局推导钩子; 界面根在这里把尺寸同步到视口 (原 <c>DivRoot</c> 的职责).
+    /// </summary>
+    public virtual void LayoutCalculate(ref DivLayout layout)
+    {
+      if (IsRoot)
+      {
+        layout.Width = CoreInfo.ViewWidth;
+        layout.Height = CoreInfo.ViewHeight;
+      }
+    }
 
     public virtual void InteractCalculate(ref InteractStyle interact) { }
 
     public virtual void DesignCalculate(ref DivDesign design) { }
+
+    /// <summary>
+    /// 作者态底色 —— 代码导出读取这个值, 而不是 <see cref="DivDesign.Color"/> 的当帧快照.
+    /// <br>状态机脚本 (如 <c>ButtonScript</c>) 每帧把乘算结果写回 <see cref="DivDesign.Color"/>, 直接读会把
+    /// "恰好悬停时的提亮色"钉进生成文件; 脚本通过 <see cref="DivScript.AuthorColor"/> 提供未被污染的底色。</br>
+    /// </summary>
+    public Color AuthorColor => _script?.AuthorColor ?? Design.Color;
 
     /// <summary>
     /// 测量划分元素所期望的内容尺寸.
@@ -564,7 +923,8 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       if (UpperBatch is not null)
         return; //位于批次容器内: 直接绘制于上级批次, 不自行开启.
-      Matrix transform = UpperCanvas is null ? Module.UICamera.View : Matrix.Identity;
+      //未挂载界面时 (编辑器预览 / 构造后未初始化) 用单位阵, 不该为了画一个预览去空引用.
+      Matrix transform = UpperCanvas is not null || Module is null ? Matrix.Identity : Module.UICamera.View;
       if (UpperScissor is not null)
         UIBatch.Request(blendState, samplerState, DepthStencilState.Default, UIBatch.ScissorTestRasterizer, ScissorBounds, transform);
       else
@@ -578,7 +938,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public void DoRender(GraphicsDevice device, SpriteBatch batch)
     {
-      if (IsVisible is false || IsCulled)
+      if (Disposed || IsVisible is false || IsCulled)
         return;
       if (IsCanvas)
       {
@@ -598,20 +958,21 @@ namespace Colin.Core.Modulars.UserInterfaces
       {
         //切回上级渲染目标, 将画布内容合成绘制; 提交顺序保持与绘制顺序一致.
         UIBatch.Flush();
-        if (UpperCanvas is not null)
-          device.SetRenderTarget(UpperCanvas.Canvas);
-        else
+        Div upperCanvas = UpperCanvas;
+        if (upperCanvas is not null)
+          device.SetRenderTarget(upperCanvas.Canvas);
+        else if (Module is not null)
           device.SetRenderTarget(Module.RawRt);
-        Vector2 canvasRenderPos = Layout.ScreenLocation + Layout.Anchor;
-        if (UpperCanvas is not null)
-          canvasRenderPos = Layout.RenderTargetLocation + Layout.Anchor;
-        bool rootScissor = _root.Layout.ScissorEnable;
+        Vector2 canvasRenderPos = upperCanvas is not null
+          ? Layout.RenderTargetLocation + Layout.Anchor
+          : Layout.ScreenLocation + Layout.Anchor;
+        bool rootScissor = _root is not null && _root.Layout.ScissorEnable;
         UIBatch.Request(
           BlendState.AlphaBlend, SamplerState.PointWrap,
           DepthStencilState.None,
           rootScissor ? UIBatch.ScissorTestRasterizer : UIBatch.DefaultRasterizer,
           rootScissor ? _root.ScissorBounds : default,
-          UpperCanvas is not null ? Matrix.Identity : Module.UICamera.View);
+          upperCanvas is not null || Module is null ? Matrix.Identity : Module.UICamera.View);
         batch.Draw(Canvas, canvasRenderPos, null, Design.Color, 0f, Layout.Anchor, Layout.Scale, SpriteEffects.None, 0f);
       }
     }
@@ -648,35 +1009,55 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <param name="div">需要添加的划分元素.</param>
     /// <param name="doInit">执行添加划分元素的初始化.</param>
     /// <returns>若添加成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
-    public virtual bool Register(Div div, bool doInit = false)
+    public virtual bool Register(Div div, bool doInit = false) => AttachDirect(div, doInit);
+
+    /// <summary>
+    /// 按"子级集合"语义挂载子元素, 不经过 <see cref="Register"/> 的虚分派.
+    /// <br>[!] 文档装载专用: <see cref="Common.UserInterfaces.Forms.Form"/> 这类重写了 <see cref="Register"/> 的类型会把子级挂进 View,</br>
+    /// <br>而文档存的是它自己的 <see cref="Children"/> —— 用 Register 还原会把文档里的 View/Border 挪成 View 的子级, 层级被悄悄改写.</br>
+    /// </summary>
+    internal bool AttachDirect(Div div, bool doInit = false)
     {
+      if (div is null || ReferenceEquals(div, this) || Disposed)
+        return false;
       div._parent = this;
       div._module = _module;
       div._root = _root;
       div.Layout.Invalidate(); //重挂载后强制重算, 防止版本戳巧合时沿用旧父级的布局结果.
       Events.Register(div.Events);
-      if (doInit)
-        div.DoInitialize();
       Children.Add(div);
       _structureVersion++;
+      //已初始化的树上新挂节点 (生成代码的 OnStructureReady / 编辑器添加子级 / 运行时塞内容):
+      //立刻补一次初始化, 否则它的 DivInit 与生成结构永远不会执行.
+      if (doInit || (InitializationCompleted && div.InitializationCompleted is false))
+        div.DoInitialize();
       return true;
     }
+
+    /// <summary>
+    /// 按"子级集合"语义挂载子元素, 供<b>生成的布局代码</b>与结构重建使用.
+    /// <br>与 <see cref="Register"/> 的区别: 这里不做虚分派 —— 生成代码描述的是"谁是谁的子级",</br>
+    /// <br>不能被 <see cref="Common.UserInterfaces.Forms.Form"/> 这类重写改写层级, 否则代码与生成物描述的树不是同一棵.</br>
+    /// </summary>
+    public bool Attach(Div div, bool doInit = false) => AttachDirect(div, doInit);
 
     /// <summary>
     /// 于子级序列的指定位置插入子元素 (层级编辑器重排用).
     /// </summary>
     public virtual bool Insert(int index, Div div, bool doInit = false)
     {
+      if (div is null || ReferenceEquals(div, this) || Disposed)
+        return false;
       div._parent = this;
       div._module = _module;
       div._root = _root;
       div.Layout.Invalidate();
       index = Math.Clamp(index, 0, Children.Count);
       Events.Insert(index, div.Events);
-      if (doInit)
-        div.DoInitialize();
       Children.Insert(index, div);
       _structureVersion++;
+      if (doInit || (InitializationCompleted && div.InitializationCompleted is false))
+        div.DoInitialize();
       return true;
     }
 
@@ -687,11 +1068,10 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// <returns>若移除成功, 返回 <see langword="true"/>, 否则返回 <see langword="false"/>.</returns>
     public virtual bool Remove(Div div)
     {
+      if (div is null)
+        return false;
       div._parent = null;
       div._root = null;
-      div._upperScissor = null;
-      div._upperBatch = null;
-      div._upperCanvas = null;
       Events.Remove(div.Events);
       bool removed = Children.Remove(div);
       if (removed)
@@ -720,10 +1100,20 @@ namespace Colin.Core.Modulars.UserInterfaces
       //Clear();
     }
 
+    /// <summary>
+    /// 把元素提到同级序列末尾 (最上层).
+    /// <br>[!] 一切都在它<b>实际的父级</b>上完成: <see cref="Remove"/> 与挂载必须成对作用在同一个列表上,
+    /// 否则 <c>Form</c> 这类把子级转发进 <c>View</c> 的容器会出现"从 Form 删、往 View 加"从而复制一份.</br>
+    /// </summary>
     public void SetTop(Div division)
     {
-      Remove(division);
-      Register(division);
+      if (division is null || ReferenceEquals(division, this))
+        return;
+      Div owner = division.Parent;
+      if (owner is null)
+        return;
+      owner.Remove(division);
+      owner.Attach(division);
     }
 
     public void Do(Action<Div> action) => action(this);
@@ -744,7 +1134,8 @@ namespace Colin.Core.Modulars.UserInterfaces
     public bool ContainsScreenPoint(Vector2 pos)
       => ContainsScreenPoint(pos.ToPoint());
 
-    public Vector2 MousePos => Module.UICamera.ConvertToWorld(MouseResponder.Position);
+    /// <summary>鼠标于本元素坐标系中的位置; 界面未挂载时为 <see cref="Vector2.Zero"/> (编辑器在挂载前读它不该炸).</summary>
+    public Vector2 MousePos => Module is null ? Vector2.Zero : Module.UICamera.ConvertToWorld(MouseResponder.Position);
 
     public Vector2 RelativeMousePos => MousePos - Layout.ScreenLocation;
 
@@ -756,18 +1147,41 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     public virtual void Dispose()
     {
+      if (Disposed)
+        return;
+      //自摘除: 释放后残留在父级 Children 里的元素会被继续 Update/Render (事件节点已销毁 → NRE)
+      Div parent = _parent;
+      if (parent is not null && parent.Disposed is false)
+      {
+        parent.Events?.Remove(Events);
+        if (parent.Children.Remove(this))
+          parent._structureVersion++;
+      }
       Disposed = true;
       _parent = null;
       _renderer = null;
       _controller = null;
       _module = null;
       _root = null;
-      _upperCanvas = null;
-      _upperScissor = null;
+      //先递归子级 (它们还要从本节点的事件节点上注销), 再销毁自己的事件节点.
+      //[!] 子级 Dispose 会把自己从 Children 里摘掉, 所以不能"按下标遍历" —— 从尾部取并核对是否真的移除了,
+      //    既不会跳元素, 也不会在被覆盖的 Dispose 忘了自摘除时留下没释放的子级.
+      List<Div> children = Children;
+      while (children.Count > 0)
+      {
+        Div child = children[children.Count - 1];
+        child.Dispose();
+        if (children.Count > 0 && ReferenceEquals(children[children.Count - 1], child))
+        {
+          children.RemoveAt(children.Count - 1);
+          _structureVersion++;
+        }
+      }
+      children.Clear();
+      _script?.UnbindInternal();
+      _script = null;
       Events?.Dispose();
       Canvas?.Dispose();
-      for (int count = 0; count < Children.Count; count++)
-        Children[count].Dispose();
       OnDispose?.Invoke();
     }
   }

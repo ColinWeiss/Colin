@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.Modulars.UserInterfaces.Animation;
 using Microsoft.Xna.Framework.Input;
 
@@ -29,9 +29,46 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     private readonly List<Div> _focusables = new List<Div>(64);
 
-    private DivRoot _contianer = new DivRoot("NomalContainer");
+    /// <summary>
+    /// 本场景必需的页面/子树 (类型 + 工厂): 被删掉/换掉时每帧自动按代码补建, 布局仍由文档决定.
+    /// <br>这就是"文档管布局, 代码挂行为"的兜底: 页面节点不是不可删的特权对象, 它只是代码接管的那棵子树.</br>
+    /// </summary>
+    private readonly List<KeyValuePair<Type, Func<Div>>> _requiredPages = new List<KeyValuePair<Type, Func<Div>>>();
 
-    public DivRoot Root => _contianer;
+    /// <summary>声明"这个场景需要某个页面", 缺失时自动补建 (按页面根上的脚本类型识别).</summary>
+    public void RequirePage<T>(Func<Div> factory) where T : DivScript
+      => RequirePage(typeof(T), factory);
+
+    /// <summary>声明"这个场景需要某种页面/子树", 缺失时自动补建.</summary>
+    public void RequirePage(Type pageScriptType, Func<Div> factory)
+    {
+      if (pageScriptType is null || factory is null)
+        return;
+      for (int index = 0; index < _requiredPages.Count; index++)
+        if (_requiredPages[index].Key == pageScriptType)
+          return;
+      _requiredPages.Add(new KeyValuePair<Type, Func<Div>>(pageScriptType, factory));
+      EnsureRequiredPages();
+    }
+
+    /// <summary>清空本场景的必需页面声明 (切场景时由 <see cref="SetRoot"/> 调用).</summary>
+    public void ClearRequiredPages() => _requiredPages.Clear();
+
+    /// <summary>补齐缺失的必需页面; 编辑器编辑期挂起 (让用户能真的删掉看效果), 退出编辑后下一帧自动长回来.</summary>
+    public void EnsureRequiredPages()
+    {
+      if (_requiredPages.Count == 0 || InteractionSuspended || Root is null)
+        return;
+      for (int index = 0; index < _requiredPages.Count; index++)
+      {
+        KeyValuePair<Type, Func<Div>> requirement = _requiredPages[index];
+        DivPageHost.Ensure(Root, requirement.Key, requirement.Value);
+      }
+    }
+
+    private Div _contianer = DivFactory.Root("NomalContainer");
+
+    public Div Root => _contianer;
 
     public Camera UICamera;
 
@@ -39,7 +76,7 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
       UICamera = new Camera();
       UICamera.DoInitialize(CoreInfo.ViewWidth, CoreInfo.ViewHeight);
-      Scene.Events.ClientSizeChanged += (s, e) =>
+      _onClientSizeChanged = (s, e) =>
       {
         UICamera.Translate = CoreInfo.ViewCenter;
         UICamera.Projection = Matrix.CreateOrthographicOffCenter(0f, CoreInfo.Graphics.GraphicsDevice.Viewport.Width, CoreInfo.Graphics.GraphicsDevice.Viewport.Height, 0f, 0f, 1f);
@@ -48,8 +85,11 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.Position = CoreInfo.ViewCenter;
         UICamera.TargetPosition = CoreInfo.ViewCenter;
       };
+      Scene.Events.ClientSizeChanged += _onClientSizeChanged;
       base.DoInitialize();
     }
+
+    private EventHandler _onClientSizeChanged;
 
     private Vector2 tar;
 
@@ -68,10 +108,14 @@ namespace Colin.Core.Modulars.UserInterfaces
         UICamera.TargetZoom = Vector2.One;
 
       UICamera.DoUpdate(time);
+      //文档只管布局: 代码声明的页面/子树缺失时在这里补建, 让"删掉页面"不是致命状态
+      EnsureRequiredPages();
         Root?.DoUpdate(time);
       if (FocusNavigation)
         UpdateFocusNavigation();
-      //动画播放器: 于整树布局写入全部完成之后采样回写 —— 采样值当帧渲染即可见, 不会被样式/布局覆盖
+      //动画播放器: 于整树布局写入全部完成之后采样回写 —— 颜色/缩放当帧渲染即可见;
+      //[!] 但 Layout.Left/Top/Width/Height/Rotation 的采样会晚一帧才进 screenTransform (DivLayout.Calculate 已经跑过了),
+      //    位移类动画据此判断节奏, 别按"同帧生效"去设计时间轴.
       for (int index = AnimationPlayers.Count - 1; index >= 0; index--)
         AnimationPlayers[index].Tick(this, (float)time.ElapsedGameTime.TotalSeconds);
     }
@@ -170,9 +214,9 @@ namespace Colin.Core.Modulars.UserInterfaces
 
     private static void CollectFocusables(Div div, List<Div> results)
     {
-      if (div is null || div.IsVisible is false || div.IsCulled)
+      if (div is null || div.IsVisibleInTree is false || div.IsCulled)
         return;
-      if (div is not DivRoot && div.Interact.IsSelectable && div.Interact.IsInteractive)
+      if (div.IsRoot is false && div.Interact.IsSelectable && div.Interact.IsInteractive)
         results.Add(div);
       List<Div> children = div.Children;
       for (int count = 0; count < children.Count; count++)
@@ -199,14 +243,30 @@ namespace Colin.Core.Modulars.UserInterfaces
     {
     }
 
-    public void Register(DivRoot container) => Root?.Register(container);
+    public void Register(Div container) => Root?.Register(container);
 
-    public void SetRoot(DivRoot root)
+    public void SetRoot(Div root)
     {
+      if (root is null)
+        return;
       root._module = this;
+      if (ReferenceEquals(root, _contianer) is false)
+        UnhookRootEvents(_contianer);
       _contianer = root;
+      _requiredPages.Clear();
       root.DoInitialize();
+      HookRootEvents(root);
+    }
 
+    /// <summary>
+    /// 把界面根的事件节点挂进场景事件树.
+    /// <br>[!] 与 <see cref="UnhookRootEvents"/> 必须成对: 换根时不摘旧根, 旧界面的整棵树会永远留在场景派发链里
+    /// (而且它们的 DivEvents 已释放, 每次鼠标事件都白跑一遍).</br>
+    /// </summary>
+    private void HookRootEvents(Div root)
+    {
+      if (root is null || Scene?.Events is null)
+        return;
       Scene.Events.Mouse.MouseHover.Register(root.Events.MouseHover);
       Scene.Events.Mouse.LeftClicked.Register(root.Events.LeftClicked);
       Scene.Events.Mouse.LeftClicking.Register(root.Events.LeftClicking);
@@ -225,10 +285,35 @@ namespace Colin.Core.Modulars.UserInterfaces
       Scene.Events.Keys.KeysDown.Register(root.Events.KeysDown);
     }
 
+    private void UnhookRootEvents(Div root)
+    {
+      if (root is null || Scene?.Events is null)
+        return;
+      Scene.Events.Mouse.MouseHover.Remove(root.Events.MouseHover);
+      Scene.Events.Mouse.LeftClicked.Remove(root.Events.LeftClicked);
+      Scene.Events.Mouse.LeftClicking.Remove(root.Events.LeftClicking);
+      Scene.Events.Mouse.LeftDown.Remove(root.Events.LeftDown);
+      Scene.Events.Mouse.LeftUp.Remove(root.Events.LeftUp);
+      Scene.Events.Mouse.RightClicked.Remove(root.Events.RightClicked);
+      Scene.Events.Mouse.RightClicking.Remove(root.Events.RightClicking);
+      Scene.Events.Mouse.RightDown.Remove(root.Events.RightDown);
+      Scene.Events.Mouse.RightUp.Remove(root.Events.RightUp);
+      Scene.Events.Mouse.ScrollDown.Remove(root.Events.ScrollDown);
+      Scene.Events.Mouse.ScrollClicked.Remove(root.Events.ScrollClicked);
+      Scene.Events.Mouse.ScrollUp.Remove(root.Events.ScrollUp);
+
+      Scene.Events.Keys.KeysClicked.Remove(root.Events.KeysClicked);
+      Scene.Events.Keys.KeysClicking.Remove(root.Events.KeysClicking);
+      Scene.Events.Keys.KeysDown.Remove(root.Events.KeysDown);
+    }
+
     public override void Dispose()
     {
+      if (Scene is not null && _onClientSizeChanged is not null)
+        Scene.Events.ClientSizeChanged -= _onClientSizeChanged;
+      UnhookRootEvents(_contianer);
       Scene = null;
-      Root.Dispose();
+      Root?.Dispose();
       base.Dispose();
     }
   }
