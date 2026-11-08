@@ -407,6 +407,10 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
       if (style.IsAuthored is false)
         return;
       //Before/After 的语义是"贴着锚点目标": 没有目标时该轴根本不会定位, 生成出来就是个僵尸样式.
+      if (style.AnchorTarget is Div anchorTarget
+          && DivAnchorRules.CanAnchor(div, anchorTarget, out string anchorReason) is false)
+        report.Issue(string.Concat("节点 ", div.Name, " 的锚定目标不合法: ", anchorReason));
+
       if (style.AnchorTarget is null)
       {
         if (style.Horizontal is DivAxisAnchor.Before or DivAxisAnchor.After)
