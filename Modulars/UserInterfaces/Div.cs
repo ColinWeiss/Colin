@@ -939,6 +939,7 @@ namespace Colin.Core.Modulars.UserInterfaces
 
       BeginRender(BlendState.AlphaBlend, SamplerState.PointWrap);
       OnRender(device, batch);
+      _script?.RenderInternal(device, batch);//脚本的自定义绘制 (与视图状态密不可分的那类).
       _renderer?.DoRender(device, batch);//渲染器进行渲染.
       RenderChildren(device, batch);
       if (UseBatch)
