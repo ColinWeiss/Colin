@@ -313,6 +313,35 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
     }
 
     /// <summary>
+    /// 为一个新建的脚本类准备落点: 按"命名空间 ↔ 文件夹"约定放到对应项目目录下 (不落 Cache).
+    /// <br>文件名为 <c>&lt;类名&gt;.cs</c>; 目录 = 项目目录 + 命名空间相对根命名空间的部分.</br>
+    /// </summary>
+    public static UIDesignTarget ResolveScript(string @namespace, string className)
+    {
+      EnsureDiscovered();
+      if (string.IsNullOrEmpty(className))
+        return null;
+      string ns = @namespace ?? string.Empty;
+      UIDesignProject project = MatchProject(ns) ?? _projects.FirstOrDefault();
+      string folder = project?.Directory ?? System.IO.Directory.GetCurrentDirectory();
+      string root = project?.RootNamespace;
+      if (string.IsNullOrEmpty(root) is false && ns.Length > root.Length
+          && ns.StartsWith(string.Concat(root, "."), StringComparison.Ordinal))
+      {
+        string relative = ns.Substring(root.Length + 1).Replace('.', System.IO.Path.DirectorySeparatorChar);
+        folder = System.IO.Path.Combine(folder, relative);
+      }
+      return new UIDesignTarget
+      {
+        FilePath = System.IO.Path.Combine(folder, string.Concat(className, ".cs")),
+        ProjectFile = project?.ProjectFile,
+        Namespace = ns.Length > 0 ? ns : (root ?? string.Empty),
+        ClassName = className,
+        IsNew = true,
+      };
+    }
+
+    /// <summary>
     /// 把文件写进项目: 目录建好, 内容落盘, 并保证项目里有对应的编译项.
     /// <br>已存在的编译项不动 —— 编辑器里挪过文件的话, 那里已经是对的.</br>
     /// </summary>
