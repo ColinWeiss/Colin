@@ -546,6 +546,13 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public bool IsRoot { get; private set; }
 
+    /// <summary>
+    /// 这是"运行态生成"的节点 (槽位按数量现建、图标框/数量字这类脚本内部件):
+    /// <br>导出代码时跳过它和它的子树 —— 结构权威在脚本, 生成物只写 <c>BindScript</c>.</br>
+    /// <br>[!] 与 <see cref="DivScript.OwnsStructure"/> 的区别: 后者是"整棵子树都归脚本",
+    /// 这里是"只有我自己是运行态产物", 兄弟节点照常导出.</br>
+    /// </summary>
+    public bool ExcludeFromExport { get; set; }
     /// <summary>把本元素标记为界面根 (视口尺寸同步).</summary>
     public void MarkAsRoot()
     {

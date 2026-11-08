@@ -223,6 +223,12 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
       Node node = new Node { Div = div, Parent = parent, Local = local, Handle = handle };
       nodes.Add(node);
       localOf[div] = local;
+      //运行态生成的节点 (槽位/图标框…): 既不导出它, 也不导出它的子树.
+      if (div.ExcludeFromExport)
+      {
+        notes?.Add(string.Concat("节点 ", div.Name, " 是运行态生成的: 导出跳过 (由脚本在绑定期重建)"));
+        return;
+      }
       //脚本自持结构: 它的子级由 OnBind 现建, 生成代码只写 BindScript —— 否则会建出两套.
       if (div.Script is { OwnsStructure: true })
       {
