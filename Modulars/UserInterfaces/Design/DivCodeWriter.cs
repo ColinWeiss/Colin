@@ -355,6 +355,8 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
         EmitController(sb, div, p, report, ref controllerSerial);
       if (div.Script is not null)
         EmitScript(sb, div, p, report, ref scriptSerial);
+      else if (string.IsNullOrWhiteSpace(div.PendingScriptType) is false)
+        EmitPendingScript(sb, div, p, report);
     }
 
     private static void EmitLayout(StringBuilder sb, DivLayout layout, DivLayoutStyle style, string p)
@@ -582,6 +584,42 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
     }
 
     /// <summary>脚本: 绑定 + 作者态参数. 参数在绑定之后写, 保证脚本的 OnBind 已经跑过 (它可能补建内部件).</summary>
+    /// <summary>已创建但尚未编译的脚本: 只写按类型名的预绑定 (没有实例, 导不出参数).</summary>
+    private static void EmitPendingScript(StringBuilder sb, Div div, string p, DivCodeWriteReport report)
+    {
+      string typeName = div.PendingScriptType.Trim();
+      if (IsQualifiedTypeName(typeName) is false)
+      {
+        report.Issue(string.Concat("节点 ", div.Name, " 的待编译脚本类型名不合法: ", typeName));
+        return;
+      }
+      string qualified = typeName.StartsWith("global::", StringComparison.Ordinal) ? typeName : string.Concat("global::", typeName);
+      Line(sb, 3, string.Concat(p, ".BindScript(new ", qualified, "());"));
+      report.Scripts++;
+      Line(sb, 3, string.Concat("// ↑ 预绑定: ", typeName, " 尚未编译; 编译后如需导出参数, 再导出一次"));
+      report.Notes.Add(string.Concat("节点 ", div.Name, " 预绑定未编译脚本 ", typeName, " (只写 BindScript, 不导参数)"));
+    }
+
+    /// <summary>形如 A.B.C 的类型全名 (允许前缀 global::); 不校验类型是否真的存在.</summary>
+    private static bool IsQualifiedTypeName(string value)
+    {
+      string text = value.StartsWith("global::", StringComparison.Ordinal) ? value.Substring("global::".Length) : value;
+      if (string.IsNullOrEmpty(text))
+        return false;
+      string[] parts = text.Split('.');
+      for (int index = 0; index < parts.Length; index++)
+      {
+        string part = parts[index];
+        if (string.IsNullOrEmpty(part))
+          return false;
+        if (char.IsLetter(part[0]) is false && part[0] != '_')
+          return false;
+        for (int c = 1; c < part.Length; c++)
+          if (char.IsLetterOrDigit(part[c]) is false && part[c] != '_')
+            return false;
+      }
+      return true;
+    }
     private static void EmitScript(StringBuilder sb, Div div, string p, DivCodeWriteReport report, ref int serial)
     {
       DivScript script = div.Script;

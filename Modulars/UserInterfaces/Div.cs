@@ -589,6 +589,12 @@ namespace Colin.Core.Modulars.UserInterfaces
       return script;
     }
 
+    /// <summary>
+    /// 编辑器用: 已经创建、但尚未编译的脚本类型全名 (创建空脚本时预绑定).
+    /// <br>导出时若 <see cref="Script"/> 为空而这里非空, 就按类型名写 <c>BindScript(new global::Ns.XxxScript())</c>,
+    /// 让"新建脚本 + 导出"合并进同一次编译.</br>
+    /// </summary>
+    public string PendingScriptType { get; set; }
     /// <summary>取本元素上指定类型的脚本; 没有 (或类型不符) 返回 null.</summary>
     public T GetScript<T>() where T : DivScript => _script as T;
 
