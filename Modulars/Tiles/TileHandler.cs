@@ -1,4 +1,4 @@
-﻿using Colin.Core.IO;
+using Colin.Core.IO;
 using System.Threading;
 
 namespace Colin.Core.Modulars.Tiles
@@ -78,6 +78,21 @@ namespace Colin.Core.Modulars.Tiles
 
     /// <summary>读档: 从键值组里按键取值; 键不在就让字段保持默认.</summary>
     public virtual void LoadStep(TagCompound data) { }
+
+    /// <summary>
+    /// 把一个格子的 Handler 状态导出成结构载荷; 没有可保存状态时返回 null.
+    /// <br>与整块 <see cref="SaveStep"/> 分开, 结构只保存选区内真正需要的逐格数据.</br>
+    /// </summary>
+    public virtual TagCompound SaveCell(int index) => null;
+
+    /// <summary>把一个格子的结构 Handler 载荷写回当前格子.</summary>
+    public virtual void LoadCell(int index, TagCompound data, Point3 wCoord) { }
+
+    /// <summary>
+    /// 在结构写入该格前清掉旧的逐格 Handler 状态.
+    /// <br>不处理 Protected 这类编辑器标志; 只清可被结构覆盖的内容.</br>
+    /// </summary>
+    public virtual void ClearCell(int index, Point3 wCoord) { }
 
     /// <summary>
     /// 判断指定相对于该物块坐标具有指定偏移位置处的物块是否具有相同的行为方式.

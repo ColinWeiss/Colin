@@ -14,7 +14,7 @@
     private static int _sortCache = 0;
     /// <summary>
     /// 更新排序缓存.
-    /// <br>世界生成在后台也会递增它, 用原子操作, 丢了序号会让两个结构物块叠在同一层.</br>
+    /// <br>世界生成在后台也会递增它, 用原子操作, 丢了序号会让两个家具物块叠在同一层.</br>
     /// </summary>
     public static int UpdateSortCache()
     {

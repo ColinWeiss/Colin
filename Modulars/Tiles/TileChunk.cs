@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using Colin.Core.Resources;
 using System.Collections.Concurrent;
@@ -371,7 +371,7 @@ namespace Colin.Core.Modulars.Tiles
 
     /// <summary>
     /// 区块数据就位后的主线程收尾.
-    /// <br>后台读档和生成期间各 Handler 欠下的活儿在这里补, 比如结构物块的指针重建.</br>
+    /// <br>后台读档和生成期间各 Handler 欠下的活儿在这里补, 比如家具物块的指针重建.</br>
     /// </summary>
     public void DoChunkReady()
     {
