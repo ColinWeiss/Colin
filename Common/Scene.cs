@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.IO;
 using Colin.Core.Modulars;
 
@@ -42,6 +42,18 @@ namespace Colin.Core.Common
     {
       Events = new SceneEvents();
       // 仅此一处管理Game.Window事件, 其他地方都用Scene.Event统一进行管理, 不需要单独删除
+    }
+
+    /// <summary>
+    /// 创建一个不进入场景管理器、不创建渲染目标的离屏场景.
+    /// <br>供地形预览等纯数据工具挂 Tile/Business 用; 不参与游戏 Update/Draw.</br>
+    /// </summary>
+    public static Scene CreateDetached()
+    {
+      Scene scene = new Scene { InitializeOnSwitch = false };
+      scene._components = new SceneModuleList(scene);
+      scene._components.Add(scene.Events);
+      return scene;
     }
 
     public override sealed void Initialize()
@@ -187,7 +199,7 @@ namespace Colin.Core.Common
     {
       Modules.Dispose();
       SceneRenderTarget?.Dispose();
-      if (CoreInfo.Core.Window is not null)
+      if (CoreInfo.Core?.Window is not null)
       {
         CoreInfo.Core.Window.ClientSizeChanged -= Events.InvokeSizeChange;
         CoreInfo.Core.Window.OrientationChanged -= Events.InvokeSizeChange;

@@ -28,6 +28,11 @@ namespace Colin.Core.Modulars.Tiles
     public ITileContext Context;
 
     /// <summary>
+    /// 离屏地形预览用的 Tile: 建造不排刷新队列, 也不触发渲染器脏标记.
+    /// </summary>
+    public bool IsPreview { get; set; }
+
+    /// <summary>
     /// 区块字典.
     /// <br>用于存储当前已被加载的区块.</br>
     /// <br>键: 区块坐标.</br>
