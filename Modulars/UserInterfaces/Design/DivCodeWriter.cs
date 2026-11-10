@@ -343,7 +343,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
       if (div.LayoutOwnership != DivLayoutOwnership.Auto)
         Line(sb, 3, string.Concat(p, ".LayoutOwnership = ", EnumLiteral(typeof(DivLayoutOwnership), div.LayoutOwnership), ";"));
 
-      EmitLayout(sb, div.Layout, div.Style, p);
+      //尺寸自持的脚本 (FormScript 之类) 由脚本在绑定期按自身规格现算, 生成代码不写宽高.
+      bool ownsSize = div.Script is { OwnsSize: true };
+      if (ownsSize)
+        report.Note(string.Concat("节点 ", div.Name, " 的脚本 ", div.Script.GetType().Name, " 自持尺寸: 不导出宽高"));
+      EmitLayout(sb, div.Layout, div.Style, p, ownsSize);
       EmitStyle(sb, div.Style, p, div, report);
       EmitInteract(sb, div.Interact, p);
       Color authorColor = div.AuthorColor;
@@ -359,7 +363,7 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
         EmitPendingScript(sb, div, p, report);
     }
 
-    private static void EmitLayout(StringBuilder sb, DivLayout layout, DivLayoutStyle style, string p)
+    private static void EmitLayout(StringBuilder sb, DivLayout layout, DivLayoutStyle style, string p, bool ownsSize)
     {
       bool derivedLeft = style.Horizontal != DivAxisAnchor.None;
       bool derivedTop = style.Vertical != DivAxisAnchor.None;
@@ -373,7 +377,11 @@ namespace Colin.Core.Modulars.UserInterfaces.Design
       else if (derivedLeft is false && derivedTop is false && (layout.Left != 0f || layout.Top != 0f))
         Line(sb, 3, string.Concat(p, ".Layout.SetLocation(", F(layout.Left), ", ", F(layout.Top), ");"));
 
-      if (derivedWidth && derivedHeight is false)
+      if (ownsSize)
+      {
+        //尺寸归脚本: 不写宽高 (写了也会被 OnBind 里的现算覆盖, 只会让生成文件看起来和运行期不一致).
+      }
+      else if (derivedWidth && derivedHeight is false)
         Line(sb, 3, string.Concat(p, ".Layout.Height = ", F(layout.Height), ";"));
       else if (derivedHeight && derivedWidth is false)
         Line(sb, 3, string.Concat(p, ".Layout.Width = ", F(layout.Width), ";"));

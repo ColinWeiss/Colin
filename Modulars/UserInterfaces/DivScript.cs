@@ -81,6 +81,13 @@ namespace Colin.Core.Modulars.UserInterfaces
     /// </summary>
     public virtual bool OwnsStructure => false;
 
+    /// <summary>
+    /// 这个脚本是否<b>自持尺寸</b>: 它在 <see cref="OnBind"/> 里按内容/自身规格决定宿主节点的宽高 (例如 <c>FormScript</c> 的视图 + 边框).
+    /// <br>导出时不再写这个节点的 <c>Layout.Width/Height</c> —— 否则生成代码里的旧尺寸会和脚本现算的尺寸打架.</br>
+    /// <br>注意: 只跳过尺寸, 位置/锚点/缩放等摆放数据照常导出.</br>
+    /// </summary>
+    public virtual bool OwnsSize => false;
+
     // —— 宿主快捷访问: 脚本里绝大多数代码都在读写宿主节点, 这几个转发让迁移后的代码不必满屏 Owner. —— //
     /// <summary>宿主节点的事件总线.</summary>
     protected DivEvents Events => Owner.Events;
