@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
@@ -266,16 +266,49 @@ public sealed class AssetManager : IDisposable
   /// 预加载：扫描目录(默认整个根目录), 把所有命中已注册加载器的文件按其资产类型
   /// 全部载入缓存(已缓存的跳过).单文件失败不中断整体.返回本次加载数量.
   /// </summary>
-  public int LoadDirectory(string? subDir = null, SearchOption option = SearchOption.AllDirectories)
+  /// <param name="subDir">相对 <see cref="RootDir"/> 的子目录; 为空表示整个根目录.</param>
+  /// <param name="option">是否递归子目录.</param>
+  /// <param name="progress">
+  /// 扫描进度回调 (已处理工作量, 总工作量); 每处理一个文件回调一次, 由调用方决定要不要节流.
+  /// <br>工作量 = 文件字节数 + 每文件固定开销: 资产大小差两个数量级 (12MB 字体 vs 几百字节的小图),
+  /// 纯按文件数算, 进度条会在绝大部分时间里几乎不动, 最后几百个小文件一瞬间跳满;
+  /// 纯按字节算则反过来, 前 10% 的文件就吃掉 99% 的字节, 进度条一到 99% 就开始装死.</br>
+  /// </param>
+  public int LoadDirectory(string? subDir = null, SearchOption option = SearchOption.AllDirectories,
+                           Action<long, long>? progress = null)
   {
+    // 每个文件的开销底数: 开文件/读流/建实例的固定成本, 折算成相当于多大的文件.
+    const long PerFileCost = 256 * 1024;
     var dir = subDir is null ? RootDir : Path.Combine(RootDir, subDir);
     if (!Directory.Exists(dir)) return 0;
-    var count = 0;
-    foreach (var file in Directory.EnumerateFiles(dir, "*.*", option))
+    // 先收齐文件与工作量再逐个加载: 不先知道总量, 进度条就只能在最后一下跳满.
+    List<FileInfo> files;
+    try { files = new List<FileInfo>(new DirectoryInfo(dir).EnumerateFiles("*.*", option)); }
+    catch { return 0; }
+    var costs = new long[files.Count];
+    long totalCost = 0;
+    for (var index = 0; index < files.Count; index++)
     {
+      long size = 0;
+      try { size = files[index].Length; }
+      catch { /* 文件在枚举后消失: 按固定开销计 */ }
+      costs[index] = size + PerFileCost;
+      totalCost += costs[index];
+    }
+    var count = 0;
+    long doneCost = 0;
+    progress?.Invoke(0, totalCost);
+    for (var index = 0; index < files.Count; index++)
+    {
+      var file = files[index];
       string virt;
-      try { virt = NormalizePath(Path.GetRelativePath(RootDir, Path.GetFullPath(file))); }
-      catch { continue; }
+      try { virt = NormalizePath(Path.GetRelativePath(RootDir, Path.GetFullPath(file.FullName))); }
+      catch
+      {
+        doneCost += costs[index];
+        progress?.Invoke(doneCost, totalCost);
+        continue;
+      }
       var ext = ExtensionOf(virt);
       foreach (var kv in _loaders)
       {
@@ -284,12 +317,14 @@ public sealed class AssetManager : IDisposable
         if (_cache.ContainsKey(cacheKey)) continue;
         try
         {
-          using var stream = ReadBuffered(file);
-          _cache[cacheKey] = kv.Value.LoadUntyped(ContextFor(file), stream, virt);
+          using var stream = ReadBuffered(file.FullName);
+          _cache[cacheKey] = kv.Value.LoadUntyped(ContextFor(file.FullName), stream, virt);
           count++;
         }
         catch { /* 单个失败不拖垮预加载 */ }
       }
+      doneCost += costs[index];
+      progress?.Invoke(doneCost, totalCost);
     }
     return count;
   }
