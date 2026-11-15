@@ -35,6 +35,7 @@ namespace Colin.Core
     public Preparator Preparator { get; private set; }
 
     private int _targetFrame = 60;
+    private int _perfFrames;
     /// <summary>
     /// 指示程序目标帧率.
     /// </summary>
@@ -130,6 +131,12 @@ namespace Colin.Core
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
       if (CoreInfo.Debug)
         HitchRecorder.OnFrame();
+      if (CoreInfo.Debug && CoreInfo.StartupParameter is not null
+          && Array.IndexOf(CoreInfo.StartupParameter, "--perf") >= 0 && ++_perfFrames >= 300)
+      {
+        _perfFrames = 0;
+        Console.Log(ConsoleTextType.Remind, "Perf", $"{HitchRecorder.LastAvgFrameMs:F2} ms/frame");
+      }
       TweenManager.Update();
       Assets.Manager.PumpReloads();
       if (!Started)
