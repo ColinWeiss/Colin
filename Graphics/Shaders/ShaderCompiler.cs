@@ -16,10 +16,10 @@ namespace Colin.Core.Graphics.Shaders
       switch (profile)
       {
         case CompileProfile.Vertex:
-          profilePar = "vs_4_0";
+          profilePar = "vs_5_0";
           break;
         case CompileProfile.Pixel:
-          profilePar = "ps_4_0";
+          profilePar = "ps_5_0";
           break;
         case CompileProfile.Compute:
           profilePar = "cs_5_0";
