@@ -1,4 +1,4 @@
-﻿using Colin.Core.Graphics.Bridge;
+using ComputeSharp.MonoGame;
 using Microsoft.Xna.Framework.Input;
 using System.Reflection;
 
@@ -31,7 +31,7 @@ namespace Colin.Core
     /// <summary>
     /// Compute Sharp 桥接.
     /// </summary>
-    internal static TinterBridge Tinter { get; set; }
+    internal static CsBridge Tinter { get; set; }
 
     /// <summary>
     /// 游戏刻缓存.

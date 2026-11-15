@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework.Content.Pipeline;
+using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
@@ -63,7 +63,7 @@ public sealed class RuntimeProcessorContext : ContentProcessorContext
   public override string OutputFilename { get; }
   public override ContentBuildLogger Logger => _logger;
   public override OpaqueDataDictionary Parameters => _parameters;
-  public override TargetPlatform TargetPlatform => TargetPlatform.Windows;
+  public override TargetPlatform TargetPlatform => TargetPlatform.WindowsDX12;
   public override GraphicsProfile TargetProfile => GraphicsProfile.HiDef;
   public override ContentIdentity SourceIdentity => new ContentIdentity("Runtime");
 

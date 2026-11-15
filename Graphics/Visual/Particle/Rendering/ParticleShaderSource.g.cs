@@ -6,7 +6,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
   {
     public const string RenderEffectSource =
 @"// =====================================================================
-// 粒子渲染着色器 (纹理粒子版, MonoGame Effect / DirectX_11):
+// 粒子渲染着色器 (纹理粒子版, MonoGame Effect / WindowsDX12):
 // 粒子状态存于""数据纹理"" (宽 = 容量, 高 = 5 行 RGBA32F, 逐行对应 Particle 的 5 个 float4),
 // 实例流只携带槽位 ID, 顶点着色器按 ID 做纹素取样展开四边形 —— 与老 GpuParticle 思路一致.
 // 双流实例化: 流 0 = 四边形角点模板, 流 1 = 槽位 ID.
@@ -108,7 +108,7 @@ VertexShaderOutput MainVS(VertexShaderInput input)
     return output;
 }
 
-float4 MainPS(VertexShaderOutput input) : COLOR
+float4 MainPS(VertexShaderOutput input) : SV_Target
 {
     float4 texel = SpriteTexture.Sample(SpriteTextureSampler, input.Uv);
     return texel * input.Color;
@@ -118,8 +118,8 @@ technique ParticleRendering
 {
     pass P0
     {
-        VertexShader = compile vs_5_0 MainVS();
-        PixelShader = compile ps_5_0 MainPS();
+        VertexShader = compile vs_6_0 MainVS();
+        PixelShader = compile ps_6_0 MainPS();
     }
 };
 ";

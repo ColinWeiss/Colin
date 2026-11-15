@@ -1,4 +1,4 @@
-﻿namespace Colin.Core.Preparation
+namespace Colin.Core.Preparation
 {
   /// <summary>
   /// 表示一个预工作项.
@@ -16,5 +16,13 @@
     float Progress { get; set; }
 
     public void Prepare();
+  }
+
+  /// <summary>
+  /// 需要主线程执行的预工作项 (图形设备调用不能在预加载后台线程执行).
+  /// </summary>
+  public interface IMainThreadPreExecution : IPreExecution
+  {
+    void PrepareMainThread();
   }
 }

@@ -1,5 +1,4 @@
-﻿using Colin.Core.Graphics.Bridge;
-using Colin.Core.Graphics.Tinters;
+using Colin.Core.Graphics.Bridge;
 using ComputeSharp;
 using System.Security.Cryptography;
 

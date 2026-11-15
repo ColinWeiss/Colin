@@ -1,5 +1,5 @@
 // =====================================================================
-// 刀光条带 Mesh 着色器 (MonoGame Effect, DirectX_11):
+// 刀光条带 Mesh 着色器 (MonoGame Effect, WindowsDX12):
 // 顶点由 RibbonBuilder 直接摆在轨迹/弧线上 (拉刀光, Unity trail 同思路),
 // PS 采样纹理 × 顶点色 × 纹理层参数 —— 本体可叠加多个纹理层,
 // 每层一次 pass, 各自携带 UvTransform (平铺/偏移/V缩放/强度) 与 LayerTint (层色调).
@@ -40,7 +40,7 @@ VertexShaderOutput MainVS(VertexShaderInput input)
     return output;
 }
 
-float4 MainPS(VertexShaderOutput input) : COLOR
+float4 MainPS(VertexShaderOutput input) : SV_Target
 {
     // 层 UV 变换: 横向平铺 + 偏移 (流光滚动), 纵向以中线为中心缩放.
     float2 uv = input.Uv;
@@ -55,7 +55,7 @@ technique SlashRendering
 {
     pass P0
     {
-        VertexShader = compile vs_5_0 MainVS();
-        PixelShader = compile ps_5_0 MainPS();
+        VertexShader = compile vs_6_0 MainVS();
+        PixelShader = compile ps_6_0 MainPS();
     }
 };

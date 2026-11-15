@@ -9,7 +9,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
   /// <see cref="EffectProcessor.Process"/> —— 其内部即 ShaderResult + EffectObject
   /// 的进程内编译核心 (不经 CLI 工具), 运行时把 HLSL 源码编译为 MGFX 字节码.
   /// <br>依赖: MonoGame.Framework.Content.Pipeline.dll (vendor 于 Colin/Libs) +
-  /// SharpDX.D3DCompiler (DirectX_11 profile 的着色器编译后端).</br>
+  /// SharpDX.D3DCompiler (WindowsDX12 profile 的着色器编译后端).</br>
   /// </summary>
   public static class ParticleEffectCompiler
   {
@@ -17,7 +17,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
     public static string LastDiagnostics { get; private set; } = string.Empty;
 
     /// <summary>
-    /// 在进程内把磁盘上的 .fx 源文件编译为 MGFX 字节码 (DirectX_11 / HiDef).
+    /// 在进程内把磁盘上的 .fx 源文件编译为 MGFX 字节码 (WindowsDX12 / HiDef).
     /// <br><see cref="EffectContent"/> 的 Identity 指向真实源文件, 因此 #include
     /// (如 Macros.fxh) 相对源文件所在目录解析.</br>
     /// </summary>
@@ -36,7 +36,7 @@ namespace Colin.Core.Graphics.Visual.Particle.Rendering
     }
 
     /// <summary>
-    /// 在进程内把 HLSL 源码字符串编译为 MGFX 字节码 (DirectX_11 / HiDef).
+    /// 在进程内把 HLSL 源码字符串编译为 MGFX 字节码 (WindowsDX12 / HiDef).
     /// <br>源码写入临时文件后交由 <see cref="EffectProcessor"/> 编译 (管线要求文件路径形式的身份标识),
     /// 编译本身完全发生在当前进程内. 源码为字符串时不含相对 #include 语义, 需要包含其他文件的
     /// 源码请改用 <see cref="CompileFromFile"/>.</br>

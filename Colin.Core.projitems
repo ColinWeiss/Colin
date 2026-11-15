@@ -33,7 +33,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Assets\IAssetLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Businesses\DeferralSe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\BuiltinLoaders.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\ComputeShaderLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Assets\Loaders\EffectSourceLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Circle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Camera.cs" />
@@ -59,16 +58,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\ParticlePresetFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\ParticleTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\GpuUpdateStrategy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\ParticleComputeDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\ParticleComputeShaders.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture3D.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\TinterBridge.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\CsReflection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\D3D12Interop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Bridge\SharedTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\GrayScaleShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\PixelPerfect2XShader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\Tinter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tinters\VignetteShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\ColorTween.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Tweens\Ease.cs" />
@@ -199,9 +191,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Console.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ComputeShader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\ShaderCompiler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\Shaders\UnorderedTexture2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileChunkArrayPool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Tiles\TileRefresher.cs" />

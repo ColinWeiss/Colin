@@ -1,9 +1,8 @@
 using Colin.Core.Common.Debugs;
-using Colin.Core.Graphics.Bridge;
-using Colin.Core.Graphics.Tinters;
 using Colin.Core.Graphics.Tweens;
 using Colin.Core.IO;
 using Colin.Core.Preparation;
+using ComputeSharp.MonoGame;
 using System.Reflection;
 
 namespace Colin.Core
@@ -70,12 +69,11 @@ namespace Colin.Core
 
     protected override sealed void Initialize()
     {
-      CoreInfo.Tinter = new TinterBridge(GraphicsDevice);
+      CoreInfo.Tinter = new CsBridge(GraphicsDevice);
       CoreInfo.Batch = new SpriteBatch(CoreInfo.Graphics.GraphicsDevice);
       CoreInfo.Config = new Config();
       CoreInfo.Config.Load();
       Assets.Init(GraphicsDevice, rootDir: CoreInfo.Debug ? FindDevAssetsRoot() : null, hotReload: CoreInfo.Debug);
-      Assets.Manager.RegisterLoader(new ComputeShaderLoader());
       Assets.Manager.RegisterLoader(new EffectSourceLoader());
       Assets.Manager.AssetReloaded += (path, type, _) =>
         Console.Log(ConsoleTextType.Remind, "Core", string.Concat("资产热重载: ", path, " (", type.Name, ")"));
