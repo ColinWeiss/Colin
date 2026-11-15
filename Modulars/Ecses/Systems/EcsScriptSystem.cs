@@ -1,4 +1,4 @@
-﻿using Colin.Core.Mathematical;
+using Colin.Core.Mathematical;
 using Colin.Core.Modulars.Ecses.Components;
 
 namespace Colin.Core.Modulars.Ecses.Systems
@@ -15,7 +15,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       for (int EntityCount = 0; EntityCount < Ecs.Entities.Length; EntityCount++)
       {
         _current = Ecs.Entities[EntityCount];
-        if (_current is null)
+        if (_current is null || _current.LogicSuspended)
           continue;
         coms = _current.Components;
         for (int comCount = 0; comCount < coms.Count; comCount++)
@@ -38,10 +38,13 @@ namespace Colin.Core.Modulars.Ecses.Systems
         _current = Ecs.Entities[EntityCount];
         if (_current is null)
           continue;
+        // 逻辑挂起的实体只跑纯表现组件: 模拟交给外部, 画面仍然要动
+        bool presentationOnly = _current.LogicSuspended;
         coms = _current.Components;
         for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          if (coms[comCount] is EcsComScript script && script._updateStarted is false)
+          if (coms[comCount] is EcsComScript script && script._updateStarted is false
+            && (presentationOnly is false || script is IEcsComPresentation))
           {
             script.UpdateStart();
             script._updateStarted = true;
@@ -49,7 +52,8 @@ namespace Colin.Core.Modulars.Ecses.Systems
         }
         for (int comCount = 0; comCount < coms.Count; comCount++)
         {
-          if (coms[comCount] is EcsComScript script && script.UpdateEnable)
+          if (coms[comCount] is EcsComScript script && script.UpdateEnable
+            && (presentationOnly is false || script is IEcsComPresentation))
             script.DoUpdate();
         }
       }

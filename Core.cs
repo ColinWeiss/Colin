@@ -10,6 +10,12 @@ namespace Colin.Core
 {
   public class Core : Game
   {
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint flags);
+
     [System.Runtime.InteropServices.DllImport("nvapi64.dll", EntryPoint = "fake")]
     private static extern int LoadNvApi64();
 
@@ -66,6 +72,15 @@ namespace Colin.Core
       CoreInfo.Init(this);
       IsMouseVisible = false;
       IsFixedTimeStep = true;
+      if (CoreInfo.Headless)
+      {
+        //专用服务器: 不渲染, 但 WindowsDX 仍需要一个设备, 所以保留一个极小的隐藏窗口
+        Visiable = false;
+        Window.AllowUserResizing = false;
+        CoreInfo.Graphics.PreferredBackBufferWidth = 320;
+        CoreInfo.Graphics.PreferredBackBufferHeight = 180;
+        CoreInfo.Graphics.ApplyChanges();
+      }
     }
 
     protected override sealed void Initialize()
@@ -129,6 +144,26 @@ namespace Colin.Core
     {
       if (!Enable)
         return;
+      //专用服务器不该在桌面上留窗口. MonoGame 启动阶段会自己 Show 一次, 所以每帧压一次(开销可忽略)
+      if (CoreInfo.Headless)
+      {
+        try
+        {
+          IntPtr handle = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
+          if (handle == IntPtr.Zero)
+            handle = Window.Handle;
+          if (handle != IntPtr.Zero)
+          {
+            ShowWindow(handle, 0); // SW_HIDE
+            //有的驱动/MonoGame 内部会把窗口再显示出来, 挪到屏幕外兜底
+            SetWindowPos(handle, IntPtr.Zero, -32000, -32000, 0, 0, 0x0001 | 0x0004 | 0x0010);
+          }
+        }
+        catch
+        {
+          //隐藏失败不影响服务端逻辑
+        }
+      }
       Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
       if (CoreInfo.Debug)
         HitchRecorder.OnFrame();

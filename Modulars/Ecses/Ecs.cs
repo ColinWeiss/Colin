@@ -1,4 +1,4 @@
-﻿using Colin.Core.Common.Debugs;
+using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Mathematical;
@@ -138,8 +138,18 @@ namespace Colin.Core.Modulars.Ecses
 
     public ConcurrentQueue<EcsCreateCommand> CreateCommands;
 
+    /// <summary>
+    /// 实体创建拦截点: 返回 false 表示本次创建被外部接管(不分配槽位, 返回 null).
+    /// <br>通用能力: 给"生成权威在别处"的场景用(联机客户端只接受服务器下发, 回放只接受录制流...), 引擎不关心谁在拦.</br>
+    /// </summary>
+    public Func<Type, bool> CreateInterceptor;
+
+    public bool CanCreate(Type type) => CreateInterceptor is null || CreateInterceptor(type);
+
     public T MarkCreate<T>() where T : Entity, new()
     {
+      if (CanCreate(typeof(T)) is false)
+        return null;
       T result;
       EcsCreateCommand cmd;
       for (int count = 0; count < Entities.Length; count++)
@@ -176,6 +186,8 @@ namespace Colin.Core.Modulars.Ecses
 
     public Entity Put(Entity target)
     {
+      if (target is not null && CanCreate(target.GetType()) is false)
+        return null;
       for (int count = 0; count < Entities.Length; count++)
       {
         if (Entities[count] is null && _reservedSlots.Contains(count) is false)

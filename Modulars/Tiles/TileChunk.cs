@@ -613,28 +613,40 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
-    public void AsyncSaveChunk(string path)
+    public void AsyncSaveChunk(string path) => AsyncSaveChunk(path, null);
+
+    /// <summary>
+    /// 异步落盘并在完成后回调(参数为是否成功).
+    /// <br>通用能力: 调用方可以据此决定"落盘成功后才把区块移出世界"; 回调被投递回主线程.</br>
+    /// </summary>
+    public void AsyncSaveChunk(string path, Action<bool> onCompleted)
     {
       if (Infos is null || _saving)
         return;
       _saving = true;
       Task.Run(() =>
       {
+        bool ok;
         try
         {
           DataIO.DoSave(path, this, true);
           // 先还池再清标志, 中间不留窗口: 还池之后 Infos 已是 null, 走 Infos 的守卫
           // 若先清标志再还池, 主线程会在两步之间看到 可存档 状态, 又叠出一个空瓦片档
           ReleaseArrays();
+          ok = true;
         }
         catch (Exception exception)
         {
           // 存档失败(典型是文件被上一轮任务占用): 数组留在原地不还池, 宁可漏存不可写坏
           _saving = false;
           Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块存档失败, 本区块保持未卸载状态: ", path, ", 原因: ", exception.Message));
-          return;
+          ok = false;
         }
-        _saving = false;
+        if (ok)
+          _saving = false;
+        if (onCompleted is null)
+          return;
+        Tile.Scene.Business.MarkMainThreadJob(() => onCompleted(ok));
       });
     }
 

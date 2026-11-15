@@ -1,4 +1,4 @@
-﻿using Colin.Core.IO;
+using Colin.Core.IO;
 using Colin.Core.Mathematical;
 using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
@@ -87,6 +87,12 @@ namespace Colin.Core.Modulars.Ecses
     /// 指示该实体是否需要执行存储/读取操作.
     /// </summary>
     public bool NeedSaveAndLoad;
+
+    /// <summary>
+    /// 实体逻辑挂起: 置真时跳过脚本/重力/物块碰撞/位移, 位置由外部驱动.
+    /// <br>通用能力: 给"由网络/动画/回放等外部来源接管模拟"的场景用, 引擎不关心谁在驱动.</br>
+    /// </summary>
+    public bool LogicSuspended;
 
     public EcsComDoc _comDoc;
     public EcsComDoc Document => _comDoc;

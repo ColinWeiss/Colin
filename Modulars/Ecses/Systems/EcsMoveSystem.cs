@@ -1,4 +1,4 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+using Colin.Core.Modulars.Ecses.Components;
 
 namespace Colin.Core.Modulars.Ecses.Systems
 {
@@ -18,7 +18,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       for (int count = 0; count < _Entities.Length; count++)
       {
         _current = _Entities[count];
-        if (_current is null)
+        if (_current is null || _current.LogicSuspended)
           continue;
         comTransform = _current.GetCom<EcsComTransform>();
         if (comTransform is null)

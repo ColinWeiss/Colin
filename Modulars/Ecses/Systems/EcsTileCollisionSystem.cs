@@ -1,4 +1,4 @@
-﻿using Colin.Core.Modulars.Ecses.Components;
+using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Modulars.Tiles;
 
 namespace Colin.Core.Modulars.Ecses.Systems
@@ -33,7 +33,7 @@ namespace Colin.Core.Modulars.Ecses.Systems
       for (int count = 0; count < Ecs.Entities.Length; count++)
       {
         _current = Ecs.Entities[count];
-        if (_current is null)
+        if (_current is null || _current.LogicSuspended)
           continue;
         comTransform = _current.GetCom<EcsComTransform>();
         comPhysic = _current.GetCom<EcsComTileInteract>();

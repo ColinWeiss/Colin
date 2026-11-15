@@ -1,4 +1,4 @@
-﻿using Colin.Core.Graphics.Bridge;
+using Colin.Core.Graphics.Bridge;
 using Microsoft.Xna.Framework.Input;
 using System.Reflection;
 
@@ -15,6 +15,9 @@ namespace Colin.Core
     public static Random Rand => Random.Shared;
 
     public static string[] StartupParameter;
+
+    /// <summary>只跑逻辑、不渲染(专用服务器模式). 引擎层通用开关, 不含任何联机概念.</summary>
+    public static bool Headless;
 
     /// <summary>
     /// 用于初始化和控制图形设备的显示.
