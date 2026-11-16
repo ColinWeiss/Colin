@@ -642,11 +642,17 @@ namespace Colin.Core.Modulars.Tiles
           Console.Log(ConsoleTextType.Error, "TileChunk", string.Concat("区块存档失败, 本区块保持未卸载状态: ", path, ", 原因: ", exception.Message));
           ok = false;
         }
-        if (ok)
-          _saving = false;
         if (onCompleted is null)
+        {
+          _saving = false;
           return;
-        Tile.Scene.Business.MarkMainThreadJob(() => onCompleted(ok));
+        }
+        // 区块还留在世界字典里: 主线程真正移除之前必须继续算"操作中", 否则别人会读到已还池的 null 数组
+        Tile.Scene.Business.MarkMainThreadJob(() =>
+        {
+          try { onCompleted(ok); }
+          finally { _saving = false; }
+        });
       });
     }
 
