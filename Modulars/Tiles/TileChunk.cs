@@ -554,8 +554,18 @@ namespace Colin.Core.Modulars.Tiles
       }
     }
 
+    /// <summary>区块存档格式版本; 读到更高的版本说明档来自更新的版本, 宁可拒读也不要半读.</summary>
+    public const int SaveVersion = 1;
+
     public void LoadStep(TagCompound data)
     {
+      int savedVersion = data.GetInt("SaveV", 0);
+      if (savedVersion > SaveVersion)
+      {
+        Console.Log(ConsoleTextType.Error, "TileChunk",
+          string.Concat("区块(", CoordX, ",", CoordY, ")存档版本 ", savedVersion, " 高于本版本 ", SaveVersion, ", 已跳过"));
+        return;
+      }
       int length = Infos.Length;
       //大数组先整段收下来, 后面逐格只做下标和赋值
       int[] collisions = data.GetArray<int>("Collision");
@@ -681,6 +691,7 @@ namespace Colin.Core.Modulars.Tiles
 
     public void SaveStep(TagCompound data)
     {
+      data["SaveV"] = SaveVersion;
       Span<TileInfo> infoSpan = Infos;
       int length = infoSpan.Length;
       //逐格数据全部摊成批量数组整存整取: 一格一组键值对这种事在物块这里是想都不要想的
