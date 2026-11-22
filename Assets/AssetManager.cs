@@ -95,6 +95,19 @@ public sealed class AssetManager : IDisposable
   public IEnumerable<(Type AssetType, string Extension)> RegisteredLoaders =>
       _loaders.Keys.Select(k => (k.Item1, k.Item2));
 
+  /// <summary>
+  /// 注销某资产类型的全部加载器(所有扩展名), 返回移除数量.
+  /// <br>宿主已有自己的同类管线时用: 例如 DeltaMachine 全部音频走自有流式/混音管线,
+  /// 不需要内置的 <c>SoundEffectLoader</c> 再把同一批 .wav 解码进 XNA.</br>
+  /// </summary>
+  public int UnregisterLoader<T>()
+  {
+    var keys = _loaders.Keys.Where(k => k.Item1 == typeof(T)).ToArray();
+    foreach (var key in keys)
+      _loaders.Remove(key);
+    return keys.Length;
+  }
+
   // ---------- 统一取用 API ----------
 
   /// <summary>同步加载.已缓存则直取, 否则经注册加载器从原始文件构造并缓存.</summary>
