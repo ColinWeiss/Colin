@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ComputeSharp;
@@ -174,6 +174,24 @@ public sealed unsafe class TinterBridge : IDisposable
 
   /// <summary>诊断用: 当前帧输入缓冲的 MonoGame 视图 (探针采样用, 常规流程勿用).</summary>
   public Texture2D PeekInput() => IsZeroCopy && _inputs.Length > 0 ? _inputs[CurrentParity].Wrapper : _fbOutput;
+
+  /// <summary>
+  /// 按目标尺寸预分配输入与链路纹理, <b>不派发</b>.
+  /// <br>尺寸变化后由主线程调一次, 把"改完窗口第一刀"要重建的那批全屏共享纹理提前建好;
+  /// 否则第一次 <see cref="Process{T}"/> 会在特效刚出现的那一帧一次性分配, 表现为一次可见卡顿.</br>
+  /// <br>已同尺寸/同链路级数时是空操作.</br>
+  /// </summary>
+  public void Prepare(int width, int height, int stageCount)
+  {
+    if (width <= 0 || height <= 0 || stageCount <= 0)
+      return;
+    if (!IsZeroCopy)
+    {
+      EnsureFallbackInput(width, height);
+      return;
+    }
+    EnsureChain(width, height, stageCount);
+  }
 
   // —— 诊断探针锚点: 最近一次派发实际读取的输入 / 实际产出的输出 (供外部采样, 定位内容断链) ——
   public static Texture2D DebugLastInput;

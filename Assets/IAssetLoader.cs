@@ -1,6 +1,18 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Leemo.Assets;
+
+/// <summary>
+/// 可选契约: 加载器声明自己只受理某段路径.
+/// <br>预加载扫描据此在<b>读文件之前</b>就把不归它管的路径跳过; 否则就得"读完整个文件 → 抛异常拒载 → 被上层吞掉",
+/// 每抛一次异常在附加调试器时都要过一次调试器通知, 上千个文件就是秒级开销.</br>
+/// <br>按需 <c>Load&lt;T&gt;</c> 不走这个过滤: 显式点名要加载时, 加载器自己的校验仍然生效.</br>
+/// </summary>
+public interface IPathFiltered
+{
+  /// <summary>该虚拟路径是否归本加载器受理 (虚拟路径: 根目录相对、正斜杠、小写).</summary>
+  bool Accepts(string virtualPath);
+}
 
 /// <summary>
 /// 资产加载器契约：一种加载器服务一种资产类型, 按文件扩展名分流.

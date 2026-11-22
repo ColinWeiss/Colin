@@ -26,6 +26,8 @@ public sealed class AssetManager : IDisposable
     Type AssetType { get; }
     IEnumerable<string> Extensions { get; }
     object LoadUntyped(AssetLoadContext context, Stream stream, string path);
+    /// <summary>该路径是否归本加载器管 (未实现 <see cref="IPathFiltered"/> 时恒为 true).</summary>
+    bool Accepts(string path);
   }
 
   private sealed class LoaderBox<T> : ILoaderBox
@@ -35,6 +37,7 @@ public sealed class AssetManager : IDisposable
     public Type AssetType => typeof(T);
     public IEnumerable<string> Extensions => _inner.Extensions;
     public object LoadUntyped(AssetLoadContext ctx, Stream stream, string path) => _inner.Load(ctx, stream, path)!;
+    public bool Accepts(string path) => _inner is not IPathFiltered filter || filter.Accepts(path);
   }
 
   private readonly GraphicsDevice _graphicsDevice;
@@ -313,6 +316,9 @@ public sealed class AssetManager : IDisposable
       foreach (var kv in _loaders)
       {
         if (kv.Key.Item2 != ext) continue;
+        // 先问加载器"这段路径归不归你管": 不归就不读文件、也不抛异常拒载.
+        // 路径过滤是启动期最划算的一刀——上千个文件各抛一次异常, 附加调试器时每次都要过调试器通知.
+        if (kv.Value.Accepts(virt) is false) continue;
         var cacheKey = new CacheKey(kv.Key.Item1, virt);
         if (_cache.ContainsKey(cacheKey)) continue;
         try
