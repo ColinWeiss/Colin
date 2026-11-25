@@ -40,6 +40,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SceneRenderModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\EventNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\EventBus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\EventScope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\IEventBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\KeysEventNode.cs" />

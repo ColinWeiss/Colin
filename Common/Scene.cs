@@ -1,4 +1,5 @@
 using Colin.Core.Common.Debugs;
+using Colin.Core.Events;
 using Colin.Core.IO;
 using Colin.Core.Modulars;
 
@@ -38,9 +39,17 @@ namespace Colin.Core.Common
 
     public SceneEvents Events;
 
+    /// <summary>
+    /// 场景级领域事件总线.
+    /// <br>Publish 入队, 由 <see cref="Update"/> 在所有模块更新之后统一 Flush; 场景销毁时 Clear.</br>
+    /// <br>与 <see cref="Events"/> (输入事件) 职责不同: 这个只承载"已经发生的游戏事实".</br>
+    /// </summary>
+    public EventBus EventBus { get; }
+
     public Scene() : base(CoreInfo.Core)
     {
       Events = new SceneEvents();
+      EventBus = new EventBus();
       // 仅此一处管理Game.Window事件, 其他地方都用Scene.Event统一进行管理, 不需要单独删除
     }
 
@@ -98,6 +107,7 @@ namespace Colin.Core.Common
         }
         UpdatePreset();
         Modules.DoUpdate(gameTime);
+        EventBus.Flush();
         SceneUpdate();
         base.Update(gameTime);
       }
@@ -198,6 +208,7 @@ namespace Colin.Core.Common
     protected override void Dispose(bool disposing)
     {
       Modules.Dispose();
+      EventBus?.Clear();
       SceneRenderTarget?.Dispose();
       if (CoreInfo.Core?.Window is not null)
       {
