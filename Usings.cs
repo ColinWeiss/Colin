@@ -2,6 +2,7 @@
 global using Colin.Core.Common;
 global using Colin.Core.Extensions;
 global using Colin.Core.Graphics;
+global using Colin.Core.Graphics.PBR;
 global using Colin.Core.Graphics.Visual.Particle;
 global using Colin.Core.Graphics.Visual.Particle.Rendering;
 global using Colin.Core.Graphics.Visual.Serialization;
