@@ -1,7 +1,9 @@
 using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
+using Colin.Core.Graphics.PBR;
 using Colin.Core.IO;
 using Colin.Core.Mathematical;
+using Colin.Core.Modulars.Ecses.Components;
 using Colin.Core.Resources;
 using SharpDX;
 using System.Collections.Concurrent;
@@ -14,10 +16,21 @@ namespace Colin.Core.Modulars.Ecses
   /// <br>「环境控制实体」</br>
   /// <br>这一系列会影响到环境的游戏元素, 我们统称为 <see cref="Entity"/>.</br>
   /// </summary>
-  public class Ecs : SceneRenderModule, IOStep
+  public class Ecs : SceneRenderModule, IOStep, IPbrRenderScene
   {
     private TypeSnapshotTable<EcsSystem> _systems;
     public TypeSnapshotTable<EcsSystem> Systems => _systems;
+
+    public PbrRenderer Renderer { get; private set; }
+
+    public PbrCamera Camera { get; } = new PbrCamera();
+
+    public PbrLighting Lighting { get; set; } = PbrLighting.CreateDefault();
+
+    public bool DrawSkybox { get; set; }
+
+    private Texture2D _pbrEnvironment;
+    private readonly HashSet<PbrModel> _pbrUpdatedModels = new HashSet<PbrModel>();
 
     public T RegisterSystem<T>() where T : EcsSystem, new()
     {
@@ -46,6 +59,12 @@ namespace Colin.Core.Modulars.Ecses
       _reservedSlots.Clear();
       _systems = new TypeSnapshotTable<EcsSystem>();
       CreateCommands = new ConcurrentQueue<EcsCreateCommand>();
+      if (CoreInfo.Headless is false && CoreInfo.Graphics?.GraphicsDevice is not null)
+      {
+        Renderer = new PbrRenderer(CoreInfo.Graphics.GraphicsDevice);
+        Renderer.GameLighting = true;
+        Renderer.DrawSkybox = false;
+      }
     }
     public override void Start()
     {
@@ -105,11 +124,13 @@ namespace Colin.Core.Modulars.Ecses
             continue;
           }
         }
+        UpdatePbrModels((float)time.ElapsedGameTime.TotalSeconds);
       }
     }
     public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
-      device.Clear(Color.Transparent);
+      device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Transparent, 1f, 0);
+      RenderPbr(device);
       EcsSystem _system;
       for (int count = 0; count < _systems.Count; count++)
       {
@@ -120,6 +141,61 @@ namespace Colin.Core.Modulars.Ecses
     public override void DoRegenerateRender(GraphicsDevice device, SpriteBatch batch)
     {
       // device.SetRenderTarget(LightingAdpter.RawRt);
+    }
+
+    /// <summary>接入离线烘焙的环境图; 只用于 3D 环境反射, 不作为可见天空盒.</summary>
+    public void SetEnvironment(Texture2D source)
+    {
+      _pbrEnvironment?.Dispose();
+      _pbrEnvironment = PbrTextureFactory.CreateMipMapped(CoreInfo.Graphics.GraphicsDevice, source);
+      Lighting.EnvironmentTexture = _pbrEnvironment;
+    }
+
+    private void UpdatePbrModels(float deltaSeconds)
+    {
+      if (deltaSeconds <= 0f)
+        return;
+      _pbrUpdatedModels.Clear();
+      for (int i = 0; i < Entities.Length; i++)
+      {
+        Entity entity = Entities[i];
+        EcsComPbrRender render = entity?.GetCom<EcsComPbrRender>();
+        if (render?.Model is null || _pbrUpdatedModels.Add(render.Model) is false)
+          continue;
+        render.Model.Update(deltaSeconds);
+      }
+    }
+
+    private void RenderPbr(GraphicsDevice device)
+    {
+      if (Renderer is null || RawRt is null || Scene?.Camera is null)
+        return;
+
+      Camera.SyncToSceneCamera(Scene.Camera, RawRt.Width, RawRt.Height);
+      Renderer.GameLighting = true;
+      Renderer.DrawSkybox = DrawSkybox;
+      Renderer.Begin(Camera, Lighting);
+
+      for (int i = 0; i < Entities.Length; i++)
+      {
+        Entity entity = Entities[i];
+        EcsComPbrRender render = entity?.GetCom<EcsComPbrRender>();
+        if (render?.Model is null || render.Visible is false)
+          continue;
+
+        BoundingBox bounds = render.Model.Bounds;
+        Vector3 center = (bounds.Min + bounds.Max) * 0.5f;
+        Vector2 world = entity.Transform.Translation + render.Offset;
+        Vector3 position = new Vector3(world.X, -world.Y, render.Depth);
+        Matrix transform =
+            Matrix.CreateTranslation(-center.X, -bounds.Min.Y, -center.Z) *
+            Matrix.CreateScale(render.Scale) *
+            Matrix.CreateRotationY(render.Yaw) *
+            Matrix.CreateTranslation(position);
+        Renderer.DrawModel(render.Model, transform);
+      }
+
+      Renderer.End();
     }
 
     /// <summary>
@@ -229,6 +305,10 @@ namespace Colin.Core.Modulars.Ecses
           disposable.Dispose();
         }
       }
+      Renderer?.Dispose();
+      Renderer = null;
+      _pbrEnvironment?.Dispose();
+      _pbrEnvironment = null;
       base.Dispose();
     }
 

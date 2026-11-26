@@ -34,6 +34,7 @@ namespace Colin.Core.Graphics.PBR
     private readonly EffectParameter _alphaCutoff;
     private readonly EffectParameter _alphaMode;
     private readonly EffectParameter _workflow;
+    private readonly EffectParameter _gameLighting;
     private readonly EffectParameter _boneCount;
     private readonly EffectParameter _baseColorTexture;
     private readonly EffectParameter _metallicRoughnessTexture;
@@ -87,6 +88,7 @@ namespace Colin.Core.Graphics.PBR
       _alphaCutoff = Require("AlphaCutoff");
       _alphaMode = Require("AlphaMode");
       _workflow = Require("Workflow");
+      _gameLighting = Require("GameLighting");
       _boneCount = Require("BoneCount");
       _baseColorTexture = Require("BaseColorTexture");
       _metallicRoughnessTexture = Require("MetallicRoughnessTexture");
@@ -180,6 +182,12 @@ namespace Colin.Core.Graphics.PBR
     public void SelectSkybox()
     {
       Effect.CurrentTechnique = _skyTechnique;
+    }
+
+    /// <summary>游戏 2D 光照模式: 跳过 3D 直接光/色调映射, 由 Ecs 的 Light 后处理统一上光.</summary>
+    public void SetGameLighting(bool gameLighting)
+    {
+      _gameLighting.SetValue(gameLighting ? 1f : 0f);
     }
 
     public void BindMaterial(PbrMaterial material)

@@ -56,7 +56,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\XNAExt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\IPbrRenderScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrAnimation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrAttachment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrEffectCompiler.cs" />
@@ -72,7 +71,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrTextureCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrTextureFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrVertex.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Graphics\PBR\PbrWorldRenderModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\CpuUpdateStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\EmissionShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graphics\Visual\Particle\EmitterConfig.cs" />
@@ -207,6 +205,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IResetable.cs" />
     <Compile Include="..\Colin\Modulars\Ecses\Components\EcsComRenderData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComPbrRender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComBasic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComControlCore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modulars\Ecses\Components\EcsComDoc.cs" />

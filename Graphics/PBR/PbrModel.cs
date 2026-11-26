@@ -142,6 +142,12 @@ namespace Colin.Core.Graphics.PBR
 
     public void Draw(PbrRenderer renderer)
     {
+      Draw(renderer, Transform);
+    }
+
+    /// <summary>用一个临时世界变换绘制 (多个实体共享同一个模型资产时用).</summary>
+    public void Draw(PbrRenderer renderer, Matrix transform)
+    {
       for (int i = 0; i < Nodes.Count; i++)
       {
         PbrNode node = Nodes[i];
@@ -158,7 +164,7 @@ namespace Colin.Core.Graphics.PBR
             continue;
 
           PbrMesh mesh = Meshes[meshIndex];
-          Matrix world = mesh.IsSkinned ? Transform : node.World * Transform;
+          Matrix world = mesh.IsSkinned ? transform : node.World * transform;
           renderer.SubmitMesh(mesh, world);
         }
       }

@@ -41,6 +41,9 @@ namespace Colin.Core.Graphics.PBR
     /// <summary>单面材质的剔除方向. 世界内做 Y 反射的 3D 层需要换成 CullCounterClockwiseFace.</summary>
     public CullMode SingleSidedCullMode = CullMode.CullClockwiseFace;
 
+    /// <summary>游戏 2D 光照模式; 为 true 时 PBR 只输出底色+环境反射, 由场景光照后处理上光.</summary>
+    public bool GameLighting;
+
     public Vector3 CameraPosition { get; private set; }
 
     public PbrEffect Effect => _effect;
@@ -96,6 +99,11 @@ namespace Colin.Core.Graphics.PBR
       model.Draw(this);
     }
 
+    public void DrawModel(PbrModel model, Matrix transform)
+    {
+      model.Draw(this, transform);
+    }
+
     /// <summary>提交网格: 不透明材质立即绘制, 透明材质按摄像机距离排序后在本帧 End 前绘制.</summary>
     public void SubmitMesh(PbrMesh mesh, Matrix world)
     {
@@ -120,6 +128,7 @@ namespace Colin.Core.Graphics.PBR
       PbrMaterial material = mesh.Material;
       _effect.SelectTechnique(mesh.IsSkinned);
       _effect.SetWorld(world);
+      _effect.SetGameLighting(GameLighting);
       _effect.BindMaterial(material);
       _effect.BindBones(mesh);
 

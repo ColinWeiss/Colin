@@ -59,6 +59,28 @@ namespace Colin.Core.Graphics.PBR
       Position = eyePosition;
     }
 
+    /// <summary>
+    /// 对齐 2D 场景相机: 相机位置/旋转/缩放跟随 Game 的 <see cref="Colin.Core.Common.Camera"/>;
+    /// 3D 世界坐标使用 (worldX, -worldY, depth), 相机正面 +Z 看向锚点.
+    /// <br>锚点处 1 世界像素 = 1 屏幕像素 * Zoom.Y, 模型离开地面(z!=0)时自然获得近大远小.</br>
+    /// </summary>
+    public void SyncToSceneCamera(Colin.Core.Common.Camera sceneCamera, int viewWidth, int viewHeight, float fieldOfView = MathHelper.PiOver4)
+    {
+      float zoom = MathF.Max(0.0001f, sceneCamera.Zoom.Y);
+      float aspect = viewHeight > 0 ? viewWidth / (float)viewHeight : 1f;
+      float distance = (viewHeight * 0.5f) / (zoom * MathF.Tan(fieldOfView * 0.5f));
+      Vector3 target = new Vector3(sceneCamera.Position.X, -sceneCamera.Position.Y, 0f);
+      Vector3 up = Vector3.Transform(Vector3.Up, Matrix.CreateRotationZ(sceneCamera.Rotation));
+      SetPerspective(
+          target + new Vector3(0f, 0f, MathF.Max(1f, distance)),
+          target,
+          up,
+          fieldOfView,
+          aspect,
+          1f,
+          MathF.Max(1000f, distance * 8f));
+    }
+
     /// <summary>按当前环绕参数放置相机. 半径以 <see cref="Target"/> 为球心.</summary>
     public void ApplyOrbit()
     {

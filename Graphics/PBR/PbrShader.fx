@@ -57,6 +57,7 @@ float OcclusionStrength;
 float AlphaCutoff;
 float AlphaMode;
 float Workflow;
+float GameLighting;
 float BoneCount;
 
 struct VSInput
@@ -293,6 +294,15 @@ float4 PSMain(VSOutput input) : COLOR
     float3 N = normalize(input.NormalWS);
     float3 T = normalize(input.TangentWS - N * dot(N, input.TangentWS));
     float3 B = normalize(input.BitangentWS);
+
+    if (GameLighting > 0.5)
+    {
+        // 交给游戏原有 2D 光照: 只输出材质底色 + 环境反射, Ecs 的 Light 后处理会统一乘上来.
+        float3 view = normalize(EyePosition - input.PositionWS);
+        float3 reflected = reflect(-view, N);
+        float3 reflection = EnvironmentColor(reflected, roughness * 8.0) * F0 * (1.0 - roughness);
+        return float4(LinearToSRGB(albedo + reflection * EnvironmentIntensity), alpha);
+    }
 
     float3 tangentNormal = NormalTexture.Sample(LinearSampler, input.TexCoord).xyz * 2.0 - 1.0;
     // glTF 法线贴图为 OpenGL 约定 (+Y 朝图像上方), 而 D3D 采样时 +V 朝图像下方, 故翻转绿通道.
