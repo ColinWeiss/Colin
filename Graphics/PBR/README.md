@@ -48,12 +48,15 @@
   最后用 `PointClamp` 放大 2 倍，形成 2px 像素块；2D 保持原分辨率。`Ecs.PbrPixelSize` 固定为 2。
 - **相机**: `PbrCamera.SyncToSceneCamera` 跟随 2D `Scene.Camera` 的 Position / Zoom / Rotation。
   3D 按全分辨率同步，z=0 处与 2D 世界逐像素对齐；模型离开地面 (z≠0) 时得到近大远小。
-- **光照**: ECS 世界内不再使用 3D 方向光。`PbrRenderer.GameLighting = true` 时 PBR 只输出
-  材质底色 + 环境反射，随后由 Ecs 原本的 `LightingAdapter`/Tile 光照后处理统一上光。
+- **光照**: ECS 世界内不再使用完整的 3D 三方向光。`PbrRenderer.GameLighting = true` 时：
+  游戏 2D LPV/Tile 光照负责漫反射着色；环境图负责金属/粗糙度反射；
+  `LightingAdapter.CurrentSunColor/CurrentSunLightDirection` 通过 `Ecs.GameLightProvider`
+  提供一盏只计算高光的游戏日光，让金属度在风格化光照下仍有方向性高光。
   独立 PBR 演示仍使用 3D 直接光 + ACES。
 - **环境反射**: 离线烘焙环境图只用于材质反射，不是可见天空盒；优先读
   `Textures/Backgrounds/<背景名>/Environment.jpg` (没有则 `.png`)，缺失时退回旧 `Sky.jpg`。
-  `PbrLighting.EnvironmentRotation` 可让环境图绕 Y 轴旋转。
+  `PbrLighting.EnvironmentRotation` 可让环境图绕 Y 轴旋转。粗糙度 1 的金属仍保留最低 25%
+  环境反射，不会直接变成纯黑。
 - **透明**: 着色器输出直通 alpha; 渲染器把 `AlphaMode.Blend` 网格按深度排队 (DepthRead +
   NonPremultiplied)。实测 `Texture2D.FromStream` 不预乘 alpha。
 

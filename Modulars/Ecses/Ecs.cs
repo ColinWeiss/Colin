@@ -28,6 +28,9 @@ namespace Colin.Core.Modulars.Ecses
 
     public PbrLighting Lighting { get; set; } = PbrLighting.CreateDefault();
 
+    /// <summary>游戏 3D 光照桥: 返回 (lightDirection, HDR color), 作为 PBR 高光的方向光.</summary>
+    public Func<(Vector3 Direction, Vector3 Color)> GameLightProvider;
+
     public bool DrawSkybox { get; set; }
 
     /// <summary>ECS 3D 的像素滤镜倍率: 3D 渲染到 1/2 分辨率, 再用 Point 采样放大, 形成 2px 像素块.</summary>
@@ -199,6 +202,18 @@ namespace Colin.Core.Modulars.Ecses
 
       // 全分辨率渲染, 让 3D 相机和 2D 相机在 z=0 处严格对齐; 2px 滤镜在合成时做.
       Camera.SyncToSceneCamera(Scene.Camera, target.Width, target.Height);
+      if (GameLightProvider is not null)
+      {
+        (Vector3 lightDirection, Vector3 lightColor) = GameLightProvider();
+        if (lightColor != Vector3.Zero)
+        {
+          Lighting.KeyLight = new PbrDirectionalLight
+          {
+            Direction = lightDirection,
+            Color = lightColor
+          };
+        }
+      }
       Renderer.GameLighting = true;
       Renderer.DrawSkybox = false;
       Renderer.Begin(Camera, Lighting);

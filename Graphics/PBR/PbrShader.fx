@@ -297,11 +297,27 @@ float4 PSMain(VSOutput input) : COLOR
 
     if (GameLighting > 0.5)
     {
-        // 交给游戏原有 2D 光照: 只输出材质底色 + 环境反射, Ecs 的 Light 后处理会统一乘上来.
+        // 游戏 LPV 光照是 2D 漫反射, 不提供 3D 高光; 金属/粗糙度靠环境图表达.
+        // 粗糙度 1 时仍保留最低限度的环境反射, 避免金属材质直接变成纯黑.
         float3 view = normalize(EyePosition - input.PositionWS);
         float3 reflected = reflect(-view, N);
-        float3 reflection = EnvironmentColor(reflected, roughness * 8.0) * F0 * (1.0 - roughness);
-        return float4(LinearToSRGB(albedo + reflection * EnvironmentIntensity), alpha);
+        float reflectionWeight = 0.25 + 0.75 * (1.0 - roughness);
+        float3 reflection = EnvironmentColor(reflected, roughness * 8.0) * F0 * reflectionWeight;
+
+        // 游戏日光给一盏仅高光的 3D 方向光, 让金属度/粗糙度参与游戏风格化光照.
+        float3 gameSpecular = 0;
+        float3 lightDirection = normalize(-DirLight0Direction);
+        float nDotL = saturate(dot(N, lightDirection));
+        if (nDotL > 0.0)
+        {
+            float3 halfDir = normalize(lightDirection + view);
+            float nDotH = saturate(dot(N, halfDir));
+            float specPower = exp2(11.0 * (1.0 - roughness) + 1.0);
+            float specNormalization = (specPower + 8.0) / (8.0 * 3.14159265);
+            gameSpecular = DirLight0Color * pow(nDotH, specPower) * specNormalization * F0 * nDotL;
+        }
+
+        return float4(LinearToSRGB(albedo + reflection * EnvironmentIntensity + gameSpecular), alpha);
     }
 
     float3 tangentNormal = NormalTexture.Sample(LinearSampler, input.TexCoord).xyz * 2.0 - 1.0;
@@ -320,7 +336,8 @@ float4 PSMain(VSOutput input) : COLOR
     float occlusion = lerp(1.0, OcclusionTexture.Sample(LinearSampler, input.TexCoord).r, OcclusionStrength);
     float3 reflection = reflect(-V, N);
     float3 ambientDiffuse = EnvironmentColor(N, 5.0) * diffuseColor;
-    float3 ambientSpecular = EnvironmentColor(reflection, roughness * 8.0) * F0 * (1.0 - roughness);
+    float ambientReflectionWeight = 0.25 + 0.75 * (1.0 - roughness);
+    float3 ambientSpecular = EnvironmentColor(reflection, roughness * 8.0) * F0 * ambientReflectionWeight;
     color += (ambientDiffuse + ambientSpecular) * occlusion * EnvironmentIntensity;
 
     float3 emissive = EmissiveFactor * EmissiveStrength * SRGBToLinear(EmissiveTexture.Sample(LinearSampler, input.TexCoord).rgb);
