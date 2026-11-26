@@ -44,11 +44,10 @@
 - **Z=0 分层**: 普通 2D 层在 `Z = 0`。`EcsComPbrRender.Depth > 0` 的 3D 画在所有 2D 之后，
   可以遮挡玩家/物块；`Depth < 0` 的 3D 画在所有 2D 之前，被 2D 遮挡。
   当前瓶子 `Depth = 120` (前景)，鲨鱼 `Depth = -120` (背景)。
-- **2px 像素滤镜**: ECS 3D 渲染到 1/2 分辨率带深度 RT，合成时用 `PointClamp` 放大 2 倍，
-  形成 2px 像素块；2D 保持原分辨率。`Ecs.PbrPixelSize` 固定为 2。
+- **2px 像素滤镜**: ECS 3D 先全分辨率渲染并套游戏光照，再缩到 1/2 分辨率像素目标，
+  最后用 `PointClamp` 放大 2 倍，形成 2px 像素块；2D 保持原分辨率。`Ecs.PbrPixelSize` 固定为 2。
 - **相机**: `PbrCamera.SyncToSceneCamera` 跟随 2D `Scene.Camera` 的 Position / Zoom / Rotation。
-  半分辨率渲染时同步传入 `zoomScale = 1/2`，放大后锚点处仍是 1 世界像素 ≈ `Zoom.Y` 屏幕像素；
-  模型离开地面 (z≠0) 时得到近大远小。
+  3D 按全分辨率同步，z=0 处与 2D 世界逐像素对齐；模型离开地面 (z≠0) 时得到近大远小。
 - **光照**: ECS 世界内不再使用 3D 方向光。`PbrRenderer.GameLighting = true` 时 PBR 只输出
   材质底色 + 环境反射，随后由 Ecs 原本的 `LightingAdapter`/Tile 光照后处理统一上光。
   独立 PBR 演示仍使用 3D 直接光 + ACES。

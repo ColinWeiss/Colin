@@ -40,6 +40,9 @@ namespace Colin.Core.Modulars.Ecses
 
     public RenderTarget2D PbrFrontRt { get; private set; }
 
+    /// <summary>2px 像素滤镜的目标: 3D 先全分辨率渲染/上光, 再缩小到这里, 最后 Point 放大.</summary>
+    public RenderTarget2D PbrPixelRt { get; private set; }
+
     private Texture2D _pbrEnvironment;
     private readonly HashSet<PbrModel> _pbrUpdatedModels = new HashSet<PbrModel>();
 
@@ -194,8 +197,8 @@ namespace Colin.Core.Modulars.Ecses
       device.SetRenderTarget(target);
       device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Transparent, 1f, 0);
 
-      // 半分辨率渲染: 相机在 z=0 处的像素密度也减半, 放大 2x 后仍与 2D 世界对齐.
-      Camera.SyncToSceneCamera(Scene.Camera, target.Width, target.Height, MathHelper.PiOver4, 1f / PbrPixelSize);
+      // 全分辨率渲染, 让 3D 相机和 2D 相机在 z=0 处严格对齐; 2px 滤镜在合成时做.
+      Camera.SyncToSceneCamera(Scene.Camera, target.Width, target.Height);
       Renderer.GameLighting = true;
       Renderer.DrawSkybox = false;
       Renderer.Begin(Camera, Lighting);
@@ -227,15 +230,20 @@ namespace Colin.Core.Modulars.Ecses
 
     private void EnsurePbrTargets()
     {
-      int width = Math.Max(1, CoreInfo.ViewWidth / PbrPixelSize);
-      int height = Math.Max(1, CoreInfo.ViewHeight / PbrPixelSize);
-      if (PbrBackRt is not null && PbrBackRt.Width == width && PbrBackRt.Height == height)
+      int width = CoreInfo.ViewWidth;
+      int height = CoreInfo.ViewHeight;
+      int pixelWidth = Math.Max(1, width / PbrPixelSize);
+      int pixelHeight = Math.Max(1, height / PbrPixelSize);
+      if (PbrBackRt is not null && PbrBackRt.Width == width && PbrBackRt.Height == height &&
+          PbrPixelRt is not null && PbrPixelRt.Width == pixelWidth && PbrPixelRt.Height == pixelHeight)
         return;
 
       PbrBackRt?.Dispose();
       PbrFrontRt?.Dispose();
+      PbrPixelRt?.Dispose();
       PbrBackRt = RenderTargetExt.CreateWithDepth(width, height);
       PbrFrontRt = RenderTargetExt.CreateWithDepth(width, height);
+      PbrPixelRt = RenderTargetExt.CreateDefault(pixelWidth, pixelHeight);
     }
 
     /// <summary>
@@ -351,6 +359,8 @@ namespace Colin.Core.Modulars.Ecses
       PbrBackRt = null;
       PbrFrontRt?.Dispose();
       PbrFrontRt = null;
+      PbrPixelRt?.Dispose();
+      PbrPixelRt = null;
       _pbrEnvironment?.Dispose();
       _pbrEnvironment = null;
       base.Dispose();
