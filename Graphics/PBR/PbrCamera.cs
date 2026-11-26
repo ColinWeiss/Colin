@@ -64,9 +64,9 @@ namespace Colin.Core.Graphics.PBR
     /// 3D 世界坐标使用 (worldX, -worldY, depth), 相机正面 +Z 看向锚点.
     /// <br>锚点处 1 世界像素 = 1 屏幕像素 * Zoom.Y, 模型离开地面(z!=0)时自然获得近大远小.</br>
     /// </summary>
-    public void SyncToSceneCamera(Colin.Core.Common.Camera sceneCamera, int viewWidth, int viewHeight, float fieldOfView = MathHelper.PiOver4)
+    public void SyncToSceneCamera(Colin.Core.Common.Camera sceneCamera, int viewWidth, int viewHeight, float fieldOfView = MathHelper.PiOver4, float zoomScale = 1f)
     {
-      float zoom = MathF.Max(0.0001f, sceneCamera.Zoom.Y);
+      float zoom = MathF.Max(0.0001f, sceneCamera.Zoom.Y * zoomScale);
       float aspect = viewHeight > 0 ? viewWidth / (float)viewHeight : 1f;
       float distance = (viewHeight * 0.5f) / (zoom * MathF.Tan(fieldOfView * 0.5f));
       Vector3 target = new Vector3(sceneCamera.Position.X, -sceneCamera.Position.Y, 0f);

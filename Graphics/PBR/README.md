@@ -37,11 +37,18 @@
   不受 128 根骨骼的常量寄存器上限。每顶点最多 4 个影响 (`LimitBoneWeights`)。
 - **天空盒**: `PbrRenderModule.DrawSkybox = true` 时先画全屏天空盒; 只用于独立 PBR 演示。
   游戏世界内**不画**天空盒, 只保留 2D 分层背景。
-- **世界 3D**: `Ecs` 原生实现 `IPbrRenderScene`，在 `DoRawRender` 里先画带深度的 3D 再画 2D 实体。
+- **世界 3D**: `Ecs` 原生实现 `IPbrRenderScene`，3D 实体由 `EcsComPbrRender` 描述，
+  由 `LightingAdapter` 在 2D 合成前后分别调用 `Ecs.RenderPbrLayer`。
   3D 世界坐标 `(worldX, -worldY, depth)`，相机正面 +Z；实体 Transform 固定在世界里,
-  相机移动不会带走模型。`EcsComPbrRender` 的 `Offset/Depth/Scale/Yaw` 控制摆放。
+  相机移动不会带走模型。
+- **Z=0 分层**: 普通 2D 层在 `Z = 0`。`EcsComPbrRender.Depth > 0` 的 3D 画在所有 2D 之后，
+  可以遮挡玩家/物块；`Depth < 0` 的 3D 画在所有 2D 之前，被 2D 遮挡。
+  当前瓶子 `Depth = 120` (前景)，鲨鱼 `Depth = -120` (背景)。
+- **2px 像素滤镜**: ECS 3D 渲染到 1/2 分辨率带深度 RT，合成时用 `PointClamp` 放大 2 倍，
+  形成 2px 像素块；2D 保持原分辨率。`Ecs.PbrPixelSize` 固定为 2。
 - **相机**: `PbrCamera.SyncToSceneCamera` 跟随 2D `Scene.Camera` 的 Position / Zoom / Rotation。
-  锚点处 1 世界像素 ≈ 1 屏幕像素 × Zoom.Y；模型离开地面 (z≠0) 时得到近大远小。
+  半分辨率渲染时同步传入 `zoomScale = 1/2`，放大后锚点处仍是 1 世界像素 ≈ `Zoom.Y` 屏幕像素；
+  模型离开地面 (z≠0) 时得到近大远小。
 - **光照**: ECS 世界内不再使用 3D 方向光。`PbrRenderer.GameLighting = true` 时 PBR 只输出
   材质底色 + 环境反射，随后由 Ecs 原本的 `LightingAdapter`/Tile 光照后处理统一上光。
   独立 PBR 演示仍使用 3D 直接光 + ACES。
@@ -95,7 +102,9 @@ pbr.Camera.Frame(model.GetWorldSphere());
 ## 已知限制 / 下一步
 
 - ECS 世界内为了接游戏 2D 光照，3D 只输出底色 + 环境反射，**不做 3D 方向光/阴影**。
-- 3D 与 2D 地块/实体没有深度遮挡；Ecs 的 3D 先画、2D 实体后画，3D 在实体之下。
+- 3D 与 2D 的遮挡按**实体**的 Z 分层，不是逐三角形/逐像素深度；模型本身跨 Z=0 时仍由
+  `EcsComPbrRender.Depth` 的符号决定整层。
+- 3D 层在 VFX/UI 之下；2D 的 VFX/UI 不会按 Z 和 3D 交错。
 - 相机跟随 2D 相机的 Position/Zoom/Rotation，但 2D 相机的 `Translate` 偏移未接入 (通常等于视口中心)。
 - 模型贴图默认不生成 mip；环境图已带 mip。
 - 透明只按网格排队；双面透明材质有自重叠混色。

@@ -1,5 +1,6 @@
 using Colin.Core.Common.Debugs;
 using Colin.Core.Events;
+using Colin.Core.Extensions;
 using Colin.Core.Graphics.PBR;
 using Colin.Core.IO;
 using Colin.Core.Mathematical;
@@ -28,6 +29,16 @@ namespace Colin.Core.Modulars.Ecses
     public PbrLighting Lighting { get; set; } = PbrLighting.CreateDefault();
 
     public bool DrawSkybox { get; set; }
+
+    /// <summary>ECS 3D 的像素滤镜倍率: 3D 渲染到 1/2 分辨率, 再用 Point 采样放大, 形成 2px 像素块.</summary>
+    public const int PbrPixelSize = 2;
+
+    /// <summary>普通 2D 渲染所在的 Z 平面. 3D 的 Depth 大于它时在 2D 之上, 小于它时被 2D 遮挡.</summary>
+    public const float Scene2DZ = 0f;
+
+    public RenderTarget2D PbrBackRt { get; private set; }
+
+    public RenderTarget2D PbrFrontRt { get; private set; }
 
     private Texture2D _pbrEnvironment;
     private readonly HashSet<PbrModel> _pbrUpdatedModels = new HashSet<PbrModel>();
@@ -129,8 +140,7 @@ namespace Colin.Core.Modulars.Ecses
     }
     public override void DoRawRender(GraphicsDevice device, SpriteBatch batch)
     {
-      device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Transparent, 1f, 0);
-      RenderPbr(device);
+      device.Clear(Color.Transparent);
       EcsSystem _system;
       for (int count = 0; count < _systems.Count; count++)
       {
@@ -166,14 +176,28 @@ namespace Colin.Core.Modulars.Ecses
       }
     }
 
-    private void RenderPbr(GraphicsDevice device)
+    /// <summary>
+    /// 渲染一层 ECS 3D. front=false 画在 2D 之下 (Depth &lt;= 0), front=true 画在 2D 之上 (Depth &gt; 0).
+    /// <br>由 LightingAdapter 在 2D 合成前/后分别调用, 保证 3D 能按 Z=0 平面和 2D 正确分层.</br>
+    /// </summary>
+    public void RenderPbrLayer(bool front)
     {
-      if (Renderer is null || RawRt is null || Scene?.Camera is null)
+      if (Renderer is null || Scene?.Camera is null)
         return;
 
-      Camera.SyncToSceneCamera(Scene.Camera, RawRt.Width, RawRt.Height);
+      EnsurePbrTargets();
+      RenderTarget2D target = front ? PbrFrontRt : PbrBackRt;
+      if (target is null)
+        return;
+
+      GraphicsDevice device = CoreInfo.Graphics.GraphicsDevice;
+      device.SetRenderTarget(target);
+      device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Transparent, 1f, 0);
+
+      // 半分辨率渲染: 相机在 z=0 处的像素密度也减半, 放大 2x 后仍与 2D 世界对齐.
+      Camera.SyncToSceneCamera(Scene.Camera, target.Width, target.Height, MathHelper.PiOver4, 1f / PbrPixelSize);
       Renderer.GameLighting = true;
-      Renderer.DrawSkybox = DrawSkybox;
+      Renderer.DrawSkybox = false;
       Renderer.Begin(Camera, Lighting);
 
       for (int i = 0; i < Entities.Length; i++)
@@ -181,6 +205,9 @@ namespace Colin.Core.Modulars.Ecses
         Entity entity = Entities[i];
         EcsComPbrRender render = entity?.GetCom<EcsComPbrRender>();
         if (render?.Model is null || render.Visible is false)
+          continue;
+        bool isFront = render.Depth > Scene2DZ;
+        if (isFront != front)
           continue;
 
         BoundingBox bounds = render.Model.Bounds;
@@ -196,6 +223,19 @@ namespace Colin.Core.Modulars.Ecses
       }
 
       Renderer.End();
+    }
+
+    private void EnsurePbrTargets()
+    {
+      int width = Math.Max(1, CoreInfo.ViewWidth / PbrPixelSize);
+      int height = Math.Max(1, CoreInfo.ViewHeight / PbrPixelSize);
+      if (PbrBackRt is not null && PbrBackRt.Width == width && PbrBackRt.Height == height)
+        return;
+
+      PbrBackRt?.Dispose();
+      PbrFrontRt?.Dispose();
+      PbrBackRt = RenderTargetExt.CreateWithDepth(width, height);
+      PbrFrontRt = RenderTargetExt.CreateWithDepth(width, height);
     }
 
     /// <summary>
@@ -307,6 +347,10 @@ namespace Colin.Core.Modulars.Ecses
       }
       Renderer?.Dispose();
       Renderer = null;
+      PbrBackRt?.Dispose();
+      PbrBackRt = null;
+      PbrFrontRt?.Dispose();
+      PbrFrontRt = null;
       _pbrEnvironment?.Dispose();
       _pbrEnvironment = null;
       base.Dispose();
