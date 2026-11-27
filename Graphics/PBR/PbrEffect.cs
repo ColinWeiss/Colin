@@ -24,6 +24,8 @@ namespace Colin.Core.Graphics.PBR
     private readonly EffectParameter _baseColorFactor;
     private readonly EffectParameter _metallicFactor;
     private readonly EffectParameter _roughnessFactor;
+    private readonly EffectParameter _metallicOverride;
+    private readonly EffectParameter _roughnessOverride;
     private readonly EffectParameter _specularFactor;
     private readonly EffectParameter _glossinessFactor;
     private readonly EffectParameter _emissiveFactor;
@@ -78,6 +80,8 @@ namespace Colin.Core.Graphics.PBR
       _baseColorFactor = Require("BaseColorFactor");
       _metallicFactor = Require("MetallicFactor");
       _roughnessFactor = Require("RoughnessFactor");
+      _metallicOverride = Require("MetallicOverride");
+      _roughnessOverride = Require("RoughnessOverride");
       _specularFactor = Require("SpecularFactor");
       _glossinessFactor = Require("GlossinessFactor");
       _emissiveFactor = Require("EmissiveFactor");
@@ -201,6 +205,8 @@ namespace Colin.Core.Graphics.PBR
       _baseColorFactor.SetValue(material.BaseColorFactor);
       _metallicFactor.SetValue(material.MetallicFactor);
       _roughnessFactor.SetValue(material.RoughnessFactor);
+      _metallicOverride.SetValue(material.MetallicOverride);
+      _roughnessOverride.SetValue(material.RoughnessOverride);
       _specularFactor.SetValue(material.SpecularFactor);
       _glossinessFactor.SetValue(material.GlossinessFactor);
       _emissiveFactor.SetValue(material.EmissiveFactor);

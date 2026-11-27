@@ -47,6 +47,8 @@ float Exposure;
 float4 BaseColorFactor;
 float MetallicFactor;
 float RoughnessFactor;
+float MetallicOverride;
+float RoughnessOverride;
 float3 SpecularFactor;
 float GlossinessFactor;
 float3 EmissiveFactor;
@@ -265,6 +267,10 @@ float4 PSMain(VSOutput input) : COLOR
         albedo = BaseColorFactor.rgb * SRGBToLinear(baseSample.rgb);
         float metallic = saturate(MetallicFactor * workflowSample.b);
         roughness = RoughnessFactor * workflowSample.g;
+        if (MetallicOverride >= 0.0)
+            metallic = saturate(MetallicOverride);
+        if (RoughnessOverride >= 0.0)
+            roughness = RoughnessOverride;
         F0 = lerp(0.04, albedo, metallic);
         diffuseColor = albedo * (1.0 - metallic);
         alpha = BaseColorFactor.a * baseSample.a;
@@ -276,6 +282,8 @@ float4 PSMain(VSOutput input) : COLOR
         float3 specular = saturate(SpecularFactor * SRGBToLinear(workflowSample.rgb));
         float glossiness = saturate(GlossinessFactor * workflowSample.a);
         roughness = 1.0 - glossiness;
+        if (RoughnessOverride >= 0.0)
+            roughness = RoughnessOverride;
         F0 = specular;
         diffuseColor = albedo * (1.0 - max(max(specular.r, specular.g), specular.b));
         alpha = BaseColorFactor.a * baseSample.a;
@@ -298,7 +306,7 @@ float4 PSMain(VSOutput input) : COLOR
     if (GameLighting > 0.5)
     {
         // 游戏 LPV 光照是 2D 漫反射, 不提供 3D 高光; 金属/粗糙度靠环境图表达.
-        // 粗糙度 1 时仍保留最低限度的环境反射, 避免金属材质直接变成纯黑.
+        // 这里先用几何法线, 避免法线贴图切线基异常时反射方向变成 NaN.
         float3 view = normalize(EyePosition - input.PositionWS);
         float3 reflected = reflect(-view, N);
         float reflectionWeight = 0.25 + 0.75 * (1.0 - roughness);
@@ -317,7 +325,7 @@ float4 PSMain(VSOutput input) : COLOR
             gameSpecular = DirLight0Color * pow(nDotH, specPower) * specNormalization * F0 * nDotL;
         }
 
-        return float4(LinearToSRGB(albedo + reflection * EnvironmentIntensity + gameSpecular), alpha);
+        return float4(LinearToSRGB(diffuseColor + reflection * EnvironmentIntensity + gameSpecular), alpha);
     }
 
     float3 tangentNormal = NormalTexture.Sample(LinearSampler, input.TexCoord).xyz * 2.0 - 1.0;

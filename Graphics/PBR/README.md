@@ -56,7 +56,8 @@
 - **环境反射**: 离线烘焙环境图只用于材质反射，不是可见天空盒；优先读
   `Textures/Backgrounds/<背景名>/Environment.jpg` (没有则 `.png`)，缺失时退回旧 `Sky.jpg`。
   `PbrLighting.EnvironmentRotation` 可让环境图绕 Y 轴旋转。粗糙度 1 的金属仍保留最低 25%
-  环境反射，不会直接变成纯黑。
+  环境反射，不会直接变成纯黑。`PbrMaterial.MetallicOverride/RoughnessOverride` 可绕过 ORM
+  贴图直接指定金属度/粗糙度，用于预览或特殊材质。
 - **透明**: 着色器输出直通 alpha; 渲染器把 `AlphaMode.Blend` 网格按深度排队 (DepthRead +
   NonPremultiplied)。实测 `Texture2D.FromStream` 不预乘 alpha。
 

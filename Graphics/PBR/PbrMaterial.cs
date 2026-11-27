@@ -30,6 +30,12 @@ namespace Colin.Core.Graphics.PBR
 
     public float RoughnessFactor = 1f;
 
+    /// <summary>预览/特效用: &gt;=0 时覆盖 metallic 贴图与 factor 的结果; -1 表示不覆盖.</summary>
+    public float MetallicOverride = -1f;
+
+    /// <summary>预览/特效用: &gt;=0 时覆盖 roughness 贴图与 factor 的结果; -1 表示不覆盖.</summary>
+    public float RoughnessOverride = -1f;
+
     /// <summary>SpecularGlossiness 的 specularFactor (即 F0), 线性空间.</summary>
     public Vector3 SpecularFactor = Vector3.One;
 
